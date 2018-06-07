@@ -1,0 +1,27 @@
+.avatar-img {
+  /* make a square container */
+  width: 50px;
+  height: 50px;
+
+  /* fill the container, preserving aspect ratio, and cropping to fit */
+  background-size: cover;
+
+  /* center the image vertically and horizontally */
+  background-position: top center;
+
+  /* round the edges to a circle with border radius 1/2 container size */
+  border-radius: 50%;
+  margin-bottom: -10px;
+}
+
+.chatbot-header {
+  background-image: url('/assets/chatbot.PNG');
+}
+
+.user-header {
+  background-image: url('/assets/user.png');
+}
+
+.avatar-det{
+}
+

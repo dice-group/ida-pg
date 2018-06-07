@@ -1,0 +1,10 @@
+<!-- In future put nogrow into fxflex of message form and let the list flex on its on-->
+<mat-card fxLayout="column" style="height: 100vh">
+  <div style="overflow: auto;max-height: 75vh" #scrollMe>
+    <app-message-list [messages]="this.getMessages()"></app-message-list>
+  </div>
+
+  <app-message-form fxFlex style="min-height: 100px" (msgemitter)="addNewMessage($event)" ></app-message-form>
+</mat-card>
+
+<!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->

@@ -1,0 +1,40 @@
+{
+	"nodes": [{
+		"id": 1,
+		"label": "Paris",
+		"group": 1
+	}, {
+		"id": 2,
+		"label": "London",
+		"group": 2
+	}, {
+		"id": 3,
+		"label": "Berlin",
+		"group": 2
+	}, {
+		"id": 4,
+		"label": "Tokyo",
+		"group": 3
+	}],
+	"links": [{
+		"id": 1,
+		"source": 1,
+		"target": 2,
+		"str_val": 5
+	}, {
+		"id": 2,
+		"source": 1,
+		"target": 3,
+		"str_val": 1
+	}, {
+		"id": 3,
+		"source": 2,
+		"target": 4,
+		"str_val": 2
+	}, {
+		"id": 4,
+		"source": 3,
+		"target": 4,
+		"str_val": 5
+	}]
+}
