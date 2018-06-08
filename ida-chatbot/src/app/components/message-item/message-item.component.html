@@ -4,14 +4,16 @@
     <mat-card-title>{{message.username}}</mat-card-title>
     <mat-card-subtitle>{{message.timestamp.toLocaleString()}}</mat-card-subtitle>
   </mat-card-header>-->
-  <mat-card fxLayout="col" style="margin-bottom: 5px" fxLayoutGap="15px">
+  <mat-card fxLayout="row" style="margin-bottom: 5px" fxLayoutGap="15px">
     <div class="avatar-det" fxFlex="nogrow">
       <div [ngClass]="message.avatar=='chatbot'?'chatbot-header':'user-header'" class="avatar-img"></div><br>
       <a style="font-size: small;font-weight: bold">{{message.username}}</a><br>
       <a style="font-size: x-small">{{message.timestamp.toLocaleTimeString()}}</a>
     </div>
-    <div fxFlex>
+    <div fxFlex="nogrow" >
+      <p style="word-wrap: break-word">
       {{message.content}}
+      </p>
     </div>
   </mat-card>
 <!--</mat-card>-->

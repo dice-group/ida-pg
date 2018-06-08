@@ -13,7 +13,7 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
 
-    /*var svg = d3.select('#d3_selectable_force_directed_graph');
+   /* var svg = d3.select('#d3_selectable_force_directed_graph');
 
     d3.json('/assets/fdg/demo.json', function(error, graph) {
       if (!error) {

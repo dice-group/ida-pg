@@ -1,10 +1,10 @@
-<mat-list style="background-color:#eaeaea; overflow: auto;height: 100vh" fxLayout="column" fxLayoutGap="0">
+<!--<mat-list style="background-color:#eaeaea; overflow: auto;height: 100vh" fxLayout="column" fxLayoutGap="0">
   <mat-divider></mat-divider>
   <mat-list-item>
     <button mat-button>City</button>
-    <!--<button mat-icon-button>
+    &lt;!&ndash;<button mat-icon-button>
       <mat-icon>delete</mat-icon>
-    </button>-->
+    </button>&ndash;&gt;
     <mat-divider></mat-divider>
   </mat-list-item>
   <mat-list-item>
@@ -15,4 +15,19 @@
     <button mat-button>QA</button>
     <mat-divider></mat-divider>
   </mat-list-item>
-</mat-list>
+</mat-list>-->
+
+<mat-button-toggle-group style="background-color:#eaeaea; overflow: auto;height: 100vh" fxLayout="column" value="City">
+  <mat-button-toggle value="City">
+    City
+  </mat-button-toggle>
+  <mat-button-toggle value="Panama">
+    Panama
+  </mat-button-toggle>
+  <mat-button-toggle value="QA">
+    QA
+  </mat-button-toggle>
+  <mat-button-toggle value="Titanic">
+    Titanic
+  </mat-button-toggle>
+</mat-button-toggle-group>
