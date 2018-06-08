@@ -1,10 +1,14 @@
-<mat-tab-group>
-  <mat-tab label="FDG">
+<mat-tab-group style="min-width: 40vw">
+  <!--<mat-tab label="FDG">
     <app-fdg-view [idpf]="32"></app-fdg-view>
   </mat-tab>
   <mat-tab label="DataTable">
 
+  </mat-tab>-->
+<ng-container *ngIf="item.dataset">
+  <mat-tab  *ngFor="let ds of object.keys(item.dataset)" label="{{ds}}">
+      {{item.dataset[ds]}}
   </mat-tab>
-
+</ng-container>
 
 </mat-tab-group>

@@ -1,11 +1,13 @@
 <div fxLayout="row">
   <!--<div fxFlex="10%" style="background-color:#eaeaea; overflow: auto;">-->
-    <app-sidebar fxFlex="nogrow"></app-sidebar>
+    <app-sidebar fxFlex="nogrow" [items]="getSidebarItems()" (activeItmEmitter)="changeActiveItem($event)" [activeItem]="getActiveItem()"></app-sidebar>
  <!-- </div>-->
-  <div fxFlex="auto">
-    <app-data-view-container></app-data-view-container>
+  <div fxFlex="auto" ngSwitch="0">
+    <ng-container *ngFor="let item of getMainviewItems()">
+    <app-data-view-container  [item]="item" *ngSwitchCase="item.id"></app-data-view-container>
+    </ng-container>
   </div>
-  <app-chatbox fxFlex ></app-chatbox>
+  <app-chatbox fxFlex (actnEmitter)="actionHandler($event)"></app-chatbox>
   <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
 </div>
 

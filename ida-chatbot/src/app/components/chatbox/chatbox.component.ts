@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {Message} from '../../models/message';
 import {RestService} from '../../service/rest/rest.service';
 import {ResponseBean} from '../../models/response-bean';
@@ -10,6 +10,7 @@ import {ResponseBean} from '../../models/response-bean';
 })
 export class ChatboxComponent implements OnInit, AfterViewChecked {
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
+  @Output() actnEmitter = new EventEmitter<ResponseBean>();
   curDate = new Date();
   msg1: Message = new Message('Hello there! How can I help you?', 'Assistant', 'chatbot', this.curDate);
   msg2: Message = new Message('Hi! Could you please load the City dataset.', 'User', 'user', this.curDate);
@@ -46,9 +47,13 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
   }
 
   processBotResponse(resp: ResponseBean) {
-    const msg: Message = new Message(resp.payload, 'Assistant', 'chatbot', new Date());
+    const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
     // Putting delay to make responses look natural
     setTimeout(() => this.addNewMessage(msg), 1000);
+    if (resp.actnCode > 0) {
+      // load the dataset
+      this.actnEmitter.emit(resp);
+    }
   }
 
   scrollToBottom(): void {
