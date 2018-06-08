@@ -11,6 +11,11 @@ import upb.ida.bean.ResponseBean;
 
 public class RespBeanSerializer extends StdSerializer<ResponseBean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public RespBeanSerializer() {
 		this(null);
 	}
@@ -23,9 +28,11 @@ public class RespBeanSerializer extends StdSerializer<ResponseBean> {
 	public void serialize(ResponseBean value, JsonGenerator jgen, SerializerProvider arg2)
 			throws IOException, JsonGenerationException {
 		jgen.writeStartObject();
+		jgen.writeNumberField("actnCode", value.getActnCode());
 		jgen.writeNumberField("errCode", value.getErrCode());
 		jgen.writeStringField("errMsg", value.getErrMsg());
 		jgen.writeObjectField("payload", value.getPayload());
+		jgen.writeObjectField("chatmsg", value.getChatmsg());
 		jgen.writeEndObject();
 	}
 

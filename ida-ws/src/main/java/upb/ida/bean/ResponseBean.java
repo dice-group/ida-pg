@@ -6,9 +6,11 @@ import upb.ida.serializer.RespBeanSerializer;
 
 @JsonSerialize(using = RespBeanSerializer.class)
 public class ResponseBean {
+	private int actnCode;
 	private int errCode;
 	private String errMsg;
 	private Object payload;
+	private String chatmsg;
 	public int getErrCode() {
 		return errCode;
 	}
@@ -27,4 +29,17 @@ public class ResponseBean {
 	public void setPayload(Object payload) {
 		this.payload = payload;
 	}
+	public int getActnCode() {
+		return actnCode;
+	}
+	public void setActnCode(int actnCode) {
+		this.actnCode = actnCode;
+	}
+	public String getChatmsg() {
+		return chatmsg;
+	}
+	public void setChatmsg(String chatmsg) {
+		this.chatmsg = chatmsg;
+	}
+	
 }
