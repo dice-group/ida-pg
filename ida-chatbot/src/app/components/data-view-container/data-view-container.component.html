@@ -1,4 +1,4 @@
-<mat-tab-group style="min-width: 40vw">
+<mat-tab-group style="min-width: 40vw;max-height: 100vh">
   <!--<mat-tab label="FDG">
     <app-fdg-view [idpf]="32"></app-fdg-view>
   </mat-tab>
@@ -6,8 +6,8 @@
 
   </mat-tab>-->
 <ng-container *ngIf="item.dataset">
-  <mat-tab  *ngFor="let ds of object.keys(item.dataset)" label="{{ds}}">
-      {{item.dataset[ds]}}
+  <mat-tab  *ngFor="let ds of object.keys(item.dataset)" label="{{ds}}" style="">
+    <app-datatable-view [data]="item.dataset[ds]"></app-datatable-view>
   </mat-tab>
 </ng-container>
 

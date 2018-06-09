@@ -32,7 +32,7 @@ export class SidebarComponent implements OnInit{
     }
   }*/
 
-  clickItem(id: number) {
+  public clickItem(id: number) {
     this.activeItmEmitter.emit(id);
   }
 

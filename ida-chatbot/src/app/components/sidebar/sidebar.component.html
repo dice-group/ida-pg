@@ -18,7 +18,7 @@
 </mat-list>-->
 
 <mat-button-toggle-group style="background-color:#eaeaea; overflow: auto;height: 100vh;min-width: 80px" fxLayout="column" value="{{activeItem}}">
-<mat-button-toggle *ngFor="let item of items " value="{{item.id}}">
+<mat-button-toggle *ngFor="let item of items " value="{{item.id}}" (click)="clickItem(item.id)">
   {{item.label}}
 </mat-button-toggle>
 </mat-button-toggle-group>

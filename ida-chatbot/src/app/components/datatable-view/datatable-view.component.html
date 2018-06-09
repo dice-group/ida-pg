@@ -1,3 +1,14 @@
-<p>
-  datatable-view works!
-</p>
+<table mat-table [dataSource]="tableData" class="table-cls mat-elevation-z8">
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- Position Column -->
+  <ng-container *ngFor="let fieldName of fields" matColumnDef="{{fieldName}}">
+    <th mat-header-cell *matHeaderCellDef>{{fieldName}}</th>
+    <td mat-cell *matCellDef="let element"> {{element[fieldName]}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="fields;"></tr>
+  <tr mat-row *matRowDef="let row; columns: fields;"></tr>
+</table>

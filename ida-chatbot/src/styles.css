@@ -1,9 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
-@import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 html, body {
   box-sizing: border-box;
   height: 100%;
   margin: 0;
+}
+
+.table-cls {
+  overflow: auto;
+  width: 97%;
+  margin: 10px;
+  height: 100vh;
+}
+.mat-header-row {
+  position: sticky;
+  top: 0;
+  background-color: inherit;
+}
+.hidden-cls {
+  display: none;
 }
