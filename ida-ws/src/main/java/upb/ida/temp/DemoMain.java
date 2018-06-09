@@ -23,6 +23,7 @@ public class DemoMain {
 	static {
 		dsPathMap = new HashMap<String, String>();
 		dsPathMap.put("city", "/city");
+		dsPathMap.put("movie", "/movie");
 	}
 	@Autowired
 	ServletContext context;
