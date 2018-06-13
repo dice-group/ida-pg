@@ -1,14 +1,28 @@
-<mat-tab-group style="min-width: 40vw;max-height: 100vh">
+<mat-tab-group style="max-height: 100vh" [selectedIndex]="activeTabIndex" mat-stretch-tabs>
   <!--<mat-tab label="FDG">
     <app-fdg-view [idpf]="32"></app-fdg-view>
   </mat-tab>
   <mat-tab label="DataTable">
 
   </mat-tab>-->
-<ng-container *ngIf="item.dataset">
-  <mat-tab  *ngFor="let ds of object.keys(item.dataset)" label="{{ds}}" style="">
-    <app-datatable-view [data]="item.dataset[ds]"></app-datatable-view>
-  </mat-tab>
-</ng-container>
+  <ng-container *ngIf="item.dataset">
+    <mat-tab *ngFor="let ds of object.keys(item.dataset)">
+      <ng-template mat-tab-label>
+        <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
+          <span>{{ds}}</span>
+        </div>
+      </ng-template>
+      <app-datatable-view [data]="item.dataset[ds]"></app-datatable-view>
+    </mat-tab>
+    <mat-tab *ngFor="let ext of extraTabs">
+      <ng-template mat-tab-label>
+        <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
+          <span>{{ext.label}}</span>
+          <mat-icon *ngIf="ext.closable" appClickStopPropagation (click)="closeTab(ext)">close</mat-icon>
+        </div>
+      </ng-template>
+      Temp
+    </mat-tab>
+  </ng-container>
 
 </mat-tab-group>

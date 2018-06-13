@@ -53,6 +53,7 @@ import { DatatableViewComponent } from './components/datatable-view/datatable-vi
 import { FdgViewComponent } from './components/fdg-view/fdg-view.component';
 import { BargraphViewComponent } from './components/bargraph-view/bargraph-view.component';
 import { IntroComponent } from './components/intro/intro.component';
+import { ClickStopPropagationDirective } from './directive/click-stop-propagation.directive';
 
 @NgModule({
   exports: [
@@ -105,7 +106,8 @@ export class DemoMaterialModule {}
     DatatableViewComponent,
     FdgViewComponent,
     BargraphViewComponent,
-    IntroComponent
+    IntroComponent,
+    ClickStopPropagationDirective
   ],
   imports: [
     BrowserModule,
