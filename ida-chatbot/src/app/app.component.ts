@@ -11,12 +11,13 @@ import {SidebarElement} from './models/sidebar-element';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  idCount = 0;
+  idCount = 1;
   title = 'app';
-  private sidebarItems: SidebarElement[] = [];
+  public introSideItem = new SidebarElement(0, 'Introduction');
+  private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
-  public dummyMvw = new MainviewElement(-1, {});
-  public activeItem = -1;
+
+  public activeItem = 0;
 
   AppComponent() {
   }

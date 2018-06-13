@@ -52,6 +52,7 @@ import { DataViewContainerComponent } from './components/data-view-container/dat
 import { DatatableViewComponent } from './components/datatable-view/datatable-view.component';
 import { FdgViewComponent } from './components/fdg-view/fdg-view.component';
 import { BargraphViewComponent } from './components/bargraph-view/bargraph-view.component';
+import { IntroComponent } from './components/intro/intro.component';
 
 @NgModule({
   exports: [
@@ -103,7 +104,8 @@ export class DemoMaterialModule {}
     DataViewContainerComponent,
     DatatableViewComponent,
     FdgViewComponent,
-    BargraphViewComponent
+    BargraphViewComponent,
+    IntroComponent
   ],
   imports: [
     BrowserModule,

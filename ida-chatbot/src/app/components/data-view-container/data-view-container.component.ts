@@ -14,7 +14,7 @@ export class DataViewContainerComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.item);
+    // console.log(this.item);
   }
 
 }
