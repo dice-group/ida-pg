@@ -48,5 +48,10 @@ public class MessageRestController {
 			response.setChatmsg("Service under development. Please try later.");
 		return response;
 	}
+	@RequestMapping("/sen")
+	public ResponseBean sen() throws Exception {
+		response.setPayload("hi i am faisal");
+		return response;
+	}
 
 }
