@@ -14,21 +14,34 @@ export class DataViewContainerComponent implements OnInit {
   public item: MainviewElement;
   public object = Object;
   public tempTab = new TabElement(1, 'TempTab', TabType.GEN, null, true);
-  public extraTabs: TabElement[] = [this.tempTab, this.tempTab, this.tempTab, this.tempTab, this.tempTab, this.tempTab, this.tempTab];
   public activeTabIndex = 0;
+  public datasetCount = 0;
 
   constructor() {
   }
 
   ngOnInit() {
+    this.datasetCount = this.object.keys(this.item.dataset).length;
     // console.log(this.item);
   }
 
   closeTab(tab: TabElement) {
-    const ind = this.extraTabs.indexOf(tab);
+    const ind = this.item.extraTabs.indexOf(tab);
     if (ind > -1) {
-      this.extraTabs = this.extraTabs.filter(item => item !== tab);
+      this.item.extraTabs = this.item.extraTabs.filter(item => item !== tab);
     }
+  }
+
+  public getActiveDataTableName() {
+    if (this.activeTabIndex < this.datasetCount) {
+      // returning the associated filename
+      return this.object.keys(this.item.dataset)[this.activeTabIndex];
+    }
+    return null;
+  }
+
+  public focusLastTab() {
+    this.activeTabIndex = this.datasetCount + this.item.extraTabs.length - 1;
   }
 
 }

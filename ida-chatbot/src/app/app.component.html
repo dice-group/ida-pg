@@ -9,7 +9,7 @@
     <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
     </ng-container>
   </div>
-  <app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="actionHandler($event)"></app-chatbox>
+  <app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
   <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
 </div>
 

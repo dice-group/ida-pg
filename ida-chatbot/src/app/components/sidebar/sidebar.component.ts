@@ -8,7 +8,7 @@ import {ResponseBean} from '../../models/response-bean';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit{
+export class SidebarComponent implements OnInit {
   @Input('items')
   public items: SidebarElement[];
   @Output() activeItmEmitter = new EventEmitter<number>();
@@ -34,6 +34,15 @@ export class SidebarComponent implements OnInit{
 
   public clickItem(id: number) {
     this.activeItmEmitter.emit(id);
+  }
+
+  public getActiveDatasetName() {
+    for (const sEl of this.items) {
+      if (sEl.id === this.activeItem) {
+        return sEl.label;
+      }
+    }
+    return null;
   }
 
 }

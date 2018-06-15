@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
 
 @Component({
   selector: 'app-bargraph-view',
@@ -6,8 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./bargraph-view.component.css']
 })
 export class BargraphViewComponent implements OnInit {
-
-  constructor() { }
+  @Input('content')
+  public content: any;
+  constructor(public uip: UniqueIdProviderService) { }
 
   ngOnInit() {
   }

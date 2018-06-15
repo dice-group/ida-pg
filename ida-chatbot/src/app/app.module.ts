@@ -54,9 +54,29 @@ import { FdgViewComponent } from './components/fdg-view/fdg-view.component';
 import { BargraphViewComponent } from './components/bargraph-view/bargraph-view.component';
 import { IntroComponent } from './components/intro/intro.component';
 import { ClickStopPropagationDirective } from './directive/click-stop-propagation.directive';
-
+import { TabViewComponent } from './components/tab-view/tab-view.component';
 @NgModule({
-  exports: [
+  declarations: [
+    AppComponent,
+    MessageListComponent,
+    MessageItemComponent,
+    MessageFormComponent,
+    ChatboxComponent,
+    SidebarComponent,
+    DataViewContainerComponent,
+    DatatableViewComponent,
+    FdgViewComponent,
+    BargraphViewComponent,
+    IntroComponent,
+    ClickStopPropagationDirective,
+    TabViewComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpModule,
+    HttpClientModule,
     CdkTableModule,
     MatAutocompleteModule,
     MatButtonModule,
@@ -90,32 +110,6 @@ import { ClickStopPropagationDirective } from './directive/click-stop-propagatio
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-  ],
-  declarations: []
-})
-export class DemoMaterialModule {}
-@NgModule({
-  declarations: [
-    AppComponent,
-    MessageListComponent,
-    MessageItemComponent,
-    MessageFormComponent,
-    ChatboxComponent,
-    SidebarComponent,
-    DataViewContainerComponent,
-    DatatableViewComponent,
-    FdgViewComponent,
-    BargraphViewComponent,
-    IntroComponent,
-    ClickStopPropagationDirective
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpModule,
-    HttpClientModule,
-    DemoMaterialModule,
     FlexLayoutModule
   ],
   providers: [],
