@@ -70,36 +70,36 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         .data(graph.nodes)
         .enter().append("circle")
         .attr("r", 5)
-        .attr("fill", function(d) { 
+        .attr("fill", function(d) {
             if ('color' in d)
                 return d.color;
             else
-                return color(d.group); 
+                return color(d.group);
         })
         .call(d3v4.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended));
 
-      
+
     // add titles for mouseover blurbs
     node.append("title")
-        .text(function(d) { 
+        .text(function(d) {
             if ('label' in d)
                 return d.label;
             else
-                return d.id; 
+                return d.id;
         });
 
     var simulation = d3v4.forceSimulation()
         .force("link", d3v4.forceLink()
                 .id(function(d) { return d.id; })
-                .distance(function(d) { 
+                .distance(function(d) {
                     return 30;
                     //var dist = 20 / d.value;
                     //console.log('dist:', dist);
 
-                    return dist; 
+                    return dist;
                 })
               )
         .force("charge", d3v4.forceManyBody())
@@ -115,10 +115,10 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         .links(graph.links);
 
     function ticked() {
-        // update node and line positions at every step of 
+        // update node and line positions at every step of
         // the force simulation
-        link.attr("x1", function(d) { 
-        	return d.source.x; 
+        link.attr("x1", function(d) {
+        	return d.source.x;
         	})
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
@@ -141,8 +141,8 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         // don't remove the brush on keyup in the middle of a selection
         brushing = true;
 
-        node.each(function(d) { 
-            d.previouslySelected = shiftKey && d.selected; 
+        node.each(function(d) {
+            d.previouslySelected = shiftKey && d.selected;
         });
     }
 
@@ -231,7 +231,7 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         d3v4.select(this).classed("selected", function(p) { d.previouslySelected = d.selected; return d.selected = true; });
 
         node.filter(function(d) { return d.selected; })
-        .each(function(d) { //d.fixed |= 2; 
+        .each(function(d) { //d.fixed |= 2;
           d.fx = d.x;
           d.fy = d.y;
         })
@@ -242,7 +242,7 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
       //d.fx = d3v4.event.x;
       //d.fy = d3v4.event.y;
             node.filter(function(d) { return d.selected; })
-            .each(function(d) { 
+            .each(function(d) {
                 d.fx += d3v4.event.dx;
                 d.fy += d3v4.event.dy;
             })
@@ -253,7 +253,7 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
       d.fx = null;
       d.fy = null;
         node.filter(function(d) { return d.selected; })
-        .each(function(d) { //d.fixed &= ~6; 
+        .each(function(d) { //d.fixed &= ~6;
             d.fx = null;
             d.fy = null;
         })
@@ -266,8 +266,8 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         .data(texts)
         .enter()
         .append('text')
-        .attr('x', 900)
-        .attr('y', function(d,i) { return 470 + i * 18; })
+        .attr('x', parentWidth-250)
+        .attr('y', function(d,i) { return (parentHeight-70) + i * 18; })
         .text(function(d) { return d; });
 
     return graph;
