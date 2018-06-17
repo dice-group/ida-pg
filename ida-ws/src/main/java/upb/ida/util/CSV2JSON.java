@@ -11,7 +11,8 @@ public class CSV2JSON {
 
     public static void main(String[] args) throws Exception {
 
-        File output = new File("input.csv");
+        File output = new File("C:\\Users\\Faisal Mahmood\\Desktop\\dice-ida\\ida-ws\\src\\main\\java\\upb\\ida\\util\\input.csv");
+        
         InputStream in = new FileInputStream(output);
         //InputStream in = new ByteArrayInputStream(output.getBytes("UTF-8"));
 
