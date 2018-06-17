@@ -1,0 +1,7 @@
+<ng-container [ngSwitch]="tabElement.tabType">
+  <app-fdg-view *ngSwitchCase="tabType.FDG" [content]="tabElement.content"></app-fdg-view>
+  <app-bargraph-view *ngSwitchCase="tabType.BG" [content]="tabElement.content"></app-bargraph-view>
+  <div *ngSwitchCase="tabType.GEN">
+    {{tabElement.content}}
+  </div>
+</ng-container>

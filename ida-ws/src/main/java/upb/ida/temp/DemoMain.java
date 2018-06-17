@@ -3,7 +3,11 @@ package upb.ida.temp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.io.InputStream;
+=======
+import java.util.ArrayList;
+>>>>>>> a14a58a207a9c1e977ab4afd51bbdbbd9b929db5
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +57,21 @@ public class DemoMain {
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(readAll);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Map<String, String>> convertToMap(File input) throws JsonProcessingException, IOException {
+
+		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
+		CsvMapper csvMapper = new CsvMapper();
+
+		// Read data from CSV file
+		List<Object> readAll = csvMapper.readerFor(Map.class).with(csvSchema).readValues(input).readAll();
+		List<Map<String, String>> resMapList = new ArrayList<>();
+		for(Object entry : readAll) {
+			resMapList.add((Map<String, String>) entry);
+		}
+		return resMapList;
+	}
+	
 	public Map<String, String> getDatasetContent(String keyword) throws JsonProcessingException, IOException{
 		Map<String, String> resMap = new HashMap<String, String>();
 		String path = dsPathMap.get(keyword.toLowerCase());
@@ -68,6 +87,7 @@ public class DemoMain {
 		}
 		return resMap;
 	}
+
 	
 	public Object fileCsv(File input,String x,String y) throws JsonProcessingException, IOException {
 		
@@ -104,6 +124,10 @@ public class DemoMain {
 			  }
 		}
 		return resMap;
+	}
+	public static int sumNum(int a, int b) {
+		return a+b;
+
 	}
 
 }
