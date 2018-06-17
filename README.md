@@ -1,0 +1,2 @@
+# dice-ida
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d52407703fa345b6bff055e57cd79c44)](https://app.codacy.com/app/nikit91/dice-ida?utm_source=github.com&utm_medium=referral&utm_content=nikit91/dice-ida&utm_campaign=badger)
