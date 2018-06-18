@@ -13,7 +13,6 @@ export class TabViewComponent implements OnInit {
   public tabElement: TabElement;
 
   constructor() {
-    console.log('new tab loaded: ' + this.tabType);
   }
 
   ngOnInit() {

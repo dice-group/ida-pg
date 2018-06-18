@@ -71,8 +71,8 @@ export class AppComponent {
     const prmobj = {
       msg: message.content,
       actvScrId: this.activeItem,
-      actvTbl: actvTbl,
-      actvDs: actvDs
+      actvTbl: actvTbl == null ? '' : actvTbl,
+      actvDs: actvDs == null ? '' : actvDs
     };
     // Send the message to server
     this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
