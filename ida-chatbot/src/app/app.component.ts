@@ -19,7 +19,7 @@ import {TabType} from './enums/tab-type.enum';
 export class AppComponent {
   idCount = 1;
   title = 'app';
-  public introSideItem = new SidebarElement(0, 'Introduction');
+  public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
   @ViewChild(ChatboxComponent)
@@ -41,7 +41,7 @@ export class AppComponent {
     if (resp.actnCode === 1) {
       const newId = this.idCount++;
       // load the dataset
-      const sdbEle = new SidebarElement(newId, resp.payload.label);
+      const sdbEle = new SidebarElement(newId, resp.payload.label, resp.payload.dsName);
       this.sidebarItems.push(sdbEle);
       const mvEle = new MainviewElement(newId, resp.payload.dataset);
       this.mainViewItems.push(mvEle);

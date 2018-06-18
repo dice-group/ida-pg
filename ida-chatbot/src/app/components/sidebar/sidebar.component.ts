@@ -39,7 +39,7 @@ export class SidebarComponent implements OnInit {
   public getActiveDatasetName() {
     for (const sEl of this.items) {
       if (sEl.id === this.activeItem) {
-        return sEl.label;
+        return sEl.dsName;
       }
     }
     return null;
