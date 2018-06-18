@@ -55,6 +55,13 @@ public class MessageRestController {
 			dataMap.put("actvScrId", actvScrId);
 			response.setPayload(dataMap);
 			response.setActnCode(2);
+		}else if (msg.matches(".*[bB]ar.*[gG]raph.*")) {
+			response.setChatmsg("Your requested Bar-Graph is now added to the main view.");
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("bgData", "dummy");
+			dataMap.put("actvScrId", actvScrId);
+			response.setPayload(dataMap);
+			response.setActnCode(3);
 		} else
 			response.setChatmsg("Service under development. Please try later.");
 		return response;

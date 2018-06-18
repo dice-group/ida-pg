@@ -15,9 +15,34 @@ export class BargraphViewComponent implements OnInit, AfterViewInit {
   public content: any;
   public bgid: string;
   public intervalId: any;
-
+  public tempContent: any;
   constructor(public uip: UniqueIdProviderService) {
     this.bgid = 'bg' + this.uip.getUniqueId();
+    this.tempContent = {
+      xaxisname : 'cityName',
+      yaxisname : 'avgrent',
+      keys : [ 'cityName' ],
+      baritems : [ {
+        cityName : 'Berlin',
+        avgrent : 2600,
+      }, {
+        cityName : 'Paris',
+        avgrent : 4000
+      }, {
+        cityName : 'Delhi',
+        avgrent : 2500
+      }, {
+        cityName : 'Bengaluru',
+        avgrent : 2000
+      }, {
+        cityName : 'Paderborn',
+        avgrent : 2450
+      }, {
+        cityName : 'Palika Bazaar',
+        avgrent : 150
+      } ]
+
+    };
   }
 
   ngOnInit() {
@@ -34,7 +59,7 @@ export class BargraphViewComponent implements OnInit, AfterViewInit {
     const svg = d3.select('#' + this.bgid);
     if (svg) {
       clearInterval(this.intervalId);
-      generateBarGraph(svg, this.content);
+      generateBarGraph(svg, this.tempContent);
     }
   }
 

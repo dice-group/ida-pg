@@ -3,7 +3,16 @@
  */
 function generateBarGraph(svg, data) {
 	// requisite vars start
+  if (typeof d3v4 == 'undefined')
+    d3v4 = d3;
 
+  let tempWidth = d3v4.select('svg').node().parentNode.clientWidth;
+  let tempHeight = d3v4.select('svg').node().parentNode.clientHeight;
+
+  let margin = {top: 20, right: 20, bottom: 30, left: 40};
+  let width = +tempWidth - margin.left - margin.right;
+  let height = +tempHeight - margin.top - margin.bottom;
+  let g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	var x0 = d3.scaleBand().rangeRound([ 0, width ]).paddingInner(0.1);
 
 	var x1 = d3.scaleBand().padding(0.05);
@@ -54,7 +63,7 @@ function generateBarGraph(svg, data) {
 	g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(null, "s"))
 			.append("text").attr("x", 2).attr("y", y(y.ticks().pop()) + 0.5)
 			.attr("dy", "0.32em").attr("fill", "#000").attr("font-weight",
-					"bold").attr("text-anchor", "start").text("Population");
+					"bold").attr("text-anchor", "start").text(data.yaxisname);
 
 	var legend = g.append("g").attr("font-family", "sans-serif").attr(
 			"font-size", 10).attr("text-anchor", "end").selectAll("g").data(

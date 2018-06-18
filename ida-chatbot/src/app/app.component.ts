@@ -57,6 +57,17 @@ export class AppComponent {
           break;
         }
       }
+    } else if (resp.actnCode === 3) {
+      // Open new tab
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.bgData, true, true);
+      for (const mvwItem of this.mainViewItems) {
+        if (Number(resp.payload.actvScrId) === mvwItem.id) {
+          // Add a tab to extra tabs
+          mvwItem.extraTabs.push(newTab);
+          this.dvwComp.focusLastTab();
+          break;
+        }
+      }
     }
   }
 
