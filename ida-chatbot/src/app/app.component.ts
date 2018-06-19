@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Message} from './models/message';
 import {ResponseBean} from './models/response-bean';
 import {SidebarComponent} from './components/sidebar/sidebar.component';
@@ -24,8 +24,8 @@ export class AppComponent {
   private mainViewItems: MainviewElement[] = [];
   @ViewChild(ChatboxComponent)
   private chatboxComp: ChatboxComponent;
-  @ViewChild(DataViewContainerComponent)
-  private dvwComp: DataViewContainerComponent;
+  @ViewChildren(DataViewContainerComponent)
+  private dataVwCompList: QueryList<DataViewContainerComponent>;
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
   public activeItem = 0;
@@ -53,7 +53,7 @@ export class AppComponent {
         if (Number(resp.payload.actvScrId) === mvwItem.id) {
           // Add a tab to extra tabs
           mvwItem.extraTabs.push(newTab);
-          this.dvwComp.focusLastTab();
+          this.getActiveMainView().focusLastTab();
           break;
         }
       }
@@ -64,7 +64,7 @@ export class AppComponent {
         if (Number(resp.payload.actvScrId) === mvwItem.id) {
           // Add a tab to extra tabs
           mvwItem.extraTabs.push(newTab);
-          this.dvwComp.focusLastTab();
+          this.getActiveMainView().focusLastTab();
           break;
         }
       }
@@ -75,8 +75,8 @@ export class AppComponent {
     this.chatboxComp.addNewMessage(message);
     let actvTbl = '';
     let actvDs = '';
-    if (this.dvwComp && this.sbComp) {
-      actvTbl = this.dvwComp.getActiveDataTableName();
+    if (this.getActiveMainView() && this.sbComp) {
+      actvTbl = this.getActiveMainView().getActiveDataTableName();
       actvDs = this.sbComp.getActiveDatasetName();
     }
     const prmobj = {
@@ -97,6 +97,16 @@ export class AppComponent {
       // load the dataset
       this.actionHandler(resp);
     }
+  }
+
+  public getActiveMainView(): DataViewContainerComponent {
+    let activeMainDtVw = null;
+    this.dataVwCompList.forEach((mvEntry) => {
+      if (mvEntry.item.id === this.activeItem) {
+        activeMainDtVw = mvEntry;
+      }
+    });
+    return activeMainDtVw;
   }
 
   public getMainviewItems() {
