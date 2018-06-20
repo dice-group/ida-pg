@@ -3,11 +3,8 @@ package upb.ida.temp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-<<<<<<< HEAD
 import java.io.InputStream;
-=======
 import java.util.ArrayList;
->>>>>>> a14a58a207a9c1e977ab4afd51bbdbbd9b929db5
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,14 +98,10 @@ public class DemoMain {
 
 		return p;
 	}
+	
 	public Map<String, 	Object> getJsonData(String keyword,String x, String y) throws JsonProcessingException, IOException{
 	
-      //  File output = new File("C:\\Users\\Faisal Mahmood\\Desktop\\dice-ida\\ida-ws\\src\\main\\java\\upb\\ida\\util\\input.csv");
-        
-       // InputStream in = new FileInputStream(output);
-        //InputStream in = new ByteArrayInputStream(output.getBytes("UTF-8"));
-
-        String xy =keyword;
+		String xy =keyword;
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		String path = dsPathMap.get(keyword.toLowerCase());
 		if(path!=null) {
@@ -117,14 +110,13 @@ public class DemoMain {
 			  if (directoryListing != null) {
 			    for (File child : directoryListing) {
 			      // Do something with child
-//			    	resMap.put("x_axis", x);
-//			    	resMap.put("y_axis", y);
 			    	resMap.put(child.getName(), fileCsv(child,x,y));
 			    }
 			  }
 		}
 		return resMap;
 	}
+	
 	public static int sumNum(int a, int b) {
 		return a+b;
 

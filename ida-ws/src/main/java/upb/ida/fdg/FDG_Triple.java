@@ -32,11 +32,11 @@ public class FDG_Triple {
 		this.targetNode = targetNode;
 	}
 
-	public Double getStr_val() {
+	public Double getStrVal() {
 		return str_val;
 	}
 
-	public void setStr_val(Double str_val) {
+	public void setStrVal(Double str_val) {
 		this.str_val = str_val;
 	}
 

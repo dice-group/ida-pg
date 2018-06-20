@@ -53,8 +53,7 @@ public class FDG_Node {
 		if (getClass() != obj.getClass())
 			return false;
 		FDG_Node other = (FDG_Node) obj;
-		if (id != other.id)
-			return false;
-		return true;
+		return id == other.id;
+			
 	}
 }
