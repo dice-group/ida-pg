@@ -1,4 +1,4 @@
-function createV4SelectableForceDirectedGraph(svg, graph) {
+function createV4SelectableForceDirectedGraph(elId, svg, graph) {
     // if both d3v3 and d3v4 are loaded, we'll assume
     // that d3v4 is called d3v4, otherwise we'll assume
     // that d3v4 is the default (d3)
@@ -11,10 +11,10 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
     var width = +svg.attr("width"),
         height = +svg.attr("height");
 
-    let parentWidth = d3v4.select('svg').node().parentNode.clientWidth;
-    let parentHeight = d3v4.select('svg').node().parentNode.clientHeight;
+    let parentWidth = d3v4.select(elId).node().parentNode.clientWidth;
+    let parentHeight = d3v4.select(elId).node().parentNode.clientHeight;
 
-    var svg = d3v4.select('svg')
+    var svg = d3v4.select(elId)
     .attr('width', parentWidth)
     .attr('height', parentHeight)
 

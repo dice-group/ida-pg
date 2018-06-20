@@ -9,15 +9,12 @@ html, body {
 }
 
 .table-cls {
-  overflow: auto;
-  width: 97%;
-  margin: 10px;
-  height: 100vh;
+  margin: 15px;
 }
-.mat-header-row {
+.sticky-paginator {
   position: sticky;
-  top: 0;
-  background-color: inherit;
+  bottom: 0;
+  background-color: white;
 }
 .hidden-cls {
   display: none;
