@@ -6,8 +6,8 @@ function generateBarGraph(svg, data) {
   if (typeof d3v4 == 'undefined')
     d3v4 = d3;
 
-  let tempWidth = d3v4.select('svg').node().parentNode.clientWidth;
-  let tempHeight = d3v4.select('svg').node().parentNode.clientHeight;
+  let tempWidth = svg.node().parentNode.clientWidth;
+  let tempHeight = svg.node().parentNode.clientHeight;
 
   let margin = {top: 20, right: 20, bottom: 30, left: 40};
   let width = +tempWidth - margin.left - margin.right;

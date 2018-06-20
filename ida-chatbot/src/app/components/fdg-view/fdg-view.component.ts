@@ -3,7 +3,7 @@ import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.ser
 
 declare var d3;
 
-declare function createV4SelectableForceDirectedGraph(a, b);
+declare function createV4SelectableForceDirectedGraph(a, b, c);
 
 @Component({
   selector: 'app-fdg-view',
@@ -15,11 +15,13 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
   @Input('content')
   public content: any;
   public fdgid: string;
+  public svgid: string;
   public graph: any;
   public intervalId: any;
 
   constructor(public uip: UniqueIdProviderService) {
     this.fdgid = 'fdg' + this.uip.getUniqueId();
+    this.svgid = 'svg' + this.uip.getUniqueId();
   }
 
   ngOnInit() {
@@ -47,7 +49,7 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
     const svg = d3.select('#' + this.fdgid);
     if (svg) {
       clearInterval(this.intervalId);
-      createV4SelectableForceDirectedGraph(svg, this.graph);
+      createV4SelectableForceDirectedGraph( '#' + this.svgid , svg, this.graph);
     }
   }
 

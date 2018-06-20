@@ -38,6 +38,7 @@ public class MessageRestController {
 			response.setChatmsg("City Dataset loaded, you can access the table(s) in the main view.");
 			Map<String, Object> dataMap = new HashMap<String, Object>();
 			dataMap.put("label", "City");
+			dataMap.put("dsName", "city");
 			dataMap.put("dataset", dem.getDatasetContent("city"));
 			response.setPayload(dataMap);
 			response.setActnCode(1);
@@ -45,6 +46,7 @@ public class MessageRestController {
 			response.setChatmsg("Movie Dataset loaded, you can access the table(s) in the main view.");
 			Map<String, Object> dataMap = new HashMap<String, Object>();
 			dataMap.put("label", "Movie");
+			dataMap.put("dsName", "movie");
 			dataMap.put("dataset", dem.getDatasetContent("movie"));
 			response.setPayload(dataMap);
 			response.setActnCode(1);
