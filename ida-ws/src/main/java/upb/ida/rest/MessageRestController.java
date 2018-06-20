@@ -19,7 +19,9 @@ import upb.ida.temp.DemoMain;
 public class MessageRestController {
 	@Autowired
 	ResponseBean response;
+	@Autowired
 	DemoMain dem;
+	@Autowired
 	FDG_Util fdgUtil;
 
 	@RequestMapping("/sayhello")
