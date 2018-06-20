@@ -19,9 +19,7 @@ import upb.ida.temp.DemoMain;
 public class MessageRestController {
 	@Autowired
 	ResponseBean response;
-	@Autowired
 	DemoMain dem;
-	@Autowired
 	FDG_Util fdgUtil;
 
 	@RequestMapping("/sayhello")
@@ -66,6 +64,11 @@ public class MessageRestController {
 			response.setActnCode(3);
 		} else
 			response.setChatmsg("Service under development. Please try later.");
+		return response;
+	}
+	@RequestMapping("/sen")
+	public ResponseBean sen() throws Exception {
+		response.setPayload("hi i am faisal");
 		return response;
 	}
 

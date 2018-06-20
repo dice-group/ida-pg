@@ -60,7 +60,8 @@ public class FDG_Util {
 		rootNode.set("links", edgeArr1);
 		
 		Set<FDG_Node> nodeSet = new HashSet<>();
-		FDG_Node srcNd, trgtNd;
+		FDG_Node srcNd;
+		FDG_Node trgtNd;
 		ObjectNode edgeNode;
 		boolean isNew;
 		for (FDG_Triple entry : triples) {

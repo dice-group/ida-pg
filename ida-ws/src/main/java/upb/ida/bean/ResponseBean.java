@@ -3,6 +3,9 @@ package upb.ida.bean;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import upb.ida.serializer.RespBeanSerializer;
+import java.util.Map;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
 
 @JsonSerialize(using = RespBeanSerializer.class)
 public class ResponseBean {
