@@ -35,10 +35,6 @@ public class DemoMain {
 	}
 	@Autowired
 	ServletContext context;
-	public static void main(String[] args) throws Exception {
-		
-		
-	}
 	
 	public String printJson(File input) throws JsonProcessingException, IOException {
 

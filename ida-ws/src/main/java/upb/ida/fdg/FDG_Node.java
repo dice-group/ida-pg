@@ -54,6 +54,5 @@ public class FDG_Node {
 			return false;
 		FDG_Node other = (FDG_Node) obj;
 		return id == other.id;
-			
 	}
 }

@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Message} from './models/message';
 import {ResponseBean} from './models/response-bean';
 import {SidebarComponent} from './components/sidebar/sidebar.component';
@@ -19,13 +19,13 @@ import {TabType} from './enums/tab-type.enum';
 export class AppComponent {
   idCount = 1;
   title = 'app';
-  public introSideItem = new SidebarElement(0, 'Introduction');
+  public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
   @ViewChild(ChatboxComponent)
   private chatboxComp: ChatboxComponent;
-  @ViewChild(DataViewContainerComponent)
-  private dvwComp: DataViewContainerComponent;
+  @ViewChildren(DataViewContainerComponent)
+  private dataVwCompList: QueryList<DataViewContainerComponent>;
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
   public activeItem = 0;
@@ -41,7 +41,7 @@ export class AppComponent {
     if (resp.actnCode === 1) {
       const newId = this.idCount++;
       // load the dataset
-      const sdbEle = new SidebarElement(newId, resp.payload.label);
+      const sdbEle = new SidebarElement(newId, resp.payload.label, resp.payload.dsName);
       this.sidebarItems.push(sdbEle);
       const mvEle = new MainviewElement(newId, resp.payload.dataset);
       this.mainViewItems.push(mvEle);
@@ -53,7 +53,18 @@ export class AppComponent {
         if (Number(resp.payload.actvScrId) === mvwItem.id) {
           // Add a tab to extra tabs
           mvwItem.extraTabs.push(newTab);
-          this.dvwComp.focusLastTab();
+          this.getActiveMainView().focusLastTab();
+          break;
+        }
+      }
+    } else if (resp.actnCode === 3) {
+      // Open new tab
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.bgData, true, true);
+      for (const mvwItem of this.mainViewItems) {
+        if (Number(resp.payload.actvScrId) === mvwItem.id) {
+          // Add a tab to extra tabs
+          mvwItem.extraTabs.push(newTab);
+          this.getActiveMainView().focusLastTab();
           break;
         }
       }
@@ -64,15 +75,15 @@ export class AppComponent {
     this.chatboxComp.addNewMessage(message);
     let actvTbl = '';
     let actvDs = '';
-    if (this.dvwComp && this.sbComp) {
-      actvTbl = this.dvwComp.getActiveDataTableName();
+    if (this.getActiveMainView() && this.sbComp) {
+      actvTbl = this.getActiveMainView().getActiveDataTableName();
       actvDs = this.sbComp.getActiveDatasetName();
     }
     const prmobj = {
       msg: message.content,
       actvScrId: this.activeItem,
-      actvTbl: actvTbl,
-      actvDs: actvDs
+      actvTbl: actvTbl == null ? '' : actvTbl,
+      actvDs: actvDs == null ? '' : actvDs
     };
     // Send the message to server
     this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
@@ -86,6 +97,16 @@ export class AppComponent {
       // load the dataset
       this.actionHandler(resp);
     }
+  }
+
+  public getActiveMainView(): DataViewContainerComponent {
+    let activeMainDtVw = null;
+    this.dataVwCompList.forEach((mvEntry) => {
+      if (mvEntry.item.id === this.activeItem) {
+        activeMainDtVw = mvEntry;
+      }
+    });
+    return activeMainDtVw;
   }
 
   public getMainviewItems() {

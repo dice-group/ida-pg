@@ -19,7 +19,9 @@ import upb.ida.temp.DemoMain;
 public class MessageRestController {
 	@Autowired
 	ResponseBean response;
+	@Autowired
 	DemoMain dem;
+	@Autowired
 	FDG_Util fdgUtil;
 
 	@RequestMapping("/sayhello")
@@ -36,6 +38,7 @@ public class MessageRestController {
 			response.setChatmsg("City Dataset loaded, you can access the table(s) in the main view.");
 			Map<String, Object> dataMap = new HashMap<String, Object>();
 			dataMap.put("label", "City");
+			dataMap.put("dsName", "city");
 			dataMap.put("dataset", dem.getDatasetContent("city"));
 			response.setPayload(dataMap);
 			response.setActnCode(1);
@@ -43,6 +46,7 @@ public class MessageRestController {
 			response.setChatmsg("Movie Dataset loaded, you can access the table(s) in the main view.");
 			Map<String, Object> dataMap = new HashMap<String, Object>();
 			dataMap.put("label", "Movie");
+			dataMap.put("dsName", "movie");
 			dataMap.put("dataset", dem.getDatasetContent("movie"));
 			response.setPayload(dataMap);
 			response.setActnCode(1);
@@ -53,6 +57,13 @@ public class MessageRestController {
 			dataMap.put("actvScrId", actvScrId);
 			response.setPayload(dataMap);
 			response.setActnCode(2);
+		}else if (msg.matches(".*[bB]ar.*[gG]raph.*")) {
+			response.setChatmsg("Your requested Bar-Graph is now added to the main view.");
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("bgData", "dummy");
+			dataMap.put("actvScrId", actvScrId);
+			response.setPayload(dataMap);
+			response.setActnCode(3);
 		} else
 			response.setChatmsg("Service under development. Please try later.");
 		return response;

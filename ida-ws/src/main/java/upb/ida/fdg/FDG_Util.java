@@ -47,7 +47,6 @@ public class FDG_Util {
 	 * @throws JsonProcessingException 
 	 */
 	public static ObjectNode getFDGData(List<FDG_Triple> triples, double[] strngthValArr) throws JsonProcessingException, IOException {
-		double mean = StatUtils.geometricMean(strngthValArr);
 		double max = StatUtils.max(strngthValArr);
 		double min = StatUtils.min(strngthValArr);
 		
@@ -87,7 +86,7 @@ public class FDG_Util {
 			// strength of the edge, calculate mean, min and max; then normalize the
 			// deviation between min - mean to max - mean
 			// edgeNode.put("str_val", entry.getStr_val());
-			edgeNode.put("str_val", 1);
+			edgeNode.put("str_val", calcNrmlStrngth(entry.getStrngthVal(), max, min));
 			if (entry.getLabel() != null)
 				edgeNode.put("label", entry.getLabel());
 		}
@@ -101,7 +100,6 @@ public class FDG_Util {
 		int tripUniqueId = 1;
 		File file = new File(context.getRealPath(filePath));
 		List<FDG_Triple> tripleList = new ArrayList<>();
-		List<Double> strngthList = new ArrayList<>();
 
 		// Fetch the map for the file
 		List<Map<String, String>> dataMapList = dem.convertToMap(file);
@@ -138,8 +136,9 @@ public class FDG_Util {
 		return res;
 	}
 
-	public static double calcNrmlStrngth(double num, double mean, double max, double min) {
+	public static double calcNrmlStrngth(double num, double max, double min) {
 		double res = 0;
+		res = ((0.9)*(num - min)/(max - min))+ 0.1;
 		return res;
 	}
 
