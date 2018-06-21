@@ -16,9 +16,9 @@ import upb.ida.temp.DemoMain;
 @RequestMapping("/csv2json")
 public class DatasetController {
 		@Autowired
-		ResponseBean response;
+		private ResponseBean response;
 		@Autowired
-		DemoMain dem;
+		private DemoMain dem;
 		
 		@RequestMapping("/selectedFile")
 		public ResponseBean selectedFile(@RequestParam(value = "msg") String msg,@RequestParam(value = "x_axis") String x,@RequestParam(value = "y_axis") String y) throws Exception {
@@ -28,9 +28,6 @@ public class DatasetController {
 				dataMap.put("x_axis", x);
 				dataMap.put("y_axis", y);
 				dataMap.put("dataset", dem.getJsonData(msg,x,y));
-				Map<String, Object> data =   new HashMap<String, Object>();
-				System.out.println(dataMap);
-						data=dataMap;
 				response.setPayload(dataMap);
 				response.setActnCode(1);
 			}

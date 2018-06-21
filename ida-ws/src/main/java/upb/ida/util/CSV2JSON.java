@@ -16,7 +16,7 @@ public class CSV2JSON {
         InputStream in = new FileInputStream(output);
         //InputStream in = new ByteArrayInputStream(output.getBytes("UTF-8"));
 
-        jsonMaker lst= new jsonMaker(in);
+        JsonMaker lst= new JsonMaker();
         List <Map< String, String >> lstt = lst.jsonObject(in);
 
         Scanner reader = new Scanner(System.in);  // Reading from System.in
@@ -26,10 +26,10 @@ public class CSV2JSON {
         String y = reader.next();
         reader.close();
 
-        getAxisJson jsn= new getAxisJson(x,y);
+        GetAxisJson jsn= new GetAxisJson();
 
         Object p[];
-        p= jsn.NewJsonObjct(x,y,lstt);
+        p= jsn.newJsonObjct(x,y,lstt);
         System.out.println("x-axis:"+x);
         System.out.println("y-axis:"+y);
         System.out.println(p[0]);
