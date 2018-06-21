@@ -34,11 +34,11 @@ import java.util.ArrayList;
 public class CSV
 {
     static final private int NUMMARK = 10;
-    static final private char COMMA = ',';
+    //static final private char COMMA = ',';
     static final private char DQUOTE = '"';
     static final private char CRETURN = '\r';
     static final private char LFEED = '\n';
-    static final private char SQUOTE = '\'';
+    //static final private char SQUOTE = '\'';
     static final private char COMMENT = '#';
 
     /**

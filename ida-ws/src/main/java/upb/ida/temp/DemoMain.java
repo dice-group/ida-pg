@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import javax.servlet.ServletContext;
 
@@ -19,9 +18,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import upb.ida.util.CSV;
-import upb.ida.util.getAxisJson;
-import upb.ida.util.jsonMaker;
+
+import upb.ida.util.GetAxisJson;
+import upb.ida.util.JsonMaker;
 @Component
 public class DemoMain {
 	
@@ -34,7 +33,7 @@ public class DemoMain {
 		dsPathMap.put("movie", "/movie");
 	}
 	@Autowired
-	ServletContext context;
+	private ServletContext context;
 	
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
@@ -85,19 +84,19 @@ public class DemoMain {
 	public Object fileCsv(File input,String x,String y) throws JsonProcessingException, IOException {
 		
 		InputStream in = new FileInputStream(input);
-	    jsonMaker lst= new jsonMaker(in);
-        List <Map< String, String >> lstt = lst.jsonObject(in);
-        getAxisJson jsn= new getAxisJson(x,y);
+	    JsonMaker lst= new JsonMaker();
+		List <Map< String, String >> lstt = lst.jsonObject(in);
+        GetAxisJson jsn= new GetAxisJson();
 
         Object p[];
-        p= jsn.NewJsonObjct(x,y,lstt);
+        p= jsn.newJsonObjct(x,y,lstt);
 
 		return p;
 	}
 	
 	public Map<String, 	Object> getJsonData(String keyword,String x, String y) throws JsonProcessingException, IOException{
 	
-		String xy =keyword;
+		
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		String path = dsPathMap.get(keyword.toLowerCase());
 		if(path!=null) {
