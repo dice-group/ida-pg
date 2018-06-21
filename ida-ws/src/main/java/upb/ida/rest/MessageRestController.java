@@ -18,11 +18,11 @@ import upb.ida.temp.DemoMain;
 @RequestMapping("/message")
 public class MessageRestController {
 	@Autowired
-	ResponseBean response;
+	private ResponseBean response;
 	@Autowired
-	DemoMain dem;
+	private DemoMain dem;
 	@Autowired
-	FDG_Util fdgUtil;
+	private FDG_Util fdgUtil;
 
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
@@ -66,6 +66,11 @@ public class MessageRestController {
 			response.setActnCode(3);
 		} else
 			response.setChatmsg("Service under development. Please try later.");
+		return response;
+	}
+	@RequestMapping("/sen")
+	public ResponseBean sen() throws Exception {
+		response.setPayload("hi i am faisal");
 		return response;
 	}
 

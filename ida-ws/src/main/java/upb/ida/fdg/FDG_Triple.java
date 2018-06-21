@@ -31,7 +31,7 @@ public class FDG_Triple {
 	public void setTargetNode(FDG_Node targetNode) {
 		this.targetNode = targetNode;
 	}
-
+  
 	public Double getStrngthVal() {
 		return strngthVal;
 	}

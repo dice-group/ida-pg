@@ -1,7 +1,9 @@
 package upb.ida.temp;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+import upb.ida.util.GetAxisJson;
+import upb.ida.util.JsonMaker;
 @Component
 public class DemoMain {
 	
@@ -23,11 +28,12 @@ public class DemoMain {
 	
 	static {
 		dsPathMap = new HashMap<String, String>();
+		dsPathMap.put("input", "/input");
 		dsPathMap.put("city", "/city");
 		dsPathMap.put("movie", "/movie");
 	}
 	@Autowired
-	ServletContext context;
+	private ServletContext context;
 	
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
@@ -73,9 +79,42 @@ public class DemoMain {
 		}
 		return resMap;
 	}
+
+	
+	public Object fileCsv(File input,String x,String y) throws JsonProcessingException, IOException {
+		
+		InputStream in = new FileInputStream(input);
+	    JsonMaker lst= new JsonMaker();
+		List <Map< String, String >> lstt = lst.jsonObject(in);
+        GetAxisJson jsn= new GetAxisJson();
+
+        Object p[];
+        p= jsn.newJsonObjct(x,y,lstt);
+
+		return p;
+	}
+	
+	public Map<String, 	Object> getJsonData(String keyword,String x, String y) throws JsonProcessingException, IOException{
+	
+		
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		String path = dsPathMap.get(keyword.toLowerCase());
+		if(path!=null) {
+			 File dir = new File(context.getRealPath(path));
+			  File[] directoryListing = dir.listFiles();
+			  if (directoryListing != null) {
+			    for (File child : directoryListing) {
+			      // Do something with child
+			    	resMap.put(child.getName(), fileCsv(child,x,y));
+			    }
+			  }
+		}
+		return resMap;
+	}
 	
 	public static int sumNum(int a, int b) {
 		return a+b;
+
 	}
 
 }

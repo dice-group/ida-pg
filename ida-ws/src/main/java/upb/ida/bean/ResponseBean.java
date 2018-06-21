@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import upb.ida.serializer.RespBeanSerializer;
 
+
 @JsonSerialize(using = RespBeanSerializer.class)
 public class ResponseBean {
 	private int actnCode;
