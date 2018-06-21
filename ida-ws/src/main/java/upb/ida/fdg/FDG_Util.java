@@ -29,9 +29,9 @@ import upb.ida.temp.DemoMain;
 @Component
 public class FDG_Util {
 	@Autowired
-	DemoMain dem;
+	private DemoMain dem;
 	@Autowired
-	ServletContext context;
+	private ServletContext context;
 	public static final GsonBuilder builder = new GsonBuilder();
 	public static final Gson gson = builder.create();
 	public static final int MAX_STR = 10;
