@@ -15,7 +15,7 @@ public class RiveDemo {
 		// Sort the replies after loading them!
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
-		System.out.println(bot.reply("user", "my name is nikit"));
+		System.out.println(bot.reply("user", "my name is bot"));
 		System.out.println(bot.reply("user", "what is my name?"));
 		// say my name to me in reverse
 		System.out.println(bot.reply("user", "say my name to me in reverse"));
