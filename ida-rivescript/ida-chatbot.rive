@@ -9,6 +9,12 @@
 - I don't quite get that :(. How about you ask that in a\s
 ^ different way. I can do a couple of interesting things ^_^!
 
++ my name is *
+- <set name=<formal>>Nice to meet you, <get name>.
+
++ (what is my name|who am i)
+- You're <get name>, right?
+
 + hello 
 - Hello, I am your data assistant!. How can I help you?
 
@@ -50,7 +56,7 @@
 + i want to run clustering on this table 
 - i do have a fascinating choice 
 + k means algorithm 
-- how many clusters would like to have ?
+- how many clusters would like to h ave ?
 + 5
 - which is the label feature ?
 + cities
@@ -61,6 +67,8 @@
 ^ view 
 
 
++ say my name to me in reverse
+- <call>sayname <get name></call> 
 
  
 
