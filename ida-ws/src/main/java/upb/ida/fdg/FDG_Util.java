@@ -29,9 +29,9 @@ import upb.ida.temp.DemoMain;
 @Component
 public class FDG_Util {
 	@Autowired
-	DemoMain dem;
+	private DemoMain dem;
 	@Autowired
-	ServletContext context;
+	private ServletContext context;
 	public static final GsonBuilder builder = new GsonBuilder();
 	public static final Gson gson = builder.create();
 	public static final int MAX_STR = 10;
@@ -60,7 +60,8 @@ public class FDG_Util {
 		rootNode.set("links", edgeArr1);
 		
 		Set<FDG_Node> nodeSet = new HashSet<>();
-		FDG_Node srcNd, trgtNd;
+		FDG_Node srcNd;
+		FDG_Node trgtNd;
 		ObjectNode edgeNode;
 		boolean isNew;
 		for (FDG_Triple entry : triples) {
@@ -137,7 +138,7 @@ public class FDG_Util {
 
 	public static double calcNrmlStrngth(double num, double max, double min) {
 		double res = 0;
-		res = ((9)*(num - min)/(max - min))+ 1;
+		res = ((0.9)*(num - min)/(max - min))+ 0.1;
 		return res;
 	}
 

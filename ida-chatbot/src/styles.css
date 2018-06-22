@@ -9,16 +9,19 @@ html, body {
 }
 
 .table-cls {
-  overflow: auto;
-  width: 97%;
-  margin: 10px;
-  height: 100vh;
+  margin: 15px;
 }
-.mat-header-row {
+.sticky-paginator {
   position: sticky;
-  top: 0;
-  background-color: inherit;
+  bottom: 0;
+  background-color: white;
 }
 .hidden-cls {
   display: none;
+}
+
+.fdg-label {
+  font: 4px sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
 }

@@ -1,17 +1,20 @@
-function createV4SelectableForceDirectedGraph(svg, graph) {
+function createV4SelectableForceDirectedGraph(elId, svg, graph) {
     // if both d3v3 and d3v4 are loaded, we'll assume
     // that d3v4 is called d3v4, otherwise we'll assume
     // that d3v4 is the default (d3)
+
+    let edgDist = 30;
+    let nodeRadius = 5;
     if (typeof d3v4 == 'undefined')
         d3v4 = d3;
 
     var width = +svg.attr("width"),
         height = +svg.attr("height");
 
-    let parentWidth = d3v4.select('svg').node().parentNode.clientWidth;
-    let parentHeight = d3v4.select('svg').node().parentNode.clientHeight;
+    let parentWidth = d3v4.select(elId).node().parentNode.clientWidth;
+    let parentHeight = d3v4.select(elId).node().parentNode.clientHeight;
 
-    var svg = d3v4.select('svg')
+    var svg = d3v4.select(elId)
     .attr('width', parentWidth)
     .attr('height', parentHeight)
 
@@ -69,7 +72,7 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", 5)
+        .attr("r", nodeRadius)
         .attr("fill", function(d) {
             if ('color' in d)
                 return d.color;
@@ -80,8 +83,12 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended));
-
-
+    // add label start
+    var text = gDraw.append("g").attr("class","fdg-label").selectAll("node-label")
+        .data(graph.nodes)
+        .enter().append("text")
+        .text(function(d) { return d.label; });
+  //     //add label end
     // add titles for mouseover blurbs
     node.append("title")
         .text(function(d) {
@@ -95,7 +102,7 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
         .force("link", d3v4.forceLink()
                 .id(function(d) { return d.id; })
                 .distance(function(d) {
-                    return 30;
+                    return edgDist;
                     //var dist = 20 / d.value;
                     //console.log('dist:', dist);
 
@@ -126,6 +133,13 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
 
         node.attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
+       // text.attr("transform",transformCustom);
+      text.attr("x", function(d) {
+        return d.x + 2;
+      })
+        .attr("y", function(d) {
+          return d.y + 8;
+        });
     }
 
     var brushMode = false;
@@ -262,12 +276,12 @@ function createV4SelectableForceDirectedGraph(svg, graph) {
     var texts = ['Use the scroll wheel to zoom',
                  'Hold the shift key to select nodes']
 
-    svg.selectAll('text')
+    svg.selectAll('overlay-text')
         .data(texts)
         .enter()
         .append('text')
         .attr('x', parentWidth-250)
-        .attr('y', function(d,i) { return (parentHeight-70) + i * 18; })
+        .attr('y', function(d,i) { return (parentHeight-30) + i * 18; })
         .text(function(d) { return d; });
 
     return graph;
