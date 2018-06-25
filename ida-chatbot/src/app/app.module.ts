@@ -9,7 +9,7 @@ import { ChatboxComponent } from './components/chatbox/chatbox.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {
   MatAutocompleteModule,
@@ -55,6 +55,7 @@ import { BargraphViewComponent } from './components/bargraph-view/bargraph-view.
 import { IntroComponent } from './components/intro/intro.component';
 import { ClickStopPropagationDirective } from './directive/click-stop-propagation.directive';
 import { TabViewComponent } from './components/tab-view/tab-view.component';
+import {RestService} from './service/rest/rest.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -112,7 +113,11 @@ import { TabViewComponent } from './components/tab-view/tab-view.component';
     MatTooltipModule,
     FlexLayoutModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: RestService ,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

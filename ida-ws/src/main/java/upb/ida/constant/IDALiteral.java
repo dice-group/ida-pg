@@ -12,6 +12,6 @@ public interface IDALiteral {
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
 	public static final String RS_USER = "user";
-	public static final String RS_FILEPATH = "C:\\Users\\Bets\\dice-ida\\ida-rivescript\\ida-chatbot.rive";
+	public static final String RS_FILEPATH = "./rivescript/ida-chatbot.rive";
 	public static final String RS_LOADDATA_ROUTINE = "loadData";
 }

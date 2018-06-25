@@ -1,5 +1,8 @@
 package upb.ida.service;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rivescript.RiveScript;
@@ -10,8 +13,9 @@ import upb.ida.util.IDAContextUtils;
 
 @Service
 public class RiveScriptService {
-	
-	private RiveScript getBotInstance() {
+	@Autowired
+	private ServletContext context;
+	public RiveScript getBotInstance() {
 		RiveScript bot = null;
 		//Load instance from http session
 		bot = (RiveScript) IDAContextUtils.fetchFromSession(IDALiteral.RS_INSTANCE);
@@ -39,7 +43,7 @@ public class RiveScriptService {
 		RiveScript bot = new RiveScript();
 		
 		// Load an individual file.
-		bot.loadFile(IDALiteral.RS_FILEPATH);
+		bot.loadFile(context.getRealPath(IDALiteral.RS_FILEPATH));
 		
 		// Sort the replies after loading them!
 		bot.sortReplies();
