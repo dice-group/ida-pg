@@ -22,7 +22,7 @@
 - Loading the City data set, please wait 
 
 // Trigger Call to load the city data set 
-
+<call>loadData<get name></call>
 + ok
 - City data set is loaded, you can access the table in the main\s 
 ^ view
@@ -70,6 +70,7 @@
 + say my name to me in reverse
 - <call>sayname <get name></call> 
 
++ 
  
 
 
