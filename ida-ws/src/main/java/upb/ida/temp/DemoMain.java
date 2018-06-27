@@ -79,6 +79,10 @@ public class DemoMain {
 		}
 		return resMap;
 	}
+	
+	public static boolean datasetExists(String keyword) {
+		return dsPathMap.get(keyword.toLowerCase())!=null;
+	}
 
 	
 	public Object fileCsv(File input,String x,String y) throws JsonProcessingException, IOException {
