@@ -1,0 +1,16 @@
+! version = 2.0
++ i want a force directed graph visual on the current table
+- aah i have got the right match, which feature should be the \s
+^ source node ?
++ city 1 
+- which feature should be the target node ?
++ city 2 
+- which feature should depict the strength between the nodes 
+^ ?
++ distance 
+// FDG trigger call 
+- your requested force directed graph is now added to the \s
+^ main view
+
+* <set sourceNode=<formal>> <call>fdg-handler <get sourceNode></call> == pass => Source Node is set.
+- Dataset not found.
