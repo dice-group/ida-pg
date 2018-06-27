@@ -19,12 +19,8 @@
 - Hello, I am your data assistant!. How can I help you?
 
 + i would like you to load the * data set
-* <set dsname=<formal>> <call>loadDataset <get dsname></call> == pass => Dataset loaded.
-- Dataset not found.
-
-+ ok
-- City data set is loaded, you can access the table in the main\s 
-^ view
+* <call>loadDataset <star></call> == 1 => Dataset loaded
+- Dataset not loaded 
 
 + i want a barchart visualization for the current table
 - oh cool, which feature should be on the x-scale?
