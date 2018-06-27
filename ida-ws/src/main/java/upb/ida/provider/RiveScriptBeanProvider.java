@@ -32,7 +32,7 @@ public class RiveScriptBeanProvider {
 
 		// Sort the replies after loading them!
 		bot.sortReplies();
-		bot.setSubroutine(IDALiteral.RS_LOADDATA_ROUTINE, new ExampleMacro());
+		bot.setSubroutine("sayname", new ExampleMacro());
 
 		return bot;
 	}

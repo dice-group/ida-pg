@@ -11,7 +11,6 @@ public class ExampleMacro implements Subroutine {
 		// to find their ID and then use the usual methods.
 		String user = rs.currentUser();
 		rs.setUservar(user, "java", "This variable was set by Java when you said 'reverse " + message + "'");
-
 		// Reverse their message and return it.
 		return new StringBuilder(message).reverse().toString();
 	}
