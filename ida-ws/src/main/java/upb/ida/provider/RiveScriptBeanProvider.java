@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import com.rivescript.RiveScript;
-
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
 
@@ -19,6 +18,8 @@ public class RiveScriptBeanProvider {
 
 	@Autowired
 	private ServletContext context;
+	@Autowired
+	LoadDataContent loadDataContent;
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -34,6 +35,8 @@ public class RiveScriptBeanProvider {
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
 
+		bot.setSubroutine("loadDataset", loadDataContent);
 		return bot;
 	}
+	
 }

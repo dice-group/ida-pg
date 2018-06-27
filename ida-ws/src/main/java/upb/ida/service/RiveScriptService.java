@@ -10,7 +10,7 @@ import upb.ida.constant.IDALiteral;
 
 @Service
 public class RiveScriptService {
-	
+
 	@Autowired
 	@Qualifier("sessionBotInstance")
 	private RiveScript sessionBotInstance;
