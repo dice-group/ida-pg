@@ -70,7 +70,17 @@
 - <call>sayname <get name></call> 
 
  
-
-
++ i want a force directed graph visual on the current table
+- No probllem, But before proceeding tell me what is the \s
+^ source node ?
++ source node is *
+- <set sourceNode=<star>> Great!and  which feature should be the target node ?
++ target node is *
+- <set targetNode=<star>> which feature should depict the strength between the nodes 
+^ ?
++ strength is *
+- <set strength =<star>><call>FdgHandler <get sourceNode> <get targetNode> <star></call> 
+^ your requested force directed graph is now added to the \s
+^ main view
 
 
