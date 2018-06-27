@@ -19,8 +19,8 @@
 - Hello, I am your data assistant!. How can I help you?
 
 + i would like you to load the * data set
-* <set dsname=<formal>> <call>loadDataset <get dsname></call> == pass => Dataset loaded.
-- Dataset not found.
+* <call>loadDataset <star></call> == 1 => Dataset loaded
+- Dataset not loaded 
 
 + ok
 - City data set is loaded, you can access the table in the main\s 
@@ -82,5 +82,4 @@
 - <set strength =<star>><call>FdgHandler <get sourceNode> <get targetNode> <star></call> 
 ^ your requested force directed graph is now added to the \s
 ^ main view
-
 
