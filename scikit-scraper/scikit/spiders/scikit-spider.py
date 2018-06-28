@@ -73,20 +73,15 @@ class ScikitSpider(CrawlSpider):
                 if innerMethodTable:
                     for row in innerMethodTable.xpath('tbody/tr[@class="field-odd field"] | tbody/tr[@class="field-even field"]'):
                         fieldname = row.xpath("th/text()")
-                        
                         if "Parameters" in fieldname.extract_first():
                             method_item['methodParams'] = row.css("td p strong::text").extract()
                             method_item['methodParamsBody'] = ' '.join([unicodedata.normalize('NFKD', txt.strip().replace('\n', ' ')).encode('ascii','ignore') for txt in row.xpath("td//text()").extract()])
-                        
                         if "Returns" in fieldname.extract_first():
                             method_item['methodReturns'] = row.css("td p strong::text").extract()
                             method_item['methodReturnsBody'] = ' '.join([unicodedata.normalize('NFKD', txt.strip().replace('\n', ' ')).encode('ascii','ignore') for txt in row.xpath("td//text()").extract()])
-                
                 item['methods'].append(dict(method_item))
 
         yield item
-
-
 
 
 
