@@ -20,6 +20,7 @@ public class RiveScriptBeanProvider {
 	private ServletContext context;
 	@Autowired
 	LoadDataContent loadDataContent;
+	
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -35,6 +36,7 @@ public class RiveScriptBeanProvider {
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
 		bot.setSubroutine("loadDataset", loadDataContent);
+	
 		return bot;
 	}
 	

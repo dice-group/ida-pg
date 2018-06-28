@@ -14,5 +14,5 @@ public interface IDALiteral {
 	public static final String RS_USER = "user";
 	public static final String RS_FILEPATH = "./rivescript/ida-chatbot.rive";
 	public static final String RS_LOADDATA_ROUTINE = "loadData";
-	public static final String RS_LOADBARGRAPH_ROUTINE = "loadBarGraph";
+
 }
