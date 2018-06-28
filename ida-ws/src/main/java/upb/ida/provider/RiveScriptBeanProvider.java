@@ -22,6 +22,8 @@ public class RiveScriptBeanProvider {
 	LoadDataContent loadDataContent;
 	@Autowired
 	FdgHandler FdgHandler; 
+	@Autowired
+	BgdHandler BgdHandler; 
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -38,6 +40,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("sayname", new ExampleMacro());
 		bot.setSubroutine("loadDataset", loadDataContent);
 		bot.setSubroutine("FdgHandler", FdgHandler);
+		bot.setSubroutine("BgdHandler", BgdHandler);
 		return bot;
 	}
 	

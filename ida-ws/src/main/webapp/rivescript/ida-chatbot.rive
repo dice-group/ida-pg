@@ -83,3 +83,14 @@
 ^ your requested force directed graph is now added to the \s
 ^ main view
 
+
++ Bar graph 
+- No probllem, But before proceeding tell me what is the \s
+^ x-axis ?
++ x is *
+- <set x=<star>> Great! and  which feature should be along yaxis ?
++ y is *
+- <call>BgdHandler <get xaxis> <star></call> 
+^ your requested BAR graph is now added to the \s
+^ main view
+

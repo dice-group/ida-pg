@@ -102,10 +102,8 @@ public class DemoMain {
 		List<Map<String, String>> lstt = lst.jsonObject(in);
 		GetAxisJson jsn = new GetAxisJson();
 
-		Object p[];
-		p = jsn.newJsonObjct(x, y, lstt);
+        return	jsn.newJsonObjct(x, y, lstt);
 
-		return p;
 	}
 
 	public Map<String, Object> getJsonData(String filepath, String x, String y) throws JsonProcessingException, IOException {
