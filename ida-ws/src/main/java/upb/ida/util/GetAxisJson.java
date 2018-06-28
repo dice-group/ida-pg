@@ -1,10 +1,14 @@
 package upb.ida.util;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+//import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class GetAxisJson {
 
@@ -21,13 +25,18 @@ public class GetAxisJson {
 				listt.add(mMap);
 			}
 		}
-		String jjson = new Gson().toJson(listt);
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValueAsString(listt);
+		ArrayNode nodeArr1 = mapper.createArrayNode();
+		nodeArr1.add(mapper.readTree(mapper.writeValueAsString(listt)));
+		
+//		String jjson = new Gson().toJson(listt);
 //	    Object ar[] = new String[2];
 //		x_axis.add(x);
 //		String xaxis = new Gson().toJson(x_axis);
 //		ar[0] = xaxis;
 //		ar[1] = jjson;
-		return jjson;
+		return nodeArr1;
 	}
 
 }
