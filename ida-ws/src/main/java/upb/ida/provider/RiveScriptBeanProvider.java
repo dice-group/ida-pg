@@ -32,10 +32,10 @@ public class RiveScriptBeanProvider {
 
 		RiveScript bot = new RiveScript();
 
-		// Load an individual file.
-		bot.loadFile(context.getRealPath(IDALiteral.RS_FILEPATH));
+		// Load the Rivescript directory.
+		bot.loadDirectory(context.getRealPath(IDALiteral.RS_DIRPATH));
 
-		// Sort the replies after loading them!
+		// Sort the replies and set Subroutine calls for designated functionality 
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
 		bot.setSubroutine("loadDataset", loadDataContent);
