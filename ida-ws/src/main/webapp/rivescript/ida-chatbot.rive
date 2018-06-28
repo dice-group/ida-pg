@@ -18,14 +18,9 @@
 + hello 
 - Hello, I am your data assistant!. How can I help you?
 
-+ i would like you to load the city data set
-- Loading the City data set, please wait 
-
-// Trigger Call to load the city data set 
-
-+ ok
-- City data set is loaded, you can access the table in the main\s 
-^ view
++ i would like you to load the * data set
+* <call>loadDataset <star></call> == 1 => Dataset loaded
+- Dataset not loaded 
 
 + i want a barchart visualization for the current table
 - oh cool, which feature should be on the x-scale?
