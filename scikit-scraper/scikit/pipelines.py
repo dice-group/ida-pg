@@ -8,6 +8,6 @@
 
 class ScikitPipeline(object):
 
-    @classmethod
+    @staticmethod
     def process_item(self, item, spider):
         return item
