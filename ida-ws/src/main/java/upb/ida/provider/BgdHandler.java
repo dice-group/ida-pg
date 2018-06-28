@@ -27,8 +27,8 @@ public class BgdHandler implements Subroutine {
 			dataMap.put("label", "Bar Graph");
 			
 //			dataMap.put("dsName", message);
-			String path = DemoMain.getFilePath(actvTbl,actvDs );
-			dataMap.put("dataset", DemoMain.getJsonData(path,args[0].toLowerCase(),args[1].toLowerCase()));
+			String path = DemoMain.getFilePath(actvDs,actvTbl );
+			dataMap.put("dataset", DemoMain.getJsonData(path,args[0],args[1]));
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_BG);
 			return "pass";
