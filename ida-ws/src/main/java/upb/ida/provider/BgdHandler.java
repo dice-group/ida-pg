@@ -27,14 +27,11 @@ public class BgdHandler implements Subroutine {
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", "Bar Graph");
-			
-//			dataMap.put("dsName", message);
 			String path = DemoMain.getFilePath(actvDs,actvTbl );
 			List <String> keys = new ArrayList <String> ();
 		    keys.add(args[0]);
 		    dataMap.put("Label", "BgData");
-			//dataMap.put("actvScrId", actvScrId);
-		    dataMap.put("xaxisname", args[0]);
+			 dataMap.put("xaxisname", args[0]);
 			dataMap.put("yaxisname", args[1]);
 			dataMap.put("keys", keys);
 			
