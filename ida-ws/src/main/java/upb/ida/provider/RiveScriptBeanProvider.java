@@ -20,10 +20,10 @@ public class RiveScriptBeanProvider {
 	private ServletContext context;
 	@Autowired
 	LoadDataContent loadDataContent;
-  @Autowired
-	FdgHandler FdgHandler; 
 	@Autowired
-	BgdHandler BgdHandler; 
+	FdgHandler FdgHandler;
+	@Autowired
+	BgdHandler BgdHandler;
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -39,9 +39,9 @@ public class RiveScriptBeanProvider {
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
 		bot.setSubroutine("loadDataset", loadDataContent);
-    bot.setSubroutine("FdgHandler", FdgHandler);
+		bot.setSubroutine("FdgHandler", FdgHandler);
 		bot.setSubroutine("BgdHandler", BgdHandler);
 		return bot;
 	}
-	
+
 }
