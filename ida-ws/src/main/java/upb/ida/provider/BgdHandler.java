@@ -16,9 +16,9 @@ import upb.ida.temp.DemoMain;
 @Component
 public class BgdHandler implements Subroutine {
 	@Autowired
-	DemoMain DemoMain;
+	private DemoMain DemoMain;
 	@Autowired
-	ResponseBean responseBean;
+	private ResponseBean responseBean;
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		
 		//		String user = rs.currentUser();
