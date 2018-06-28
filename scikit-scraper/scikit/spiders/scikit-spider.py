@@ -13,7 +13,8 @@ class ScikitSpider(CrawlSpider):
              callback="parse_item",
              follow=True),)
 
-    def parse_item(self, response):
+    @staticmethod
+    def parse_item(response):
     	item = MainItem()
         section = response.css("div.section")
         title = section.xpath("dl/dt/code/text()")
@@ -22,7 +23,7 @@ class ScikitSpider(CrawlSpider):
         item['funcDesc'] = unicodedata.normalize('NFKD', section.xpath("dl/dd/p/text()").extract_first().replace('\n', ' ')).encode('ascii','ignore')
         item['notes'] = ' '.join([unicodedata.normalize('NFKD', txt.strip().replace('\n', ' ')).encode('ascii','ignore') for txt in section.xpath("//p[text()='Notes']/following-sibling::p[not(@class='rubric')]//text()").extract()]) #returns text from the follwoing <p> tags as a single string, if the <p> tag is not associated with "rubric" class
         item['methods'] = []
-        
+
         #for sites that don't have method table and just have a paramTable, check if the mtable is empty, if it is then the first table on the site would be paramTable
         
         mtable = response.xpath('//table[@class="longtable docutils"]')
