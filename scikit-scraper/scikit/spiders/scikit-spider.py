@@ -25,7 +25,6 @@ class ScikitSpider(CrawlSpider):
         item['methods'] = []
 
         #for sites that don't have method table and just have a paramTable, check if the mtable is empty, if it is then the first table on the site would be paramTable
-        
         mtable = response.xpath('//table[@class="longtable docutils"]')
         paramTable = []
         methods = []
@@ -41,7 +40,7 @@ class ScikitSpider(CrawlSpider):
             for row in paramTable.xpath('tbody/tr[@class="field-odd field"] | tbody/tr[@class="field-even field"]'):
                 fieldname = row.xpath("th/text()")
                 #check the value of colHead/fieldname, if it's 'Parameters', 'Attributes' or 'Returns'. Assign accordingly.
-                
+
                 if "Parameters" in fieldname.extract_first():
                     item['allFuncParams'] = row.css("td p strong::text").extract()
                     #extract the entire colBody (without including sentences starting with \n)
@@ -54,7 +53,7 @@ class ScikitSpider(CrawlSpider):
                 if "Returns" in fieldname.extract_first():
                     item['allReturnParams'] = row.css("td p strong::text").extract()
                     item['funcReturnBody'] = ' '.join([unicodedata.normalize('NFKD', txt.strip().replace('\n', ' ')).encode('ascii','ignore') for txt in row.xpath("td/descendant::text()[not(starts-with(., '\n'))]").extract()])
-        
+
         #loop over methods
         if mtable:
             # extract all methods from the page
@@ -86,11 +85,6 @@ class ScikitSpider(CrawlSpider):
                 item['methods'].append(dict(method_item))
 
         yield item
-
-                   
-        
-        
-
 
 
 
