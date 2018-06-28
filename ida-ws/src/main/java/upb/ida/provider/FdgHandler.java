@@ -2,14 +2,12 @@ package upb.ida.provider;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.rivescript.macro.Subroutine;
-import com.rivescript.util.StringUtils;
 
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
@@ -24,7 +22,7 @@ public class FdgHandler implements Subroutine {
 		
 		//		String user = rs.currentUser();
 		try {
-			Map<String, Object> dataMap = new HashMap<String, Object>();
+			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", "Fdg Handler");
 //			dataMap.put("dsName", message);
 			dataMap.put("dataset", FDG_Util.generateFDG("city//citydistance.csv",args[0].toLowerCase(),args[1].toLowerCase(),args[2].toLowerCase()));
