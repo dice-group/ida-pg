@@ -19,11 +19,11 @@ public class RiveScriptBeanProvider {
 	@Autowired
 	private ServletContext context;
 	@Autowired
-	LoadDataContent loadDataContent;
+	private LoadDataContent loadDataContent;
 	@Autowired
-	FdgHandler FdgHandler;
+	private FdgHandler FdgHandler;
 	@Autowired
-	BgdHandler BgdHandler;
+	private BgdHandler BgdHandler;
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
