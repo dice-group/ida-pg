@@ -22,8 +22,7 @@ public class LoadDataContent implements Subroutine {
 	ResponseBean responseBean;
 
 	public String call(com.rivescript.RiveScript rs, String[] args) {
-		String message = StringUtils.join(args, " ")
-		                            .trim();
+		String message = StringUtils.join(args, " ").trim();
 		// String user = rs.currentUser();
 		if (DemoMain.datasetExists(message)) {
 			try {
