@@ -17,9 +17,9 @@ import upb.ida.temp.DemoMain;
 @Component
 public class LoadDataContent implements Subroutine {
 	@Autowired
-	DemoMain demoMain;
+	private DemoMain demoMain;
 	@Autowired
-	ResponseBean responseBean;
+	private ResponseBean responseBean;
 
 	public String call(com.rivescript.RiveScript rs, String[] args) {
 		String message = StringUtils.join(args, " ").trim();
