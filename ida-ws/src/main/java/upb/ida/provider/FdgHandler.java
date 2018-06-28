@@ -16,11 +16,11 @@ import upb.ida.temp.DemoMain;
 @Component
 public class FdgHandler implements Subroutine {
 	@Autowired
-	DemoMain DemoMain;
+	private DemoMain DemoMain;
 	@Autowired
-	FDG_Util FDG_Util;
+	private FDG_Util FDG_Util;
 	@Autowired
-	ResponseBean responseBean;
+	private ResponseBean responseBean;
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		
 		//		String user = rs.currentUser();
