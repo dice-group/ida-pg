@@ -1,5 +1,8 @@
 package upb.ida.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,18 +31,9 @@ public class MessageRestController {
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
 		String reply = rsService.getRSResponse(msg);
+		Map<String, Object> dataMap = new HashMap<>();
+		dataMap.put("actvScrId", actvScrId);
 		response.setChatmsg(reply);
-		return response;
-	}
-	@RequestMapping("/sen")
-	public ResponseBean sen() throws Exception {
-		response.setPayload("hi i am faisal");
-		return response;
-	}
-
-	@RequestMapping("/sumNum")
-	public ResponseBean sumNum(@RequestParam(value = "a") int a, @RequestParam(value = "b") int b) throws Exception {
-		response.setPayload(a + b);
 		return response;
 	}
 
