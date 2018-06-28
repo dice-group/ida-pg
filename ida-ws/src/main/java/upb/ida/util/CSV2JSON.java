@@ -2,6 +2,9 @@ package upb.ida.util;
 
 import java.io.*;
 import java.util.*;
+
+import upb.ida.constant.IDALiteral;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -11,7 +14,7 @@ public class CSV2JSON {
 
     public static void main(String[] args) throws Exception {
 
-        File output = new File("C:\\Users\\Faisal Mahmood\\Desktop\\dice-ida\\ida-ws\\src\\main\\java\\upb\\ida\\util\\input.csv");
+        File output = new File("C:\\Users\\Faisal Mahmood\\Desktop\\dice-ida\\ida-ws\\src\\main\\webapp\\city\\citydistance.csv");
         
         InputStream in = new FileInputStream(output);
         //InputStream in = new ByteArrayInputStream(output.getBytes("UTF-8"));
@@ -27,13 +30,22 @@ public class CSV2JSON {
         reader.close();
 
         GetAxisJson jsn= new GetAxisJson();
-
-        Object p[];
-        p= jsn.newJsonObjct(x,y,lstt);
-        System.out.println("x-axis:"+x);
-        System.out.println("y-axis:"+y);
-        System.out.println(p[0]);
-        System.out.println(p[1]);
+        Map<String, Object> dataMap =   new HashMap<String, Object>();
+	    List <String> keys = new ArrayList <String> ();
+	    keys.add(x);
+	    dataMap.put("Label", "BgData");
+		//dataMap.put("actvScrId", actvScrId);
+	    dataMap.put("xaxisname", x);
+		dataMap.put("yaxisname", y);
+		dataMap.put("keys", keys);
+		dataMap.put("dataset", jsn.newJsonObjct(x,y,lstt));
+		System.out.println(dataMap);;
+        //Object p[];
+//        System.out.println(jsn.newJsonObjct(x,y,lstt));
+//        System.out.println("x-axis:"+x);
+//        System.out.println("y-axis:"+y);
+        //System.out.println(p[0]);
+        //System.out.println(p[1]);
 
 
 
