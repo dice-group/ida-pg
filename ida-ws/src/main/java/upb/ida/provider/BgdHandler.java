@@ -1,6 +1,8 @@
 package upb.ida.provider;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,14 @@ public class BgdHandler implements Subroutine {
 			
 //			dataMap.put("dsName", message);
 			String path = DemoMain.getFilePath(actvDs,actvTbl );
+			List <String> keys = new ArrayList <String> ();
+		    keys.add(args[0]);
+		    dataMap.put("Label", "BgData");
+			//dataMap.put("actvScrId", actvScrId);
+		    dataMap.put("xaxisname", args[0]);
+			dataMap.put("yaxisname", args[1]);
+			dataMap.put("keys", keys);
+			
 			dataMap.put("dataset", DemoMain.getJsonData(path,args[0],args[1]));
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_BG);
