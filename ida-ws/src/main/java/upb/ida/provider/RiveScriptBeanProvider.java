@@ -20,7 +20,7 @@ public class RiveScriptBeanProvider {
 	private ServletContext context;
 	@Autowired
 	LoadDataContent loadDataContent;
-	@Autowired
+  @Autowired
 	FdgHandler FdgHandler; 
 	@Autowired
 	BgdHandler BgdHandler; 
@@ -39,7 +39,7 @@ public class RiveScriptBeanProvider {
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
 		bot.setSubroutine("loadDataset", loadDataContent);
-		bot.setSubroutine("FdgHandler", FdgHandler);
+    bot.setSubroutine("FdgHandler", FdgHandler);
 		bot.setSubroutine("BgdHandler", BgdHandler);
 		return bot;
 	}
