@@ -21,10 +21,14 @@ public class BgdHandler implements Subroutine {
 		
 		//		String user = rs.currentUser();
 		try {
+			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
+			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", "Bar Graph");
+			
 //			dataMap.put("dsName", message);
-			dataMap.put("dataset", DemoMain.getJsonData("city\\citydistance.csv",args[0].toLowerCase(),args[1].toLowerCase()));
+			String path = DemoMain.getFilePath(actvTbl,actvDs );
+			dataMap.put("dataset", DemoMain.getJsonData(path,args[0].toLowerCase(),args[1].toLowerCase()));
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_BG);
 			return "pass";
