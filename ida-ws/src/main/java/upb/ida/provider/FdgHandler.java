@@ -27,11 +27,12 @@ public class FdgHandler implements Subroutine {
 		try {
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
+			//String actvScrId = (String) responseBean.getPayload().get("actvScrid");
 			String path = DemoMain.getFilePath(actvDs,actvTbl );
 			Map<String, Object> dataMap = responseBean.getPayload();
-			dataMap.put("label", "Fdg Handler");
-//			dataMap.put("dsName", message);
-			dataMap.put("dataset", FDG_Util.generateFDG(path,args[0].toLowerCase(),args[1],args[2]));
+			dataMap.put("label", "Fdg Data");
+			dataMap.put("fdgData", FDG_Util.generateFDG(path,args[0].toLowerCase(),args[1],args[2]));
+			//dataMap.put("actvScrId", actvScrId);
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_FDG);
 			return "pass";
