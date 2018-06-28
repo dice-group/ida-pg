@@ -1,6 +1,4 @@
-import scrapy 
-import re 
-import unicodedata 
+import unicodedata
 from scikit.items import MainItem, MethodItem
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
@@ -10,7 +8,7 @@ class ScikitSpider(CrawlSpider):
     name = "sci-spider"
     start_urls = ['http://scikit-learn.org/stable/modules/classes.html']
 
-    #The xpath in restrict_paths only collects the internal links 
+    #The xpath in restrict_paths only collects the internal links
     rules = (Rule(LinkExtractor(allow=(), restrict_xpaths=('//td/a[@class="reference internal"]',)),
              callback="parse_item",
              follow=True),)
@@ -59,7 +57,7 @@ class ScikitSpider(CrawlSpider):
         #loop over methods
         if mtable:
             # extract all methods from the page
-            for method in response.xpath('//dl[@class="method"]'):
+            for method in methods:
                 method_item = MethodItem()
                 text = ""
                 #to extract the methodName

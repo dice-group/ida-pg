@@ -20,6 +20,7 @@ class ScikitSpiderMiddleware(object):
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
+    @classmethod
     def process_spider_input(self, response, spider):
         # Called for each response that goes through the spider
         # middleware and into the spider.
@@ -27,6 +28,7 @@ class ScikitSpiderMiddleware(object):
         # Should return None or raise an exception.
         return None
 
+    @classmethod
     def process_spider_output(self, response, result, spider):
         # Called with the results returned from the Spider, after
         # it has processed the response.
@@ -43,6 +45,7 @@ class ScikitSpiderMiddleware(object):
         # or Item objects.
         pass
 
+    @classmethod
     def process_start_requests(self, start_requests, spider):
         # Called with the start requests of the spider, and works
         # similarly to the process_spider_output() method, except
@@ -52,6 +55,7 @@ class ScikitSpiderMiddleware(object):
         for r in start_requests:
             yield r
 
+    @classmethod
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
@@ -68,6 +72,7 @@ class ScikitDownloaderMiddleware(object):
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
+    @classmethod
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
         # middleware.
@@ -80,6 +85,7 @@ class ScikitDownloaderMiddleware(object):
         #   installed downloader middleware will be called
         return None
 
+    @classmethod
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
 
@@ -99,5 +105,6 @@ class ScikitDownloaderMiddleware(object):
         # - return a Request object: stops process_exception() chain
         pass
 
+    @classmethod
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)

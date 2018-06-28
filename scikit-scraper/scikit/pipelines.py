@@ -7,5 +7,7 @@
 
 
 class ScikitPipeline(object):
+
+    @classmethod
     def process_item(self, item, spider):
         return item
