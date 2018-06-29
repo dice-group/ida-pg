@@ -21,8 +21,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import upb.ida.temp.DemoMain;
 
@@ -32,8 +30,6 @@ public class FDG_Util {
 	private DemoMain dem;
 	@Autowired
 	private ServletContext context;
-	public static final GsonBuilder builder = new GsonBuilder();
-	public static final Gson gson = builder.create();
 	public static final int MAX_STR = 10;
 
 	/**
