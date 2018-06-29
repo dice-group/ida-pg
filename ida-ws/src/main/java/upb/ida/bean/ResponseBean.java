@@ -1,5 +1,7 @@
 package upb.ida.bean;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import upb.ida.serializer.RespBeanSerializer;
@@ -10,7 +12,7 @@ public class ResponseBean {
 	private int actnCode;
 	private int errCode;
 	private String errMsg;
-	private Object payload;
+	private Map<String, Object> payload;
 	private String chatmsg;
 	public int getErrCode() {
 		return errCode;
@@ -24,10 +26,10 @@ public class ResponseBean {
 	public void setErrMsg(String errMsg) {
 		this.errMsg = errMsg;
 	}
-	public Object getPayload() {
+	public Map<String, Object> getPayload() {
 		return payload;
 	}
-	public void setPayload(Object payload) {
+	public void setPayload(Map<String, Object> payload) {
 		this.payload = payload;
 	}
 	public int getActnCode() {

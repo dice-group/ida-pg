@@ -1,39 +1,43 @@
 package upb.ida.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+
 import upb.ida.bean.ResponseBean;
+import upb.ida.constant.IDALiteral;
 import upb.ida.temp.DemoMain;
 
 
-@RestController
-@CrossOrigin(origins = "*")
-@RequestMapping("/csv2json")
+@Component
 public class DatasetController {
 		@Autowired
 		private ResponseBean response;
 		@Autowired
 		private DemoMain dem;
-		
-		@RequestMapping("/selectedFile")
-		public ResponseBean selectedFile(@RequestParam(value = "msg") String msg,@RequestParam(value = "x_axis") String x,@RequestParam(value = "y_axis") String y) throws Exception {
-			if(msg.matches("[iI]nput")) {
+
+		public ResponseBean selectedFile(String filePath, String x, String y) throws Exception {
 				response.setChatmsg("Input Dataset converted to Json for Visualisation and clustering");
 				Map<String, Object> dataMap =   new HashMap<String, Object>();
-				dataMap.put("x_axis", x);
-				dataMap.put("y_axis", y);
-				dataMap.put("dataset", dem.getJsonData(msg,x,y));
+			    List <String> keys = new ArrayList <String> ();
+			    keys.add(x);
+			    dataMap.put("Label", "BgData");
+				//dataMap.put("actvScrId", actvScrId);
+			    dataMap.put("xaxisname", x);
+				dataMap.put("yaxisname", y);
+				dataMap.put("keys", keys);
+				dataMap.put("dataset", dem.getJsonData(filePath,x,y));
 				response.setPayload(dataMap);
-				response.setActnCode(1);
-			}
+				response.setActnCode(IDALiteral.UIA_BG);
 			
 			return response;
 		}
+		
+		
 	
 	
 
