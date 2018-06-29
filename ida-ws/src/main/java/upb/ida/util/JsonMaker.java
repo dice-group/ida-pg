@@ -19,9 +19,16 @@ public class JsonMaker {
             while (csv.hasNext()) {
                 List < String > x = csv.next();
                 Map < String, String > obj = new LinkedHashMap< >();
-                for (int i = 0; i < fieldNames.size(); i++) {
-                    obj.put(fieldNames.get(i), x.get(i));
+                if(fieldNames.size()==2) {
+                	for (int i = 0; i == fieldNames.size(); i++) {
+                        obj.put(fieldNames.get(i), x.get(i));
+                    	
+                	}
                 }
+                else
+                	for (int i = 0; i < fieldNames.size(); i++) {
+                    obj.put(fieldNames.get(i), x.get(i));
+                	}
                 list.add(obj);
             }
             ObjectMapper mapperr = new ObjectMapper();

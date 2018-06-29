@@ -12,20 +12,27 @@ import com.rivescript.macro.Subroutine;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.fdg.FDG_Util;
+import upb.ida.temp.DemoMain;
 @Component
 public class FdgHandler implements Subroutine {
 	@Autowired
-	FDG_Util FDG_Util;
+	private DemoMain DemoMain;
 	@Autowired
-	ResponseBean responseBean;
+	private FDG_Util FDG_Util;
+	@Autowired
+	private ResponseBean responseBean;
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		
 		//		String user = rs.currentUser();
 		try {
+			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
+			String actvDs = (String) responseBean.getPayload().get("actvDs");
+			//String actvScrId = (String) responseBean.getPayload().get("actvScrid");
+			String path = DemoMain.getFilePath(actvDs,actvTbl );
 			Map<String, Object> dataMap = responseBean.getPayload();
-			dataMap.put("label", "Fdg Handler");
-//			dataMap.put("dsName", message);
-			dataMap.put("dataset", FDG_Util.generateFDG("city//citydistance.csv",args[0].toLowerCase(),args[1].toLowerCase(),args[2].toLowerCase()));
+			dataMap.put("label", "Fdg Data");
+			dataMap.put("fdgData", FDG_Util.generateFDG(path,args[0].toLowerCase(),args[1],args[2]));
+			//dataMap.put("actvScrId", actvScrId);
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_FDG);
 			return "pass";
