@@ -30,9 +30,13 @@ public class MessageRestController {
 			@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
-		String reply = rsService.getRSResponse(msg);
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
+		dataMap.put("actvTbl", actvTbl);
+		dataMap.put("actvDs", actvDs);
+		response.setPayload(dataMap);
+		String reply = rsService.getRSResponse(msg);
+		
 		response.setChatmsg(reply);
 		return response;
 	}
