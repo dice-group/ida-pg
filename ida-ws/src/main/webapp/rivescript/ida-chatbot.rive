@@ -15,9 +15,9 @@
 + hello 
 - Hello, I am your data assistant!. How can I help you?
 
-+ i would like you to load the * data set
-* <call>loadDataset <star></call> == 1 => Dataset loaded
-- Dataset not loaded 
+//+ i would like you to load the * data set
+//* <call>loadDataset <star></call> == 1 => Dataset loaded
+//- Dataset not loaded 
 
 + ok
 - City data set is loaded, you can access the table in the main\s 

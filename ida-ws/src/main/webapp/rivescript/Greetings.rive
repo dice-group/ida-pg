@@ -2,7 +2,7 @@
 
 //Greetings
 + hello 
-- Hello there, What can I do for you?
+- hello there, What can I do for you?
 
 + (my name is|i am)*
 - <set name=<star2>>Nice to meet you, <get name>.What \s
