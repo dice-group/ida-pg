@@ -1,7 +1,7 @@
 ! version = 2.0
 
 + i want a force directed graph visual on the current table
-- No probllem, But before proceeding tell me what is the \s
+- No problem, But before proceeding tell me what is the \s
 ^ source node ?
 + source node is *
 - <set sourceNode=<formal>parsingP> Great!and  which feature should be the target node ?
