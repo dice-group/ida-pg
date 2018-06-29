@@ -1,0 +1,13 @@
+! version = 2.0
+
+// Substitutions
+! sub Hello = Hello there, What can I do for you?
+! sub hey there = Hello there, What can I do for you?
+! sub hello = Hello there, What can I do for you?
+! sub hi  = Hello there, What can I do for you?
+! sub hello bot = Hello there, What can I do for you?
+! sub hey bot = Hello there, What can I do for you?
+! sub hey bot what's up = Hello there, What can I do for you?
+
+
+S

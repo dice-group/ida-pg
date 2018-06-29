@@ -1,9 +1,6 @@
 ! version = 2.0
 
-// Substitutions
-! sub Hello = Hello, I am your data assistant!. How can I \s
-^ help you?
-! sub load city data set = Loading the City data set, please ^ wait 
+
 
 + *
 - I don't quite get that :(. How about you ask that in a\s
@@ -90,7 +87,7 @@
 + x is *
 - <set x=<star>> Great! and  which feature should be along yaxis ?
 + y is *
-- <call>BgdHandler <get xaxis> <star></call> 
+- <call>BgdH andler <get xaxis> <star></call> 
 ^ your requested BAR graph is now added to the \s
 ^ main view
 
