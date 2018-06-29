@@ -3,8 +3,6 @@ package upb.ida.util;
 import java.io.*;
 import java.util.*;
 
-import upb.ida.constant.IDALiteral;
-
 import java.io.File;
 import java.io.InputStream;
 
@@ -39,7 +37,6 @@ public class CSV2JSON {
 		dataMap.put("yaxisname", y);
 		dataMap.put("keys", keys);
 		dataMap.put("dataset", jsn.newJsonObjct(x,y,lstt));
-		System.out.println(dataMap);;
         //Object p[];
 //        System.out.println(jsn.newJsonObjct(x,y,lstt));
 //        System.out.println("x-axis:"+x);

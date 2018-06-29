@@ -1,13 +1,9 @@
 package upb.ida.fdg;
 
-import com.google.gson.annotations.SerializedName;
 
 public class FDG_Node {
-	@SerializedName("id")
 	private Integer id;
-	@SerializedName("label")
 	private String label;
-	@SerializedName("group")
 	private Integer group;
 	
 	public FDG_Node(Integer id, String label, Integer group) {
