@@ -11,12 +11,13 @@ public class ClusterAlgoDesc {
 	private String note;
 	private List<ClusterParam> params;
 	
-	public ClusterAlgoDesc(int id, String fnName, String fnDesc, String note) {
+	public ClusterAlgoDesc(int id, String fnName, String fnDesc, String note, List<ClusterParam> params) {
 		super();
 		this.id = id;
 		this.fnName = fnName;
 		this.fnDesc = fnDesc;
 		this.note = note;
+		this.params = params;
 	}
 	public int getId() {
 		return id;
