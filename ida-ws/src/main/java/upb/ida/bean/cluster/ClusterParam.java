@@ -6,12 +6,21 @@ public class ClusterParam {
 	private String name;
 	private List<String> type;
 	private boolean optional;
+	private String desc;
 
 	public ClusterParam(String name, List<String> type, boolean optional) {
 		super();
 		this.name = name;
 		this.type = type;
 		this.optional = optional;
+	}
+
+	public ClusterParam(String name, List<String> type, boolean optional, String desc) {
+		super();
+		this.name = name;
+		this.type = type;
+		this.optional = optional;
+		this.desc = desc;
 	}
 
 	public String getName() {
@@ -36,6 +45,14 @@ public class ClusterParam {
 
 	public void setOptional(boolean optional) {
 		this.optional = optional;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 }
