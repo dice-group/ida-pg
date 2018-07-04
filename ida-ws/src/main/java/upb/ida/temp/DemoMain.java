@@ -42,37 +42,26 @@ public class DemoMain {
 
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
-		CsvSchema csvSchema = CsvSchema.builder()
-		                               .setUseHeader(true)
-		                               .build();
+		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
 		CsvMapper csvMapper = new CsvMapper();
 
 		// Read data from CSV file
-		List<Object> readAll = csvMapper.readerFor(Map.class)
-		                                .with(csvSchema)
-		                                .readValues(input)
-		                                .readAll();
+		List<Object> readAll = csvMapper.readerFor(Map.class).with(csvSchema).readValues(input).readAll();
 
 		ObjectMapper mapper = new ObjectMapper();
 
 		// Write JSON formated data to stdout
-		return mapper.writerWithDefaultPrettyPrinter()
-		             .writeValueAsString(readAll);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(readAll);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Map<String, String>> convertToMap(File input) throws JsonProcessingException, IOException {
 
-		CsvSchema csvSchema = CsvSchema.builder()
-		                               .setUseHeader(true)
-		                               .build();
+		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
 		CsvMapper csvMapper = new CsvMapper();
 
 		// Read data from CSV file
-		List<Object> readAll = csvMapper.readerFor(Map.class)
-		                                .with(csvSchema)
-		                                .readValues(input)
-		                                .readAll();
+		List<Object> readAll = csvMapper.readerFor(Map.class).with(csvSchema).readValues(input).readAll();
 		List<Map<String, String>> resMapList = new ArrayList<>();
 		for (Object entry : readAll) {
 			resMapList.add((Map<String, String>) entry);
@@ -107,11 +96,12 @@ public class DemoMain {
 		List<Map<String, String>> lstt = lst.jsonObject(in);
 		GetAxisJson jsn = new GetAxisJson();
 
-        return	jsn.newJsonObjct(x, y, lstt);
+		return jsn.newJsonObjct(x, y, lstt);
 
 	}
 
-	public Map<String, Object> getJsonData(String filepath, String x, String y) throws JsonProcessingException, IOException {
+	public Map<String, Object> getJsonData(String filepath, String x, String y)
+			throws JsonProcessingException, IOException {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		File file = new File(context.getRealPath(filepath));
