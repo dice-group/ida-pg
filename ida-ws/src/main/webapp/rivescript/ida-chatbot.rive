@@ -1,9 +1,6 @@
 ! version = 2.0
 
-// Substitutions
-! sub Hello = Hello, I am your data assistant!. How can I \s
-^ help you?
-! sub load city data set = Loading the City data set, please ^ wait 
+
 
 + *
 - I don't quite get that :(. How about you ask that in a\s
@@ -18,9 +15,9 @@
 + hello 
 - Hello, I am your data assistant!. How can I help you?
 
-+ i would like you to load the * data set
-* <call>loadDataset <star></call> == 1 => Dataset loaded
-- Dataset not loaded 
+//+ i would like you to load the * data set
+//* <call>loadDataset <star></call> == 1 => Dataset loaded
+//- Dataset not loaded 
 
 + ok
 - City data set is loaded, you can access the table in the main\s 

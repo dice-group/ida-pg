@@ -1,29 +1,4 @@
 ! version = 2.0
-! var name = intelligent data assistant 
-
-+ hello 
-- Hello buddy.\s
-^ What can i do for you?
-
-+(who are you|what are you)
-- LOL! well, i am your <bot name>
- 
-
-+ my name is *
-- <set name=<star>>Nice to meet you, <get name>.\s
- ^ what would you wish to do?
-
-+ (what is my name|who am i)
-* <get name> == undefined => You never told me your name.
-- Your name is <get name>, silly!
--  you  are <get name>, aren't you ?
-
-
-+ (i will be back|brb) in #
-* <set mins=<star2>><star2>   >= 10 => awww!i'm sorry that i can't wait for you so long honey!
-* <get mins> < 10  => i shall wait for you sweetie, come back soon.
-
-
 
 + [*]cluster*
 - oh, let's talk about clustering.\s
@@ -46,12 +21,3 @@
 + * on y 
 -<set yaxis=<star>> there you go! your graph is ready!
 
-+ (ok bye|i have to leave now|bye)
-- sheesh! don't leave me so soon :/
-- i will miss you, come back soon 
-- i will pray for your safe return
-
-+ *
-- I'm not sure how to answer that.
-- I don't have a reply for that.
-- Try asking that a different way.
