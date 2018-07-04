@@ -100,16 +100,19 @@ public class DemoMain {
 
 	}
 
-	public Map<String, Object> getJsonData(String filepath, String x, String y)
+	public Object getJsonData(String filepath, String x, String y)
 			throws JsonProcessingException, IOException {
 
-		Map<String, Object> resMap = new HashMap<String, Object>();
+//		Map<String, Object> resMap = new HashMap<String, Object>();
+//		File file = new File(context.getRealPath(filepath));
+//		if (file != null) {
+//			// Do something with child
+//			resMap.put(file.getName(), fileCsv(file, x, y));
+//		}
+//		return resMap;
 		File file = new File(context.getRealPath(filepath));
-		if (file != null) {
-			// Do something with child
-			resMap.put(file.getName(), fileCsv(file, x, y));
-		}
-		return resMap;
+		return fileCsv(file, x, y);
+		
 	}
 
 	public String getFilePath(String actvDs, String actvTbl) {
