@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +90,7 @@ public class DemoMain {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
 
-	public Object fileCsv(File input, String x, String y) throws JsonProcessingException, IOException {
+	public Object fileCsv(File input, String x, String y) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
 		InputStream in = new FileInputStream(input);
 		JsonMaker lst = new JsonMaker();
@@ -101,7 +102,7 @@ public class DemoMain {
 	}
 
 	public Object getJsonData(String filepath, String x, String y)
-			throws JsonProcessingException, IOException {
+			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
 //		Map<String, Object> resMap = new HashMap<String, Object>();
 //		File file = new File(context.getRealPath(filepath));

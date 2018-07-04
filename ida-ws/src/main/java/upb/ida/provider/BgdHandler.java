@@ -1,6 +1,7 @@
 package upb.ida.provider;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,8 @@ public class BgdHandler implements Subroutine {
 		try {
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
-			Map<String, Object> dataMap = responseBean.getPayload();
+			String actvScrId = (String) responseBean.getPayload().get("actvScrId");
+			Map<String, Object> dataMap = new HashMap<String,Object>();
 			//dataMap.put("label", "Bar Graph");
 			String path = DemoMain.getFilePath(actvDs,actvTbl );
 			List <String> keys = new ArrayList <String> ();
@@ -39,12 +41,19 @@ public class BgdHandler implements Subroutine {
 			dataMap.put("baritems", DemoMain.getJsonData(path,args[0],args[1]));
 			Map<String, Object> submap_data = new HashMap<String,Object>();
 			submap_data.put("bgData", dataMap);
+			submap_data.put("actvScrId", actvScrId);
 			responseBean.setPayload(submap_data);
 			responseBean.setActnCode(IDALiteral.UIA_BG);
 			return "pass";
 		} catch (IOException e) {
 			e.printStackTrace();
 		
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return "fail";
 	

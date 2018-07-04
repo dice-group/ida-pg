@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -13,17 +16,19 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class GetAxisJson {
 
 	// To initialize variables with parameterized constructor
-	public Object newJsonObjct(String x, String y, List<Map<String, String>> lstt) throws java.io.IOException {
+	public Object newJsonObjct(String x, String y, List<Map<String, String>> lstt) throws java.io.IOException, NumberFormatException, ParseException {
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode nodeArr1 = mapper.createArrayNode();
 		
 //		ArrayList<String> x_axis = new ArrayList<String>();
 		for (int i = 0; i < lstt.size(); i++) {
-			HashMap<String, String> mMap = new HashMap<String, String>();
+			HashMap<String, Object> mMap = new HashMap<String, Object>();
 			if (lstt.get(i).containsKey(x) && lstt.get(i).containsKey(y)) {
-				mMap = new HashMap<String, String>(); // create a new one!
+				mMap = new HashMap<String, Object>(); // create a new one!
 				mMap.put(x, lstt.get(i).get(x));
-				mMap.put(y, lstt.get(i).get(y));
+				Double StrngthValID = 
+						Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(lstt.get(i).get(y)).toString());
+				mMap.put(y,StrngthValID) ;
 				
 				nodeArr1.add(mapper.readTree(mapper.writeValueAsString(mMap)));
 			}
