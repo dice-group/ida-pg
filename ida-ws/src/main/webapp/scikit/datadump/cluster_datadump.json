@@ -72,7 +72,7 @@
 				},
 				{
 					"paramName": "init",
-					"type": "{k-means++, random or an array}",
+					"type": "{k-means++, random or an ndarray}",
 					"desc": "Method for initialization, defaults to k-means++: k-means++ : selects initial cluster centers for k-mean clustering in a smart way to speed up convergence. See section Notes in k_init for more details. random: choose k observations (rows) at random from data for the initial centroids. If an ndarray is passed, it should be of shape (n_clusters, n_features) and gives the initial centers."
 				},
 				{
