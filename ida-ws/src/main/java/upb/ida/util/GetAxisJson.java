@@ -15,6 +15,9 @@ public class GetAxisJson {
 	// To initialize variables with parameterized constructor
 	public Object newJsonObjct(String x, String y, List<Map<String, String>> lstt) throws java.io.IOException {
 		List<Map<String, String>> listt = new ArrayList<Map<String, String>>();
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode nodeArr1 = mapper.createArrayNode();
+		
 //		ArrayList<String> x_axis = new ArrayList<String>();
 		for (int i = 0; i < lstt.size(); i++) {
 			HashMap<String, String> mMap = new HashMap<String, String>();
@@ -22,13 +25,11 @@ public class GetAxisJson {
 				mMap = new HashMap<String, String>(); // create a new one!
 				mMap.put(x, lstt.get(i).get(x));
 				mMap.put(y, lstt.get(i).get(y));
-				listt.add(mMap);
+				
+				nodeArr1.add(mapper.readTree(mapper.writeValueAsString(mMap)));
 			}
 		}
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValueAsString(listt);
-		ArrayNode nodeArr1 = mapper.createArrayNode();
-		nodeArr1.add(mapper.readTree(mapper.writeValueAsString(listt)));
+		
 		
 //		String jjson = new Gson().toJson(listt);
 //	    Object ar[] = new String[2];
