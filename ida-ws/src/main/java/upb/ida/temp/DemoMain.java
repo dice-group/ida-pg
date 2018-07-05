@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
-import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.util.GetAxisJson;
 import upb.ida.util.JsonMaker;
 
@@ -37,9 +35,6 @@ public class DemoMain {
 	}
 	@Autowired
 	private ServletContext context;
-	@Autowired
-	@Qualifier("scktClstrDtDmp")
-	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
 
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
