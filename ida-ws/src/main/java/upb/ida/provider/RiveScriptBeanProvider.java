@@ -28,7 +28,7 @@ public class RiveScriptBeanProvider {
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	@Qualifier("sessionBotInstance")
-	private RiveScript initBotInstance() {
+	public RiveScript initBotInstance() {
 
 		RiveScript bot = new RiveScript();
 

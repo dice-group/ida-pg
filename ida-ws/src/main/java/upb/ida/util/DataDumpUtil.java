@@ -29,9 +29,9 @@ public class DataDumpUtil {
 	// Method to fetch list of params in a clustering algorithm
 	public List<ClusterParam> getClusterAlgoParams(String algoName) {
 		List<ClusterParam> resList = null;
-		algoName = algoName.trim();
+		String trmdName = algoName.trim();
 		for (ClusterAlgoDesc entry : scktClstrDtDmp.values()) {
-			if (entry.getFnName().equalsIgnoreCase(algoName) || entry.getFnDesc().equalsIgnoreCase(algoName)) {
+			if (entry.getFnName().equalsIgnoreCase(trmdName) || entry.getFnDesc().equalsIgnoreCase(trmdName)) {
 				resList = entry.getParams();
 				break;
 			}
