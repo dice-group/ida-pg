@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,9 @@ public class DemoMain {
 	}
 	@Autowired
 	private ServletContext context;
+
+	@Autowired
+	private JsonMaker JsonMaker;
 
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
@@ -84,27 +88,30 @@ public class DemoMain {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
 
-	public Object fileCsv(File input, String x, String y) throws JsonProcessingException, IOException {
+	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
-		InputStream in = new FileInputStream(input);
-		JsonMaker lst = new JsonMaker();
-		List<Map<String, String>> lstt = lst.jsonObject(in);
+//		InputStream in = new FileInputStream(input);
+		
+		List<Map<String, String>> lstt = JsonMaker.jsonObject(input);
 		GetAxisJson jsn = new GetAxisJson();
 
-		return jsn.newJsonObjct(x, y, lstt);
+		jsn.newJsonObjct(x, y, lstt, dataMap);
 
 	}
 
-	public Map<String, Object> getJsonData(String filepath, String x, String y)
-			throws JsonProcessingException, IOException {
+	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap)
+			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
-		Map<String, Object> resMap = new HashMap<String, Object>();
+//		Map<String, Object> resMap = new HashMap<String, Object>();
+//		File file = new File(context.getRealPath(filepath));
+//		if (file != null) {
+//			// Do something with child
+//			resMap.put(file.getName(), fileCsv(file, x, y));
+//		}
+//		return resMap;
 		File file = new File(context.getRealPath(filepath));
-		if (file != null) {
-			// Do something with child
-			resMap.put(file.getName(), fileCsv(file, x, y));
-		}
-		return resMap;
+		fileCsv(file, x, y, dataMap);
+		
 	}
 
 	public String getFilePath(String actvDs, String actvTbl) {

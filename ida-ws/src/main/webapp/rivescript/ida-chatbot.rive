@@ -1,9 +1,10 @@
 ! version = 2.0
-
+! local concat = newline
 // Substitutions
 ! sub Hello = Hello, I am your data assistant!. How can I \s
 ^ help you?
 ! sub load city data set = Loading the City data set, please ^ wait 
+
 
 + *
 - I don't quite get that :(. How about you ask that in a\s
@@ -19,7 +20,7 @@
 - Hello, I am your data assistant!. How can I help you?
 
 + i would like you to load the * data set
-* <call>loadDataset <star></call> == 1 => Dataset loaded
+* <call>loadDataset <star></call> == pass => Loaded 
 - Dataset not loaded 
 
 + ok
@@ -69,7 +70,6 @@
 + say my name to me in reverse
 - <call>sayname <get name></call> 
 
- 
 + i want a force directed graph visual on the current table
 - No probllem, But before proceeding tell me what is the \s
 ^ source node ?
@@ -87,9 +87,32 @@
 + Bar graph 
 - No probllem, But before proceeding tell me what is the \s
 ^ x-axis ?
-+ x is *
++ x is * 
 - <set x=<star>> Great! and  which feature should be along yaxis ?
-+ y is *
++ y is * 
 - <call>BgdHandler <get x> <star></call> 
 ^ your requested BAR graph is now added to the \s
+
++ x is * 
+- <set x=<star>> Great! and  which feature should be along yaxis ?
++ y is * 
+- <call>BgdHandler <get x> <star></call> 
+^ your requested BAR graph is now added to the \s
+
++ [aA]lgo is *
+- <set selectedAlgo=<star>>\s
+^ Here are all of the parameters for <get selectedAlgo>> Algo \n
+^ <set algParams=<call>ParamsHanler</call>>
+ 
++ cluster
+- No probllem, But before proceeding choose a clustering algo\n
+^ <set algo=<call>ClusterConHandler</call>>\n
+^ [Hint ]  <get algo> 
 ^ main view
+
+
+
+
+
+
+
