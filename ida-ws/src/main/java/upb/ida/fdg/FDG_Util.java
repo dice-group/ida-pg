@@ -2,7 +2,6 @@ package upb.ida.fdg;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +120,7 @@ public class FDG_Util {
 				nodeMap.put(trgtNdLbl, trgtNd);
 			}
 			Double strngthValD = Double
-					.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(strngthVal).toString());
+					.parseDouble(strngthVal);
 			strngthValArr[sindx++] = strngthValD;
 			// 3. Create Triple Object
 			FDG_Triple triple = new FDG_Triple(tripUniqueId++, srcNd, trgtNd, strngthValD);

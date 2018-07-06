@@ -1,6 +1,5 @@
 package upb.ida.util;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,56 @@ public class FilterUtil {
 	public static final int GREATER = 1;
 	public static final int LESSER = -1;
 	public static final int EQUAL = 0;
+	
+	
+	
+	/**
+	 * Method to generate FilterOptions for First N record
+	 * @param fieldName - name of the field to be filtered
+	 * @param n - number of records needed
+	 * @param isNumeric - if field is numeric
+	 * @return FilterOptions instance
+	 */
+	public FilterOption getFirstNFilterOpt(String fieldName, int n, boolean isNumeric) {
+		FilterOption filterOption = new FilterOption(fieldName, 0, n, isNumeric);
+		return filterOption;
+	}
+	/**
+	 * Method to generate FilterOptions for Last N record
+	 * @param fieldName - name of the field to be filtered
+	 * @param n - number of records needed
+	 * @param datasetSize - size of the dataset
+	 * @param isNumeric - if field is numeric
+	 * @return FilterOptions instance
+	 */
+	public FilterOption getLastNFilterOpt(String fieldName, int n, int datasetSize, boolean isNumeric) {
+		FilterOption filterOption = new FilterOption(fieldName, n-1, datasetSize-n, isNumeric);
+		return filterOption;
+	}
+	/**
+	 * Method to generate FilterOptions for from n to n1 record
+	 * @param fieldName - name of the field to be filtered
+	 * @param fromSeq - index of record to start from (inclusive)
+	 * @param toSeq - index of record to end on (exclusive)
+	 * @param isNumeric - if field is numeric
+	 * @return FilterOptions instance
+	 */
+	public FilterOption getSubDatasetFilterOpt(String fieldName, int fromSeq, int toSeq, boolean isNumeric) {
+		FilterOption filterOption = new FilterOption(fieldName, fromSeq, toSeq, isNumeric);
+		return filterOption;
+	}
+	/**
+	 * Method to generate FilterOptions for sorted top N records
+	 * @param fieldName - name of the field to be filtered
+	 * @param n - number of records needed
+	 * @param sortDirection - direction of the sort
+	 * @param isNumeric - if field is numeric
+	 * @return FilterOptions instance
+	 */
+	public FilterOption getSortedFirstNFilterOpt(String fieldName, int n, FilterSort sortDirection, boolean isNumeric) {
+		FilterOption filterOption = new FilterOption(fieldName, sortDirection, 0, n, isNumeric);
+		return filterOption;
+	}
 	
 	/**
 	 * Method to perform filter operation over a given dataset
@@ -109,7 +158,7 @@ public class FilterUtil {
 	 */
 	private Double getDoubleVal(String entry) throws NumberFormatException, ParseException {
 		Double res = Double
-		.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(entry).toString());
+		.parseDouble(entry);
 		return res;
 	}
 	/**
@@ -149,9 +198,4 @@ public class FilterUtil {
 		}
 		return diff;
 	}
-	
-	//TODO: Write a method to generate FilterOptions for First N record
-	//TODO: Write a method to generate FilterOptions for Last N record
-	//TODO: Write a method to generate FilterOptions for from n to n1 record
-	//TODO: Write a method to generate FilterOptions for sorted top N records
 }

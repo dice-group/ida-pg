@@ -10,50 +10,65 @@ import org.springframework.stereotype.Component;
 
 import com.rivescript.macro.Subroutine;
 
+import upb.ida.bean.FilterOption;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.DemoMain;
+
 @Component
 public class BgdHandler implements Subroutine {
+	
+	public static final String FIRST_N_REC = "FIRSTN";
+	public static final String LAST_N_REC = "LASTN";
+	public static final String TOP_N_REC = "TOPN";
+	public static final String FROM_TO_REC = "FROMTO";
+	
 	@Autowired
 	private DemoMain DemoMain;
 	@Autowired
 	private ResponseBean responseBean;
-	public String call (com.rivescript.RiveScript rs, String[] args) {
-		
-		//		String user = rs.currentUser();
+
+	public String call(com.rivescript.RiveScript rs, String[] args) {
+
 		try {
+			// Fetch active dataset details
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
-			String actvScrId = (String) responseBean.getPayload().get("actvScrId");
-			Map<String, Object> dataMap = new HashMap<String,Object>();
-			//dataMap.put("label", "Bar Graph");
-			String path = DemoMain.getFilePath(actvDs,actvTbl );
-			/*List <String> keys = new ArrayList <String> ();
-		    keys.add(args[0]);
-		    //dataMap.put("Label", "BgData");
-			dataMap.put("xaxisname", args[0]);
-			dataMap.put("yaxisname", args[1]);
-			dataMap.put("keys", keys);*/
-			
-			DemoMain.getJsonData(path,args[0],args[1], dataMap);
-			Map<String, Object> submap_data = new HashMap<String,Object>();
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			String path = DemoMain.getFilePath(actvDs, actvTbl);
+			String xaxisname = args[0];
+			String yaxisname = args[1];
+			/*String filterType = args[3];
+			FilterOption filterOption = getFilterOption(filterType);*/
+			// set the bargraph in dataMap
+			DemoMain.getJsonData(path, xaxisname, yaxisname, dataMap);
+			Map<String, Object> submap_data = responseBean.getPayload();
 			submap_data.put("bgData", dataMap);
-			submap_data.put("actvScrId", actvScrId);
-			responseBean.setPayload(submap_data);
 			responseBean.setActnCode(IDALiteral.UIA_BG);
 			return "pass";
 		} catch (IOException e) {
 			e.printStackTrace();
-		
+
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "fail";
+
+	}
 	
+	private FilterOption getFilterOption(String filterType) {
+		FilterOption filterOption = null;
+		if(filterType.equalsIgnoreCase(FIRST_N_REC)) {
+			//Get Filter Option for First N records
+		} else if(filterType.equalsIgnoreCase(LAST_N_REC)) {
+			//Get Filter Option for Last N records
+		} else if(filterType.equalsIgnoreCase(TOP_N_REC)) {
+			//Get Filter Option for Top N records
+		} else if(filterType.equalsIgnoreCase(FROM_TO_REC)) {
+			//Get Filter Option for particular sequence of records
+		}
+		return filterOption;
 	}
 }
