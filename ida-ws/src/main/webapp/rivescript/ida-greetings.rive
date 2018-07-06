@@ -5,7 +5,7 @@
 - hello there, What can I do for you?
 
 + (my name is|i am)*
-- <set name=<star2>>Nice to meet you, <get name>.What \s
+- <set name=<star2>>Nice to meet you, <get name>. What \s
 ^ can I do for you ?
 
 + (what is my name|who am i)
@@ -16,6 +16,6 @@
 - No, you've never told me your name before.
 
 + (what are you|who are you)
-- I am your intelligent data assistant!
-- I am an intelligent chat bot!
+- I am your intelligent data assistant!{weight=3}
+- I am an intelligent chat bot!{weight=4}
 
