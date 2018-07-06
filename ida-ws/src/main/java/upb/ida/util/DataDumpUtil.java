@@ -21,7 +21,7 @@ public class DataDumpUtil {
 	public List<String> getClusteringAlgoNames() {
 		List<String> resList = new ArrayList<>();
 		for (ClusterAlgoDesc entry : scktClstrDtDmp.values()) {
-			resList.add(entry.getFnDesc());
+			resList.add(entry.getFnName());
 		}
 		return resList;
 	}
