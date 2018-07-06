@@ -7,32 +7,24 @@
 - Data set not found!
 
 + i would like you to load * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
+@ load <star> dataset
+
 + please load * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
+@ load <star> dataset
+
 + please show * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
+@ load <star> dataset
+
 + show * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
-+ would you display * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
+@ load <star> dataset
+
+@ load <star> dataset
+
 + please display * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
+@ load <star> dataset
+
 + display * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
-^ loaded. You can access the table in the main view.
-- Data set not found!
+@ load <star> dataset
+
 
 

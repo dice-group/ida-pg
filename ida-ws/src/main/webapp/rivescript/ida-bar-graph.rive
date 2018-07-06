@@ -8,54 +8,24 @@
 + i want a bar graph visualisation for the current table
 - ok, before proceeding tell me what is the \s
 ^ xaxis ?
-+ x is * 
++ xaxis is * 
 - <set x=<star>> Great! and  which feature should be along y-axis ?
-+ y is * 
-* <call>BgdHandler <get x> <star></call>== pass => your requested \s
++ yaxis is * 
+* <call>BgdHandler "<get x>" "<star>"</call> == pass => your requested \s
 ^ bar graph is now added to the main view
 
 
 + i want bar graph for this dataset
-- ok, before proceeding tell me what is the \s
-^ xaxis ?
-+ xaxis is* 
-- <set x=<star>> Great! and  which feature should be along y-axis ?
-+ yaxis is * 
-* <call>BgdHandler <get x> <star></call>== pass => your requested \s
-^ bar graph is now added to the main view
+@ i want a bar graph visualisation for the current table
 
 + i want bar graph
-- ok, before proceeding tell me what is the \s
-^ x-axis ?
-+ place * along xaxis
-- <set x=<star>> Great! and  which feature should be along y-axis ?
-+ place * along yaxis
-* <call>BgdHandler <get x> <star></call>== pass => your requested \s
-^ bar graph is now added to the main view
+@ i want a bar graph visualisation for the current table
 
 + show me bar graph for this
-- ok, before proceeding tell me what is the \s
-^ xaxis ?
-+ * along xaxis 
-- <set x=<star>> Great! and  which feature should be along y-axis ?
-+ * along yaxis
-* <call>BgdHandler <get x> <star></call>== pass => your requested \s
-^ bar graph is now added to the main view
+@ i want a bar graph visualisation for the current table
 
 + show me bar graph
-- ok, before proceeding tell me what is the \s
-^ x-axis ?
-+ xaxis will be * 
-- <set x=<star>> Great! and  which feature should be along y-axis ?
-+ yaxis will be * 
-* <call>BgdHandler <get x> <star></call> == pass =>your requested \s
-^ bar graph is now added to the main view
+@ i want a bar graph visualisation for the current table
 
 + display bar graph for this file
-- ok, before proceeding tell me what is the \s
-^ x-axis ?
-+ * as xaxis 
-- <set x=<star>> Great! and which feature should be along y-axis ?
-+ * as yaxis
-* <call>BgdHandler <get x> <star></call>== pass => your requested \s
-^ bar graph is now added to the main view
+@ i want a bar graph visualisation for the current table
