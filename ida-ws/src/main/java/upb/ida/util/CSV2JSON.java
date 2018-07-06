@@ -14,11 +14,11 @@ public class CSV2JSON {
 
         File output = new File("C:\\Users\\Faisal Mahmood\\Desktop\\dice-ida\\ida-ws\\src\\main\\webapp\\city\\citydistance.csv");
         
-        InputStream in = new FileInputStream(output);
+      //  File in = new FileInputStream(output);
         //InputStream in = new ByteArrayInputStream(output.getBytes("UTF-8"));
 
         JsonMaker lst= new JsonMaker();
-        List <Map< String, String >> lstt = lst.jsonObject(in);
+        List <Map< String, String >> lstt = lst.jsonObject(output);
 
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("What is the x-axis name: \n ");

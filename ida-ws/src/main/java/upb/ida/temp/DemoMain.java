@@ -36,6 +36,9 @@ public class DemoMain {
 	@Autowired
 	private ServletContext context;
 
+	@Autowired
+	private JsonMaker JsonMaker;
+
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
 		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
@@ -85,18 +88,18 @@ public class DemoMain {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
 
-	public Object fileCsv(File input, String x, String y) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
-		InputStream in = new FileInputStream(input);
-		JsonMaker lst = new JsonMaker();
-		List<Map<String, String>> lstt = lst.jsonObject(in);
+//		InputStream in = new FileInputStream(input);
+		
+		List<Map<String, String>> lstt = JsonMaker.jsonObject(input);
 		GetAxisJson jsn = new GetAxisJson();
 
-		return jsn.newJsonObjct(x, y, lstt);
+		jsn.newJsonObjct(x, y, lstt, dataMap);
 
 	}
 
-	public Object getJsonData(String filepath, String x, String y)
+	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap)
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
 //		Map<String, Object> resMap = new HashMap<String, Object>();
@@ -107,7 +110,7 @@ public class DemoMain {
 //		}
 //		return resMap;
 		File file = new File(context.getRealPath(filepath));
-		return fileCsv(file, x, y);
+		fileCsv(file, x, y, dataMap);
 		
 	}
 

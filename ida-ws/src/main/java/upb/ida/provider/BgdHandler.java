@@ -31,14 +31,14 @@ public class BgdHandler implements Subroutine {
 			Map<String, Object> dataMap = new HashMap<String,Object>();
 			//dataMap.put("label", "Bar Graph");
 			String path = DemoMain.getFilePath(actvDs,actvTbl );
-			List <String> keys = new ArrayList <String> ();
+			/*List <String> keys = new ArrayList <String> ();
 		    keys.add(args[0]);
 		    //dataMap.put("Label", "BgData");
 			dataMap.put("xaxisname", args[0]);
 			dataMap.put("yaxisname", args[1]);
-			dataMap.put("keys", keys);
+			dataMap.put("keys", keys);*/
 			
-			dataMap.put("baritems", DemoMain.getJsonData(path,args[0],args[1]));
+			DemoMain.getJsonData(path,args[0],args[1], dataMap);
 			Map<String, Object> submap_data = new HashMap<String,Object>();
 			submap_data.put("bgData", dataMap);
 			submap_data.put("actvScrId", actvScrId);
