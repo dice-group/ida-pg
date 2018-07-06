@@ -13,31 +13,26 @@ import com.rivescript.macro.Subroutine;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.DemoMain;
+
 @Component
 public class BgdHandler implements Subroutine {
 	@Autowired
 	private DemoMain DemoMain;
 	@Autowired
 	private ResponseBean responseBean;
-	public String call (com.rivescript.RiveScript rs, String[] args) {
-		
-		//		String user = rs.currentUser();
+
+	public String call(com.rivescript.RiveScript rs, String[] args) {
+
 		try {
+			// Fetch active dataset details
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			String actvScrId = (String) responseBean.getPayload().get("actvScrId");
-			Map<String, Object> dataMap = new HashMap<String,Object>();
-			//dataMap.put("label", "Bar Graph");
-			String path = DemoMain.getFilePath(actvDs,actvTbl );
-			/*List <String> keys = new ArrayList <String> ();
-		    keys.add(args[0]);
-		    //dataMap.put("Label", "BgData");
-			dataMap.put("xaxisname", args[0]);
-			dataMap.put("yaxisname", args[1]);
-			dataMap.put("keys", keys);*/
-			
-			DemoMain.getJsonData(path,args[0],args[1], dataMap);
-			Map<String, Object> submap_data = new HashMap<String,Object>();
+			Map<String, Object> dataMap = new HashMap<String, Object>();
+			String path = DemoMain.getFilePath(actvDs, actvTbl);
+			// set the bargraph in dataMap
+			DemoMain.getJsonData(path, args[0], args[1], dataMap);
+			Map<String, Object> submap_data = new HashMap<String, Object>();
 			submap_data.put("bgData", dataMap);
 			submap_data.put("actvScrId", actvScrId);
 			responseBean.setPayload(submap_data);
@@ -45,15 +40,13 @@ public class BgdHandler implements Subroutine {
 			return "pass";
 		} catch (IOException e) {
 			e.printStackTrace();
-		
+
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "fail";
-	
+
 	}
 }
