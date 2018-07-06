@@ -11,8 +11,7 @@
       <a style="font-size: x-small">{{message.timestamp.toLocaleTimeString()}}</a>
     </div>
     <div fxFlex="nogrow" >
-      <p style="word-wrap: break-word">
-      {{message.content}}
+      <p style="word-wrap: break-word" [innerHTML]="message.content">
       </p>
     </div>
   </mat-card>
