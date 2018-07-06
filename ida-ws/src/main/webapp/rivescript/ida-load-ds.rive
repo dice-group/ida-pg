@@ -1,17 +1,38 @@
 ! version = 2.0
 
 //Loading the data set 
-+ i would like you to load * dataset
++ load * dataset
 * <call>loadDataset <star></call> == pass => Dataset is now \s
 ^ loaded. You can access the table in the main view.
 - Data set not found!
 
-//I would like you to load <> dataset.
-//Please load <> dataset.
-//Load <> dataset.
-//I would like you to show <> dataset.
-//Please show <> dataset.
-//Show <> dataset.
-// would like you to display <> dataset.
-Please display <> dataset.
-////Display <> dataset.
++ i would like you to load * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
++ please load * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
++ please show * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
++ show * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
++ would you display * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
++ please display * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
++ display * dataset
+* <call>loadDataset <star></call> == pass => Dataset is now \s
+^ loaded. You can access the table in the main view.
+- Data set not found!
+
+
