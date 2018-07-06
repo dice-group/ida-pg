@@ -99,11 +99,17 @@
 - <call>BgdHandler <get x> <star></call> 
 ^ your requested BAR graph is now added to the \s
 
-+ [aA]lgo is *
-- <set selectedAlgo=<star>>\s
-^ Here are all of the parameters for <get selectedAlgo>> Algo \n
-^ <set algParams=<call>ParamsHanler</call>>
- 
++ algo is *
+- <set selectedAlgo=<star>>Here are all of the parameters for <get selectedAlgo> Algo
+^ <set algParams=<call>ParamsHandler <get selectedAlgo></call>><get algParams>
+^ >> Which optional parameters you want?
+
++ optionals are +
+- <set optionals=<star>>
+^ <call>UserParamEntry <get optionals></call>>
+
+
+
 + cluster
 - No probllem, But before proceeding choose a clustering algo\n
 ^ <set algo=<call>ClusterConHandler</call>>\n
