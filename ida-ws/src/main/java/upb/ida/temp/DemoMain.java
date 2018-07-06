@@ -1,9 +1,7 @@
 package upb.ida.temp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +19,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import upb.ida.util.GetAxisJson;
-import upb.ida.util.JsonMaker;
 
 @Component
 public class DemoMain {
@@ -35,9 +32,6 @@ public class DemoMain {
 	}
 	@Autowired
 	private ServletContext context;
-
-	@Autowired
-	private JsonMaker JsonMaker;
 
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
@@ -92,7 +86,7 @@ public class DemoMain {
 
 //		InputStream in = new FileInputStream(input);
 		
-		List<Map<String, String>> lstt = JsonMaker.jsonObject(input);
+		List<Map<String, String>> lstt = convertToMap(input);
 		GetAxisJson jsn = new GetAxisJson();
 
 		jsn.newJsonObjct(x, y, lstt, dataMap);
