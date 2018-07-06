@@ -1,5 +1,8 @@
 package upb.ida.provider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import com.rivescript.RiveScript;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
 
+
 @Component
 public class RiveScriptBeanProvider {
 
@@ -24,11 +28,15 @@ public class RiveScriptBeanProvider {
 	private FdgHandler FdgHandler;
 	@Autowired
 	private BgdHandler BgdHandler;
+	@Autowired
+	private ClusterConHandler ClusterConHandler;
+	@Autowired
+	private ParamsHandler ParamsHandler;
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	@Qualifier("sessionBotInstance")
-	private RiveScript initBotInstance() {
+	public RiveScript initBotInstance() {
 
 		RiveScript bot = new RiveScript();
 
@@ -41,7 +49,17 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("loadDataset", loadDataContent);
 		bot.setSubroutine("FdgHandler", FdgHandler);
 		bot.setSubroutine("BgdHandler", BgdHandler);
+		bot.setSubroutine("ClusterConHandler", ClusterConHandler);
+		bot.setSubroutine("ParamsHandler", ParamsHandler);
 		return bot;
+	}
+	
+	@Bean
+	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+	@Qualifier("riveSessionMap")
+	public Map<String,Object> riveSessionMap() {
+		Map<String,Object> sessionMap = new HashMap<>();
+		return sessionMap;
 	}
 
 }

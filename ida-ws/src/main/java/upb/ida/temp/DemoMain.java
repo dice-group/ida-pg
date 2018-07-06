@@ -1,9 +1,8 @@
 package upb.ida.temp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import upb.ida.util.GetAxisJson;
-import upb.ida.util.JsonMaker;
 
 @Component
 public class DemoMain {
@@ -37,37 +35,26 @@ public class DemoMain {
 
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
-		CsvSchema csvSchema = CsvSchema.builder()
-		                               .setUseHeader(true)
-		                               .build();
+		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
 		CsvMapper csvMapper = new CsvMapper();
 
 		// Read data from CSV file
-		List<Object> readAll = csvMapper.readerFor(Map.class)
-		                                .with(csvSchema)
-		                                .readValues(input)
-		                                .readAll();
+		List<Object> readAll = csvMapper.readerFor(Map.class).with(csvSchema).readValues(input).readAll();
 
 		ObjectMapper mapper = new ObjectMapper();
 
 		// Write JSON formated data to stdout
-		return mapper.writerWithDefaultPrettyPrinter()
-		             .writeValueAsString(readAll);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(readAll);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Map<String, String>> convertToMap(File input) throws JsonProcessingException, IOException {
 
-		CsvSchema csvSchema = CsvSchema.builder()
-		                               .setUseHeader(true)
-		                               .build();
+		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
 		CsvMapper csvMapper = new CsvMapper();
 
 		// Read data from CSV file
-		List<Object> readAll = csvMapper.readerFor(Map.class)
-		                                .with(csvSchema)
-		                                .readValues(input)
-		                                .readAll();
+		List<Object> readAll = csvMapper.readerFor(Map.class).with(csvSchema).readValues(input).readAll();
 		List<Map<String, String>> resMapList = new ArrayList<>();
 		for (Object entry : readAll) {
 			resMapList.add((Map<String, String>) entry);
@@ -95,26 +82,30 @@ public class DemoMain {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
 
-	public Object fileCsv(File input, String x, String y) throws JsonProcessingException, IOException {
+	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
-		InputStream in = new FileInputStream(input);
-		JsonMaker lst = new JsonMaker();
-		List<Map<String, String>> lstt = lst.jsonObject(in);
+//		InputStream in = new FileInputStream(input);
+		
+		List<Map<String, String>> lstt = convertToMap(input);
 		GetAxisJson jsn = new GetAxisJson();
 
-        return	jsn.newJsonObjct(x, y, lstt);
+		jsn.newJsonObjct(x, y, lstt, dataMap);
 
 	}
 
-	public Map<String, Object> getJsonData(String filepath, String x, String y) throws JsonProcessingException, IOException {
+	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap)
+			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
-		Map<String, Object> resMap = new HashMap<String, Object>();
+//		Map<String, Object> resMap = new HashMap<String, Object>();
+//		File file = new File(context.getRealPath(filepath));
+//		if (file != null) {
+//			// Do something with child
+//			resMap.put(file.getName(), fileCsv(file, x, y));
+//		}
+//		return resMap;
 		File file = new File(context.getRealPath(filepath));
-		if (file != null) {
-			// Do something with child
-			resMap.put(file.getName(), fileCsv(file, x, y));
-		}
-		return resMap;
+		fileCsv(file, x, y, dataMap);
+		
 	}
 
 	public String getFilePath(String actvDs, String actvTbl) {

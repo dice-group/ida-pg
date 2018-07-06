@@ -20,6 +20,7 @@ public class MessageRestController {
 	private ResponseBean response;
 	@Autowired
 	private RiveScriptService rsService;
+	
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
