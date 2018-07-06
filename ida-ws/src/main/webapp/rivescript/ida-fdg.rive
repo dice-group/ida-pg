@@ -14,7 +14,30 @@
 - <set targetNode=<star>> which feature should depict the strength \s
 ^ between the nodes ?
 + strength is *
-- <set strength =<star>><call>FdgHandler <get sourceNode> <get targetNode> <star></call> \s 
+- <set strength =<star>><call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> \s 
 ^ == pass => your requested force directed graph is now added to the \s
 ^ main view
 
++ i want force directed graph visualization
+@ show me fdg
+
++ i want force graph for this dataset
+@ show me fdg
+
++ i want force graph
+@ show me fdg
+
++ show me force graph for this
+@ show me fdg
+
++ show me force graph
+@ show me fdg
+
++ display force graph
+@ show me fdg
+
++ display force graph for this dataset
+@ show me fdg
+
++ display froce graph for this file
+@ show me fdg
