@@ -1,6 +1,5 @@
 package upb.ida.util;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +158,7 @@ public class FilterUtil {
 	 */
 	private Double getDoubleVal(String entry) throws NumberFormatException, ParseException {
 		Double res = Double
-		.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(entry).toString());
+		.parseDouble(entry);
 		return res;
 	}
 	/**

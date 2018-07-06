@@ -1,6 +1,5 @@
 package upb.ida.util;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +32,7 @@ public class GetAxisJson {
 			HashMap<String, Object> mMap = new HashMap<String, Object>();
 			mMap = new HashMap<String, Object>(); // create a new one!
 			mMap.put(xKey, lstt.get(i).get(xKey));
-			Double StrngthValID = Double.parseDouble(
-					NumberFormat.getNumberInstance(java.util.Locale.US).parse(lstt.get(i).get(yKey)).toString());
+			Double StrngthValID = Double.parseDouble(lstt.get(i).get(yKey));
 			mMap.put(yKey, StrngthValID);
 
 			nodeArr1.add(mapper.readTree(mapper.writeValueAsString(mMap)));
