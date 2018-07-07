@@ -32,7 +32,10 @@ public class RiveScriptBeanProvider {
 	private ClusterConHandler ClusterConHandler;
 	@Autowired
 	private ParamsHandler ParamsHandler;
-
+	@Autowired
+	private UserParamEntry UserParamEntry;
+	@Autowired
+	private	UserParamValueCollector UserParamValueCollector;
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	@Qualifier("sessionBotInstance")
@@ -51,6 +54,9 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("BgdHandler", BgdHandler);
 		bot.setSubroutine("ClusterConHandler", ClusterConHandler);
 		bot.setSubroutine("ParamsHandler", ParamsHandler);
+		bot.setSubroutine("UserParamEntry", UserParamEntry);
+		bot.setSubroutine("UserParamValueCollector", UserParamValueCollector);
+		
 		return bot;
 	}
 	
