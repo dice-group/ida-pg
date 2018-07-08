@@ -16,6 +16,8 @@ public class DataDumpUtil {
 	@Autowired
 	@Qualifier("scktClstrDtDmp")
 	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
+	@Autowired
+	private SessionUtil sessionUtil;
 
 	// Method to fetch the names of clustering algorithm
 	public List<String> getClusteringAlgoNames() {
@@ -32,6 +34,7 @@ public class DataDumpUtil {
 		String trmdName = algoName.trim();
 		for (ClusterAlgoDesc entry : scktClstrDtDmp.values()) {
 			if (entry.getFnName().equalsIgnoreCase(trmdName) || entry.getFnDesc().equalsIgnoreCase(trmdName)) {
+				sessionUtil.setAlgoNameOrignal(entry.getFnName());
 				resList = entry.getParams();
 				break;
 			}
