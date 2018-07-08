@@ -33,15 +33,15 @@ public class BarGraphUtil {
 	public static final String FROM_TO_REC = "FROMTO";
 
 	@Autowired
-	DemoMain demoMain;
+	private DemoMain demoMain;
 	@Autowired
 	private ServletContext context;
 	@Autowired
-	FilterUtil filterUtil;
+	private FilterUtil filterUtil;
 
 	// To initialize variables with parameterized constructor
 	public void newJsonObjct(String x, String y, List<Map<String, String>> lstt, Map<String, Object> dataMap)
-			throws java.io.IOException, NumberFormatException, ParseException {
+			throws IOException, NumberFormatException, ParseException {
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode nodeArr1 = mapper.createArrayNode();
 		String xKey = getMatchingKey(x, lstt.get(0));

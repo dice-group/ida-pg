@@ -17,7 +17,7 @@ public class BgdHandler implements Subroutine {
 	@Autowired
 	private ResponseBean responseBean;
 	@Autowired
-	BarGraphUtil barGraphUtil;
+	private BarGraphUtil barGraphUtil;
 
 	public String call(com.rivescript.RiveScript rs, String[] args) {
 
