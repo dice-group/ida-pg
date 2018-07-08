@@ -40,7 +40,7 @@ public class FilterUtil {
 	 * @return FilterOptions instance
 	 */
 	public FilterOption getLastNFilterOpt(int n, int datasetSize) {
-		FilterOption filterOption = new FilterOption(n - 1, datasetSize - n);
+		FilterOption filterOption = new FilterOption(datasetSize - n - 1, datasetSize);
 		return filterOption;
 	}
 
@@ -131,7 +131,6 @@ public class FilterUtil {
 		// reached
 		List<Map<String, String>> resList = new ArrayList<>();
 		resList.addAll(data);
-		int swapCount = 0;
 		String curSel;
 		String curComp;
 		String fieldName = filterOption.getFieldName();
@@ -144,23 +143,21 @@ public class FilterUtil {
 		int matchNum = filterOption.getSort() == FilterSort.ASC ? GREATER : LESSER;
 		Map<String, String> curEntry;
 		Map<String, String> comEntry;
+		//TODO: Fix sorting algorithm
 		// Select elements sequentially
-		for (int i = 0; i < resList.size(); i++) {
-			curEntry = resList.get(i);
-			curSel = curEntry.get(fieldName);
+		for (int i = 0; i < limit; i++) {
+			
 			// Compare them with the ones ahead, switch positions if current selection is
 			// bigger
 			for (int j = i + 1; j < resList.size(); j++) {
+				curEntry = resList.get(i);
+				curSel = curEntry.get(fieldName);
 				comEntry = resList.get(j);
 				curComp = comEntry.get(fieldName);
 				if (compareEntries(curSel, curComp, isNumeric) == matchNum) {
-					swapCount++;
 					// swap
 					resList.set(i, comEntry);
 					resList.set(j, curEntry);
-				}
-				if (swapCount >= limit) {
-					break;
 				}
 			}
 		}

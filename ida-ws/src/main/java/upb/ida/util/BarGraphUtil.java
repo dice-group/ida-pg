@@ -81,7 +81,7 @@ public class BarGraphUtil {
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
 		List<Map<String, String>> lstt = demoMain.convertToMap(input);
-		//Filter data
+		// Filter data
 		lstt = fetchFilteredData(lstt, args);
 		GetAxisJson jsn = new GetAxisJson();
 
@@ -118,7 +118,7 @@ public class BarGraphUtil {
 		} else if (filterType.equalsIgnoreCase(FROM_TO_REC)) {
 			// Get Filter Option for particular sequence of records
 			Integer fromSeq = Integer.parseInt(params[0]);
-			Integer toSeq = Integer.parseInt(params[0]);
+			Integer toSeq = Integer.parseInt(params[1]);
 			filterOption = filterUtil.getSubDatasetFilterOpt(fromSeq, toSeq);
 		}
 		return filterOption;
@@ -134,38 +134,46 @@ public class BarGraphUtil {
 		String path = demoMain.getFilePath(actvDs, actvTbl);
 		String xaxisname = args[0];
 		String yaxisname = args[1];
+		String[] filterArgs = new String[args.length - 2];
+		for (int i = 2; i < args.length; i++) {
+			filterArgs[i - 2] = args[i];
+		}
 		// set the bargraph in dataMap
-		getJsonData(path, xaxisname, yaxisname, dataMap, args);
+		getJsonData(path, xaxisname, yaxisname, dataMap, filterArgs);
 		Map<String, Object> submap_data = responseBean.getPayload();
 		submap_data.put("bgData", dataMap);
 		responseBean.setActnCode(IDALiteral.UIA_BG);
 	}
 
-	public List<Map<String, String>>  fetchFilteredData(List<Map<String, String>> data, String[] args) throws NumberFormatException, ParseException {
+	public List<Map<String, String>> fetchFilteredData(List<Map<String, String>> data, String[] args)
+			throws NumberFormatException, ParseException {
 		List<Map<String, String>> resList = null;
 		String filterType = args[0];
 		String[] params = null;
 		if (filterType.equalsIgnoreCase(FIRST_N_REC) || filterType.equalsIgnoreCase(LAST_N_REC)) {
 			// Process for First/Last N records
-			String[] tempParams = {args[1], String.valueOf(data.size())};
+			String[] tempParams = { args[1], String.valueOf(data.size()) };
 			params = tempParams;
 		} else if (filterType.equalsIgnoreCase(TOP_N_REC)) {
-			//Perform check for isNumeric
+			// Perform check for isNumeric
 			String fieldName = args[2];
-			Boolean isNumeric = isNumeric(data.get(0).get(fieldName));
+			Map<String, String> sampleEntry = data.get(0);
+			String tempKey = getMatchingKey(fieldName, sampleEntry);
+			fieldName = tempKey;
+			Boolean isNumeric = isNumeric(sampleEntry.get(fieldName));
 			// Process for top N records
-			String[] tempParams = {args[1], fieldName, args[3], isNumeric.toString()};
+			String[] tempParams = { args[1], fieldName, args[3], isNumeric.toString() };
 			params = tempParams;
 		} else if (filterType.equalsIgnoreCase(FROM_TO_REC)) {
 			// process for sub selection
-			String[] tempParams = {args[1], args[2]};
+			String[] tempParams = { args[1], args[2] };
 			params = tempParams;
 		}
 		FilterOption filterOption = getFilterOption(filterType, params);
 		resList = filterUtil.getFilteredData(data, filterOption);
 		return resList;
 	}
-	
+
 	public boolean isNumeric(String entry) {
 		return entry.matches("^[1-9]\\d*(\\.\\d+)?$");
 	}
