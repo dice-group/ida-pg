@@ -82,10 +82,9 @@ public class DemoMain {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
 
-	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap)
+			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 
-//		InputStream in = new FileInputStream(input);
-		
 		List<Map<String, String>> lstt = convertToMap(input);
 		GetAxisJson jsn = new GetAxisJson();
 
@@ -95,17 +94,9 @@ public class DemoMain {
 
 	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap)
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
-
-//		Map<String, Object> resMap = new HashMap<String, Object>();
-//		File file = new File(context.getRealPath(filepath));
-//		if (file != null) {
-//			// Do something with child
-//			resMap.put(file.getName(), fileCsv(file, x, y));
-//		}
-//		return resMap;
 		File file = new File(context.getRealPath(filepath));
 		fileCsv(file, x, y, dataMap);
-		
+
 	}
 
 	public String getFilePath(String actvDs, String actvTbl) {

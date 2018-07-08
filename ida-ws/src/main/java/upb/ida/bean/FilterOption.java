@@ -39,6 +39,20 @@ public class FilterOption {
 		this.toSeq = toSeq;
 		this.isNumeric = isNumeric;
 	}
+	
+	/**
+	 * For custom sub selection
+	 * 
+	 * @param fromSeq
+	 *            - Index of the starting record (inclusive)
+	 * @param toSeq
+	 *            - Index of the end record (exclusive)
+	 */
+	public FilterOption(Integer fromSeq, Integer toSeq) {
+		super();
+		this.fromSeq = fromSeq;
+		this.toSeq = toSeq;
+	}
 
 	/**
 	 * For sorting and custom sub selection together
