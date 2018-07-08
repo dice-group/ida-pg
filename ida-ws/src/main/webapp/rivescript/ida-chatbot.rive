@@ -104,9 +104,16 @@
 ^ <set algParams=<call>ParamsHandler <get selectedAlgo></call>><get algParams>
 ^ >> Which optional parameters you want?
 
-+ optionals are +
++ optionals are *
 - <set optionals=<star>>
-^ <call>UserParamEntry <get optionals></call>>
+^ <set finalList=<call>UserParamEntry "<get optionals>" <get selectedAlgo></call>> YOUR PARAMS ARE : <get finalList>
+^ <br> Enter Value for your parameters.
+
++ set * as * 
+* <call>UserParamValueCollector <star1> <star2></call> == pass => got it Next param value.  
+- All values taken,Enter the columns names for clustering
++ columns are * 
+- <set columns=<star>><call>ClusterDataGetter "<get columns>" <get selectedAlgo></call> Clustering done
 
 
 
