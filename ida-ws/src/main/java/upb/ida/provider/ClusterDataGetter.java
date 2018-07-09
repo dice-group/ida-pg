@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,12 +28,17 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.ResponseBean;
+import upb.ida.bean.cluster.ClusterAlgoDesc;
+import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.bean.cluster.ParamEntryChecker;
 import upb.ida.temp.DemoMain;
 import upb.ida.util.SessionUtil;
 
 @Component
 public class ClusterDataGetter implements Subroutine {
+	@Autowired
+	@Qualifier("scktClstrDtDmp")
+	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
 	@Autowired
 	private DemoMain DemoMain;
 	@Autowired
@@ -84,12 +90,24 @@ public class ClusterDataGetter implements Subroutine {
 			
 				HashMap<String, String> mMap = new HashMap<String, String>();
 				Iterator<String> op=paramList.keySet().iterator();
-				
-				while(op.hasNext()) {
+//				ClusterAlgoDesc entry =(ClusterAlgoDesc) scktClstrDtDmp.values();
+//				List<ClusterParam> type=entry.getParams();
+//		    	Iterator<String> tempType=((Map<String, ClusterAlgoDesc>) type).keySet().iterator();
+//				
+//		    	while(tempType.hasNext()) {
+//					   String typ = tempType.next();
+//				
+//		    	}
+		    	while(op.hasNext()) {
 					   String tempKey = op.next();
 				       values=(ParamEntryChecker)paramList.get(tempKey);
+				      
 				       mMap.put(values.getParamName(), values.getParamValue());
 				}
+				
+				
+				
+				
 				HashMap<String, Object> jsonDataForCluster = new HashMap<String, Object>();
 				jsonDataForCluster.put("data", outer_list);
 				jsonDataForCluster.put("params", mMap);
