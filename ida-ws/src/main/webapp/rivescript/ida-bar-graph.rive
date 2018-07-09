@@ -12,19 +12,19 @@
 - <set x=<star>> Great! and  which feature should be along y-axis ?
 + yaxis is * 
 - <set y=<star>> Great! and  How many items would you like to see?
-^ \s\sTop N | First N | last N | from __ to __
+^ <br>(HINT: Top N | First N | last N | from __ to __ )
 	
 + first * records
-* <call>BgdHandler "<get x>" "<get y>" FIRSTN <star1></call> == pass => your requested
+* <call>BgdHandler "<get x>" "<get y>" FIRSTN "<star1>"</call> == pass => Your requested
 ^ \sBar Graph is now added to the main view
 + last * records
-* <call>BgdHandler "<get x>" "<get y>" LASTN <star1></call> == pass => your requested
+* <call>BgdHandler "<get x>" "<get y>" LASTN "<star1>"</call> == pass => Your requested
 ^ \sBar Graph is now added to the main view
 + top * records sorted * on *
-* <call>BgdHandler "<get x>" "<get y>" TOPN <star1> <star3> <star2></call> == pass => your requested
+* <call>BgdHandler "<get x>" "<get y>" TOPN "<star1>" "<star3>" "<star2>"</call> == pass => Your requested
 ^ \sBar Graph is now added to the main view
 + from * to *
-* <call>BgdHandler "<get x>" "<get y>" FROMTO <star1> <star2></call> == pass => your requested
+* <call>BgdHandler "<get x>" "<get y>" FROMTO "<star1>" "<star2>"</call> == pass => Your requested
 ^ \sBar Graph is now added to the main view
 
 

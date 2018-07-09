@@ -2,7 +2,6 @@ package upb.ida.temp;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
-import upb.ida.util.GetAxisJson;
 
 @Component
 public class DemoMain {
@@ -80,23 +77,6 @@ public class DemoMain {
 
 	public static boolean datasetExists(String keyword) {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
-	}
-
-	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap)
-			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
-
-		List<Map<String, String>> lstt = convertToMap(input);
-		GetAxisJson jsn = new GetAxisJson();
-
-		jsn.newJsonObjct(x, y, lstt, dataMap);
-
-	}
-
-	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap)
-			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
-		File file = new File(context.getRealPath(filepath));
-		fileCsv(file, x, y, dataMap);
-
 	}
 
 	public String getFilePath(String actvDs, String actvTbl) {

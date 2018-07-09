@@ -83,9 +83,7 @@ public class BarGraphUtil {
 		List<Map<String, String>> lstt = demoMain.convertToMap(input);
 		// Filter data
 		lstt = fetchFilteredData(lstt, args);
-		GetAxisJson jsn = new GetAxisJson();
-
-		jsn.newJsonObjct(x, y, lstt, dataMap);
+		newJsonObjct(x, y, lstt, dataMap);
 
 	}
 
