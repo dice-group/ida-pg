@@ -8,15 +8,12 @@ import org.springframework.stereotype.Component;
 
 import com.rivescript.macro.Subroutine;
 
-import upb.ida.util.DataDumpUtil;
-import upb.ida.util.SessionUtil;
 import upb.ida.bean.cluster.ParamEntryChecker;
+import upb.ida.util.SessionUtil;
 
 @Component
 public class UserParamValueCollector implements Subroutine {
 	
-	@Autowired
-	private DataDumpUtil DataDumpUtil;
 	@Autowired
 	private SessionUtil sessionUtil;
 	public String call (com.rivescript.RiveScript rs, String[] args) {
@@ -24,26 +21,13 @@ public class UserParamValueCollector implements Subroutine {
 	
 		try {
 			
+			@SuppressWarnings("unchecked")
 			Map<String , Object> paramList = (Map<String, Object>) sessionUtil.getSessionMap().get("clusterParams");
 			ParamEntryChecker values;
 			ParamEntryChecker allProvider;
 			paramList.get(args[0]);
 			Iterator<String> op=paramList.keySet().iterator();
 			int checker=0;
-			
-//			while(op.hasNext()) {
-//				String tempKey = op.next();
-//			       allProvider=(ParamEntryChecker)paramList.get(tempKey);
-//			       if(allProvider.isProvided()){
-//			    	   checker=checker +1;
-//			    	   }
-//		
-//			}
-			//Map<String , ParamEntryChecker> valueUpdate;
-			
-//			if(checker==paramList.size()) {
-//				return "fail";
-//			}
 			if(checker!=paramList.size()) {		
 				 if(paramList.containsKey(args[0]));{
 					 values= (ParamEntryChecker) paramList.get(args[0]);
