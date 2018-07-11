@@ -24,7 +24,7 @@ public class CheckParamCollected implements Subroutine {
 	private DataDumpUtil DataDumpUtil;
 	@Autowired
 	private SessionUtil sessionUtil;
-	
+
 	@SuppressWarnings("unchecked")
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		try {
@@ -62,7 +62,7 @@ public class CheckParamCollected implements Subroutine {
 				}
 			
 			return StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br><br>";
-			
+
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
