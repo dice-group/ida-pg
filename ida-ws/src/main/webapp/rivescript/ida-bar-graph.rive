@@ -1,0 +1,44 @@
+! version = 2.0
+
+//Accepting user query for
+//Bar graph visualisation and
+//calling BgHandler subroutine
+//to communicate with Java and frontend 
+
++ i want a bar graph visualisation for the current table
+- ok, before proceeding tell me what is the \s
+^ xaxis ?
++ xaxis is * 
+- <set x=<star>> Great! and  which feature should be along y-axis ?
++ yaxis is * 
+- <set y=<star>> Great! and  How many items would you like to see?
+^ <br>(HINT: Top N | First N | last N | from __ to __ )
+	
++ first * records
+* <call>BgdHandler "<get x>" "<get y>" FIRSTN "<star1>"</call> == pass => Your requested
+^ \sBar Graph is now added to the main view
++ last * records
+* <call>BgdHandler "<get x>" "<get y>" LASTN "<star1>"</call> == pass => Your requested
+^ \sBar Graph is now added to the main view
++ top * records sorted * on *
+* <call>BgdHandler "<get x>" "<get y>" TOPN "<star1>" "<star3>" "<star2>"</call> == pass => Your requested
+^ \sBar Graph is now added to the main view
++ from * to *
+* <call>BgdHandler "<get x>" "<get y>" FROMTO "<star1>" "<star2>"</call> == pass => Your requested
+^ \sBar Graph is now added to the main view
+
+
++ i want bar graph for this dataset
+@ i want a bar graph visualisation for the current table
+
++ i want bar graph
+@ i want a bar graph visualisation for the current table
+
++ show me bar graph for this
+@ i want a bar graph visualisation for the current table
+
++ show me bar graph
+@ i want a bar graph visualisation for the current table
+
++ display bar graph for this file
+@ i want a bar graph visualisation for the current table

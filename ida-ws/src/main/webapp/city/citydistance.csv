@@ -1,24 +1,24 @@
 "city1","city2","distance"
-"Berlin","Buenos Aires","7,402"
-"Berlin","Cairo","1,795"
-"Buenos Aires","Berlin","7,402"
-"Buenos Aires","Cairo","7,345"
-"Buenos Aires","Washington","5,218"
-"Cairo","Berlin","1,795"
-"Cairo","Buenos Aires","7,345"
-"Cairo","Washington","5,800"
-"Calcutta","Berlin","4,368"
-"Calcutta","Washington","8,084"
-"Cape Town","Berlin","5,981"
-"Cape Town","Buenos Aires","4,269"
-"Cape Town","Cairo","4,500"
-"Cape Town","Tokyo","9,156"
-"Cape Town","Warsaw","5,958"
-"Cape Town","Washington","7,901"
-"Chicago","Tokyo","6,299"
-"Chicago","Warsaw","4,667"
-"Chicago","Washington","597"
-"Hong Kong","Chicago","7,793"
-"Hong Kong","Honolulu","5,549"
-"Hong Kong","Istanbul","4,984"
-"Hong Kong","Lisbon","6,853"
+"Berlin","Buenos Aires",7402
+"Berlin","Cairo",1795
+"Buenos Aires","Berlin",7402
+"Buenos Aires","Cairo",7345
+"Buenos Aires","Washington",5218
+"Cairo","Berlin",1795
+"Cairo","Buenos Aires",7345
+"Cairo","Washington",5800
+"Calcutta","Berlin",4368
+"Calcutta","Washington",8084
+"Cape Town","Berlin",5981
+"Cape Town","Buenos Aires",4269
+"Cape Town","Cairo",4500
+"Cape Town","Tokyo",9156
+"Cape Town","Warsaw",5958
+"Cape Town","Washington",7901
+"Chicago","Tokyo",6299
+"Chicago","Warsaw",4667
+"Chicago","Washington",597
+"Hong Kong","Chicago",7793
+"Hong Kong","Honolulu",5549
+"Hong Kong","Istanbul",4984
+"Hong Kong","Lisbon",6853
