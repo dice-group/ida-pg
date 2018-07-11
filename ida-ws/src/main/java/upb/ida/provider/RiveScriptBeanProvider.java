@@ -38,6 +38,8 @@ public class RiveScriptBeanProvider {
 	private UserParamValueCollector userParamValueCollector;
 	@Autowired
 	private ClusterDataGetter clusterDataGetter;
+	@Autowired
+	private CheckParamCollected checkParamCollected;
 
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -60,6 +62,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("UserParamEntry", userParamEntry);
 		bot.setSubroutine("UserParamValueCollector", userParamValueCollector);
 		bot.setSubroutine("ClusterDataGetter", clusterDataGetter);
+		bot.setSubroutine("CheckParamCollected", checkParamCollected);
 
 		return bot;
 	}

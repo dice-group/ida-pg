@@ -25,4 +25,5 @@ public class SessionUtil {
 	public void setSessionMap(Map<String, Object> sessionMap) {
 		this.sessionMap = sessionMap;
 	}
+	
 }
