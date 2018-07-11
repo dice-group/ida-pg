@@ -1,8 +1,5 @@
 package upb.ida.provider;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.rivescript.Config;
 import com.rivescript.RiveScript;
+
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
 

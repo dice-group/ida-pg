@@ -20,7 +20,6 @@ public class GetCorrectParamTypes {
 	
 	public HashMap<String, Object> CorrectTypeValues(Map<String , Object> paramList,String algoName,List<ClusterParam> resList){
 		
-		@SuppressWarnings("unused")
 		ParamEntryChecker values;
 		
 			HashMap<String, Object> mMap = new HashMap<String, Object>();
@@ -49,17 +48,26 @@ public class GetCorrectParamTypes {
 			    			   
 			    		   }
 			    		   else if(resList.get(i).getType().get(0).equals("boolean")) {
-			    			   if(values.getParamValue().equals("true"))  {
+			    			   if(values.getParamValue().equals("true")||values.getParamValue().equals("True"))  {
 				    			   	bool=true;
 				    			   	mMap.put(values.getParamName(), bool);
 				    			   	}
-					    			if(values.getParamValue().equals("false"))  {
-					    			bool=true;
+					    			if(values.getParamValue().equals("false")||values.getParamValue().equals("False"))  {
+					    			bool=false;
 					    			mMap.put(values.getParamName(), bool);
 					    			}
 			    			   
 			    		   }
-			    		   else {
+			    		   else if(values.getParamValue().equals("true")||values.getParamValue().equals("True"))  {
+			    			   	bool=true;
+			    			   	mMap.put(values.getParamName(), bool);
+			    			   	}
+			    		   else if(values.getParamValue().equals("false")||values.getParamValue().equals("False"))  {
+				    			bool=false;
+				    			mMap.put(values.getParamName(), bool);
+				    			} 
+				    		
+			    	       else {
 			    			   mMap.put(values.getParamName(), values.getParamValue());
 			    			   
 			    		   }

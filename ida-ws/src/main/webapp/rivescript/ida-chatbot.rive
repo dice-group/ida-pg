@@ -107,10 +107,10 @@
 + optionals are *
 - <set optionals=<star>>
 ^ <set finalList=<call>UserParamEntry "<get optionals>" <get selectedAlgo></call>> YOUR PARAMS ARE : <get finalList>
-^ [HINT] set parameter as 5
+^ [HINT : Set parameter as ...]
 
 + set * as * 
-* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call>  got it Next param value.  
+* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call> Value Stored, Enter next Value.  
 - All values taken,Enter the columns names for clustering
 + columns are * 
 - <set columns=<star>> Which Column is Key Label Feature? 
