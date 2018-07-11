@@ -11,6 +11,13 @@ import org.springframework.stereotype.Component;
 import upb.ida.bean.FilterOption;
 import upb.ida.bean.FilterSort;
 
+/**
+ * Exposes util methods to perform filtering on a given dataset of type
+ * List<Map<String, String>>
+ * 
+ * @author Nikit
+ *
+ */
 @Component
 public class FilterUtil {
 
@@ -143,10 +150,10 @@ public class FilterUtil {
 		int matchNum = filterOption.getSort() == FilterSort.ASC ? GREATER : LESSER;
 		Map<String, String> curEntry;
 		Map<String, String> comEntry;
-		//TODO: Fix sorting algorithm
+		// TODO: Fix sorting algorithm
 		// Select elements sequentially
 		for (int i = 0; i < limit; i++) {
-			
+
 			// Compare them with the ones ahead, switch positions if current selection is
 			// bigger
 			for (int j = i + 1; j < resList.size(); j++) {

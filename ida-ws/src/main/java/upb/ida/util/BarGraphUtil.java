@@ -24,6 +24,9 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.DemoMain;
 
+/**
+ * Exposes util methods for Bargraph visualization
+ */
 @Component
 public class BarGraphUtil {
 
@@ -93,7 +96,12 @@ public class BarGraphUtil {
 		fileCsv(file, x, y, dataMap, args);
 
 	}
-
+	/**
+	 * Method to create an instance of FilterOptions for the provided parameters
+	 * @param filterType - type of filtering operation
+	 * @param params - parameters for the fitlering operation
+	 * @return - FilterOption instance
+	 */
 	public FilterOption getFilterOption(String filterType, String[] params) {
 		FilterOption filterOption = null;
 		if (filterType.equalsIgnoreCase(FIRST_N_REC)) {
@@ -121,7 +129,7 @@ public class BarGraphUtil {
 		}
 		return filterOption;
 	}
-
+	
 	public void generateBarGraphData(String[] args, ResponseBean responseBean)
 			throws NumberFormatException, JsonProcessingException, IOException, ParseException {
 
@@ -142,7 +150,14 @@ public class BarGraphUtil {
 		submap_data.put("bgData", dataMap);
 		responseBean.setActnCode(IDALiteral.UIA_BG);
 	}
-
+	/**
+	 * Method to fetch filtered data for a given dataset and filter arguments
+	 * @param data - dataset to perform filtering on
+	 * @param args - arguments of for filtering
+	 * @return - filtered dataset
+	 * @throws NumberFormatException
+	 * @throws ParseException
+	 */
 	public List<Map<String, String>> fetchFilteredData(List<Map<String, String>> data, String[] args)
 			throws NumberFormatException, ParseException {
 		List<Map<String, String>> resList = null;
@@ -171,7 +186,11 @@ public class BarGraphUtil {
 		resList = filterUtil.getFilteredData(data, filterOption);
 		return resList;
 	}
-
+	/**
+	 * Method to check if given String is of numeric format
+	 * @param entry - string to check
+	 * @return - if string is numeric
+	 */
 	public boolean isNumeric(String entry) {
 		return entry.matches("^[1-9]\\d*(\\.\\d+)?$");
 	}

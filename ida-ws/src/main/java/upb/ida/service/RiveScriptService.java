@@ -8,13 +8,27 @@ import com.rivescript.RiveScript;
 
 import upb.ida.constant.IDALiteral;
 
+/**
+ * Service class to expose the communication to RiveScript
+ * 
+ * @author Nikit
+ *
+ */
 @Service
 public class RiveScriptService {
-
+	/**
+	 * Session scoped instance of the RiveScript chatbot
+	 */
 	@Autowired
 	@Qualifier("sessionBotInstance")
 	private RiveScript sessionBotInstance;
 
+	/**
+	 * Method to fetch the Rivescript response for the given query
+	 * 
+	 * @param query - natural language query
+	 * @return - natural language response
+	 */
 	public String getRSResponse(String query) {
 		String resp = null;
 		// Get bot instance

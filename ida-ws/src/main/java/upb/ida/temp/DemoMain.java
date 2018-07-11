@@ -17,6 +17,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+/**
+ * Class to expose util methods for File based operations in IDA
+ * 
+ * @author Nikit
+ *
+ */
 @Component
 public class DemoMain {
 
@@ -27,9 +33,18 @@ public class DemoMain {
 		dsPathMap.put("city", "/city");
 		dsPathMap.put("movie", "/movie");
 	}
+	/**
+	 * current context instance of SpringContext
+	 */
 	@Autowired
 	private ServletContext context;
-
+	/**
+	 * Method to generate a json string from a csv file
+	 * @param input - csv file
+	 * @return - json string
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 */
 	public String printJson(File input) throws JsonProcessingException, IOException {
 
 		CsvSchema csvSchema = CsvSchema.builder().setUseHeader(true).build();
@@ -43,7 +58,13 @@ public class DemoMain {
 		// Write JSON formated data to stdout
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(readAll);
 	}
-
+	/**
+	 * Method to generate a collection of rows from a csv file in List<Map<String, String>> format
+	 * @param input - csv file
+	 * @return - collection of rows in List<Map<String, String>> format 
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Map<String, String>> convertToMap(File input) throws JsonProcessingException, IOException {
 
@@ -58,7 +79,13 @@ public class DemoMain {
 		}
 		return resMapList;
 	}
-
+	/**
+	 * Method to generate a dataset map for a given dataset
+	 * @param keyword - name of dataset
+	 * @return - dataset map
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 */
 	public Map<String, String> getDatasetContent(String keyword) throws JsonProcessingException, IOException {
 		Map<String, String> resMap = new HashMap<String, String>();
 		String path = dsPathMap.get(keyword.toLowerCase());
@@ -74,11 +101,20 @@ public class DemoMain {
 		}
 		return resMap;
 	}
-
+	/**
+	 * Method to check if given dataset exists
+	 * @param keyword - name of dataset
+	 * @return - if dataset exists
+	 */
 	public static boolean datasetExists(String keyword) {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
-
+	/**
+	 * Method to fetch the filePath of a given datable
+	 * @param actvDs - active dataset
+	 * @param actvTbl - active datatable name
+	 * @return - file path of the datatable
+	 */
 	public String getFilePath(String actvDs, String actvTbl) {
 		String path = null;
 		String dir = dsPathMap.get(actvDs.toLowerCase());

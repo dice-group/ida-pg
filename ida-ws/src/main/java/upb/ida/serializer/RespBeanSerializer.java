@@ -9,13 +9,19 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import upb.ida.bean.ResponseBean;
 
+/**
+ * Serializer class for the {@link ResponseBean}
+ * 
+ * @author Nikit
+ *
+ */
 public class RespBeanSerializer extends StdSerializer<ResponseBean> {
 
 	/**
-	 * 
+	 * auto generated serial version id
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	public RespBeanSerializer() {
 		this(null);
 	}
@@ -23,7 +29,9 @@ public class RespBeanSerializer extends StdSerializer<ResponseBean> {
 	public RespBeanSerializer(Class<ResponseBean> t) {
 		super(t);
 	}
-
+	/**
+	 * Method to implement the serializer
+	 */
 	@Override
 	public void serialize(ResponseBean value, JsonGenerator jgen, SerializerProvider arg2)
 			throws IOException, JsonGenerationException {
