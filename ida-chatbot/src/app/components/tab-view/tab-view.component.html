@@ -4,4 +4,5 @@
   <div *ngSwitchCase="tabType.GEN">
     {{tabElement.content}}
   </div>
+  <app-datatable-view *ngSwitchCase="tabType.DTTBL" [data]="tabElement.content"></app-datatable-view>
 </ng-container>
