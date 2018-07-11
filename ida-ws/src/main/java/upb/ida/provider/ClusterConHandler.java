@@ -25,8 +25,7 @@ public class ClusterConHandler implements Subroutine {
 //			String actvScrId = (String) responseBean.getPayload().get("actvScrId");
             List<String> algoList=  new ArrayList<>();
             algoList=DataDumpUtil.getClusteringAlgoNames();
-            String algoStr=new String();
-            algoStr= "<br>"+algoList.get(0);
+            String algoStr= "<br>"+algoList.get(0);
             for (int i = 0; i < algoList.size()-1; i++) {
             	
     			algoStr=algoStr+"<br>"+algoList.get(i+1);

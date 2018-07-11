@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import upb.ida.bean.ResponseBean;
 import upb.ida.service.RiveScriptService;
 
+/**
+ * Exposes RESTful RPCs for the IDA Chatbot
+ * 
+ * @author Nikit
+ *
+ */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/message")
@@ -20,12 +26,20 @@ public class MessageRestController {
 	private ResponseBean response;
 	@Autowired
 	private RiveScriptService rsService;
-	
+
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
 	}
-
+	/**
+	 * Method to accept queries for the chatbot
+	 * @param msg - query in natural language
+	 * @param actvScrId - id of the active screen
+	 * @param actvTbl - name of the active data table on screen
+	 * @param actvDs - name of the active dataset on screen
+	 * @return - instance of {@link ResponseBean}
+	 * @throws Exception
+	 */
 	@RequestMapping("/sendmessage")
 	public ResponseBean sendmessage(@RequestParam(value = "msg") String msg,
 			@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
@@ -37,7 +51,7 @@ public class MessageRestController {
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
 		String reply = rsService.getRSResponse(msg);
-		
+
 		response.setChatmsg(reply);
 		return response;
 	}

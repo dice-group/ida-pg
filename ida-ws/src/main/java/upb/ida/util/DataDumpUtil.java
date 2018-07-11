@@ -11,13 +11,22 @@ import org.springframework.stereotype.Component;
 import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
 
+/**
+ * Exposes util methods for scikit datadump
+ * 
+ * @author Nikit
+ *
+ */
 @Component
 public class DataDumpUtil {
 	@Autowired
 	@Qualifier("scktClstrDtDmp")
 	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
 
-	// Method to fetch the names of clustering algorithm
+	/**
+	 *  Method to fetch the names of clustering algorithm
+	 * @return - names of clustering algorithms
+	 */
 	public List<String> getClusteringAlgoNames() {
 		List<String> resList = new ArrayList<>();
 		for (ClusterAlgoDesc entry : scktClstrDtDmp.values()) {
@@ -26,7 +35,11 @@ public class DataDumpUtil {
 		return resList;
 	}
 
-	// Method to fetch list of params in a clustering algorithm
+	/** Method to fetch list of params in a clustering algorithm
+	 * 
+	 * @param algoName - name of the algorithm for which params are to be fetched
+	 * @return - List of parameters
+	 */
 	public List<ClusterParam> getClusterAlgoParams(String algoName) {
 		List<ClusterParam> resList = null;
 		String trmdName = algoName.trim();

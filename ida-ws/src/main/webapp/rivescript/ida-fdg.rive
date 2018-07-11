@@ -6,16 +6,16 @@
 //to communicate with Java and frontend 
 
 + show me fdg
-- No probllem, But before proceeding tell me what is the \s
+- No problem, But before proceeding tell me what is the \s
 ^ source node ?
 + source node is *
-- <set sourceNode=<star>> Great!and which feature should be the target node ?
+- <set sourceNode=<star>> Great! And which feature should be the target node ?
 + target node is *
 - <set targetNode=<star>> which feature should depict the strength \s
 ^ between the nodes ?
 + strength is *
-- <set strength =<star>><call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> \s 
-^ == pass => your requested force directed graph is now added to the \s
+* <call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> == pass => Your\s
+^ requested force directed graph is now added to the \s
 ^ main view
 
 + i want force directed graph visualization

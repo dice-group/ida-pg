@@ -23,6 +23,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import upb.ida.temp.DemoMain;
 
+/**
+ * Exposes util methods to perform FDG related operations
+ * 
+ * @author Nikit
+ *
+ */
 @Component
 public class FDG_Util {
 	@Autowired
@@ -38,22 +44,23 @@ public class FDG_Util {
 	 * @param triples
 	 *            - list of triples
 	 * @return jsonobject of data
-	 * @throws IOException 
-	 * @throws JsonProcessingException 
+	 * @throws IOException
+	 * @throws JsonProcessingException
 	 */
-	public static ObjectNode getFDGData(List<FDG_Triple> triples, double[] strngthValArr) throws JsonProcessingException, IOException {
+	public static ObjectNode getFDGData(List<FDG_Triple> triples, double[] strngthValArr)
+			throws JsonProcessingException, IOException {
 		double max = StatUtils.max(strngthValArr);
 		double min = StatUtils.min(strngthValArr);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode rootNode = mapper.createObjectNode();
-		
+
 		ArrayNode nodeArr1 = mapper.createArrayNode();
 		ArrayNode edgeArr1 = mapper.createArrayNode();
-		
+
 		rootNode.set("nodes", nodeArr1);
 		rootNode.set("links", edgeArr1);
-		
+
 		Set<FDG_Node> nodeSet = new HashSet<>();
 		FDG_Node srcNd;
 		FDG_Node trgtNd;
@@ -77,10 +84,6 @@ public class FDG_Util {
 			edgeNode.put("id", entry.getId());
 			edgeNode.put("source", entry.getSourceNode().getId());
 			edgeNode.put("target", entry.getTargetNode().getId());
-			// TODO: Normalization needed between 1-10 (Use standard deviation to decide the
-			// strength of the edge, calculate mean, min and max; then normalize the
-			// deviation between min - mean to max - mean
-			// edgeNode.put("str_val", entry.getStr_val());
 			edgeNode.put("str_val", calcNrmlStrngth(entry.getStrngthVal(), max, min));
 			if (entry.getLabel() != null)
 				edgeNode.put("label", entry.getLabel());
@@ -88,6 +91,22 @@ public class FDG_Util {
 		return rootNode;
 	}
 
+	/**
+	 * Method to generate a Json object representing a Force Directed Graph
+	 * 
+	 * @param filePath
+	 *            - path of the data file
+	 * @param srcNodeFtr
+	 *            - feature name of the source node
+	 * @param trgtNodeFtr
+	 *            - feature name of the target node
+	 * @param strngthFtr
+	 *            - feature name of the strength between nodes
+	 * @return - Json object representing a Force Directed Graph
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public ObjectNode generateFDG(String filePath, String srcNodeFtr, String trgtNodeFtr, String strngthFtr)
 			throws JsonProcessingException, IOException, ParseException {
 		ObjectNode res = null;
@@ -119,8 +138,7 @@ public class FDG_Util {
 				trgtNd = new FDG_Node(ndUniqueId++, trgtNdLbl, 1);
 				nodeMap.put(trgtNdLbl, trgtNd);
 			}
-			Double strngthValD = Double
-					.parseDouble(strngthVal);
+			Double strngthValD = Double.parseDouble(strngthVal);
 			strngthValArr[sindx++] = strngthValD;
 			// 3. Create Triple Object
 			FDG_Triple triple = new FDG_Triple(tripUniqueId++, srcNd, trgtNd, strngthValD);
@@ -131,9 +149,20 @@ public class FDG_Util {
 		return res;
 	}
 
+	/**
+	 * Method to calculate a custom normal value for a given number
+	 * 
+	 * @param num
+	 *            - number to normalize
+	 * @param max
+	 *            - maximum number in the range of numbers
+	 * @param min
+	 *            - minimum number in the range of numbers
+	 * @return - normalized value
+	 */
 	public static double calcNrmlStrngth(double num, double max, double min) {
 		double res = 0;
-		res = ((0.9)*(num - min)/(max - min))+ 0.1;
+		res = ((0.9) * (num - min) / (max - min)) + 0.1;
 		return res;
 	}
 

@@ -47,26 +47,26 @@ export class AppComponent {
       this.mainViewItems.push(mvEle);
       this.activeItem = newId;
     } else if (resp.actnCode === 2) {
-      // Open new tab
+      // Open new tab with Force Directed Graph
       const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.fdgData, true, true);
-      for (const mvwItem of this.mainViewItems) {
-        if (Number(resp.payload.actvScrId) === mvwItem.id) {
-          // Add a tab to extra tabs
-          mvwItem.extraTabs.push(newTab);
-          this.getActiveMainView().focusLastTab();
-          break;
-        }
-      }
+      this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 3) {
-      // Open new tab
+      // Open new tab with Bar Graph
       const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.bgData, true, true);
-      for (const mvwItem of this.mainViewItems) {
-        if (Number(resp.payload.actvScrId) === mvwItem.id) {
-          // Add a tab to extra tabs
-          mvwItem.extraTabs.push(newTab);
-          this.getActiveMainView().focusLastTab();
-          break;
-        }
+      this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 4) {
+      // Open new tab with DataTable
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.tabLabel, TabType.DTTBL, resp.payload.clusterData, true, true);
+      this.addNewTab(newTab, resp);
+    }
+  }
+  addNewTab(newTab: TabElement, resp: ResponseBean) {
+    for (const mvwItem of this.mainViewItems) {
+      if (Number(resp.payload.actvScrId) === mvwItem.id) {
+        // Add a tab to extra tabs
+        mvwItem.extraTabs.push(newTab);
+        this.getActiveMainView().focusLastTab();
+        break;
       }
     }
   }
