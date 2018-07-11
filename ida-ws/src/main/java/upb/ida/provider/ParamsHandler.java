@@ -21,7 +21,7 @@ public class ParamsHandler implements Subroutine {
             paramList=DataDumpUtil.getClusterAlgoParams(args[0]);
             String algoStr = null;
 
-            if(paramList.get(0).isOptional()==false) {
+            if(!paramList.get(0).isOptional()) {
             	//algoStr="<br>"+paramList.get(0).getName()+"[Mandatory]";
             	algoStr="<br>";
             }

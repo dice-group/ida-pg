@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.cluster.ParamEntryChecker;
-import upb.ida.util.SessionUtil;;
+import upb.ida.util.SessionUtil;
 
 @Component
 public class UserParamValueCollector implements Subroutine {
@@ -36,7 +36,7 @@ public class UserParamValueCollector implements Subroutine {
 			Iterator<String> op=paramList.keySet().iterator();
 			int checker=0;
 			if(checker!=paramList.size()) {		
-				 if(paramList.containsKey(args[0]));{
+				 if(paramList.containsKey(args[0])){
 					 values= (ParamEntryChecker) paramList.get(args[0]);
 				 
 				 if (values.isProvided()) {

@@ -5,18 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.bean.cluster.ParamEntryChecker;
 @Component
 public class GetCorrectParamTypes {
-	@Autowired
-	@Qualifier("scktClstrDtDmp")
-	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
 	
 	public HashMap<String, Object> CorrectTypeValues(Map<String , Object> paramList,String algoName,List<ClusterParam> resList){
 		
