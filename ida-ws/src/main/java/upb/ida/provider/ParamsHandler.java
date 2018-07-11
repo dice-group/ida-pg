@@ -22,22 +22,23 @@ public class ParamsHandler implements Subroutine {
             String algoStr = null;
 
             if(paramList.get(0).isOptional()==false) {
-            	algoStr="<br>"+paramList.get(0).getName();
+            	//algoStr="<br>"+paramList.get(0).getName()+"[Mandatory]";
+            	algoStr="<br>";
             }
             
             else{
-            	algoStr="<br>"+paramList.get(0).getName()+"[Optional]";
+            	algoStr="<br>"+ 1 +" :- " + paramList.get(0).getName() + "  [ Optional ] ";
             }
             for (int i = 0; i < paramList.size()-1; i++) {
             	if(paramList.get(i+1).isOptional()) {
-            	algoStr=algoStr+"<br>"+paramList.get(i+1).getName()+"[Optional]";
+            	algoStr=algoStr+"<br>"+(i+1)+ ":- " + paramList.get(i+1).getName() + "  [Optional] ";
             	}
-            	else {
-            		algoStr=algoStr+"<br>"+paramList.get(i+1).getName();
-            	}
+//            	else {
+//            		algoStr=algoStr+"<br>"+paramList.get(i+1).getName();
+//            	}
             }
 
-            return algoStr+"<br>";
+            return algoStr+"<br><br>Which optional parameters you want?<br><br>";
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import com.rivescript.Config;
 import com.rivescript.RiveScript;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
@@ -43,7 +44,7 @@ public class RiveScriptBeanProvider {
 	@Qualifier("sessionBotInstance")
 	public RiveScript initBotInstance() {
 
-		RiveScript bot = new RiveScript();
+		RiveScript bot = new RiveScript(Config.utf8());
 
 		// Load the Rivescript directory.
 		bot.loadDirectory(context.getRealPath(IDALiteral.RS_DIRPATH));

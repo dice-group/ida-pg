@@ -88,9 +88,7 @@ public class ClusterDataGetter implements Subroutine {
 				GetCorrectParamTypes paramsMap= new GetCorrectParamTypes();
 				HashMap<String, Object> mMap = new HashMap<String, Object>();
 				String algoName=sessionUtil.getAlgoNameOrignal();
-				mMap=paramsMap.CorrectTypeValues(paramList,algoName,
-			            DataDumpUtil.getClusterAlgoParams(algoName));
-				
+				mMap=paramsMap.CorrectTypeValues(paramList,algoName,DataDumpUtil.getClusterAlgoParams(algoName));
 		    	HashMap<String, Object> jsonDataForCluster = new HashMap<String, Object>();
 				jsonDataForCluster.put("data", outer_list);
 				jsonDataForCluster.put("params", mMap);
@@ -100,11 +98,9 @@ public class ClusterDataGetter implements Subroutine {
 				
 				KernelHttpRequest kernel=new KernelHttpRequest();
 				List<String> clusterResult = kernel.getClusterResults(nodeArr1);
-				
 				List<Map<String, Object>> responseList=new ArrayList<>();
-				
 				columns=args[0].replaceAll("\\sand\\s"," ");
-				String keyFeature=args[2];
+				String keyFeature=args[1];
 				columns=keyFeature+" "+columns;
 				List<String> columnsForResponse = Arrays.asList(columns.split("\\s+"));
 				

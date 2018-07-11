@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,23 +37,52 @@ public class UserParamEntry implements Subroutine {
 			List<ClusterParam> paramList=  new ArrayList<>();
             paramList=DataDumpUtil.getClusterAlgoParams(args[1]);
             List<String> opParams_addable =new ArrayList<>();
+            List<String> paramWithTypes =new ArrayList<>();
            
             for(int x=0;x<opParams.size();x++) {
-            	opParams_addable.add(opParams.get(x));
+               for(int y = 0;y<paramList.size();y++) {	
+               if(paramList.get(y).getName().equals(opParams.get(x))) {	
+            	if(paramList.get(y).getType().size() > 1 ) {
+            	String list=paramList.get(y).getType().toString();
+            	String p=opParams.get(x) + " &nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "}]"), "[{");
+            	opParams_addable.add(p);
+            	paramWithTypes.add(opParams.get(x));
+            	}
+            	else if(paramList.get(y).getType().size()==1 ) {
+                	String list=paramList.get(y).getType().toString();
+                	String p=opParams.get(x) + " &nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "]"), "[");
+                	opParams_addable.add(p);
+                	paramWithTypes.add(opParams.get(x));
+
+                	}
+               }
+               }
             }
            
             for (int i = 0; i < paramList.size(); i++) {
-                 if(paramList.get(i).isOptional()==false) {
-                    opParams_addable.add(paramList.get(i).getName());
-                 }            		
-            	}
+                if(paramList.get(i).isOptional()==false) {
+	            	if(paramList.get(i).getType().size() > 1 ) {
+	            	String list=paramList.get(i).getType().toString();
+	            	String p=paramList.get(i).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "}]"), "[{");
+	            	opParams_addable.add(p);
+	            	paramWithTypes.add(paramList.get(i).getName());
+
+	            	}
+	            	else if(paramList.get(i).getType().size() == 1 ) {
+	                	String list=paramList.get(i).getType().toString();
+	                	String p=paramList.get(i).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "]"), "[");
+	                	opParams_addable.add(p);
+	                	paramWithTypes.add(paramList.get(i).getName());
+
+	                	}
+            	}}
             Map<String,ParamEntryChecker> paramMap = new HashMap<>();
             String tempName;
             ParamEntryChecker tempParamEntry;
             
-            for (int i = 0; i < opParams_addable.size(); i++) {
-                 tempName= opParams_addable.get(i);
-                 tempParamEntry = new ParamEntryChecker(tempName, null, false , opParams_addable);
+            for (int i = 0; i < paramWithTypes.size(); i++) {
+                 tempName= paramWithTypes.get(i);
+                 tempParamEntry = new ParamEntryChecker(tempName, null, false , paramWithTypes);
                  paramMap.put(tempName, tempParamEntry);                                 
             }
             //paramMap.put("userParList",new ParamEntryChecker(null, null, false , opParams_addable));
@@ -63,7 +93,7 @@ public class UserParamEntry implements Subroutine {
             for (int i = 1; i < opParams_addable.size(); i++) {
                           paramReply=paramReply+"<br>"+(i+1)+" :- "+opParams_addable.get(i);                      
            }
-			return paramReply;
+			return paramReply +"<br>Enter values for the parameters <br><br>";
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

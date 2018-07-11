@@ -100,14 +100,14 @@
 ^ your requested BAR graph is now added to the \s
 
 + algo is *
-- <set selectedAlgo=<star>>Here are all of the parameters for <get selectedAlgo> Algo
+- <set selectedAlgo=<star>>Followng is the list of parameters for " <get selectedAlgo> " :
 ^ <set algParams=<call>ParamsHandler <get selectedAlgo></call>><get algParams>
-^ >> Which optional parameters you want?
+^ [HINT : Optionals are .......]
 
 + optionals are *
 - <set optionals=<star>>
 ^ <set finalList=<call>UserParamEntry "<get optionals>" <get selectedAlgo></call>> YOUR PARAMS ARE : <get finalList>
-^ <br> Enter Value for your parameters.
+^ [HINT] set parameter as 5
 
 + set * as * 
 * <call>UserParamValueCollector <star1> <star2></call> == pass => got it Next param value.  
@@ -115,14 +115,13 @@
 + columns are * 
 - <set columns=<star>> Which Column is Key Label Feature? 
 + key feature is *
-- <set keyFeature=<star>><call>ClusterDataGetter "<get columns>" <get selectedAlgo> <get keyFeature></call> Clustering done
-
+* <call>ClusterDataGetter "<get columns>" <star></call> == pass => Clustering Completed!!
 
 
 + cluster
 - No probllem, But before proceeding choose a clustering algo\n
 ^ <set algo=<call>ClusterConHandler</call>>\n
-^ [Hint ]  <get algo> 
+^ <get algo> 
 ^ main view
 
 
