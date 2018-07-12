@@ -8,6 +8,12 @@ import org.springframework.web.context.annotation.SessionScope;
 @SessionScope
 @Component
 public class SessionUtil {
+	
+	/**
+	 * Method to return a session scoped Map and a String
+	 * @return - Map
+	 * @return - String
+	 */
 	private Map<String,Object> sessionMap;
 	private String algoNameOrignal;
 	public String getAlgoNameOrignal() {

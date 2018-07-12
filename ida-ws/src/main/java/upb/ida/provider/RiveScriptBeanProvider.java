@@ -15,6 +15,14 @@ import com.rivescript.RiveScript;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
 
+
+/**
+ * Beans provider for the rivescript bot instance
+ * 
+ * @author Nikit
+ *
+ */
+
 @Component
 public class RiveScriptBeanProvider {
 
@@ -39,6 +47,10 @@ public class RiveScriptBeanProvider {
 	@Autowired
 	private CheckParamCollected checkParamCollected;
 
+	/**
+	 * Method to provide a session scoped bean for the RiveScript bot
+	 * @return - RiveScript Instance
+	 */
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	@Qualifier("sessionBotInstance")
@@ -64,5 +76,7 @@ public class RiveScriptBeanProvider {
 
 		return bot;
 	}
+
+	
 
 }

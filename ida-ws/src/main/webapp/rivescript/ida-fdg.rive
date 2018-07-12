@@ -1,0 +1,43 @@
+! version = 2.0
+
+//Accepting user query for
+//Force directed graph visualisation and
+//calling FdgHandler subroutine
+//to communicate with Java and frontend 
+
++ show me fdg
+- No problem, But before proceeding tell me what is the \s
+^ source node ?
++ source node is *
+- <set sourceNode=<star>> Great! And which feature should be the target node ?
++ target node is *
+- <set targetNode=<star>> which feature should depict the strength \s
+^ between the nodes ?
++ strength is *
+* <call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> == pass => Your\s
+^ requested force directed graph is now added to the \s
+^ main view
+
++ i want force directed graph visualization
+@ show me fdg
+
++ i want force graph for this dataset
+@ show me fdg
+
++ i want force graph
+@ show me fdg
+
++ show me force graph for this
+@ show me fdg
+
++ show me force graph
+@ show me fdg
+
++ display force graph
+@ show me fdg
+
++ display force graph for this dataset
+@ show me fdg
+
++ display froce graph for this file
+@ show me fdg

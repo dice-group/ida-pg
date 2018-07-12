@@ -1,5 +1,9 @@
 package upb.ida.constant;
-
+/**
+ * Container for all the string literals across application
+ * @author Nikit
+ *
+ */
 public interface IDALiteral {
 	public static final String EXAMPLE = "this is an example constant string";
 	

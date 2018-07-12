@@ -29,7 +29,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
-
+/**
+ * Beans Provider for Scikit datadump
+ * @author Nikit
+ *
+ */
 @Component
 public class DataDumpProvider {
 	@Autowired

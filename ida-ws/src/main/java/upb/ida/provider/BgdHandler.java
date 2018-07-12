@@ -2,8 +2,6 @@ package upb.ida.provider;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,32 +9,20 @@ import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.ResponseBean;
-import upb.ida.constant.IDALiteral;
-import upb.ida.temp.DemoMain;
+import upb.ida.util.BarGraphUtil;
 
 @Component
 public class BgdHandler implements Subroutine {
-	@Autowired
-	private DemoMain DemoMain;
+
 	@Autowired
 	private ResponseBean responseBean;
+	@Autowired
+	private BarGraphUtil barGraphUtil;
 
 	public String call(com.rivescript.RiveScript rs, String[] args) {
 
 		try {
-			// Fetch active dataset details
-			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
-			String actvDs = (String) responseBean.getPayload().get("actvDs");
-			String actvScrId = (String) responseBean.getPayload().get("actvScrId");
-			Map<String, Object> dataMap = new HashMap<String, Object>();
-			String path = DemoMain.getFilePath(actvDs, actvTbl);
-			// set the bargraph in dataMap
-			DemoMain.getJsonData(path, args[0], args[1], dataMap);
-			Map<String, Object> submap_data = new HashMap<String, Object>();
-			submap_data.put("bgData", dataMap);
-			submap_data.put("actvScrId", actvScrId);
-			responseBean.setPayload(submap_data);
-			responseBean.setActnCode(IDALiteral.UIA_BG);
+			barGraphUtil.generateBarGraphData(args, responseBean);
 			return "pass";
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -47,6 +33,6 @@ public class BgdHandler implements Subroutine {
 			e.printStackTrace();
 		}
 		return "fail";
-
 	}
+
 }
