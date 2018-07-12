@@ -12,7 +12,7 @@ import upb.ida.bean.cluster.ParamEntryChecker;
 @Component
 public class GetCorrectParamTypes {
 	
-	public HashMap<String, Object> CorrectTypeValues(Map<String , Object> paramList,String algoName,List<ClusterParam> resList){
+	public HashMap<String, Object> correctTypeValues(Map<String , Object> paramList,String algoName,List<ClusterParam> resList){
 		
 		ParamEntryChecker values;
 		

@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +22,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.ResponseBean;
-import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.temp.DemoMain;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.GetCorrectParamTypes;
@@ -32,9 +30,7 @@ import upb.ida.util.SessionUtil;
 
 @Component
 public class ClusterDataGetter implements Subroutine {
-	@Autowired
-	@Qualifier("scktClstrDtDmp")
-	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
+	
 	@Autowired
 	private DemoMain DemoMain;
 	@Autowired
@@ -88,7 +84,7 @@ public class ClusterDataGetter implements Subroutine {
 				GetCorrectParamTypes paramsMap= new GetCorrectParamTypes();
 				HashMap<String, Object> mMap = new HashMap<String, Object>();
 				String algoName=sessionUtil.getAlgoNameOrignal();
-				mMap=paramsMap.CorrectTypeValues(paramList,algoName,DataDumpUtil.getClusterAlgoParams(algoName));
+				mMap=paramsMap.correctTypeValues(paramList,algoName,DataDumpUtil.getClusterAlgoParams(algoName));
 		    	HashMap<String, Object> jsonDataForCluster = new HashMap<String, Object>();
 				jsonDataForCluster.put("data", outer_list);
 				jsonDataForCluster.put("params", mMap);
@@ -98,37 +94,13 @@ public class ClusterDataGetter implements Subroutine {
 				
 				KernelHttpRequest kernel=new KernelHttpRequest();
 				List<String> clusterResult = kernel.getClusterResults(nodeArr1);
-				List<Map<String, Object>> responseList=new ArrayList<>();
 				columns=args[0].replaceAll("\\sand\\s"," ");
 				String keyFeature=args[1];
 				columns=keyFeature+" "+columns;
 				List<String> columnsForResponse = Arrays.asList(columns.split("\\s+"));
+				prepareResponseForCluster(columnsForResponse,path,clusterResult,dataMap);
 				
-				File responseReader = new File(context.getRealPath(path));
-				List<Map<String, String>> responseFileContent = DemoMain.convertToMap(responseReader);
-				List <String> responseColumnsKeyValue = new ArrayList <String> ();
-				for(int i=0;i<columnsForResponse.size();i++) {
-					responseColumnsKeyValue.add(getMatchingKey(columnsForResponse.get(i), responseFileContent.get(0)));
-					
-				}
-				for (int i = 0; i < responseFileContent.size(); i++) {
-				
-					Map<String,Object> innerMap=new HashMap<String,Object>();
-					for(int x=0;x<responseColumnsKeyValue.size();x++) {
-					    if(x==0) {
-							innerMap.put(columnsForResponse.get(x),responseFileContent.get(i).get(responseColumnsKeyValue.get(x)));
-							
-					    }
-					    else {
-						innerMap.put(columnsForResponse.get(x),Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
-					    }
-					}
-					innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
-					responseList.add(innerMap);
-				}
-				
-				
-				dataMap.put("cluster", responseList);
+			
 				responseBean.setPayload(dataMap);
 //				responseBean.setActnCode(IDALiteral.UIA_FDG);
 				
@@ -161,6 +133,36 @@ public class ClusterDataGetter implements Subroutine {
 			}
 		}
 		return res;
+	}
+	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+		
+		List<Map<String, Object>> responseList=new ArrayList<>();
+		File responseReader = new File(context.getRealPath(path));
+		List<Map<String, String>> responseFileContent = DemoMain.convertToMap(responseReader);
+		List <String> responseColumnsKeyValue = new ArrayList <String> ();
+		for(int i=0;i<columnsForResponse.size();i++) {
+			responseColumnsKeyValue.add(getMatchingKey(columnsForResponse.get(i), responseFileContent.get(0)));
+			
+		}
+		for (int i = 0; i < responseFileContent.size(); i++) {
+		
+			Map<String,Object> innerMap=new HashMap<String,Object>();
+			for(int x=0;x<responseColumnsKeyValue.size();x++) {
+			    if(x==0) {
+					innerMap.put(columnsForResponse.get(x),responseFileContent.get(i).get(responseColumnsKeyValue.get(x)));
+					
+			    }
+			    else {
+				innerMap.put(columnsForResponse.get(x),Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
+			    }
+			}
+			innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
+			responseList.add(innerMap);
+		}
+		
+		
+		dataMap.put("cluster", responseList);
+		
 	}
 }
 

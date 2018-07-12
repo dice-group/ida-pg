@@ -35,8 +35,7 @@ public class UserParamValueCollector implements Subroutine {
 
 			Iterator<String> op=paramList.keySet().iterator();
 			int checker=0;
-			if(checker!=paramList.size()) {		
-				 if(paramList.containsKey(args[0])){
+			if(checker!=paramList.size()&&paramList.containsKey(args[0])){
 					 values= (ParamEntryChecker) paramList.get(args[0]);
 				 
 				 if (values.isProvided()) {
@@ -77,7 +76,7 @@ public class UserParamValueCollector implements Subroutine {
 					 
 				 }
 				}
-			}
+			
 			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block

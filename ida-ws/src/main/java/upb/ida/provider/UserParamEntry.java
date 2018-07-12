@@ -60,7 +60,7 @@ public class UserParamEntry implements Subroutine {
             }
            
             for (int i = 0; i < paramList.size(); i++) {
-                if(paramList.get(i).isOptional()==false) {
+                if(!paramList.get(i).isOptional()) {
 	            	if(paramList.get(i).getType().size() > 1 ) {
 	            	String list=paramList.get(i).getType().toString();
 	            	String p=paramList.get(i).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "}]"), "[{");
