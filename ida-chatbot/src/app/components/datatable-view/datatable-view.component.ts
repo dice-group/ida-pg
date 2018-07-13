@@ -19,7 +19,9 @@ export class DatatableViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tableData = JSON.parse(this.tableData.toString());
+    if (!(this.tableData instanceof Array)) {
+      this.tableData = JSON.parse(this.tableData);
+    }
     this.dataSource = new MatTableDataSource(this.tableData);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
