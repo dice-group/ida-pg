@@ -1,6 +1,13 @@
 package upb.ida.provider;
 
 import java.io.IOException;
+/**
+ * fdgHandler is a subroutine that is used to create response for UI
+ * of Force Directed Graph by taking inputs from user through rivescript  .
+ * 
+ * @author Faisal
+ *
+ */
 import java.text.ParseException;
 import java.util.Map;
 
@@ -21,6 +28,16 @@ public class FdgHandler implements Subroutine {
 	private FDG_Util FDG_Util;
 	@Autowired
 	private ResponseBean responseBean;
+	
+	/**
+	 *Method to create response for Force Directed Graph visualization
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * @return  String - pass or fail
+	 */
+	
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		
 		//		String user = rs.currentUser();
@@ -31,6 +48,10 @@ public class FdgHandler implements Subroutine {
 			String path = DemoMain.getFilePath(actvDs,actvTbl );
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", "Fdg Data");
+			/**
+			 * function call takes file path and arguments as 
+			 * input to get data for force directed graph  
+			 */
 			dataMap.put("fdgData", FDG_Util.generateFDG(path,args[0].toLowerCase(),args[1],args[2]));
 			//dataMap.put("actvScrId", actvScrId);
 			responseBean.setPayload(dataMap);
