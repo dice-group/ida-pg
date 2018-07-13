@@ -1,6 +1,104 @@
 <mat-tab-group style="min-width: 40vw;max-height: 100vh">
   <mat-tab label="Intelligent Data Assistant">
-    Intro Tab works!
+    <h1 align="center">Welcome to Intelligent Chat Assistant!</h1>
+     <img id="begin" class="ida-intro-img" src="/assets/begin_tutorial.png"
+         alt="User Tutorial" style="width:80%;">
+    <h2>Overview</h2>
+    <p>This tutorial shows you how to build a simple Data workflow, through the most important features of
+      the Assistant. You'll learn how to:</p>
+    <ul>
+      <li><a href="#intro-img">Introduction</a></li>
+      <li><a href="#load-data-img">Load a Data set</a></li>
+      <li><a href="#scroll-data-img">Navigate through the table of the data sets</a></li>
+      <li><a href="#bar-graph-view-img">Run a Bar Graph visualisation on the data set</a></li>
+      <li><a href="#fdg-view-img">Run a Force Directed Graph visualisation on the data set</a></li>
+      <li>Classify each data point into a specific group through Clustering</li>
+    </ul>
+    <br>
+    <h3>Introduction</h3>
+    <p>This section will give you a quick overview of how your interaction with the Intelligent Assistant
+      will look like</p>
+    <img id="intro-img" class="ida-intro-img" src="/assets/intro_index.png"
+         alt="Intro Index" style="width:80%;">
+    <ol>
+      <li>Side Bar</li>
+          <ol>
+            <li>Navigation Tab</li>
+          </ol>
+      <li>Main View</li>
+         <ol>
+           <li>Tab Contents</li>
+           <li>Tab Header</li>
+         </ol>
+      <li>Chat Window</li>
+    </ol>
+    <br>
+    <h3>Load a Data Set</h3>
+    <p>This section will let you load a specific data set</p>
+    <img id="load-data-img" class="ida-intro-img" src="/assets/load-data-img.png"
+         alt="Load Data" style="width:80%;">
+    <p>After requesting, the Introduction tab in the Main view will be automatically
+      switched to the tab containing the requested data set</p>
+    <ul>
+      <li>Side bar contains the requested data set's Navigation button</li>
+      <li>Main View contains the contents of the data set</li>
+      <li>Tab header contains the file names of the data sets</li>
+      <li>Chat window will have responses for the requested user query</li>
+    </ul>
+    <br>
+    <h3>Navigate through the table of the data sets</h3>
+    <p>This section will let you navigate through the tables of the data sets</p>
+    <img id="scroll-data-img" class="ida-intro-img" src="/assets/scroll-data-img.png"
+         alt="Scroll Data" style="width:80%;">
+    <p>You can navigate through the tables of the different data sets
+       by clicking on the Tab header as shown in the image</p>
+    <br>
+    <h3>Run a Bar Graph visualisation on the data set</h3>
+    <p>This is an interactive bar chart used for visual-based filtering.
+      It allows the user to filter by categories. The graph is displayed in the Main view
+      depending on how the data is sorted</p>
+    <img id="bar-graph-view-img" class="ida-intro-img" src="/assets/bar-graph-view-img.png"
+         alt="Bar Graph" style="width:80%;">
+    <!-- TODO: align to center-->
+    <p align="justify">Let us explain it more clearly using an example,
+       <br>
+      <b>User:</b> I want a bar graph visualisation for the current table
+      <br>
+      <b>Assistant:</b> ok, before proceeding tell me what is the x-axis
+      <br>
+      <b>User:</b> City
+      <br>
+      <b>Assistant:</b> Great! and  which feature should be along y-axis ?
+      <br>
+      <b>User:</b> Wine
+      <br>
+      <b>Assistant:</b> your requested bar graph is now added to the main view</p>
+    <br>
+    <h3>Run a Force Directed Graph visualisation on the data set</h3>
+    <p>This is an interactive force directed graph used for visualisation of data.
+      Force-directed graph drawing assigns forces among the set of edges
+      and the set of nodes of a graph drawing</p>
+    <img id="fdg-view-img" class="ida-intro-img" src="/assets/fdg-view-img.png"
+         alt="Bar Graph" style="width:80%;">
+    <br>
+    <p align="justify">Below is an illustration in detail,
+      <br>
+      <b>User:</b> I want force directed graph visualization
+      <br>
+      <b>Assistant:</b> ok, before proceeding tell me what is the source node
+      <br>
+      <b>User:</b> city1
+      <br>
+      <b>Assistant:</b> Great!, and which feature should be the target node ?
+      <br>
+      <b>User:</b> city2
+      <br>
+      <b>Assistant:</b> which feature should depict the strength between the nodes ?
+      <br>
+      <b>User:</b> strength is distance
+      <br>
+      <b>Assistant:</b> your requested bar graph is now added to the main view</p>
+    <!-- TODO: top button implementation-->
   </mat-tab>
 
 </mat-tab-group>
