@@ -1,8 +1,5 @@
 package upb.ida.provider;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +11,10 @@ import org.springframework.stereotype.Component;
 
 import com.rivescript.Config;
 import com.rivescript.RiveScript;
+
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
+
 
 /**
  * Beans provider for the rivescript bot instance
@@ -23,6 +22,7 @@ import upb.ida.temp.ExampleMacro;
  * @author Nikit
  *
  */
+
 @Component
 public class RiveScriptBeanProvider {
 
@@ -31,13 +31,22 @@ public class RiveScriptBeanProvider {
 	@Autowired
 	private LoadDataContent loadDataContent;
 	@Autowired
-	private FdgHandler FdgHandler;
+	private FdgHandler fdgHandler;
 	@Autowired
-	private BgdHandler BgdHandler;
+	private BgdHandler bgdHandler;
 	@Autowired
-	private ClusterConHandler ClusterConHandler;
+	private ClusterConHandler clusterConHandler;
 	@Autowired
-	private ParamsHandler ParamsHandler;
+	private ParamsHandler paramsHandler;
+	@Autowired
+	private UserParamEntry userParamEntry;
+	@Autowired
+	private UserParamValueCollector userParamValueCollector;
+	@Autowired
+	private ClusterDataGetter clusterDataGetter;
+	@Autowired
+	private CheckParamCollected checkParamCollected;
+
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
 	 * @return - RiveScript Instance
@@ -56,22 +65,18 @@ public class RiveScriptBeanProvider {
 		bot.sortReplies();
 		bot.setSubroutine("sayname", new ExampleMacro());
 		bot.setSubroutine("loadDataset", loadDataContent);
-		bot.setSubroutine("FdgHandler", FdgHandler);
-		bot.setSubroutine("BgdHandler", BgdHandler);
-		bot.setSubroutine("ClusterConHandler", ClusterConHandler);
-		bot.setSubroutine("ParamsHandler", ParamsHandler);
+		bot.setSubroutine("FdgHandler", fdgHandler);
+		bot.setSubroutine("BgdHandler", bgdHandler);
+		bot.setSubroutine("ClusterConHandler", clusterConHandler);
+		bot.setSubroutine("ParamsHandler", paramsHandler);
+		bot.setSubroutine("UserParamEntry", userParamEntry);
+		bot.setSubroutine("UserParamValueCollector", userParamValueCollector);
+		bot.setSubroutine("ClusterDataGetter", clusterDataGetter);
+		bot.setSubroutine("CheckParamCollected", checkParamCollected);
+
 		return bot;
 	}
-	/**
-	 * Method to return a session scoped Map
-	 * @return - Map
-	 */
-	@Bean
-	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-	@Qualifier("riveSessionMap")
-	public Map<String, Object> riveSessionMap() {
-		Map<String, Object> sessionMap = new HashMap<>();
-		return sessionMap;
-	}
+
+	
 
 }

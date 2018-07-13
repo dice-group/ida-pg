@@ -43,6 +43,14 @@ public class BarGraphUtil {
 	private FilterUtil filterUtil;
 
 	// To initialize variables with parameterized constructor
+	/**
+	 * Method to create response for Bar Graph visualization
+	 * @param x - string value for x-axis
+	 * @param y - string value for y-axis
+	 * @param lstt - List of data read from csv file based on x and y axis
+	 * @param dataMap - setting values for responseBean payload
+	 * @return - void
+	 */
 	public void newJsonObjct(String x, String y, List<Map<String, String>> lstt, Map<String, Object> dataMap)
 			throws IOException, NumberFormatException, ParseException {
 		ObjectMapper mapper = new ObjectMapper();
@@ -67,7 +75,14 @@ public class BarGraphUtil {
 		}
 		dataMap.put("baritems", nodeArr1);
 	}
-
+	/**
+	 * Method to match user x and y axis values 
+	 * with that in orignal data read from csv files
+	 *  and getting actual values as in file
+	 * @param key - string for x-axis and y-axis values
+	 * @param dataMap - map containing data from csv files
+	 * @return - String returning orignal key if matched
+	 */
 	private String getMatchingKey(String key, Map<String, String> dataMap) {
 		Set<String> keySet = dataMap.keySet();
 		String res = null;
@@ -79,6 +94,17 @@ public class BarGraphUtil {
 		}
 		return res;
 	}
+	
+	/**
+	 * Method to get list of map of data for bar graph based on x and y axis given by user
+	 * 
+	 * @param input - current file for bar graph visualization
+	 * @param x - string value for x-axis
+	 * @param y - string value for y-axis
+	 * @param dataMap - map containing data from csv files
+	 * @param args -  arguments of for filtering
+	 * @return - void
+	 */
 
 	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap, String[] args)
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
@@ -89,7 +115,16 @@ public class BarGraphUtil {
 		newJsonObjct(x, y, lstt, dataMap);
 
 	}
-
+	/**
+	 * Method to get file from repository and call fileCsv function
+	 *  with real path of file for bar graph visualization
+	 * @param filepath - current file's name
+	 * @param x - string value for x-axis
+	 * @param y - string value for y-axis
+	 * @param dataMap - map containing data from csv files
+	 * @param args -  arguments of for filtering
+	 * @return - void
+	 */
 	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap, String args[])
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 		File file = new File(context.getRealPath(filepath));
@@ -129,7 +164,15 @@ public class BarGraphUtil {
 		}
 		return filterOption;
 	}
-	
+	/**
+	 * Method to create response for bar gaph visualization request
+	 * 
+	 * @param input - current file for bar graph visualization
+	 * @param args -  arguments of for filtering
+	 * @param responseBean -  ResponseBean is used as a uniform response 
+	 * format for the incoming REST calls
+	 * @return - void
+	 */
 	public void generateBarGraphData(String[] args, ResponseBean responseBean)
 			throws NumberFormatException, JsonProcessingException, IOException, ParseException {
 
