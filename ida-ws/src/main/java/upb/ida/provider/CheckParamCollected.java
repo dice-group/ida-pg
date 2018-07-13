@@ -17,7 +17,12 @@ import com.rivescript.macro.Subroutine;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.SessionUtil;
-
+/**
+ * CheckParamCollected is a subroutine that checks if all parameters are collected
+ * 
+ * @author Faisal
+ *
+ */
 @Component
 public class CheckParamCollected implements Subroutine {
 	@Autowired
@@ -26,20 +31,41 @@ public class CheckParamCollected implements Subroutine {
 	private SessionUtil sessionUtil;
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Method to create response for bar graph visualization
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * @return - String "List of remaining parameters" or "fail"
+	 */
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		try {
-			
+			/**
+			 * collecting map of collected parameters from session Map 
+			 */
 			Map <String, String >  collected=(Map<String, String>) sessionUtil.getSessionMap().get("colledtedParams");
+			/**
+			 * collecting user's selected parameters map
+			 */
 			Map<String , Object> paramList = (Map<String, Object>) sessionUtil.getSessionMap().get("clusterParams");
+			
 			List<String> paramsRemaining =new ArrayList<>();
 			Set<String> a=collected.keySet();
+			/**
+			 * collecting all parameters of the user's selected algorithm 
+			 */
 			List<ClusterParam> mMap=  DataDumpUtil.getClusterAlgoParams(sessionUtil.getAlgoNameOrignal());
-		    Set<String> b = paramList.keySet();
+		    
+			Set<String> b = paramList.keySet();
 		    Set<String> result = new HashSet<>(a);
 		    result.removeAll(b);
 		    Set<String> temp = new HashSet<>(b);
 		    temp.removeAll(a);
 		    result.addAll(temp);
+		    /**
+			 * Extracting parameter names for which value is not collected
+			 */
 		    for(int w=0;w<mMap.size();w++) {	
 		    	Iterator<String> unCommon=result.iterator();
 				while(unCommon.hasNext()) {

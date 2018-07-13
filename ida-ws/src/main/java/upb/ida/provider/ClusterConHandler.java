@@ -2,6 +2,7 @@ package upb.ida.provider;
 
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,27 @@ import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.util.DataDumpUtil;
+/**
+ * ClusterConHandler is a subroutine that fetches 
+ * all available clustering algorithms from scikit datadump.
+ * 
+ * @author Faisal
+ *
+ */
 @Component
 public class ClusterConHandler implements Subroutine {
 	
 	@Autowired
 	private DataDumpUtil DataDumpUtil;
+	
+	/**
+	 * Method to get algorithms for clustering. 
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * @return - String "all algorithms for clustering" or "fail"
+	 */
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		
 		try {

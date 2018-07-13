@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.ResponseBean;
+import upb.ida.bean.cluster.ClusterParam;
+import upb.ida.constant.IDALiteral;
 import upb.ida.temp.DemoMain;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.GetCorrectParamTypes;
@@ -41,7 +43,15 @@ public class ClusterDataGetter implements Subroutine {
 	private ServletContext context;
 	@Autowired
 	private DataDumpUtil DataDumpUtil;
-	
+	/**
+	 * Method to create and set response of clustering results 
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * @return - String "pass" or "fail"
+	 */
+
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 
 		String columns;
@@ -66,6 +76,9 @@ public class ClusterDataGetter implements Subroutine {
 			}
             
 			List<Object> outer_list = new ArrayList<>();
+			/**
+			 * getting Array list of columns from file provided by user  
+			 */
 
 			for (int i = 0; i < lstt.size(); i++) {
 			
@@ -84,24 +97,48 @@ public class ClusterDataGetter implements Subroutine {
 				GetCorrectParamTypes paramsMap= new GetCorrectParamTypes();
 				HashMap<String, Object> mMap = new HashMap<String, Object>();
 				String algoName=sessionUtil.getAlgoNameOrignal();
-				mMap=paramsMap.correctTypeValues(paramList,algoName,DataDumpUtil.getClusterAlgoParams(algoName));
+				List<ClusterParam> algoParams =DataDumpUtil.getClusterAlgoParams(algoName);
+			
+				/**
+				 * function call to get data with corrected types
+				 */
+				mMap=paramsMap.correctTypeValues(paramList,algoName,algoParams);
+				
+				/**
+				 * creating hash map to contain data , parameters
+				 *  and algorithm name
+				 */
 		    	HashMap<String, Object> jsonDataForCluster = new HashMap<String, Object>();
 				jsonDataForCluster.put("data", outer_list);
 				jsonDataForCluster.put("params", mMap);
 				jsonDataForCluster.put("algoname", sessionUtil.getAlgoNameOrignal());
+				/**
+				 * creating Array node of jsonDataForCluster - which is the data
+				 *  on which clustering algorithm will be appied 
+				 */
 				nodeArr1.add(mapper.readTree(mapper.writeValueAsString(jsonDataForCluster)));
 				nodeArr1.toString().replace('\"','\'');
-				
+				/**
+				 * creating instance of kernelHttpRequest call to make an http request 
+				 * to Jupyter kernel gateway server for running clustering on nodeArr1.
+				 */
 				KernelHttpRequest kernel=new KernelHttpRequest();
 				List<String> clusterResult = kernel.getClusterResults(nodeArr1);
 				columns=args[0].replaceAll("\\sand\\s"," ");
 				String keyFeature=args[1];
 				columns=keyFeature+" "+columns;
 				List<String> columnsForResponse = Arrays.asList(columns.split("\\s+"));
-				prepareResponseForCluster(columnsForResponse,path,clusterResult,dataMap);
+				/**
+				 * calling prepareResponseForCluster function to create response for user's request for clustering
+				 * this function takes columns , path of file , clustered results and map of payload from reponsebean
+				 *  as paramters.
+				 */
+				prepareResponseForCluster(columnsForResponse,path,clusterResult,dataMap,actvTbl);
 				
-			
-				responseBean.setPayload(dataMap);
+			    /**
+			     * updating payload in responseBean
+			     */
+				
 //				responseBean.setActnCode(IDALiteral.UIA_FDG);
 				
 				
@@ -123,6 +160,14 @@ public class ClusterDataGetter implements Subroutine {
 		return "fail";
 	
 	}
+	
+	/** Method to get all columns 
+	 * 
+	 * @param key - column names provided by user
+	 * @param dataMap - map of data fetched from file
+	 * 
+	 * @return - String
+	 */
 	private String getMatchingKey(String key, Map<String, String> dataMap) {
 		Set<String> keySet = dataMap.keySet();
 		String res = null;
@@ -134,7 +179,23 @@ public class ClusterDataGetter implements Subroutine {
 		}
 		return res;
 	}
-	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+	
+	/** Method to create response for user's request of clustering 
+	 * 
+	 * @param columnsForResponse - all columns for clustering.
+	 * @param path - path of file.
+	 * @param clusterResult - result that returned from jupyter server.
+	 * @param dataMap - map to put data i  responseBean.
+	 * @param actvTbl - gives the active table name. 
+	 * 
+	 * @throws - JsonProcessingException
+	 * @throws - IOException
+	 * @throws - NumberFormatException
+	 * @throws - ParseException
+	 * 
+	 * 
+	 */
+	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap,String actvTbl) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 		
 		List<Map<String, Object>> responseList=new ArrayList<>();
 		File responseReader = new File(context.getRealPath(path));
@@ -160,8 +221,11 @@ public class ClusterDataGetter implements Subroutine {
 			responseList.add(innerMap);
 		}
 		
-		
-		dataMap.put("cluster", responseList);
+		//sessionUtil.getSessionMap().get("")
+		dataMap.put("clusterData", responseList);
+		dataMap.put("tabLabel","Clustered"+" "+actvTbl);
+		responseBean.setPayload(dataMap);
+		responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
 		
 	}
 }

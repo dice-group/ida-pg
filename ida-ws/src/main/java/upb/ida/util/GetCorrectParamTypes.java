@@ -1,6 +1,7 @@
 package upb.ida.util;
 
 import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,26 @@ import org.springframework.stereotype.Component;
 
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.bean.cluster.ParamEntryChecker;
+/**
+ * Class to expose method to get paramter types 
+ * and change type of values in input paramList
+ * 
+ * @author Faisal
+ *
+ */
 @Component
 public class GetCorrectParamTypes {
-	
+	/**
+	 * Method correctTypeValues  to get data with correct types
+	 * @param paramList
+	 *            - {@link correctTypeValues#rs}
+	 * @param algoName
+	 *            - {@link correctTypeValues#algoName}
+	 * @param resList
+	 *            - {@link correctTypeValues#resList}
+	 *            
+	 * @return - Map of parameter values with corrected types
+	 */
 	public HashMap<String, Object> correctTypeValues(Map<String , Object> paramList,String algoName,List<ClusterParam> resList){
 		
 		ParamEntryChecker values;

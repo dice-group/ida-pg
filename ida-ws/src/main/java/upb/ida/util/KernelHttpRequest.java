@@ -14,7 +14,7 @@ public class KernelHttpRequest {
 	 
 	
 	public List<String> getClusterResults(ArrayNode nodeArr1) throws IOException {
-	StringBuilder stringBuilder = new StringBuilder("http://127.0.0.1:8890/contacts/");
+	StringBuilder stringBuilder = new StringBuilder("http://127.0.0.1:8889/contacts/");
      stringBuilder.append(nodeArr1.toString());
      //stringBuilder.append(URLEncoder.encode(username, "UTF-8"));
     
