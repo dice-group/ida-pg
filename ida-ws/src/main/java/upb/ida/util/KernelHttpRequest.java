@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  */
 public class KernelHttpRequest {
 	
-	public static final String ip_address="http://127.0.0.1:8889/contacts/";
+	public static final String ip_address="http://127.0.0.1:8889/cluster/";
 	
 	 
 	/**
