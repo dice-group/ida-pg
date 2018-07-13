@@ -98,12 +98,7 @@ public class ClusterDataGetter implements Subroutine {
 				HashMap<String, Object> mMap = new HashMap<String, Object>();
 				String algoName=sessionUtil.getAlgoNameOrignal();
 				List<ClusterParam> algoParams =DataDumpUtil.getClusterAlgoParams(algoName);
-			
-				/**
-				 * function call to get data with corrected types
-				 */
 				mMap=paramsMap.correctTypeValues(paramList,algoName,algoParams);
-				
 				/**
 				 * creating hash map to contain data , parameters
 				 *  and algorithm name
@@ -128,19 +123,7 @@ public class ClusterDataGetter implements Subroutine {
 				String keyFeature=args[1];
 				columns=keyFeature+" "+columns;
 				List<String> columnsForResponse = Arrays.asList(columns.split("\\s+"));
-				/**
-				 * calling prepareResponseForCluster function to create response for user's request for clustering
-				 * this function takes columns , path of file , clustered results and map of payload from reponsebean
-				 *  as paramters.
-				 */
-				prepareResponseForCluster(columnsForResponse,path,clusterResult,dataMap,actvTbl);
-				
-			    /**
-			     * updating payload in responseBean
-			     */
-				
-//				responseBean.setActnCode(IDALiteral.UIA_FDG);
-				
+				prepareResponseForCluster(columnsForResponse,path,clusterResult,dataMap);
 				
 				return "pass";
 		} catch (NumberFormatException e) {
@@ -195,7 +178,7 @@ public class ClusterDataGetter implements Subroutine {
 	 * 
 	 * 
 	 */
-	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap,String actvTbl) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 		
 		List<Map<String, Object>> responseList=new ArrayList<>();
 		File responseReader = new File(context.getRealPath(path));

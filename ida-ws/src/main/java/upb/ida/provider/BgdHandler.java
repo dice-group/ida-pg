@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.ResponseBean;
-import upb.ida.bean.cluster.ParamEntryChecker;
 import upb.ida.util.BarGraphUtil;
 /**
  * BgdHandler is a subroutine that is used to create response for UI
