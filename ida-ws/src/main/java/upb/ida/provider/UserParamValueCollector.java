@@ -11,12 +11,27 @@ import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.cluster.ParamEntryChecker;
 import upb.ida.util.SessionUtil;
-
+/**
+ * UserParamValueCollector is a subroutine that is used get parameter 
+ * values from user and save them in session map for future use.
+ * 
+ * @author Faisal
+ *
+ */
 @Component
 public class UserParamValueCollector implements Subroutine {
 	
 	@Autowired
 	private SessionUtil sessionUtil;
+	/**
+	 *Method to get parameter values one by one 
+	 *and tell user if all parameters are collected or not
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * @return - String "pass" or "fail"
+	 */
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		try {
 			
@@ -37,12 +52,14 @@ public class UserParamValueCollector implements Subroutine {
 			int checker=0;
 			if(checker!=paramList.size()&&paramList.containsKey(args[0])){
 					 values= (ParamEntryChecker) paramList.get(args[0]);
-				 
+				 //if param value exists then tell user 
 				 if (values.isProvided()) {
 				
 					 return "fail";
 				 
 				 }
+				 
+				 //if param value is not already provided then do this
 				 else if (!values.isProvided()) {
 				
 					 values.setParamName(args[0]);
@@ -56,6 +73,7 @@ public class UserParamValueCollector implements Subroutine {
 					 values.setParamValue(args[1]);
 					 }
 					 values.setProvided(true);
+					 //updating collected param list in session map 
 					 collected.put(args[0], args[1]);
 					 while(op.hasNext()) {
 							String tempKey = op.next();

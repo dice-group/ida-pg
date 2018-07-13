@@ -110,7 +110,7 @@
 ^ [HINT : Set parameter as ...]
 
 + set * as * 
-* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call> Value Stored, Enter next Value.  
+* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call> .  
 - All values taken,Enter the columns names for clustering
 + columns are * 
 - <set columns=<star>> Which Column is Key Label Feature? 

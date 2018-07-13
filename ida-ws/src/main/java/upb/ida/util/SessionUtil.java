@@ -1,10 +1,18 @@
 package upb.ida.util;
 
 import java.util.HashMap;
+
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
+
+/**
+ * SessionUtil contians sessionMap
+ * 
+ * @author Faisal
+ *
+ */
 @SessionScope
 @Component
 public class SessionUtil {

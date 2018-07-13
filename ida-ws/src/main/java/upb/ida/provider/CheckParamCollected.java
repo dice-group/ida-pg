@@ -75,19 +75,19 @@ public class CheckParamCollected implements Subroutine {
 				if(k.equals(u)) {
 			            	if(mMap.get(w).getType().size() > 1 ) {
 			            	String list=mMap.get(w).getType().toString();
-			            	String p="<br>"+mMap.get(w).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "}]"), "[{");
+			            	String p="<br>- "+mMap.get(w).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "}]"), "[{");
 			            	paramsRemaining.add(p);
 			            	}
 			            	else if(mMap.get(w).getType().size() == 1 ) {
 			                	String list=mMap.get(w).getType().toString();
-			                	String p="<br>"+mMap.get(w).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "]"), "[");
+			                	String p="<br>- "+mMap.get(w).getName() + "&nbsp; Type : " + StringUtils.removeStart(StringUtils.removeEnd(list, "]"), "[");
 			                paramsRemaining.add(p);
 			            	}}
 		           
 				}
 				}
 			
-			return StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br><br>";
+			return "Value Stored, Enter next Value <br>"+StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br><br>";
 
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block

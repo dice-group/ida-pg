@@ -221,9 +221,12 @@ public class ClusterDataGetter implements Subroutine {
 			responseList.add(innerMap);
 		}
 		
-		//sessionUtil.getSessionMap().get("")
+		sessionUtil.getSessionMap().remove("clusterParams");
+
+		sessionUtil.getSessionMap().remove("colledtedParams");
 		dataMap.put("clusterData", responseList);
-		dataMap.put("tabLabel","Clustered"+" "+actvTbl);
+		//dataMap.put("tabLabel","Clustered"+" "+actvTbl);
+		dataMap.put("tabLabel","Clustered Data");
 		responseBean.setPayload(dataMap);
 		responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
 		

@@ -10,11 +10,33 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+/**
+ * KernelHttpRequest connects with jupyter kernel gateway 
+ * and gets results of clustering .
+ * 
+ * @author Faisal
+ *
+ */
 public class KernelHttpRequest {
-	 
 	
+	public static final String ip_address="http://127.0.0.1:8889/contacts/";
+	
+	 
+	/**
+	 * Method to connect with jupyter kernel gatway server 
+	 * and create a GET request to fetch results of clustering 
+	 * @param nodeArr1
+	 *            - {@link getClusterResults#nodeArr1}
+	 * 
+	 * @throws - IOException
+	 * 
+	 * @return - List of string containing 
+	 * response from jupyter kernel gateway server.
+	 * It gets an array and converts it to string.
+	 *
+	 */
 	public List<String> getClusterResults(ArrayNode nodeArr1) throws IOException {
-	StringBuilder stringBuilder = new StringBuilder("http://127.0.0.1:8889/contacts/");
+	StringBuilder stringBuilder = new StringBuilder(ip_address);
      stringBuilder.append(nodeArr1.toString());
      //stringBuilder.append(URLEncoder.encode(username, "UTF-8"));
     

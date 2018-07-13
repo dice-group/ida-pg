@@ -17,7 +17,14 @@ import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.bean.cluster.ParamEntryChecker;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.SessionUtil;
-
+/**
+ * UserParamEntry is a subroutine that is used to 
+ * save algorithm parameters that are selected by User 
+ * and prompt user to enter values for parameters.
+ * 
+ * @author Faisal
+ *
+ */
 @Component
 public class UserParamEntry implements Subroutine {
 	
@@ -25,12 +32,23 @@ public class UserParamEntry implements Subroutine {
 	private DataDumpUtil DataDumpUtil;
 	@Autowired
 	private SessionUtil sessionUtil;
+	
+	/**
+	 *Method to get optional parameters list from user and save them in 
+	 *sessionMap and display it back to the user. 
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * @return - String "User Parameters List and a message asking user to Enter values for the parameter" or "fail"
+	 */
 
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		//		String user = rs.currentUser();
 		String optionalParams;
 		try {
 			
+			//parsing message of user containing optional parameter names
 			optionalParams=args[0].replaceAll("\\sand\\s"," ");
 			List<String> opParams = Arrays.asList(optionalParams.split("\\s+"));
 			
@@ -38,7 +56,8 @@ public class UserParamEntry implements Subroutine {
             paramList=DataDumpUtil.getClusterAlgoParams(args[1]);
             List<String> opParams_addable =new ArrayList<>();
             List<String> paramWithTypes =new ArrayList<>();
-           
+            
+            //getting optional parameters
             for(int x=0;x<opParams.size();x++) {
                for(int y = 0;y<paramList.size();y++) {	
                if(paramList.get(y).getName().equals(opParams.get(x))) {	
@@ -58,7 +77,8 @@ public class UserParamEntry implements Subroutine {
                }
                }
             }
-           
+            
+            //getting mandatory parameters and adding them  with optional parameters list
             for (int i = 0; i < paramList.size(); i++) {
                 if(!paramList.get(i).isOptional()) {
 	            	if(paramList.get(i).getType().size() > 1 ) {
@@ -85,10 +105,13 @@ public class UserParamEntry implements Subroutine {
                  tempParamEntry = new ParamEntryChecker(tempName, null, false , paramWithTypes);
                  paramMap.put(tempName, tempParamEntry);                                 
             }
+            
             //paramMap.put("userParList",new ParamEntryChecker(null, null, false , opParams_addable));
+            //saving user parameters list in session
             sessionUtil.getSessionMap().put("clusterParams",paramMap);
             
             String paramReply=null;
+            //creating param List as string with proper format to display it to User
             paramReply="<br>"+1+" :- "+opParams_addable.get(0);
             for (int i = 1; i < opParams_addable.size(); i++) {
                           paramReply=paramReply+"<br>"+(i+1)+" :- "+opParams_addable.get(i);                      
