@@ -1,6 +1,237 @@
 <mat-tab-group style="min-width: 40vw;max-height: 100vh">
   <mat-tab label="Intelligent Data Assistant">
-    Intro Tab works!
+    <div class="ida-align-body">
+      <h1 align="center">Welcome to Intelligent Chat Assistant!</h1>
+      <div class="container">
+      <img id="begin" class="ida-intro-img" src="/assets/begin-tutorial-img.jpeg"
+           alt="User Tutorial" style="width:80%;">
+        <div class="top-left">Don't know where to begin? Let us
+        help you get started.</div>
+      </div>
+      <h2>Overview</h2>
+      <p>This tutorial shows you hot to perform basic data-science workflow steps on a
+        data set, following is the list of contents:</p>
+      <ul>
+        <li><a href="#intro-text">Introduction</a></li>
+        <li><a href="#load-data-text">Load a Data set</a></li>
+        <li><a href="#scroll-data-text">Navigate through the table of the data sets</a></li>
+        <li><a href="#bar-graph-view-text">Run a Bar Graph visualisation on the data set</a></li>
+        <li><a href="#fdg-view-text">Run a Force Directed Graph visualisation on the data set</a></li>
+        <li><a href="#cluster-view-text">Classify each data point into a specific group through Clustering</a></li>
+      </ul>
+      <br>
+      <h3 id="intro-text">Introduction</h3>
+      <p>This section will give you a quick overview of how your interaction with the Intelligent Assistant
+        will look like</p>
+      <figure>
+        <img id="intro-img" class="ida-intro-img" src="/assets/intro-img.jpeg"
+             alt="Intro Index" style="width:80%;">
+        <figcaption align="center">Image.1 - Introduction</figcaption>
+      </figure>
+      <ol>
+        <li>Side Bar</li>
+        <ol>
+          <li>Data set Navigation button</li>
+        </ol>
+        <li>Main View</li>
+        <ol>
+          <li>Tab Contents</li>
+          <li>Tab Header</li>
+        </ol>
+        <li>Chat Window</li>
+        <ol>
+          <li>Message Window</li>
+          <li>Chat History</li>
+        </ol>
+      </ol>
+      <br>
+      <h3 id="load-data-text">Load a Data Set</h3>
+      <p>This section will let you load a specific data set</p>
+      <figure>
+        <img id="load-data-img" class="ida-intro-img" src="/assets/load-data-img.png"
+             alt="Load Data" style="width:80%;">
+        <figcaption align="center">Image.2 - Load Data set</figcaption>
+      </figure>
+      <p>After your request to load a data set, the requested data set will be added as
+        a new item in the sidebar and the data-tables inside it will be loaded to the
+        main-view as separate tabs</p>
+      <ul>
+        <li>Side bar contains the requested data set's Navigation button</li>
+        <li>Main View contains the contents of the data set</li>
+        <li>Tab header contains the file names of the data sets</li>
+        <li>Chat window will have responses for the requested user query</li>
+      </ul>
+      <br>
+      <p align="justify">Let us explain it more clearly using an example,
+        <br>
+        <b>User:</b> I would like you to load the city dataset
+        <br>
+        <b>Assistant:</b> Data set is now loaded. You can access it in the Main view</p>
+      <br>
+      <h3 id="scroll-data-text">Navigate through the table of the data sets</h3>
+      <p>This section will let you navigate through the tables of the data sets</p>
+      <figure>
+        <img id="scroll-data-img" class="ida-intro-img" src="/assets/scroll-data-img.png"
+             alt="Scroll Data" style="width:80%;">
+        <figcaption align="center">Image.3 - Scroll Data set</figcaption>
+      </figure>
+      <p>You can navigate through the tables of the different data sets
+        by clicking on the Tab header as shown in the image</p>
+      <br>
+      <h3 id="bar-graph-view-text">Run a Bar Graph visualisation on the data set</h3>
+      <p>User can request a BarChart visualization for the loaded data-tables.
+        IDA also allows user to define a filtering criteria on the data for which
+        the BarChart is requested</p>
+      <figure>
+        <img id="bar-graph-view-img" class="ida-intro-img" src="/assets/bar-graph-view-img.png"
+             alt="Bar Graph" style="width:80%;">
+        <figcaption align="center">Image.4 - Bar graph visualisation</figcaption>
+      </figure>
+      <!-- TODO: align to center-->
+      <p align="justify">Let us explain it more clearly using an example,
+        <br>
+        <b>User:</b> I want a bar graph visualisation for the current table
+        <br>
+        <b>Assistant:</b> ok, before proceeding tell me what is the x-axis
+        <br>
+        <b>User:</b> City
+        <br>
+        <b>Assistant:</b> Great! and which feature should be along y-axis ?
+        <br>
+        <b>User:</b> Wine
+        <br>
+        <b>Assistant:</b> Great! and How many items would you like to see?
+        <br>
+        <b>User:</b> Top 10 records, sorted descending on wine
+        <br>
+        <b>Assistant:</b> Your requested bar graph is now added to the main view</p>
+      <br>
+      <h3 id="fdg-view-text">Run a Force Directed Graph visualisation on the data set</h3>
+      <p>This is an interactive force directed graph used for visualisation of data.
+        Force-directed graph drawing assigns forces among the set of edges and the
+        set of nodes of a graph drawing</p>
+      <figure>
+        <img id="fdg-view-img" class="ida-intro-img" src="/assets/fdg-view-img.png"
+             alt="Force Directed Graph" style="width:80%;">
+        <figcaption align="center">Image.5 - Force Directed graph visualisation</figcaption>
+      </figure>
+      <br>
+      <p align="justify"> We will walk through in detail with an example,
+        <br>
+        <b>User:</b> I would like a force directed graph visualization for the current table
+        <br>
+        <b>Assistant:</b> Ok, before proceeding tell me what is the source node
+        <br>
+        <b>User:</b> Source node is city1
+        <br>
+        <b>Assistant:</b> Great!, and which feature should be the target node ?
+        <br>
+        <b>User:</b> Target node is city2
+        <br>
+        <b>Assistant:</b> Which feature should depict the strength between the nodes ?
+        <br>
+        <b>User:</b> Strength between the nodes should be represented by distance
+        <br>
+        <b>Assistant:</b> Your requested bar graph is now added to the main view</p>
+      <!-- TODO: top button implementation-->
+      <br>
+      <h3 id="cluster-view-text">Classify each data point into a specific group through Clustering</h3>
+      <p>User can request the IDA to run a clustering algorithm of their choice on the loaded data set,
+        IDA will provide the user with available algorithms for clustering and collect the parameters
+        required to run the algorithm</p>
+      <figure>
+        <img id="cluster-view-img" class="ida-intro-img" src="/assets/cluster-view-img.png"
+             alt="Cluster Data" style="width:80%;">
+        <figcaption align="center">Image.6 - Cluster view</figcaption>
+      </figure>
+      <br>
+      <p align="justify">Let us see how this works effectively with an example,
+        <br>
+        <b>User:</b> What are the available clustering algorithms?
+        <br>
+        <b>Assistant:</b> Here are the list of algorithms, please select one to proceed
+        [Hint]
+        - K-means
+        - Affinity Propogation
+        <br>
+        <b>User:</b> I would like to run the KMeans algorithm on the current table
+        <br>
+        <b>Assistant:</b> Following is the list of parameters for " kmeans " :
+        <br>
+      <ol>
+        <li>init [Optional]</li>
+        <li>n_init [Optional]</li>
+        <li>max_iter [Optional]</li>
+        <li>precompute_distances [Optional]</li>
+        <li>verbose [Optional]</li>
+        <li>random_state [Optional]</li>
+        <li>copy_x [Optional]</li>
+      </ol>
+      <br>
+      Which optional parameters you want?
+      <br>
+      [HINT : Optionals are .......]
+      <br>
+      <b>User:</b> Optional parameters should be init, n_init and tol
+      <br>
+      <b>Assistant:</b> Your params are:
+      <ol>
+        <li>init Type : k-means++, random, an ndarray</li>
+        <li>n_clusters Type : int</li>
+        <li>n_jobs Type : int</li>
+      </ol>
+      Enter values for the parameters
+
+      [HINT : Set parameter as ...]
+
+      <br>
+      <b>User:</b> Set n_clusters as 5
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+        <li>n_jobs Type : int</li>
+        <li>init Type : int</li>
+        <li>n_init Type : int</li>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set n_jobs as 8
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+        <li>init Type : int</li>
+        <li>n_init Type : int</li>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set init as random
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+
+        <li>n_init Type : int</li>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set n_init as 5
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set tol as 3
+      <br>
+      <b>Assistant: </b>All the values have been taken, Enter the clustering features
+      <br>
+      <b>User:</b> Clustering features are wine, cinema and gasoline
+      <br>
+      <b>Assistant:</b> Which Column is Key Label Feature?
+      <br>
+      <b>User: </b> Label feature should be city
+      <br>
+      <b>Assistant:</b> Clustered data is displayed! You can access it in the Main view
+    </div>
   </mat-tab>
 
 </mat-tab-group>
