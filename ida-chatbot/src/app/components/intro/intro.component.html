@@ -2,8 +2,12 @@
   <mat-tab label="Intelligent Data Assistant">
     <div class="ida-align-body">
       <h1 align="center">Welcome to Intelligent Chat Assistant!</h1>
+      <div class="container">
       <img id="begin" class="ida-intro-img" src="/assets/begin-tutorial-img.jpeg"
-           alt="User Tutorial" style="width:70%;">
+           alt="User Tutorial" style="width:80%;">
+        <div class="top-left">Don't know where to begin? Let us
+        help you get started.</div>
+      </div>
       <h2>Overview</h2>
       <p>This tutorial shows you hot to perform basic data-science workflow steps on a
         data set, following is the list of contents:</p>
@@ -35,6 +39,10 @@
           <li>Tab Header</li>
         </ol>
         <li>Chat Window</li>
+        <ol>
+          <li>Message Window</li>
+          <li>Chat History</li>
+        </ol>
       </ol>
       <br>
       <h3 id="load-data-text">Load a Data Set</h3>
@@ -75,9 +83,9 @@
         IDA also allows user to define a filtering criteria on the data for which
         the BarChart is requested</p>
       <figure>
-      <img id="bar-graph-view-img" class="ida-intro-img" src="/assets/bar-graph-view-img.png"
-           alt="Bar Graph" style="width:80%;">
-      <figcaption align="center">Image.4 - Bar graph visualisation</figcaption>
+        <img id="bar-graph-view-img" class="ida-intro-img" src="/assets/bar-graph-view-img.png"
+             alt="Bar Graph" style="width:80%;">
+        <figcaption align="center">Image.4 - Bar graph visualisation</figcaption>
       </figure>
       <!-- TODO: align to center-->
       <p align="justify">Let us explain it more clearly using an example,
@@ -142,29 +150,87 @@
         <b>User:</b> What are the available clustering algorithms?
         <br>
         <b>Assistant:</b> Here are the list of algorithms, please select one to proceed
-                          [Hint]
-                          - K-means
-                          - Affinity Propogation
+        [Hint]
+        - K-means
+        - Affinity Propogation
         <br>
-        <b>User:</b> algo is kmeans
+        <b>User:</b> I would like to run the KMeans algorithm on the current table
         <br>
-        <b>Assistant:</b> Following is the list of parameters for
+        <b>Assistant:</b> Following is the list of parameters for " kmeans " :
         <br>
-        <b>User:</b> Optional is init
-        <br>
-        <b>Assistant:</b> Your params are:
-        <br>
-        <b>User:</b> Set init as random
-        <br>
-        <b>Assistant:</b> All the values have been taken, Enter the column names for clustering
-        <br>
-        <b>User:</b>Columns are cinema, gasoline and wine
-        <br>
-        <b>Assistant:</b> Which Column is the Key Label Feature?
-        <br>
-        <b>User:</b>Key feature is city
-        <br>
-        <b>Assistant:</b>Clustered data is displayed! You can access it in the Main view</p>
+      <ol>
+        <li>init [Optional]</li>
+        <li>n_init [Optional]</li>
+        <li>max_iter [Optional]</li>
+        <li>precompute_distances [Optional]</li>
+        <li>verbose [Optional]</li>
+        <li>random_state [Optional]</li>
+        <li>copy_x [Optional]</li>
+      </ol>
+      <br>
+      Which optional parameters you want?
+      <br>
+      [HINT : Optionals are .......]
+      <br>
+      <b>User:</b> Optional parameters should be init, n_init and tol
+      <br>
+      <b>Assistant:</b> Your params are:
+      <ol>
+        <li>init Type : k-means++, random, an ndarray</li>
+        <li>n_clusters Type : int</li>
+        <li>n_jobs Type : int</li>
+      </ol>
+      Enter values for the parameters
+
+      [HINT : Set parameter as ...]
+
+      <br>
+      <b>User:</b> Set n_clusters as 5
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+        <li>n_jobs Type : int</li>
+        <li>init Type : int</li>
+        <li>n_init Type : int</li>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set n_jobs as 8
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+        <li>init Type : int</li>
+        <li>n_init Type : int</li>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set init as random
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+
+        <li>n_init Type : int</li>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set n_init as 5
+      <br>
+      <b>Assistant:</b> Value Stored, Enter next Value
+      <ol>
+        <li>n_tol Type: float</li>
+      </ol>
+      <br>
+      <b>User:</b> Set tol as 3
+      <br>
+      <b>Assistant: </b>All the values have been taken, Enter the clustering features
+      <br>
+      <b>User:</b> Clustering features are wine, cinema and gasoline
+      <br>
+      <b>Assistant:</b> Which Column is Key Label Feature?
+      <br>
+      <b>User: </b> Label feature should be city
+      <br>
+      <b>Assistant:</b> Clustered data is displayed! You can access it in the Main view
     </div>
   </mat-tab>
 
