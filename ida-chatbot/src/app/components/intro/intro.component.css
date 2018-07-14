@@ -1,0 +1,21 @@
+.ida-intro-img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+ol {
+  list-style-type: decimal;
+}
+ol ol{
+  list-style-type: lower-alpha;
+}
+ol ol ol{
+  list-style-type: lower-alpha;
+}
+
+.ida-align-body{
+  margin-top: 80px;
+  margin-bottom: 80px;
+  margin-right: 80px;
+  margin-left: 80px;
+}

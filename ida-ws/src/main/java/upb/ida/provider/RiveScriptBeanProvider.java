@@ -19,8 +19,6 @@ import upb.ida.temp.ExampleMacro;
 /**
  * Beans provider for the rivescript bot instance
  * 
- * @author Nikit
- *
  */
 
 @Component

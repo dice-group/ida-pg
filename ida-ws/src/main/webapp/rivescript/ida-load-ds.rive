@@ -1,12 +1,13 @@
 ! version = 2.0
 
-//Loading the data set 
+//User queries for Loading the data set 
+
 + load * dataset
 * <call>loadDataset <star></call> == pass => Dataset is now \s
 ^ loaded. You can access the table in the main view.
 - Data set not found!
 
-+ i would like you to load * dataset
++ i would like you to load the * dataset
 @ load <star> dataset
 
 + please load * dataset
@@ -26,5 +27,7 @@
 + display * dataset
 @ load <star> dataset
 
++ i would like you to load the * dataset
+@ load <star> dataset
 
 
