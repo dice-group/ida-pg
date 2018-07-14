@@ -1,0 +1,45 @@
+! version = 2.0
+
+//User queries for Clustering 
+
++ please perform clustering 
+- Here are the list of algorithms, please select one to proceed \s
+^ <set algo=<call>ClusterConHandler</call>>\n
+^ <get algo> 
+^ main view
+
++ algo is *
+- <set selectedAlgo=<star>>Following is the list of parameters for " <get selectedAlgo> " :
+^ <set algParams=<call>ParamsHandler <get selectedAlgo></call>><get algParams>
+^ [HINT : Optionals are .......]
+
++ optionals are *
+- <set optionals=<star>>
+^ <set finalList=<call>UserParamEntry "<get optionals>" <get selectedAlgo></call>> Your params are : <get finalList>
+^ [HINT : Set parameter as ...]
+
++ set * as * 
+* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call> .  
+- All the values have been taken, Enter the clustering features 
++ columns are * 
+- <set columns=<star>> Which Column is Key Label Feature? 
++ key feature is *
+* <call>ClusterDataGetter "<get columns>" <star></call> == pass => Clustered data is displayed! /s
+^ You can access it in the Main view
+
++ what are the available clustering algorithms?
+@ please perform clustering 
+
++ i would like to run the * algorithm on the current table
+@ algo is <star>
+
++ optional parameters should be *
+@ optionals are <star>
+
++ clustering features are *
+@ columns are <star>
+
++ label feature should be *
+@ key feature is <star>
+
+

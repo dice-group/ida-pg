@@ -1,12 +1,9 @@
 ! version = 2.0
 
-//Accepting user query for
-//Force directed graph visualisation and
-//calling FdgHandler subroutine
-//to communicate with Java and frontend 
+//User queries for Force Directed Graph
 
 + show me fdg
-- No problem, But before proceeding tell me what is the \s
+- Alright!, but before proceeding tell me what is the \s
 ^ source node ?
 + source node is *
 - <set sourceNode=<star>> Great! And which feature should be the target node ?
@@ -41,3 +38,9 @@
 
 + display froce graph for this file
 @ show me fdg
+
++ i would like a force directed graph visualization for the current table
+@ show me fdg
+
++ strength between the nodes should be represented by *
+@ strength is <star>
