@@ -14,8 +14,20 @@ ol ol ol{
 }
 
 .ida-align-body{
-  margin-top: 80px;
+  margin-top: 30px;
   margin-bottom: 80px;
   margin-right: 80px;
   margin-left: 80px;
+}
+.container {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.top-left {
+  position: absolute;
+  top: 38px;
+  left: 79px;
+  font-size: 18px;
 }
