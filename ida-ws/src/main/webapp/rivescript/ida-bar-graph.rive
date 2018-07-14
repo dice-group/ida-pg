@@ -3,8 +3,8 @@
 //User queries for Bar Graph
 
 + i want a bar graph visualisation for the current table
-- ok, before proceeding tell me what is the \s
-^ xaxis ?
+- Ok, before proceeding tell me what is the \s
+^ x-axis ?
 + xaxis is * 
 - <set x=<star>> Great! and  which feature should be along y-axis ?
 + yaxis is * 

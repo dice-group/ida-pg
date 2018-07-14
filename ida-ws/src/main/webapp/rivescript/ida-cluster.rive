@@ -11,7 +11,6 @@
 + algo is *
 - <set selectedAlgo=<star>>Following is the list of parameters for " <get selectedAlgo> " :
 ^ <set algParams=<call>ParamsHandler <get selectedAlgo></call>><get algParams>
-^ [HINT : Optionals are .......]
 
 + optionals are *
 - <set optionals=<star>>
@@ -19,12 +18,12 @@
 ^ [HINT : Set parameter as ...]
 
 + set * as * 
-* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call> .  
+* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call>  
 - All the values have been taken, Enter the clustering features 
 + columns are * 
 - <set columns=<star>> Which Column is Key Label Feature? 
 + key feature is *
-* <call>ClusterDataGetter "<get columns>" <star></call> == pass => Clustered data is displayed! /s
+* <call>ClusterDataGetter "<get columns>" <star></call> == pass => Clustered data is displayed! \s
 ^ You can access it in the Main view
 
 + what are the available clustering algorithms?

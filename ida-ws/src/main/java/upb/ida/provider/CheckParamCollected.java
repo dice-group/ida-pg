@@ -87,7 +87,7 @@ public class CheckParamCollected implements Subroutine {
 				}
 				}
 			
-			return "The value has been saved, Enter the next value <br>"+StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br><br>";
+			return "The value has been saved, Enter the next value <br>"+StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br>";
 
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
