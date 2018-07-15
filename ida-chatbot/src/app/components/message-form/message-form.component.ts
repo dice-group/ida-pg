@@ -1,5 +1,6 @@
 import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {Message} from '../../models/message';
+import {RestService} from '../../service/rest/rest.service';
 
 @Component({
   selector: 'app-message-form',
@@ -8,9 +9,13 @@ import {Message} from '../../models/message';
 })
 export class MessageFormComponent implements OnInit {
   @Output() msgemitter = new EventEmitter<Message>();
-  constructor() { }
-
+  constructor(private restservice: RestService) { }
+  public showBar = false;
   ngOnInit() {
+    this.restservice.requestEvnt.subscribe(val => { this.toggleProgressBar(val); });
+  }
+  toggleProgressBar(showBar) {
+    this.showBar = showBar;
   }
 
   sendMessage(msg: string) {
