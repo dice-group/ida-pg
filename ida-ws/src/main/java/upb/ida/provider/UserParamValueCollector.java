@@ -33,6 +33,7 @@ public class UserParamValueCollector implements Subroutine {
 	 * @return - String "pass" or "fail"
 	 */
 	public String call (com.rivescript.RiveScript rs, String[] args) {
+		
 		try {
 			
 			@SuppressWarnings("unchecked")
@@ -53,14 +54,15 @@ public class UserParamValueCollector implements Subroutine {
 			if(checker!=paramList.size()&&paramList.containsKey(args[0])){
 					 values= (ParamEntryChecker) paramList.get(args[0]);
 				 //if param value exists then tell user 
-				 if (values.isProvided()) {
-				
-					 return "fail";
-				 
-				 }
-				 
+//				 if (values.isProvided()) {
+//				
+//					 return "pass";
+//				 
+//				 }
+//				 
 				 //if param value is not already provided then do this
-				 else if (!values.isProvided()) {
+				 if (!values.isProvided()) {
+					 
 				
 					 values.setParamName(args[0]);
 //					static entry for k-means++ (testing)
@@ -101,7 +103,7 @@ public class UserParamValueCollector implements Subroutine {
 			e.printStackTrace();
 		}
 
-		return "fail";
+		return "pass";
 	
 	}
 }

@@ -17,8 +17,8 @@
 ^ [HINT : Set parameter as ...]
 
 + set * as * 
-* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call>  
-- All the values have been taken, Enter the clustering features 
+* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected <star1></call>
+- All values taken
 + columns are * 
 - <set columns=<star>> Which Column is Key Label Feature? 
 + key feature is *

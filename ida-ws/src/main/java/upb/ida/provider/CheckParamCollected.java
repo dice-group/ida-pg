@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.cluster.ClusterParam;
+import upb.ida.bean.cluster.ParamEntryChecker;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.SessionUtil;
 /**
@@ -40,6 +41,7 @@ public class CheckParamCollected implements Subroutine {
 	 * @return - String "List of remaining parameters" or "fail"
 	 */
 	public String call (com.rivescript.RiveScript rs, String[] args) {
+		
 		try {
 			/**
 			 * collecting map of collected parameters from session Map 
@@ -49,7 +51,9 @@ public class CheckParamCollected implements Subroutine {
 			 * collecting user's selected parameters map
 			 */
 			Map<String , Object> paramList = (Map<String, Object>) sessionUtil.getSessionMap().get("clusterParams");
-			
+			ParamEntryChecker values;
+			 values= (ParamEntryChecker) paramList.get(args[0]);
+			if(values.isProvided()) {
 			List<String> paramsRemaining =new ArrayList<>();
 			Set<String> a=collected.keySet();
 			/**
@@ -87,8 +91,8 @@ public class CheckParamCollected implements Subroutine {
 				}
 				}
 			
-			return "The value has been saved, Enter the next value <br>"+StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br>";
-
+			return "The value has been saved.<br>"+StringUtils.removeStart(StringUtils.removeEnd(paramsRemaining.toString(), "]"), "[").replaceAll(",", "")+"<br>";
+			}
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
