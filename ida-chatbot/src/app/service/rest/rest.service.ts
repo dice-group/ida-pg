@@ -42,9 +42,6 @@ export class RestService implements HttpInterceptor {
     }
     this.requestEvnt.emit(true);
     const reqObs = this.http.get(this.getFullUrl(path), {params: params});
-    reqObs.subscribe(resp => {
-      this.requestEvnt.emit(false);
-    });
     return reqObs;
   }
 }
