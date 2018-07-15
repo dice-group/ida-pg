@@ -11,53 +11,64 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
- * KernelHttpRequest connects with jupyter kernel gateway 
- * and gets results of clustering .
+ * KernelHttpRequest connects with jupyter kernel gateway and gets results of
+ * clustering .
  * 
  * @author Faisal
  *
  */
 public class KernelHttpRequest {
-	
-	public static final String ip_address="http://127.0.0.1:8889/cluster/";
-	
-	 
+
+	public static final String ip_address = "http://127.0.0.1:8889/cluster/";
+
 	/**
-	 * Method to connect with jupyter kernel gatway server 
-	 * and create a GET request to fetch results of clustering 
+	 * Method to connect with jupyter kernel gatway server and create a GET request
+	 * to fetch results of clustering
+	 * 
 	 * @param nodeArr1
 	 *            - {@link getClusterResults#nodeArr1}
 	 * 
-	 * @throws - IOException
+	 * @throws -
+	 *             IOException
 	 * 
-	 * @return - List of string containing 
-	 * response from jupyter kernel gateway server.
-	 * It gets an array and converts it to string.
+	 * @return - List of string containing response from jupyter kernel gateway
+	 *         server. It gets an array and converts it to string.
 	 *
 	 */
 	public List<String> getClusterResults(ArrayNode nodeArr1) throws IOException {
-	StringBuilder stringBuilder = new StringBuilder(ip_address);
-     stringBuilder.append(nodeArr1.toString());
-     //stringBuilder.append(URLEncoder.encode(username, "UTF-8"));
-    
-     URL obj = new URL(stringBuilder.toString());
+		StringBuilder stringBuilder = new StringBuilder(ip_address);
+		stringBuilder.append(nodeArr1.toString());
+		// stringBuilder.append(URLEncoder.encode(username, "UTF-8"));
+		List<String> clusterResult = null;
+		URL obj = new URL(stringBuilder.toString());
 
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		con.setRequestMethod("GET");
-		con.setRequestProperty("Accept-Charset", "UTF-8");
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
-		String line;
-		StringBuffer response = new StringBuffer();
+		HttpURLConnection con = null;
+		BufferedReader in = null;
+		try {
+			con = (HttpURLConnection) obj.openConnection();
+			con.setConnectTimeout(30000);
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Accept-Charset", "UTF-8");
+			in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String line;
+			StringBuffer response = new StringBuffer();
 
-		while ((line = in.readLine()) != null) {
-			response.append(line);
+			while ((line = in.readLine()) != null) {
+				response.append(line);
+			}
+			String m;
+			m = response.toString();
+			m = m.replaceAll("^.|.$", "");
+			clusterResult = Arrays.asList(m.split("\\s"));
+		} finally {
+			if (con != null) {
+				con.disconnect();
+			}
+			if (in != null) {
+				in.close();
+			}
 		}
-		in.close();
-		String m;
-		m=response.toString();
-		m=m.replaceAll("^.|.$", "");
-		List<String> clusterResult = Arrays.asList(m.split("\\s"));
+
 		return clusterResult;
-		}
+	}
 }

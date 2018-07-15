@@ -13,6 +13,12 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.DemoMain;
 
+/**
+ * LoadDataContent is a subroutine that loads the data
+ * 
+ * @author Aditya
+ *
+ */
 @Component
 public class LoadDataContent implements Subroutine {
 	@Autowired
@@ -20,8 +26,19 @@ public class LoadDataContent implements Subroutine {
 	@Autowired
 	private ResponseBean responseBean;
 
+	/**
+	 * Method to create response for loading the data set
+	 * 
+	 * @param rs
+	 *            - {@link call#rs}
+	 * @param args
+	 *            - {@link call#args}
+	 * 
+	 * @return String - pass or fail
+	 */
 	public String call(com.rivescript.RiveScript rs, String[] args) {
-		String message = StringUtils.join(args, " ").trim();
+		String message = StringUtils.join(args, " ")
+		                            .trim();
 		// String user = rs.currentUser();
 		if (DemoMain.datasetExists(message)) {
 			try {
