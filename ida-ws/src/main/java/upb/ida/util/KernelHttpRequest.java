@@ -58,8 +58,8 @@ public class KernelHttpRequest {
 			}
 			String m;
 			m = response.toString();
-			m = m.replaceAll("^.|.$", "");
-			clusterResult = Arrays.asList(m.split("\\s"));
+			m = m.replaceAll("^.|.$", "").trim();
+			clusterResult = Arrays.asList(m.split("\\s+"));
 		} finally {
 			if (con != null) {
 				con.disconnect();
