@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.math3.stat.StatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import upb.ida.temp.DemoMain;
+import upb.ida.util.FileUtil;
 
 /**
  * Exposes util methods to perform FDG related operations
@@ -32,9 +30,7 @@ import upb.ida.temp.DemoMain;
 @Component
 public class FDG_Util {
 	@Autowired
-	private DemoMain dem;
-	@Autowired
-	private ServletContext context;
+	private FileUtil dem;
 	public static final int MAX_STR = 10;
 
 	/**
@@ -112,7 +108,7 @@ public class FDG_Util {
 		ObjectNode res = null;
 		int ndUniqueId = 1;
 		int tripUniqueId = 1;
-		File file = new File(context.getRealPath(filePath));
+		File file = new File(dem.fetchSysFilePath(filePath));
 		List<FDG_Triple> tripleList = new ArrayList<>();
 
 		// Fetch the map for the file
