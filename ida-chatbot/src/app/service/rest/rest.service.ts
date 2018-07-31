@@ -1,14 +1,15 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpHandler, HttpInterceptor, HttpParams, HttpRequest} from '@angular/common/http';
+import {EventEmitter, Injectable} from '@angular/core';
+import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RestService implements HttpInterceptor{
+export class RestService implements HttpInterceptor {
   private hosturl = 'http://localhost:8080/ida-ws/';
+  public requestEvnt: EventEmitter<boolean> = new EventEmitter();
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     // Clone the request and replace the original headers with
     // cloned headers, updated with the authorization.
@@ -16,9 +17,9 @@ export class RestService implements HttpInterceptor{
       withCredentials: true
       /*headers: req.headers.set('Content-Type', 'application/json')*/
     });
-
     // send cloned request with header to the next handler.
-    return next.handle(authReq);
+    const reqObs: Observable<HttpEvent<any>> = next.handle(authReq);
+    return reqObs;
   }
 
   constructor(private http: HttpClient) {
@@ -39,6 +40,8 @@ export class RestService implements HttpInterceptor{
         params = params.set(x, prmobj[x]);
       }
     }
-    return this.http.get(this.getFullUrl(path), {params: params});
+    this.requestEvnt.emit(true);
+    const reqObs = this.http.get(this.getFullUrl(path), {params: params});
+    return reqObs;
   }
 }

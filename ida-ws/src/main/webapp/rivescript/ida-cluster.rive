@@ -5,8 +5,7 @@
 + please perform clustering 
 - Here are the list of algorithms, please select one to proceed \s
 ^ <set algo=<call>ClusterConHandler</call>>\n
-^ <get algo> 
-^ main view
+^ <get algo>
 
 + algo is *
 - <set selectedAlgo=<star>>Following is the list of parameters for " <get selectedAlgo> " :
@@ -18,7 +17,7 @@
 ^ [HINT : Set parameter as ...]
 
 + set * as * 
-* <call>UserParamValueCollector <star1> <star2></call> == pass => <call>CheckParamCollected</call>  
+* <call>UserParamValueCollector <star1> "<star2>"</call> == pass => <call>CheckParamCollected</call>
 - All the values have been taken, Enter the clustering features 
 + columns are * 
 - <set columns=<star>> Which Column is Key Label Feature? 

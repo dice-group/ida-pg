@@ -90,6 +90,7 @@ export class AppComponent {
   }
 
   processBotResponse(resp: ResponseBean) {
+    this.restservice.requestEvnt.emit(false);
     const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
     // Putting delay to make responses look natural
     setTimeout(() => this.chatboxComp.addNewMessage(msg), 1000);

@@ -1,3 +1,7 @@
+<mat-divider></mat-divider>
+<div style="height: 10px;margin-top: 10px;">
+<mat-progress-bar mode="indeterminate" *ngIf="showBar"></mat-progress-bar>
+</div>
 <form style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
   <mat-form-field fxFlex>
     <textarea #chatmsg matInput placeholder="Message"></textarea>
