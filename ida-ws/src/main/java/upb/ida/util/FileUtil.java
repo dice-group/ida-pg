@@ -1,21 +1,24 @@
-package upb.ida.temp;
+package upb.ida.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-import javax.servlet.ServletContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+import upb.ida.constant.IDALiteral;
 
 /**
  * Class to expose util methods for File based operations in IDA
@@ -24,23 +27,30 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  *
  */
 @Component
-public class DemoMain {
+@Scope("singleton")
+public class FileUtil {
 
 	public static Map<String, String> dsPathMap;
 
-	static {
+	FileUtil() throws IOException {
 		dsPathMap = new HashMap<String, String>();
-		dsPathMap.put("city", "/city");
-		dsPathMap.put("movie", "/movie");
+		// Read dsmap file
+		Properties prop = new Properties();
+		InputStream input = new FileInputStream(fetchSysFilePath(IDALiteral.DSMAP_PROP_FILEPATH));
+		prop.load(input);
+		String keyStr;
+		for (Object key : prop.keySet()) {
+			keyStr = key.toString();
+			dsPathMap.put(keyStr, prop.getProperty(keyStr));
+		}
+
 	}
-	/**
-	 * current context instance of SpringContext
-	 */
-	@Autowired
-	private ServletContext context;
+
 	/**
 	 * Method to generate a json string from a csv file
-	 * @param input - csv file
+	 * 
+	 * @param input
+	 *            - csv file
 	 * @return - json string
 	 * @throws JsonProcessingException
 	 * @throws IOException
@@ -58,10 +68,14 @@ public class DemoMain {
 		// Write JSON formated data to stdout
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(readAll);
 	}
+
 	/**
-	 * Method to generate a collection of rows from a csv file in List<Map<String, String>> format
-	 * @param input - csv file
-	 * @return - collection of rows in List<Map<String, String>> format 
+	 * Method to generate a collection of rows from a csv file in List<Map<String,
+	 * String>> format
+	 * 
+	 * @param input
+	 *            - csv file
+	 * @return - collection of rows in List<Map<String, String>> format
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
@@ -79,9 +93,12 @@ public class DemoMain {
 		}
 		return resMapList;
 	}
+
 	/**
 	 * Method to generate a dataset map for a given dataset
-	 * @param keyword - name of dataset
+	 * 
+	 * @param keyword
+	 *            - name of dataset
 	 * @return - dataset map
 	 * @throws JsonProcessingException
 	 * @throws IOException
@@ -90,32 +107,41 @@ public class DemoMain {
 		Map<String, String> resMap = new HashMap<String, String>();
 		String path = dsPathMap.get(keyword.toLowerCase());
 		if (path != null) {
-			File dir = new File(context.getRealPath(path));
+			File dir = new File(fetchSysFilePath(path));
 			File[] directoryListing = dir.listFiles();
 			if (directoryListing != null) {
 				for (File child : directoryListing) {
 					// Do something with child
-					resMap.put(child.getName(), printJson(child));
+					if (child.getName().matches(IDALiteral.CSV_FILE_PATTERN)) {
+						resMap.put(child.getName(), printJson(child));
+					}
 				}
 			}
 		}
 		return resMap;
 	}
+
 	/**
 	 * Method to check if given dataset exists
-	 * @param keyword - name of dataset
+	 * 
+	 * @param keyword
+	 *            - name of dataset
 	 * @return - if dataset exists
 	 */
 	public static boolean datasetExists(String keyword) {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
+
 	/**
 	 * Method to fetch the filePath of a given datable
-	 * @param actvDs - active dataset
-	 * @param actvTbl - active datatable name
+	 * 
+	 * @param actvDs
+	 *            - active dataset
+	 * @param actvTbl
+	 *            - active datatable name
 	 * @return - file path of the datatable
 	 */
-	public String getFilePath(String actvDs, String actvTbl) {
+	public String getDTFilePath(String actvDs, String actvTbl) {
 		String path = null;
 		String dir = dsPathMap.get(actvDs.toLowerCase());
 		if (dir != null) {
@@ -127,6 +153,17 @@ public class DemoMain {
 	public static int sumNum(int a, int b) {
 		return a + b;
 
+	}
+
+	/**
+	 * Method to fetch the filepath for files stored in src/main/resources
+	 * 
+	 * @param path
+	 *            - relative path to the file
+	 * @return File System path of the file
+	 */
+	public String fetchSysFilePath(String path) {
+		return getClass().getClassLoader().getResource(path).getFile();
 	}
 
 }
