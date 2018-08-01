@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import upb.ida.bean.ResponseBean;
+import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 
 /**
@@ -26,7 +27,7 @@ public class MessageRestController {
 	private ResponseBean response;
 	@Autowired
 	private RiveScriptService rsService;
-
+	@Autowired DataService dataService;
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
@@ -53,6 +54,19 @@ public class MessageRestController {
 		String reply = rsService.getRSResponse(msg);
 
 		response.setChatmsg(reply);
+		return response;
+	}
+	
+	@RequestMapping("/getdatatable")
+	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
+			@RequestParam(value = "actvDs") String actvDs) throws Exception {
+
+		Map<String, Object> dataMap = new HashMap<>();
+		dataMap.put("actvScrId", actvScrId);
+		dataMap.put("actvTbl", actvTbl);
+		dataMap.put("actvDs", actvDs);
+		response.setPayload(dataMap);
+		dataService.getDataTable(actvDs, actvTbl);
 		return response;
 	}
 

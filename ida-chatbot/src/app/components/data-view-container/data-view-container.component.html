@@ -1,31 +1,5 @@
 <mat-tab-group style="max-height: 100vh" [(selectedIndex)]="activeTabIndex">
-  <!--<mat-tab label="FDG">
-    <app-fdg-view [idpf]="32"></app-fdg-view>
-  </mat-tab>
-  <mat-tab label="DataTable">
-
-  </mat-tab>-->
-  <ng-container *ngIf="item.dataset">
-    <mat-tab *ngFor="let ds of object.keys(item.dataset)">
-      <ng-template mat-tab-label>
-        <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
-          <span>{{ds}}</span>
-        </div>
-      </ng-template>
-      <app-datatable-view [data]="item.dataset[ds]"></app-datatable-view>
-    </mat-tab>
-  </ng-container>
-  <ng-container *ngIf="item.dsMd">
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
-          <span>{{item.dsMd.dsName}} Schema</span>
-        </div>
-      </ng-template>
-      <app-datatable-detail [dsdetail]="item.dsMd"></app-datatable-detail>
-    </mat-tab>
-  </ng-container>
-  <mat-tab *ngFor="let ext of item.getExtraTabs()">
+  <mat-tab *ngFor="let ext of item.getTabArr()">
     <ng-template mat-tab-label>
       <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
         <span>{{ext.label}}</span>

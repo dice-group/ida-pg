@@ -1,6 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {MainviewElement} from '../../models/mainview-element';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DatasetMetadata} from '../../models/dataset-metadata';
+import {DatafileMetadata} from '../../models/datafile-metadata';
+import {IdaEventService} from '../../service/event/ida-event.service';
+
 
 @Component({
   selector: 'app-datatable-detail',
@@ -10,9 +12,17 @@ import {DatasetMetadata} from '../../models/dataset-metadata';
 export class DatatableDetailComponent implements OnInit {
   @Input('dsdetail')
   public dsdetail: DatasetMetadata;
-  constructor() { }
+  public displayedColumns: string[] = ['displayName', 'fileName', 'rowCount', 'colCount'];
+  public expandedElement: DatafileMetadata;
+
+  constructor(private ies: IdaEventService) {
+  }
 
   ngOnInit() {
+  }
+
+  requestDataTable(reqTbl: string) {
+    this.ies.dtTblEvnt.emit(reqTbl);
   }
 
 }

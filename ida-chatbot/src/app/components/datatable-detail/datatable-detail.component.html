@@ -1,4 +1,45 @@
-<div style="margin: 20px;">
-  <h3>{{dsdetail.dsName}} Dataset</h3>
-  <p>{{dsdetail.dsDesc}}</p>
+<div class="table-cls">
+  <div style="margin-bottom: 20px;" fxLayout="column">
+    <h5>{{dsdetail.dsName}} Dataset</h5>
+    <span>{{dsdetail.dsDesc}}</span>
+  </div>
+  <div style="margin-bottom: 10px;"><b>Following is the list of Data tables in this dataset:</b></div>
+  <mat-accordion [multi]="true">
+    <mat-expansion-panel *ngFor="let fileItem of dsdetail.filesMd">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-checkbox appClickStopPropagation>{{fileItem.displayName}}</mat-checkbox>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div fxLayout="row" style="margin-bottom: 20px;">
+        <div fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start" fxFlex="grow">
+          <span><b>Display Name:</b> {{fileItem.displayName}}</span>
+          <span><b>File Name:</b> {{fileItem.fileName}}</span>
+          <span><b>Row Count:</b> {{fileItem.rowCount}}</span>
+          <span><b>Column Count:</b> {{fileItem.colCount}}</span>
+          <span><b>File Description:</b> {{fileItem.fileDesc}}</span>
+        </div>
+        <div fxLayoutAlign="end" fxFlex="nogrow">
+          <div>
+            <button mat-raised-button (click)="requestDataTable(fileItem.fileName)">Open Table</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom: 10px;"><b>Following is the list of columns in this data table:</b></div>
+      <mat-accordion [multi]="true">
+        <mat-expansion-panel *ngFor="let colItem of fileItem.fileColMd">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{colItem.colName}}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="column" fxLayoutGap="5px">
+            <span><b>Column Name:</b> {{colItem.colName}}</span>
+            <span><b>Column Type:</b> {{colItem.colType}}</span>
+            <span><b>Column Description:</b> {{colItem.colDesc}}</span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>

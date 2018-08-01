@@ -10,6 +10,7 @@ import {DataViewContainerComponent} from './components/data-view-container/data-
 import {TabElement} from './models/tab-element';
 import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
 import {TabType} from './enums/tab-type.enum';
+import {IdaEventService} from './service/event/ida-event.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class AppComponent {
   idCount = 1;
   title = 'app';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
+  public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
   @ViewChild(ChatboxComponent)
@@ -28,13 +30,14 @@ export class AppComponent {
   private dataVwCompList: QueryList<DataViewContainerComponent>;
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
-  public activeItem = 0;
 
-  AppComponent() {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService) {
+    ies.dtTblEvnt.subscribe((reqTbl) => {
+      this.getDataTable(reqTbl);
+    });
   }
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService) {
-
+  AppComponent() {
   }
 
   public actionHandler(resp: ResponseBean) {
@@ -58,13 +61,18 @@ export class AppComponent {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.tabLabel, TabType.DTTBL, resp.payload.clusterData, true, true);
       this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 5) {
+      // Open new tab with DataTable
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, resp.payload.dataTable, true, true);
+      this.addNewTab(newTab, resp);
     }
   }
+
   addNewTab(newTab: TabElement, resp: ResponseBean) {
     for (const mvwItem of this.mainViewItems) {
       if (Number(resp.payload.actvScrId) === mvwItem.id) {
         // Add a tab to extra tabs
-        mvwItem.extraTabs.push(newTab);
+        mvwItem.tabArr.push(newTab);
         this.getActiveMainView().focusLastTab();
         break;
       }
@@ -89,11 +97,25 @@ export class AppComponent {
     this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
   }
 
+  getDataTable(reqTbl: string) {
+    let actvDs = '';
+    if (this.getActiveMainView() && this.sbComp) {
+      actvDs = this.sbComp.getActiveDatasetName();
+    }
+    const prmobj = {
+      actvScrId: this.activeItem,
+      actvTbl: reqTbl == null ? '' : reqTbl,
+      actvDs: actvDs == null ? '' : actvDs
+    };
+    // Send the message to server
+    this.restservice.getRequest('/message/getdatatable', prmobj).subscribe(resp => this.processBotResponse(resp));
+  }
+
   processBotResponse(resp: ResponseBean) {
     this.restservice.requestEvnt.emit(false);
     const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
     // Putting delay to make responses look natural
-    setTimeout(() => this.chatboxComp.addNewMessage(msg), 1000);
+    setTimeout(() => this.chatboxComp.addNewMessage(msg), 300);
     if (resp.actnCode > 0) {
       // load the dataset
       this.actionHandler(resp);

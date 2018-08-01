@@ -5,4 +5,5 @@
     {{tabElement.content}}
   </div>
   <app-datatable-view *ngSwitchCase="tabType.DTTBL" [data]="tabElement.content"></app-datatable-view>
+  <app-datatable-detail *ngSwitchCase="tabType.DSDET" [dsdetail]="tabElement.content"></app-datatable-detail>
 </ng-container>

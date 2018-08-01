@@ -6,58 +6,47 @@
 			"fileName": "cities.csv",
 			"displayName": "Cities",
 			"fileDesc": "Provides a mapping of major Cities of the world to their respective Countries",
+			"rowCount": 3518,
+			"colCount": 2,
 			"fileColMd": [
 				{
 					"colIndex": 1,
 					"colName": "City",
-					"colDesc": "Cities of the World"
+					"colDesc": "Cities of the World",
+					"colType": "string"
 				},
 				{
 					"colIndex": 2,
 					"colName": "Country",
-					"colDesc": "Countries of the World"
+					"colDesc": "Countries of the World",
+					"colType": "string"
 				}
 			]
 		},
 		{
-			"fileName": "citydistances.csv",
+			"fileName": "citydistance.csv",
 			"displayName": "City Distance",
 			"fileDesc": "Provides data on flight distance between cities",
+			"rowCount": 23,
+			"colCount": 3,
 			"fileColMd": [
 				{
 					"colIndex": 1,
-					"colName": "City",
-					"colDesc": "Cities of the World"
+					"colName": "city1",
+					"colDesc": "Cities of the World",
+					"colType": "string"
 				},
 				{
 					"colIndex": 2,
-					"colName": "Cappuccino",
-					"colDesc": "Cost(GBP) of Cappuccino"
+					"colName": "city2",
+					"colDesc": "Cities of the World",
+					"colType": "string"
 				},
 				{
 					"colIndex": 3,
-					"colName": "Cinema",
-					"colDesc": "Cost(GBP) of Cinema"
-				},
-				{
-					"colIndex": 4,
-					"colName": "Wine",
-					"colDesc": "Cost(GBP) of Wine"
-				},
-				{
-					"colIndex": 5,
-					"colName": "Gasoline",
-					"colDesc": "Cost(GBP) of Gasoline"
-				},
-				{
-					"colIndex": 6,
-					"colName": "Avg Rent",
-					"colDesc": "Average Rent(GBP)"
-				},
-				{
-					"colIndex": 7,
-					"colName": "Avg Disposable Income",
-					"colDesc": "Average Disposable Income(GBP)"
+					"colName": "distance",
+					"colDesc": "Flight distance(miles) between cities",
+					"colType": "string"
 				}
 			]
 		},
@@ -65,16 +54,50 @@
 			"fileName": "movehubcostofliving.csv",
 			"displayName": "Cost Of Living",
 			"fileDesc": "Movehub expenses(GBP) estimate on basic things across major world cities",
+			"rowCount": 216,
+			"colCount": 7,
 			"fileColMd": [
 				{
 					"colIndex": 1,
 					"colName": "City",
-					"colDesc": "Cities of the World"
+					"colDesc": "Cities of the World",
+					"colType": "string"
 				},
 				{
 					"colIndex": 2,
-					"colName": "Country",
-					"colDesc": "Countries of the World"
+					"colName": "Cappuccino",
+					"colDesc": "Cost(GBP) of Cappuccino",
+					"colType": "number"
+				},
+				{
+					"colIndex": 3,
+					"colName": "Cinema",
+					"colDesc": "Cost(GBP) of Cinema",
+					"colType": "number"
+				},
+				{
+					"colIndex": 4,
+					"colName": "Wine",
+					"colDesc": "Cost(GBP) of Wine",
+					"colType": "number"
+				},
+				{
+					"colIndex": 5,
+					"colName": "Gasoline",
+					"colDesc": "Cost(GBP) of Gasoline",
+					"colType": "number"
+				},
+				{
+					"colIndex": 6,
+					"colName": "Avg Rent",
+					"colDesc": "Average Rent(GBP)",
+					"colType": "number"
+				},
+				{
+					"colIndex": 7,
+					"colName": "Avg Disposable Income",
+					"colDesc": "Average Disposable Income(GBP)",
+					"colType": "number"
 				}
 			]
 		},
@@ -82,41 +105,50 @@
 			"fileName": "movehubqualityoflife.csv",
 			"displayName": "Quality of Life",
 			"fileDesc": "Movehub ratings(1-100) on different quality of life aspects across major world cities",
+			"rowCount": 216,
+			"colCount": 7,
 			"fileColMd": [
 				{
 					"colIndex": 1,
 					"colName": "City",
-					"colDesc": "Cities of the World"
+					"colDesc": "Cities of the World",
+					"colType": "string"
 				},
 				{
 					"colIndex": 2,
 					"colName": "Movehub Rating",
-					"colDesc": "City's Rating by Movehub from 1(low) to 100(high)"
+					"colDesc": "City's Rating by Movehub from 1(low) to 100(high)",
+					"colType": "number"
 				},
 				{
 					"colIndex": 3,
 					"colName": "Purchase Power",
-					"colDesc": "Purchase Power rating from 1(low) to 100(high)"
+					"colDesc": "Purchase Power rating from 1(low) to 100(high)",
+					"colType": "number"
 				},
 				{
 					"colIndex": 4,
 					"colName": "Health Care",
-					"colDesc": "Health Care rating from 1(low) to 100(high)"
+					"colDesc": "Health Care rating from 1(low) to 100(high)",
+					"colType": "number"
 				},
 				{
 					"colIndex": 5,
 					"colName": "Pollution",
-					"colDesc": "Pollution rating from 1(low) to 100(high)"
+					"colDesc": "Pollution rating from 1(low) to 100(high)",
+					"colType": "number"
 				},
 				{
 					"colIndex": 6,
 					"colName": "Quality of Life",
-					"colDesc": "Quality of Life rating from 1(low) to 100(high)"
+					"colDesc": "Quality of Life rating from 1(low) to 100(high)",
+					"colType": "number"
 				},
 				{
 					"colIndex": 7,
 					"colName": "Crime Rating",
-					"colDesc": "Crime Rating from 1(low) to 100(high)"
+					"colDesc": "Crime Rating from 1(low) to 100(high)",
+					"colType": "number"
 				}
 			]
 		}
