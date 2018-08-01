@@ -56,6 +56,7 @@ import { IntroComponent } from './components/intro/intro.component';
 import { ClickStopPropagationDirective } from './directive/click-stop-propagation.directive';
 import { TabViewComponent } from './components/tab-view/tab-view.component';
 import {RestService} from './service/rest/rest.service';
+import {DatatableDetailComponent} from './components/datatable-detail/datatable-detail.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,7 +71,8 @@ import {RestService} from './service/rest/rest.service';
     BargraphViewComponent,
     IntroComponent,
     ClickStopPropagationDirective,
-    TabViewComponent
+    TabViewComponent,
+    DatatableDetailComponent
   ],
   imports: [
     BrowserModule,

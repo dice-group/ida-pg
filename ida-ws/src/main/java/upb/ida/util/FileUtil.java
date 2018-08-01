@@ -2,6 +2,7 @@ package upb.ida.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
@@ -119,6 +122,36 @@ public class FileUtil {
 			}
 		}
 		return resMap;
+	}
+	/**
+	 * Method to fetch the metadata json for the given dataset
+	 * 
+	 * @param keyword
+	 *            - name of dataset
+	 * @return - metadata json object
+	 * @throws JsonProcessingException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public ObjectNode getDatasetMetaData(String keyword) throws JsonProcessingException, FileNotFoundException, IOException {
+		ObjectNode resObj = null;
+		String path = dsPathMap.get(keyword.toLowerCase());
+		if (path != null) {
+			File dir = new File(fetchSysFilePath(path));
+			File[] directoryListing = dir.listFiles();
+			if (directoryListing != null) {
+				for (File child : directoryListing) {
+					// Do something with child
+					if (child.getName().matches(IDALiteral.DSMD_FILE_PATTERN)) {
+						ObjectMapper mapper = new ObjectMapper();
+						ObjectReader reader = mapper.reader();
+						resObj = (ObjectNode) reader.readTree(new FileInputStream(child));
+						break;
+					}
+				}
+			}
+		}
+		return resObj;
 	}
 
 	/**
