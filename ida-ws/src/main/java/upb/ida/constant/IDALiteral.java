@@ -30,5 +30,7 @@ public interface IDALiteral {
 	
 	//CSV File name Pattern
 	public static final String CSV_FILE_PATTERN = ".*[cC][sS][vV]$";
+	//Metadata File name Pattern
+	public static final String DSMD_FILE_PATTERN = ".*_dsmd\\.[jJ][sS][oO][nN]$";
 
 }

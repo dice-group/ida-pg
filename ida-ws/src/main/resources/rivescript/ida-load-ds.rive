@@ -3,7 +3,7 @@
 //User queries for Loading the data set 
 
 + load * dataset
-* <call>loadDataset <star></call> == pass => Dataset is now \s
+* <call>LoadDsMetadata <star></call> == pass => Dataset is now \s
 ^ loaded. You can access the table in the main view.
 - Data set not found!
 

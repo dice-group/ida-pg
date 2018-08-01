@@ -42,7 +42,9 @@ public class RiveScriptBeanProvider {
 	@Autowired
 	private CheckParamCollected checkParamCollected;
 	@Autowired
-	FileUtil demoMain;
+	private FileUtil demoMain;
+	@Autowired
+	private LoadDsMetadata dsmdLoader;
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
 	 * @return - RiveScript Instance
@@ -69,7 +71,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("UserParamValueCollector", userParamValueCollector);
 		bot.setSubroutine("ClusterDataGetter", clusterDataGetter);
 		bot.setSubroutine("CheckParamCollected", checkParamCollected);
-
+		bot.setSubroutine("LoadDsMetadata", dsmdLoader);
 		return bot;
 	}
 
