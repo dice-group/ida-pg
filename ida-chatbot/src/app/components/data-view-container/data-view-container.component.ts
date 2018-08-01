@@ -21,7 +21,9 @@ export class DataViewContainerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.datasetCount = this.object.keys(this.item.dataset).length;
+    if (this.item.dataset) {
+      this.datasetCount = this.object.keys(this.item.dataset).length;
+    }
     // console.log(this.item);
   }
 

@@ -43,7 +43,7 @@ export class AppComponent {
       // load the dataset
       const sdbEle = new SidebarElement(newId, resp.payload.label, resp.payload.dsName);
       this.sidebarItems.push(sdbEle);
-      const mvEle = new MainviewElement(newId, resp.payload.dataset);
+      const mvEle = new MainviewElement(newId, resp.payload.dataset, resp.payload.dsMd);
       this.mainViewItems.push(mvEle);
       this.activeItem = newId;
     } else if (resp.actnCode === 2) {

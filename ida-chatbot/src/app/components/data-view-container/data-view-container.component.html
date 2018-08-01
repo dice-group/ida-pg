@@ -1,4 +1,4 @@
-<mat-tab-group style="max-height: 100vh" [(selectedIndex)]="activeTabIndex" mat-stretch-tabs>
+<mat-tab-group style="max-height: 100vh" [(selectedIndex)]="activeTabIndex">
   <!--<mat-tab label="FDG">
     <app-fdg-view [idpf]="32"></app-fdg-view>
   </mat-tab>
@@ -14,15 +14,25 @@
       </ng-template>
       <app-datatable-view [data]="item.dataset[ds]"></app-datatable-view>
     </mat-tab>
-    <mat-tab *ngFor="let ext of item.getExtraTabs()">
+  </ng-container>
+  <ng-container *ngIf="item.dsMd">
+    <mat-tab>
       <ng-template mat-tab-label>
         <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
-          <span>{{ext.label}}</span>
-          <mat-icon *ngIf="ext.closable" appClickStopPropagation (click)="closeTab(ext)">close</mat-icon>
+          <span>{{item.dsMd.dsName}} Schema</span>
         </div>
       </ng-template>
-      <app-tab-view [tabElement]="ext"></app-tab-view>
+      <app-datatable-detail [dsdetail]="item.dsMd"></app-datatable-detail>
     </mat-tab>
   </ng-container>
+  <mat-tab *ngFor="let ext of item.getExtraTabs()">
+    <ng-template mat-tab-label>
+      <div fxFlex="row" fxLayoutGap="20px" fxLayoutAlign="center center">
+        <span>{{ext.label}}</span>
+        <mat-icon *ngIf="ext.closable" appClickStopPropagation (click)="closeTab(ext)">close</mat-icon>
+      </div>
+    </ng-template>
+    <app-tab-view [tabElement]="ext"></app-tab-view>
+  </mat-tab>
 
 </mat-tab-group>
