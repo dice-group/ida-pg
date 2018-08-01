@@ -12,7 +12,7 @@ public interface IDALiteral {
 	public static final int UIA_FDG = 2;
 	public static final int UIA_BG = 3;
 	public static final int UIA_CLUSTER = 4;
-	public static final int UIA_VWTABLE = 1;
+	public static final int UIA_DTTABLE = 5;
 	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
