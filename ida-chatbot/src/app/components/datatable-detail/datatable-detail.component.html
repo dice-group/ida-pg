@@ -1,10 +1,23 @@
 <div class="table-cls">
   <div style="margin-bottom: 20px;" fxLayout="column">
-    <h5>{{dsdetail.dsName}} Dataset</h5>
+    <h3>{{dsdetail.dsName}} Dataset</h3>
     <span>{{dsdetail.dsDesc}}</span>
   </div>
-  <div style="margin-bottom: 10px;"><b>Following is the list of Data tables in this dataset:</b></div>
-  <mat-accordion [multi]="true">
+  <!-- TODO: Think of better expansion/collapse buttons UI -->
+  <div fxLayout="row" fxLayoutGap="20px" style="margin-bottom: 10px;">
+    <div fxLayoutAlign="start" fxFlex="grow"><b>Following is the list of Data tables in
+      this dataset:</b></div>
+    <div fxLayout="row" fxLayoutAlign="end" fxFlex="nogrow">
+      <button mat-icon-button (click)="tableAcc.openAll()">
+        <mat-icon color="primary" matTooltip="Expand All Tables">add_box</mat-icon>
+      </button>
+      <button mat-icon-button (click)="tableAcc.closeAll()">
+        <mat-icon color="primary" matTooltip="Collapse All Tables">indeterminate_check_box</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-accordion [multi]="true" #tableAcc="matAccordion">
     <mat-expansion-panel *ngFor="let fileItem of dsdetail.filesMd">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -25,8 +38,18 @@
           </div>
         </div>
       </div>
-      <div style="margin-bottom: 10px;"><b>Following is the list of columns in this data table:</b></div>
-      <mat-accordion [multi]="true">
+      <div fxLayout="row" fxLayoutGap="20px">
+        <div style="margin-bottom: 10px;" fxLayoutAlign="start" fxFlex="grow"><b>Following is the list of columns in this data table:</b></div>
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end" fxFlex="nogrow">
+          <button mat-icon-button (click)="colAcc.openAll()">
+            <mat-icon matTooltip="Expand All Columns">unfold_more</mat-icon>
+          </button>
+          <button mat-icon-button (click)="colAcc.closeAll()">
+            <mat-icon matTooltip="Collapse All Columns">unfold_less</mat-icon>
+          </button>
+        </div>
+      </div>
+      <mat-accordion [multi]="true" #colAcc="matAccordion">
         <mat-expansion-panel *ngFor="let colItem of fileItem.fileColMd">
           <mat-expansion-panel-header>
             <mat-panel-title>
