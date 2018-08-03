@@ -22,7 +22,7 @@ import upb.ida.util.FileUtil;
 @Component
 public class LoadDataContent implements Subroutine {
 	@Autowired
-	private FileUtil demoMain;
+	private FileUtil fileUtil;
 	@Autowired
 	private ResponseBean responseBean;
 
@@ -40,12 +40,12 @@ public class LoadDataContent implements Subroutine {
 		String message = StringUtils.join(args, " ")
 		                            .trim();
 		// String user = rs.currentUser();
-		if (FileUtil.datasetExists(message)) {
+		if (fileUtil.datasetExists(message)) {
 			try {
 				Map<String, Object> dataMap = responseBean.getPayload();
 				dataMap.put("label", message);
 				dataMap.put("dsName", message);
-				dataMap.put("dataset", demoMain.getDatasetContent(message));
+				dataMap.put("dataset", fileUtil.getDatasetContent(message));
 				responseBean.setPayload(dataMap);
 				responseBean.setActnCode(IDALiteral.UIA_LOADDS);
 				return IDALiteral.RESP_PASS_ROUTINE;

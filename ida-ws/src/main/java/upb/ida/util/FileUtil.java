@@ -33,7 +33,7 @@ import upb.ida.constant.IDALiteral;
 @Scope("singleton")
 public class FileUtil {
 
-	public static Map<String, String> dsPathMap;
+	private Map<String, String> dsPathMap;
 
 	FileUtil() throws IOException {
 		dsPathMap = new HashMap<String, String>();
@@ -161,7 +161,7 @@ public class FileUtil {
 	 *            - name of dataset
 	 * @return - if dataset exists
 	 */
-	public static boolean datasetExists(String keyword) {
+	public boolean datasetExists(String keyword) {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
 	}
 
