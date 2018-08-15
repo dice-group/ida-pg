@@ -23,7 +23,10 @@
     "@angular/platform-browser": "^6.1.0",
     "@angular/platform-browser-dynamic": "^6.1.0",
     "@angular/router": "^6.1.0",
+    "@deck.gl/core": "^6.0.3",
+    "@deck.gl/layers": "^6.0.3",
     "core-js": "^2.5.4",
+    "mapbox-gl": "^0.47.0",
     "rxjs": "^6.2.2",
     "zone.js": "^0.8.26"
   },
