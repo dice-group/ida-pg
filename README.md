@@ -9,7 +9,7 @@ It's core purpose is to ease the task of a Data Scientist by providing a chat in
 <li>Suggest and execute scikit's implementation of clustering algorithms</li>
 </ul>
   
-<span><h6>Here's a video demonstration of IDA:<h6> <a href="https://youtu.be/7FQTiFdqyDE">https://youtu.be/7FQTiFdqyDE</a><span>
+<span><b>Here's a video demonstration of IDA:<b> <a href="https://youtu.be/7FQTiFdqyDE">https://youtu.be/7FQTiFdqyDE</a><span>
 
 Coming soon:
 Link to the deployed instance
