@@ -35,7 +35,7 @@ public class FileUtil {
 
 	private Map<String, String> dsPathMap;
 
-	FileUtil() throws IOException {
+	public FileUtil() throws IOException {
 		dsPathMap = new HashMap<String, String>();
 		// Read dsmap file
 		Properties prop = new Properties();
@@ -136,6 +136,7 @@ public class FileUtil {
 	public ObjectNode getDatasetMetaData(String keyword) throws JsonProcessingException, FileNotFoundException, IOException {
 		ObjectNode resObj = null;
 		String path = dsPathMap.get(keyword.toLowerCase());
+		//TODO: Change the logic to use .exists() method instead of this
 		if (path != null) {
 			File dir = new File(fetchSysFilePath(path));
 			File[] directoryListing = dir.listFiles();

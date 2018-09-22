@@ -2566,7 +2566,7 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
           elevationScale: 4,
           getPosition: d => d.COORDINATES,
           /*onHover: ({object}) => setTooltip(`${object.centroid.join(', ')}\nCount: ${object.points.length}`)*/
-        })/*,
+        }),
         new IconLayer({
           id: 'icon-layer',
           data: iconDt,
@@ -2585,14 +2585,15 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
           sizeScale: 15,
           getPosition: d => d.COORDINATES,
           getIcon: d => 'marker',
-          getSize: d => 5,
+          getSize: viewstate => this.isIconVisible(viewstate),
           getColor: d => [Math.sqrt(d.exits), 140, 0],
           // onHover: ({object}) => setTooltip(`${object.name}\n${object.address}`)
-        })*/
+        })
       ]
     });
   }
 
   isIconVisible(deckobj) {
+    console.log(deckobj);
   }
 }
