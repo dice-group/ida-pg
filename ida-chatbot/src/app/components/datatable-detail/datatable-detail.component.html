@@ -21,7 +21,8 @@
     <mat-expansion-panel *ngFor="let fileItem of dsdetail.filesMd">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <mat-checkbox appClickStopPropagation>{{fileItem.displayName}}</mat-checkbox>
+          <!--<mat-checkbox appClickStopPropagation>{{fileItem.displayName}}</mat-checkbox>-->
+          {{fileItem.displayName}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div fxLayout="row" style="margin-bottom: 20px;">
