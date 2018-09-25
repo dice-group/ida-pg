@@ -55,11 +55,11 @@ background: rgba(0, 0, 0, 0.30); /* Some darker color when you click it */
 .venntooltip {
   position: absolute;
   text-align: center;
-  width: 128px;
-  height: 16px;
+  width: auto;
+  height: auto;
   background: #333;
   color: #ddd;
-  padding: 2px;
+  padding: 4px;
   border: 0px;
   border-radius: 8px;
   opacity: 0;
