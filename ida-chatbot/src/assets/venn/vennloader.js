@@ -1,4 +1,12 @@
 function renderVennDiagram(containerId, mainDivId, sets, ttPostfix){
+  function printVennArr(arr){
+    var str = '('+arr[0];
+    for(var i=1;i<arr.length;i++){
+      str+= ','+arr[i];
+    }
+    str+=')';
+    return str;
+  }
   var containerNode = d3.select('#'+containerId).node();
   var chart = venn.VennDiagram()
     .width(containerNode.clientWidth)
@@ -17,7 +25,8 @@ function renderVennDiagram(containerId, mainDivId, sets, ttPostfix){
       venn.sortAreas(mainDiv, d);
       // Display a tooltip with the current size
       tooltip.transition().duration(400).style("opacity", .9);
-      tooltip.text(d.size + " " + ttPostfix);
+      // TODO: Combine labels in case label and sets depiction values are different
+      tooltip.text(d.size + " " + ttPostfix + ' ' + printVennArr(d.sets));
       // highlight the current path
       var selection = d3.select(this).transition("tooltip").duration(400);
       selection.select("path")
