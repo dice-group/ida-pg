@@ -1,0 +1,12 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+"http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+  <bean id="id1" class="java4s.Categories" autowire="autodetect">
+      <property name="name" value="General Books" />
+  </bean>
+  <bean id="SomeThing" class="java4s.Book">
+      <property name="bookname" value="The Kids" />
+      <property name="bookprice" value="300" />
+  </bean>
+ </beans>
