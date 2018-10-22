@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="abc" class="com.mkyong.common.Customer" autowire="byName" >
+	  <property name="custName" value="Nilanjan"></property>
+	  <property name="address" ref="addr1"></property>
+	</bean>
+	<bean id="efg" class="com.mkyong.common.Customer" autowire="byName" >
+	  <property name="custName" value="Nikit"></property>
+	  <property name="address" ref="addr1"></property>
+	</bean>
+	<bean id="ijk" class="com.mkyong.common.Customer" autowire="byName" >
+	  <property name="custName" value="Anu"></property>
+	  <property name="address" ref="addr1"></property>
+	</bean>
+		
+	<bean id="addr1" class="com.mkyong.common.Address" >
+		<property name="fulladdress" value="Block A 888, CA" />
+	</bean>
+
+</beans>

@@ -1,0 +1,33 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+
+<bean id="parchod" class="mypackage.Customer" autowire="byName">
+
+<property name="name" value="Nilanjan"/>
+<property name="age" value="13"/>
+<property name="address" ref="abc"></property>
+</bean>
+<bean id="betichdchod" class="mypackage.Customer" autowire="byName">
+
+<property name="name" value="Nilanjan"/>
+<property name="age" value="92"/>
+<property name="address" ref="abc"></property>
+</bean>
+<bean id="motherchod" class="mypackage.Customer" autowire="byName">
+
+<property name="name" value="Nilanjan"/>
+<property name="age" value="112"/>
+<property name="address" ref="abc"></property>
+</bean>
+
+
+<bean id="abc" class="mypackage.Address" autowire="byName">
+
+<property name="location" value="5 png"></property>
+</bean>
+
+
+</beans>

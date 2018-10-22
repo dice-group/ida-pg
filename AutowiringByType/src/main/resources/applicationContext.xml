@@ -1,0 +1,16 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <context:component-scan base-package="com.java2novice"/>
+ 
+    <bean class="com.java2novice.PaymentGateway" autowire="byType" />
+                                     
+    <bean  class="com.java2novice.Order" >
+        <property name="item" value="Java Book" />
+        <property name="price" value="RS 225" />
+    </bean>
+</beans>
