@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- Definition for textEditor bean -->
+	<bean id="employee"
+		class="/SpringBeanAutowiring/src/main/java/com/journaldev/spring/autowiring/main/Employee.java">
+		<property name="employeeId" value="12345" />
+		<property name="employeeName" value="Nilanjan" />
+		<property name="email" value="nilanjandas@mail.com" />
+		<property name="pancard" ref="pancard" />
+	</bean>
+
+
+	<bean id="pancard"
+		class="/SpringBeanAutowiring/src/main/java/com/journaldev/spring/autowiring/main/Pancard.java">
+		<property name="panHolderName" value="Nil" />
+		<property name="panno" value="U12345" />
+	</bean>
+
+</beans>
