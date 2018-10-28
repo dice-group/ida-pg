@@ -3,23 +3,14 @@
     
     
     <wb-module deploy-name="ida-ws">
-                                
-        
-        
-        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                
-        
-        
-        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-                
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                
-        
-        
-        <property name="java-output-path" value="/ida/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
                         
         
         <property name="context-root" value="ida-ws"/>
+        <property name="java-output-path" value="/ida/target/classes"/>
                             
     
     
