@@ -24,11 +24,11 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.scrollToBottom();
+    // this.scrollToBottom();
   }
 
   ngAfterViewChecked() {
-    this.scrollToBottom();
+    // this.scrollToBottom();
   }
 
   getMessages(): Message[] {
@@ -41,6 +41,8 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
 
   addNewMessage(message: Message) {
     this.messages.push(message);
+    //this.scrollToBottom();
+    setTimeout(() => this.scrollToBottom(), 50);
   }
 
   scrollToBottom(): void {
