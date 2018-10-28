@@ -6,11 +6,11 @@ import java.util.TreeSet;
 import org.joda.time.Interval;
 
 public class SsFuehrerInfo {
-	int count = 0;
+	private int count = 0;
 
-	TreeSet<Date> promotionDates;
-	int lastSsRang = -1;
-	int maxRang = -1;
+	private TreeSet<Date> promotionDates;
+	private int lastSsRang = -1;
+	private int maxRang = -1;
 
 	public void updateData(int rang, Date promotionDate) {
 		if (lastSsRang == -1) {
