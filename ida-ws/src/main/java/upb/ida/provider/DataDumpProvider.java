@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
+import upb.ida.util.FileUtil;
 /**
  * Beans Provider for Scikit datadump
  * @author Nikit
@@ -38,7 +39,8 @@ import upb.ida.bean.cluster.ClusterParam;
 public class DataDumpProvider {
 	@Autowired
 	public ServletContext context;
-	
+	@Autowired
+	public FileUtil demoMain;
 	public static final String DATADUMP_PATH = "./scikit/datadump/cluster_datadump.json";
 	public static final String OPT_PARAM_REGEX = "[oO]ptional";
 	public static final String MULT_PARAM_REGEX = "\\s*,\\s*|\\s*or\\s*";
@@ -68,7 +70,7 @@ public class DataDumpProvider {
 		Map<String, ClusterAlgoDesc> resMap = new HashMap<>();
 		ObjectMapper mapper = new ObjectMapper();
 		// Read datadump json
-		File clstrDd = new File(context.getRealPath(DATADUMP_PATH));
+		File clstrDd = new File(demoMain.fetchSysFilePath(DATADUMP_PATH));
 		// Create Json Array
 		ObjectReader reader = mapper.reader();
 		ObjectNode objNode = (ObjectNode) reader.readTree(new FileInputStream(clstrDd));

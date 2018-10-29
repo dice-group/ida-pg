@@ -19,11 +19,11 @@ import com.rivescript.macro.Subroutine;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.fdg.FDG_Util;
-import upb.ida.temp.DemoMain;
+import upb.ida.util.FileUtil;
 @Component
 public class FdgHandler implements Subroutine {
 	@Autowired
-	private DemoMain DemoMain;
+	private FileUtil DemoMain;
 	@Autowired
 	private FDG_Util FDG_Util;
 	@Autowired
@@ -45,7 +45,7 @@ public class FdgHandler implements Subroutine {
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			//String actvScrId = (String) responseBean.getPayload().get("actvScrid");
-			String path = DemoMain.getFilePath(actvDs,actvTbl );
+			String path = DemoMain.getDTFilePath(actvDs,actvTbl );
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", "Fdg Data");
 			/**
