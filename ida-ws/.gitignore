@@ -1,4 +1,15 @@
 /target/
 /bin/
+
+# Eclipse
 .classpath
 .project
+/.settings/
+
+# IntelliJ
+/.idea/
+/out/
+*.iws
+
+# Spring Tools
+.sts4-cache
