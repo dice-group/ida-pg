@@ -56,6 +56,10 @@ import { IntroComponent } from './components/intro/intro.component';
 import { ClickStopPropagationDirective } from './directive/click-stop-propagation.directive';
 import { TabViewComponent } from './components/tab-view/tab-view.component';
 import {RestService} from './service/rest/rest.service';
+import {DatatableDetailComponent} from './components/datatable-detail/datatable-detail.component';
+import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
+import { VennViewComponent } from './components/venn-view/venn-view.component';
+import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,7 +74,11 @@ import {RestService} from './service/rest/rest.service';
     BargraphViewComponent,
     IntroComponent,
     ClickStopPropagationDirective,
-    TabViewComponent
+    TabViewComponent,
+    DatatableDetailComponent,
+    SsbViewComponent,
+    VennViewComponent,
+    DeckglHexViewComponent
   ],
   imports: [
     BrowserModule,

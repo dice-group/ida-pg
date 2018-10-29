@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +22,8 @@ import com.rivescript.macro.Subroutine;
 import upb.ida.bean.ResponseBean;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.constant.IDALiteral;
-import upb.ida.temp.DemoMain;
 import upb.ida.util.DataDumpUtil;
+import upb.ida.util.FileUtil;
 import upb.ida.util.GetCorrectParamTypes;
 import upb.ida.util.KernelHttpRequest;
 import upb.ida.util.SessionUtil;
@@ -34,13 +32,11 @@ import upb.ida.util.SessionUtil;
 public class ClusterDataGetter implements Subroutine {
 	
 	@Autowired
-	private DemoMain DemoMain;
+	private FileUtil demoMain;
 	@Autowired
 	private ResponseBean responseBean;
 	@Autowired
 	private SessionUtil sessionUtil;
-	@Autowired
-	private ServletContext context;
 	@Autowired
 	private DataDumpUtil DataDumpUtil;
 	/**
@@ -63,10 +59,10 @@ public class ClusterDataGetter implements Subroutine {
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			//String actvScrId = (String) responseBean.getPayload().get("actvScrId");
 			Map<String, Object> dataMap = responseBean.getPayload();
-			String path = DemoMain.getFilePath(actvDs, actvTbl);
+			String path = demoMain.getDTFilePath(actvDs, actvTbl);
 
-			File file = new File(context.getRealPath(path));
-			List<Map<String, String>> lstt = DemoMain.convertToMap(file);
+			File file = new File(demoMain.fetchSysFilePath(path));
+			List<Map<String, String>> lstt = demoMain.convertToMap(file);
 			ObjectMapper mapper = new ObjectMapper();
 			ArrayNode nodeArr1 = mapper.createArrayNode();
 			List <String> keys = new ArrayList <String> ();
@@ -181,8 +177,8 @@ public class ClusterDataGetter implements Subroutine {
 	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 		
 		List<Map<String, Object>> responseList=new ArrayList<>();
-		File responseReader = new File(context.getRealPath(path));
-		List<Map<String, String>> responseFileContent = DemoMain.convertToMap(responseReader);
+		File responseReader = new File(demoMain.fetchSysFilePath(path));
+		List<Map<String, String>> responseFileContent = demoMain.convertToMap(responseReader);
 		List <String> responseColumnsKeyValue = new ArrayList <String> ();
 		for(int i=0;i<columnsForResponse.size();i++) {
 			responseColumnsKeyValue.add(getMatchingKey(columnsForResponse.get(i), responseFileContent.get(0)));

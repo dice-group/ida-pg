@@ -1,7 +1,5 @@
 package upb.ida.provider;
 
-import javax.servlet.ServletContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +12,7 @@ import com.rivescript.RiveScript;
 
 import upb.ida.constant.IDALiteral;
 import upb.ida.temp.ExampleMacro;
+import upb.ida.util.FileUtil;
 
 
 /**
@@ -24,8 +23,6 @@ import upb.ida.temp.ExampleMacro;
 @Component
 public class RiveScriptBeanProvider {
 
-	@Autowired
-	private ServletContext context;
 	@Autowired
 	private LoadDataContent loadDataContent;
 	@Autowired
@@ -44,7 +41,10 @@ public class RiveScriptBeanProvider {
 	private ClusterDataGetter clusterDataGetter;
 	@Autowired
 	private CheckParamCollected checkParamCollected;
-
+	@Autowired
+	private FileUtil demoMain;
+	@Autowired
+	private LoadDsMetadata dsmdLoader;
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
 	 * @return - RiveScript Instance
@@ -57,7 +57,7 @@ public class RiveScriptBeanProvider {
 		RiveScript bot = new RiveScript(Config.utf8());
 
 		// Load the Rivescript directory.
-		bot.loadDirectory(context.getRealPath(IDALiteral.RS_DIRPATH));
+		bot.loadDirectory(demoMain.fetchSysFilePath(IDALiteral.RS_DIRPATH));
 
 		// Sort the replies and set Subroutine calls for designated functionality
 		bot.sortReplies();
@@ -71,7 +71,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("UserParamValueCollector", userParamValueCollector);
 		bot.setSubroutine("ClusterDataGetter", clusterDataGetter);
 		bot.setSubroutine("CheckParamCollected", checkParamCollected);
-
+		bot.setSubroutine("LoadDsMetadata", dsmdLoader);
 		return bot;
 	}
 

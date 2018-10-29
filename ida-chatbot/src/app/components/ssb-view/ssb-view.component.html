@@ -1,0 +1,17 @@
+<div fxFlex style="height: 85vh; margin: 20px; border-color: #eaeaea; border-style: solid">
+  <div class="ssb-container">
+    <div [attr.id]="ssbIdMap['mainSsbId']" class="ssb-main">
+      <div [attr.id]="ssbIdMap['sequenceSsbId']" class="ssb-sequence"></div>
+      <div  [attr.id]="ssbIdMap['chartSsbId']" class="ssb-chart">
+        <div [attr.id]="ssbIdMap['explanationSsbId']" class="ssb-explanation ssb-hide">
+          <span [attr.id]="ssbIdMap['percentageSsbId']" class="ssb-percentage"></span><br /> of Soldiers followed this
+          SS-Rank sequence
+        </div>
+      </div>
+    </div>
+    <div [attr.id]="ssbIdMap['sidebarSsbId']" id="sidebar" class="ssb-sidebar">
+      <span style="alignment: center">Legend:</span>
+      <div [attr.id]="ssbIdMap['legendSsbId']" class="ssb-legend"></div>
+    </div>
+  </div>
+</div>
