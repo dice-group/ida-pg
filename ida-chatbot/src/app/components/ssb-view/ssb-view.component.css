@@ -1,0 +1,60 @@
+.ssb-container {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  width: 700px;
+  height: 550px;
+  margin: 15px;
+}
+
+.ssb-main {
+  float: left;
+  width: 600px;
+}
+
+.ssb-sidebar {
+  float: right;
+  width: 100px;
+}
+
+.ssb-sequence {
+  width: 600px;
+  height: 70px;
+}
+
+.ssb-legend {
+  padding: 10px 0 0 3px;
+}
+
+.ssb-hide {
+  visibility: hidden;
+}
+
+.ssb-sequence text, .ssb-legend text {
+  font-weight: 600;
+  fill: #fff;
+}
+
+.ssb-chart {
+  position: relative;
+  width: 600px;
+  height: 400px;
+}
+
+.ssb-chart path {
+  stroke: #fff;
+}
+/* TODO: Fix needed for absolute explanation size   */
+.ssb-explanation {
+  position: absolute;
+  top: 163px;
+  left: 250px;
+  width: 100px;
+  text-align: center;
+  color: #666;
+  z-index: -1;
+}
+
+.ssb-percentage {
+  font-size: 2.5em;
+}

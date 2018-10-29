@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +20,6 @@ import upb.ida.bean.FilterOption;
 import upb.ida.bean.FilterSort;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import upb.ida.temp.DemoMain;
 
 /**
  * Exposes util methods for Bargraph visualization
@@ -36,9 +33,7 @@ public class BarGraphUtil {
 	public static final String FROM_TO_REC = "FROMTO";
 
 	@Autowired
-	private DemoMain demoMain;
-	@Autowired
-	private ServletContext context;
+	private FileUtil demoMain;
 	@Autowired
 	private FilterUtil filterUtil;
 
@@ -127,7 +122,7 @@ public class BarGraphUtil {
 	 */
 	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap, String args[])
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
-		File file = new File(context.getRealPath(filepath));
+		File file = new File(demoMain.fetchSysFilePath(filepath));
 		fileCsv(file, x, y, dataMap, args);
 
 	}
@@ -180,7 +175,7 @@ public class BarGraphUtil {
 		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 		String actvDs = (String) responseBean.getPayload().get("actvDs");
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		String path = demoMain.getFilePath(actvDs, actvTbl);
+		String path = demoMain.getDTFilePath(actvDs, actvTbl);
 		String xaxisname = args[0];
 		String yaxisname = args[1];
 		String[] filterArgs = new String[args.length - 2];
