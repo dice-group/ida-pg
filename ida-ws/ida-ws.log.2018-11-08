@@ -1,0 +1,16 @@
+INFO    2018-11-08 23:58:26,359 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp()Before method
+INFO    2018-11-08 23:58:26,375 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json)Before method
+INFO    2018-11-08 23:58:26,388 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json) execution time: 13 ms
+INFO    2018-11-08 23:58:26,389 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json)After method
+INFO    2018-11-08 23:58:26,389 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json) return Value :/C:/Personal/Projects/DiceProject/ida/ida-ws/target/classes/scikit/datadump/cluster_datadump.json
+INFO    2018-11-08 23:58:26,462 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp() execution time: 106 ms
+INFO    2018-11-08 23:58:26,462 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp()After method
+INFO    2018-11-08 23:58:26,463 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp() return Value :{KMeans=upb.ida.bean.cluster.ClusterAlgoDesc@7f8262ee, AffinityPropagation=upb.ida.bean.cluster.ClusterAlgoDesc@407a7fe9}
+INFO    2018-11-08 23:58:56,258 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp()Before method
+INFO    2018-11-08 23:58:56,288 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json)Before method
+INFO    2018-11-08 23:58:56,309 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json) execution time: 20 ms
+INFO    2018-11-08 23:58:56,309 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json)After method
+INFO    2018-11-08 23:58:56,310 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.util.FileUtil.fetchSysFilePath(./scikit/datadump/cluster_datadump.json) return Value :/C:/Personal/Projects/DiceProject/ida/ida-ws/target/classes/scikit/datadump/cluster_datadump.json
+INFO    2018-11-08 23:58:56,382 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp() execution time: 127 ms
+INFO    2018-11-08 23:58:56,383 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp()After method
+INFO    2018-11-08 23:58:56,383 [restartedMain] upb.ida.logging.AspectLogger  - upb.ida.provider.DataDumpProvider.getScktClstrDtDmp() return Value :{KMeans=upb.ida.bean.cluster.ClusterAlgoDesc@2e9299ea, AffinityPropagation=upb.ida.bean.cluster.ClusterAlgoDesc@30f444c4}
