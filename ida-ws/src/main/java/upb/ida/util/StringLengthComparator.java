@@ -2,6 +2,9 @@ package upb.ida.util;
 
 import java.util.Comparator;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class StringLengthComparator implements Comparator<String> {
 
 	@Override
