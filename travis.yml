@@ -1,0 +1,19 @@
+sudo: required
+language: java
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+  - openjdk8
+
+before_install:
+  - sudo apt-get update -qq
+
+script:
+  - cd ./ida-ws      
+  - mvn clean install -DskipTests -P linux
+  - mvn test 
+
+cache:
+  directories:
+  - $HOME/.m2
+
