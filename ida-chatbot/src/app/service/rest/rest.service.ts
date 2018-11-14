@@ -7,7 +7,6 @@ import {Observable} from 'rxjs';
 })
 export class RestService implements HttpInterceptor {
   private hosturl = 'http://131.234.28.84:8080/ida-ws/';
-  //private hosturl = 'http://localhost:8080/ida-ws/';
   public requestEvnt: EventEmitter<boolean> = new EventEmitter();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
