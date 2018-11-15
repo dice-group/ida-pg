@@ -11,15 +11,14 @@ package upb.ida.logging;
 import java.io.File;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.juli.FileHandler;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
-import upb.ida.util.SessionUtil;
+
+import upb.ida.bean.ResponseBean;
+import upb.ida.constant.IDALiteral;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -30,10 +29,7 @@ import org.apache.log4j.PropertyConfigurator;
 @Aspect
 public class AspectLogger {
 
-	static FileHandler fileHandler = new FileHandler();
 	private final Logger log = Logger.getLogger(this.getClass());
-	@Autowired
-	private SessionUtil sessionUtil;
 	@Autowired(required=true)
 	private HttpServletRequest request;
 	
@@ -101,12 +97,23 @@ public class AspectLogger {
        if (args.length > 0) {
            logMessage.deleteCharAt(logMessage.length() - 1);
        }
-
        logMessage.append(")");
        logMessage.append(" return Value :");
-       logMessage.append(retVal.toString());
-       log.setLevel(Level.INFO);
-       log.info(logMessage.toString());
+       ResponseBean returnBean = (ResponseBean) retVal;
+       if(returnBean.getActnCode() == IDALiteral.UIA_DTTABLE)
+       {
+    	   logMessage.append("Dataset");
+           log.setLevel(Level.INFO);
+           log.info(logMessage.toString());
+           log.setLevel(Level.TRACE);
+           log.trace(returnBean.toString());
+       }
+       else
+       {
+    	   logMessage.append(retVal.toString());
+    	   log.setLevel(Level.INFO);
+    	   log.info(logMessage.toString());
+       }
    }
 
     /**
