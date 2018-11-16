@@ -20,6 +20,6 @@ matrix:
       script:
         - cd ./ida-chatbot
         - npm ci
-        - npm run test
+        - npm run test-headless
         
 
