@@ -15,4 +15,11 @@ matrix:
       cache:
         directories:
           - $HOME/.m2
+    - language: node_js
+      node_js: "10"
+      script:
+        - cd ./ida-chatbot
+        - npm ci
+        - npm run test
+        
 
