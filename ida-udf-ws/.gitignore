@@ -10,6 +10,7 @@
 /.idea/
 /out/
 *.iws
+*.iml
 
 # Spring Tools
 .sts4-cache
