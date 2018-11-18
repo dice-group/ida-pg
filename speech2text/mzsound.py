@@ -10,7 +10,7 @@ while(1):
     try:
         print("You said " + r.recognize_google(audio))
         S = r.recognize_google(audio)
-        if S=="google":
+        if S=="Google":
             webbrowser.open('http://google.com')
     except sr.UnknownValueError:
         print("Could not understand audio")
