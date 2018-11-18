@@ -24,7 +24,6 @@ public class sparqlQueryController {
                 QuerySolution soln = results.nextSolution();
                 Literal name = soln.getLiteral("x");
                 return ("Done: " + name);
-//                return name;
             }
         } finally {
             qexec.close();
