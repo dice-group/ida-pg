@@ -40,6 +40,11 @@
             <artifactId>apache-jena-libs</artifactId>
             <version>3.9.0</version>
             <type>pom</type>
+		</dependency>
+		<dependency>
+            <groupId>no.acando</groupId>
+            <artifactId>xmltordf</artifactId>
+            <version>1.9.1</version>
         </dependency>
     </dependencies>
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class checkServerController {
 
     @GetMapping("/check")
-    public String greeting() {
+    public String check() {
         return "IDA Uniform Data Server is up and running";
     }
 }
