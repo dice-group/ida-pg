@@ -1,0 +1,93 @@
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Domažlice> .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://purl.org/dc/terms/description> "Czech writer and journalist"@en .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://dbpedia.org/ontology/birthDate> "1860-2-21"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://xmlns.com/foaf/0.1/name> "Karel Matěj Čapek-Chod"@en .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://dbpedia.org/ontology/deathPlace> <http://dbpedia.org/resource/Prague> .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://dbpedia.org/ontology/deathDate> "1927-11-3"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://xmlns.com/foaf/0.1/givenName> "Karel"@en .
+<http://dbpedia.org/resource/Karel_Matěj_Čapek-Chod> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Chelsea,_Massachusetts> .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://purl.org/dc/terms/description> "American journalist, lawyer, and politician"@en .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://dbpedia.org/ontology/birthDate> "1884-11-5"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://xmlns.com/foaf/0.1/name> "Joseph C. O'Mahoney"@en .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://dbpedia.org/ontology/deathPlace> <http://dbpedia.org/resource/Suffolk_County,_New_York> .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://dbpedia.org/ontology/deathDate> "1962-12-1"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://xmlns.com/foaf/0.1/givenName> "Joseph"@en .
+<http://dbpedia.org/resource/Joseph_C._O'Mahoney> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Zhytomyr> .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://purl.org/dc/terms/description> "Polish writer and journalist"@en .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://dbpedia.org/ontology/birthDate> "1922-11-12"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://xmlns.com/foaf/0.1/name> "Tadeusz Borowski"@en .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://dbpedia.org/ontology/deathPlace> <http://dbpedia.org/resource/Warsaw> .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://dbpedia.org/ontology/deathDate> "1951-7-1"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://xmlns.com/foaf/0.1/givenName> "Tadeusz"@en .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Tadeusz_Borowski> <http://xmlns.com/foaf/0.1/surname> "Borowski"@en .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Odessa> .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://purl.org/dc/terms/description> "Ukrainian statesman"@en .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://dbpedia.org/ontology/birthDate> "1940-7-4"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://xmlns.com/foaf/0.1/name> "Valentyn Symonenko"@en .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://xmlns.com/foaf/0.1/givenName> "Valentín"@en .
+<http://dbpedia.org/resource/Valentyn_Symonenko> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Myron_V._George> <http://purl.org/dc/terms/description> "American politician"@en .
+<http://dbpedia.org/resource/Myron_V._George> <http://dbpedia.org/ontology/birthDate> "1900-1-6"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Myron_V._George> <http://xmlns.com/foaf/0.1/name> "Myron V. George"@en .
+<http://dbpedia.org/resource/Myron_V._George> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Myron_V._George> <http://dbpedia.org/ontology/deathDate> "1972-4-11"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Myron_V._George> <http://xmlns.com/foaf/0.1/givenName> "Myron"@en .
+<http://dbpedia.org/resource/Myron_V._George> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/West_Salem,_Wisconsin> .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://purl.org/dc/terms/description> "American politician"@en .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://dbpedia.org/ontology/birthDate> "1858-12-6"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://xmlns.com/foaf/0.1/name> "Frank P. Coburn"@en .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://dbpedia.org/ontology/deathPlace> <http://dbpedia.org/resource/La_Crosse,_Wisconsin> .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://dbpedia.org/ontology/deathDate> "1932-11-2"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://xmlns.com/foaf/0.1/givenName> "Frank"@en .
+<http://dbpedia.org/resource/Frank_P._Coburn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://purl.org/dc/terms/description> "American congressman in Connecticut"@en .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://dbpedia.org/ontology/birthDate> "1907-10-20"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://xmlns.com/foaf/0.1/name> "Hugh Meade Alcorn, Jr."@en .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://dbpedia.org/ontology/deathDate> "1992-1-13"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://xmlns.com/foaf/0.1/givenName> "Hugh"@en .
+<http://dbpedia.org/resource/Meade_Alcorn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Paris> .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://purl.org/dc/terms/description> "French architect and designer"@en .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://dbpedia.org/ontology/birthDate> "1886-3-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://xmlns.com/foaf/0.1/name> "Robert Mallet-Stevens"@en .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://dbpedia.org/ontology/deathPlace> <http://dbpedia.org/resource/Paris> .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://dbpedia.org/ontology/deathDate> "1945-2-8"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://xmlns.com/foaf/0.1/givenName> "Robert"@en .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Robert_Mallet-Stevens> <http://xmlns.com/foaf/0.1/surname> "Mallet-Stevens"@en .
+<http://dbpedia.org/resource/James_P._Latta> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Ashland,_Ohio> .
+<http://dbpedia.org/resource/James_P._Latta> <http://purl.org/dc/terms/description> "Nebraska Democratic politician"@en .
+<http://dbpedia.org/resource/James_P._Latta> <http://dbpedia.org/ontology/birthDate> "1844-10-31"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/James_P._Latta> <http://xmlns.com/foaf/0.1/name> "James P. Latta"@en .
+<http://dbpedia.org/resource/James_P._Latta> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/James_P._Latta> <http://dbpedia.org/ontology/deathPlace> <http://dbpedia.org/resource/Rochester,_Minnesota> .
+<http://dbpedia.org/resource/James_P._Latta> <http://dbpedia.org/ontology/deathDate> "1911-9-11"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/James_P._Latta> <http://xmlns.com/foaf/0.1/givenName> "James"@en .
+<http://dbpedia.org/resource/James_P._Latta> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://purl.org/dc/terms/description> "German voice actor and musician"@en .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://dbpedia.org/ontology/birthDate> "1984-6-11"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://xmlns.com/foaf/0.1/name> "Clemens Ostermann"@en .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://dbpedia.org/ontology/deathDate> "2007-4-30"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://xmlns.com/foaf/0.1/givenName> "Clemens"@en .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Clemens_Ostermann> <http://xmlns.com/foaf/0.1/surname> "Ostermann"@en .
+<http://dbpedia.org/resource/Halvor_Næs> <http://dbpedia.org/ontology/birthPlace> <http://dbpedia.org/resource/Trysil> .
+<http://dbpedia.org/resource/Halvor_Næs> <http://purl.org/dc/terms/description> "Norwegian ski jumper"@en .
+<http://dbpedia.org/resource/Halvor_Næs> <http://dbpedia.org/ontology/birthDate> "1927-4-5"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://dbpedia.org/resource/Halvor_Næs> <http://xmlns.com/foaf/0.1/name> "Halvor Næs"@en .
+<http://dbpedia.org/resource/Halvor_Næs> <http://xmlns.com/foaf/0.1/gender> "male"@en .
+<http://dbpedia.org/resource/Halvor_Næs> <http://xmlns.com/foaf/0.1/givenName> "Halvor"@en .
+<http://dbpedia.org/resource/Halvor_Næs> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Halvor_Næs> <http://xmlns.com/foaf/0.1/surname> "Næs"@en .
