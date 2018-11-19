@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayOutputStream;
 
 @RestController
-public class sparqlQueryController {
+public class SparqlQueryController {
 
     @RequestMapping(value = "/queryParam")
     public String getbyArtist(@RequestParam("Param") String queryParam){
