@@ -32,6 +32,8 @@ public class AspectLogger {
 	private final Logger log = Logger.getLogger(this.getClass());
 	@Autowired(required=true)
 	private HttpServletRequest request;
+	@Autowired
+	private ResponseBean response;
 	
     /**
      * Constructor of AspectLogger class
@@ -138,6 +140,7 @@ public class AspectLogger {
         }
         logMessage.append(")");
         log.setLevel(Level.ERROR);
+        response.setErrCode(1);
         log.error(logMessage.toString(), exception);
     }
 }
