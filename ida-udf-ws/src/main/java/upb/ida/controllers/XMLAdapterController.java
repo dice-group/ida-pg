@@ -20,8 +20,7 @@ public class XMLAdapterController {
     @PostMapping("/")
     public String convert(@RequestBody String text) throws IOException, SAXException, ParserConfigurationException {
         // (TODO): Request's Validation
-        byte bytes[] = text.getBytes(StandardCharsets.UTF_8);
-        return new String(xmlToRDF(bytes));
+        return new String(xmlToRDF(text.getBytes(StandardCharsets.UTF_8)));
     }
 
     @PostMapping("/file")
