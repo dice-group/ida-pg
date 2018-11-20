@@ -47,7 +47,7 @@ public class DataDumpUtil {
 		String trmdName = algoName.trim();
 		for (ClusterAlgoDesc entry : scktClstrDtDmp.values()) {
 			if (entry.getFnName().equalsIgnoreCase(trmdName) || entry.getFnDesc().equalsIgnoreCase(trmdName)) {
-				sessionUtil.setAlgoNameOrignal(entry.getFnName());
+				//sessionUtil.setAlgoNameOrignal(entry.getFnName());
 				resList = entry.getParams();
 				break;
 			}

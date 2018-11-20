@@ -111,7 +111,7 @@
 					"desc": "default True When pre-computing distances it is more numerically accurate to center the data first.  If copy_x is True, then the original data is not modified.  If False, the original data is modified, and put back before the function returns, but small numerical differences may be introduced by subtracting and then adding the data mean."
 				},
 				{
-					"paramName": "n_jobs",
+					"paramName": "n_jobs1",
 					"type": "int",
 					"desc": "The number of jobs to use for the computation. This works by computing each of the n_init runs in parallel. If -1 all CPUs are used. If 1 is given, no parallel computing code is used at all, which is useful for debugging. For n_jobs below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs but one are used. algorithm : auto, full or elkan, default=auto K-means algorithm to use. The classical EM-style algorithm is full. The elkan variation is more efficient by using the triangle inequality, but currently doesnt support sparse data. auto chooses elkan for dense data and full for sparse data."
 				}

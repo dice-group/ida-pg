@@ -2,6 +2,8 @@ package upb.ida.bean.cluster;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 /**
  * ClusterParam is used to store the parameter details from Scikit
  * data-datadump.
