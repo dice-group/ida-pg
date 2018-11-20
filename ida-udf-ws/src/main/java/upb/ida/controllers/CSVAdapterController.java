@@ -4,15 +4,10 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 import upb.ida.utils.UploadManager;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/adapter/csv")
@@ -24,13 +19,18 @@ public class CSVAdapterController {
         return new String(csvToRDF(text.getBytes(StandardCharsets.UTF_8)));
     }
 
+    /**
+     * Upload CSV file to uploads directory
+     * @param file
+     * @param fileName User will have to provide this name to query data
+     */
     @PostMapping("/file")
-    public String singleFileUpload(@RequestParam(value="file") MultipartFile file) {
-        // (TODO): Request's Validation
+    public String singleFileUpload(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) {
+        // (TODO): File Validation
         try {
             // Reading file's content in bytes
             byte[] bytes = file.getBytes();
-            UploadManager.saveFile(file, csvToRDF(bytes));
+            UploadManager.saveFile(fileName, csvToRDF(bytes));
         } catch (IOException e) {
             e.printStackTrace();
         }
