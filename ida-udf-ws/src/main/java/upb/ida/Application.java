@@ -9,7 +9,6 @@ import java.io.File;
 public class Application {
 
     public static void main(String[] args) {
-        new File(System.getProperty("user.dir") + "/uploads").mkdir();
         SpringApplication.run(Application.class, args);
     }
 }

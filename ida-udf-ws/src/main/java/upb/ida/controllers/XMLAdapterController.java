@@ -5,6 +5,7 @@ import org.apache.jena.query.Dataset;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
+import upb.ida.utils.UploadManager;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
@@ -26,12 +27,10 @@ public class XMLAdapterController {
     @PostMapping("/file")
     public String singleFileUpload(@RequestParam(value="file") MultipartFile file) {
         // (TODO): Request's Validation
-
         try {
             // Reading file's content in bytes
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(System.getProperty("user.dir") + "/uploads/", file.getOriginalFilename() + ".ttl");
-            Files.write(path, xmlToRDF(bytes));
+            UploadManager.saveFile(file, xmlToRDF(bytes));
         } catch (IOException | SAXException | ParserConfigurationException e) {
             e.printStackTrace();
         }
