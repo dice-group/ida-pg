@@ -1,6 +1,5 @@
 package upb.ida.controllers;
 
-
 import no.acando.xmltordf.Builder;
 import org.apache.jena.query.Dataset;
 import org.xml.sax.SAXException;
@@ -22,7 +21,8 @@ public class XMLAdapterController {
         BufferedInputStream in = new BufferedInputStream(inputStream);
         Dataset dataset = Builder.getAdvancedBuilderJena().build().convertToDataset(in);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        dataset.getDefaultModel().write(stream, "RDF/XML");
+        //  converting it into turtle format
+        dataset.getDefaultModel().write(stream, "ttl");
 
         return new String(stream.toByteArray());
     }
