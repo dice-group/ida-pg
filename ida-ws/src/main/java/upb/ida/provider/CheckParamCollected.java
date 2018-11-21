@@ -50,12 +50,15 @@ public class CheckParamCollected implements Subroutine {
 			 */
 			Map<String , Object> paramList = (Map<String, Object>) sessionUtil.getSessionMap().get("clusterParams");
 			
+			String algoName =  (String) sessionUtil.getSessionMap().get("algoName");
+			
+			
 			List<String> paramsRemaining =new ArrayList<>();
 			Set<String> a=collected.keySet();
 			/**
 			 * collecting all parameters of the user's selected algorithm 
 			 */
-			List<ClusterParam> mMap=  DataDumpUtil.getClusterAlgoParams(sessionUtil.getAlgoNameOrignal());
+			List<ClusterParam> mMap=  DataDumpUtil.getClusterAlgoParams(algoName);
 		    
 			Set<String> b = paramList.keySet();
 		    Set<String> result = new HashSet<>(a);
