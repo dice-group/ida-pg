@@ -27,9 +27,9 @@ export class MessageFormComponent implements OnInit {
     this.msgemitter.emit(message);
   }
 
-  /*keyDownFunction(event, btn) {
+  keyDownFunction(event,msg: string) {
     if (event.keyCode === 13) {
-      btn._elementRef.nativeElement.click();
+      this.sendMessage(msg);
     }
-  }*/
+  }
 }
