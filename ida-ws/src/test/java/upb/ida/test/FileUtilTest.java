@@ -43,17 +43,54 @@ import upb.ida.util.FileUtil;
 public class FileUtilTest {
 	
 	@Autowired
-	FileUtil fileutil;
-	@Autowired
-	private FileUtil demoMain;
+	private FileUtil dem;
 	
 	
 	@Test
-	public void ConvertToMapTest () throws JsonProcessingException, IOException
+	public void fetchSysFilePathTest() throws JsonProcessingException, IOException
 	{
-		File responseReader = new File(demoMain.fetchSysFilePath("dataset/city/movehubcostoflivingtest.csv"));
-		List<Map<String, String>> responseFileContent = demoMain.convertToMap(responseReader);
-		System.out.println(responseFileContent);
+		String filePath= "dataset/city/movehubcostoflivingtest.csv";
+		File file = new File(dem.fetchSysFilePath(filePath));
+		List<Map<String, String>> dataMapList = dem.convertToMap(file);
+		//System.out.println(dataMapList);
+		Map<String,String> firstrow = new HashMap<String,String>();
+		firstrow.put("City", "Lausanne");
+		firstrow.put("Cappuccino", "3.15");
+		firstrow.put("Cinema", "12.59");
+		firstrow.put("Wine", "8.4");
+		firstrow.put("Gasoline", "1.32");
+		firstrow.put("Avg Rent", "1714");
+		firstrow.put("Avg Disposable Income", "5000.17");
+		Map<String,String> secondrow = new HashMap<String,String>();
+		secondrow.put("City", "1");
+		secondrow.put("Cappuccino", "3.28");
+		secondrow.put("Cinema", "12.59");
+		secondrow.put("Wine", "8.4");
+		secondrow.put("Gasoline", "1.31");
+		secondrow.put("Avg Rent", "2378.61");
+		secondrow.put("Avg Disposable Income", "4197.55");
+		Map<String,String> thirdrow = new HashMap<String,String>();
+		thirdrow.put("City", "Geneva");
+		thirdrow.put("Cappuccino", "2.8");
+		thirdrow.put("Cinema", "12.94");
+		thirdrow.put("Wine", "10.49");
+		thirdrow.put("Gasoline", "1.28");
+		thirdrow.put("Avg Rent", "2607.95");
+		thirdrow.put("Avg Disposable Income", "3917.72");
+		List<Object> expected = new ArrayList<Object>() {{
+	        add(firstrow);
+	        add(secondrow);
+	        add(thirdrow);
+	    }};
+		
+	    
+	    assertEquals(dataMapList.size(),expected.size());
+	    
+	    boolean testPassed = expected.containsAll(dataMapList);
+	    
+		
+		
+		
 		
 	}
 	
