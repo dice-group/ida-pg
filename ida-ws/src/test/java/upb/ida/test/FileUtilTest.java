@@ -36,32 +36,26 @@ import upb.ida.constant.IDALiteral;
 import upb.ida.Application;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.FileUtil;
-import upb.ida.fdg.FDG_Util;
 @RunWith(SpringRunner.class)
 @WebMvcTest
 @ContextConfiguration(classes = {Application.class})
 
 public class FileUtilTest {
 	
-	
-
 	@Autowired
-	private FileUtil dem;
+	FileUtil fileutil;
+	@Autowired
+	private FileUtil demoMain;
 	
 	
 	@Test
-	public void fetchSysFilePathTest()
+	public void ConvertToMapTest () throws JsonProcessingException, IOException
 	{
-		String filePath= "dataset/city/movehubcostoflivingtest.csv";
-		File actual = new File(dem.fetchSysFilePath(filePath));
-		File expected= new File("E:\\IDA_Workspace\\ida\\ida-ws\\target\\test-classes\\dataset\\city\\movehubcostoflivingtest.csv");
-		assertEquals(actual,expected);
-		
+		File responseReader = new File(demoMain.fetchSysFilePath("dataset/city/movehubcostoflivingtest.csv"));
+		List<Map<String, String>> responseFileContent = demoMain.convertToMap(responseReader);
+		System.out.println(responseFileContent);
 		
 	}
 	
+
 }
-	
-	
-
-
