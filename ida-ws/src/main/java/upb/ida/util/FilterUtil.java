@@ -106,7 +106,7 @@ public class FilterUtil {
 		resList = getDataSection(sortedData, filterOption);
 		return resList;
 	}
-
+	
 	/**
 	 * Method to get a sub section of a passed list of data
 	 * 
