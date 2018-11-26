@@ -92,7 +92,7 @@ public class ClusterDataGetter implements Subroutine {
 			Map<String , Object> paramList = (Map<String, Object>) sessionUtil.getSessionMap().get("clusterParams");
 				GetCorrectParamTypes paramsMap= new GetCorrectParamTypes();
 				HashMap<String, Object> mMap = new HashMap<String, Object>();
-				String algoName=sessionUtil.getAlgoNameOrignal();
+				String algoName =  (String) sessionUtil.getSessionMap().get("algoName");
 				List<ClusterParam> algoParams =DataDumpUtil.getClusterAlgoParams(algoName);
 				mMap=paramsMap.correctTypeValues(paramList,algoName,algoParams);
 				/**
@@ -102,7 +102,7 @@ public class ClusterDataGetter implements Subroutine {
 		    	HashMap<String, Object> jsonDataForCluster = new HashMap<String, Object>();
 				jsonDataForCluster.put("data", outer_list);
 				jsonDataForCluster.put("params", mMap);
-				jsonDataForCluster.put("algoname", sessionUtil.getAlgoNameOrignal());
+				jsonDataForCluster.put("algoname", algoName);
 				/**
 				 * creating Array node of jsonDataForCluster - which is the data
 				 *  on which clustering algorithm will be appied 
@@ -113,6 +113,9 @@ public class ClusterDataGetter implements Subroutine {
 				 * creating instance of kernelHttpRequest call to make an http request 
 				 * to Jupyter kernel gateway server for running clustering on nodeArr1.
 				 */
+				sessionUtil.getSessionMap().remove("clusterParams");
+				sessionUtil.getSessionMap().remove("colledtedParams");
+				sessionUtil.getSessionMap().remove("algoName");
 				KernelHttpRequest kernel=new KernelHttpRequest();
 				List<String> clusterResult = kernel.getClusterResults(nodeArr1);
 				columns=args[0].replaceAll("\\sand\\s"," ");
@@ -200,9 +203,7 @@ public class ClusterDataGetter implements Subroutine {
 			responseList.add(innerMap);
 		}
 		
-		sessionUtil.getSessionMap().remove("clusterParams");
-
-		sessionUtil.getSessionMap().remove("colledtedParams");
+		
 		dataMap.put("clusterData", responseList);
 		//dataMap.put("tabLabel","Clustered"+" "+actvTbl);
 		dataMap.put("tabLabel","Clustered Data");
