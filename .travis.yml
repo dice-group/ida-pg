@@ -15,16 +15,11 @@ matrix:
       cache:
         directories:
           - $HOME/.m2
-#    - language: node_js
-#      node_js: "10"
-#      script:
-#        - cd ./ida-chatbot
-#        - npm ci
-#        - npm run test-headless
+    - language: node_js
+      node_js: "10"
+      script:
+        - cd ./ida-chatbot
+        - npm ci
+        - npm run test
         
-      after_success:
-#       - mvn cobertura:cobertura
-#       - export CODECOV_TOKEN="a147793a-a3ba-43f1-8192-261537314090"
-#       - bash <(curl -s https://codecov.io/bash)
-  
 
