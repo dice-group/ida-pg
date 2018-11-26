@@ -18,18 +18,11 @@ import org.springframework.web.context.annotation.SessionScope;
 public class SessionUtil {
 	
 	/**
-	 * Method to return a session scoped Map and a String
+	 * Method to return a session scoped Map
 	 * @return - Map
-	 * @return - String
 	 */
 	private Map<String,Object> sessionMap;
-	private String algoNameOrignal;
-	public String getAlgoNameOrignal() {
-		return algoNameOrignal;
-	}
-	public void setAlgoNameOrignal(String algoNameOrignal) {
-		this.algoNameOrignal = algoNameOrignal;
-	}
+	
 	public SessionUtil() {
 		sessionMap = new HashMap<>();
 	}
