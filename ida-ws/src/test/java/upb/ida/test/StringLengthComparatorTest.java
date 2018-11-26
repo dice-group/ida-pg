@@ -20,7 +20,7 @@ import upb.ida.util.StringLengthComparator;
 @ContextConfiguration(classes = {Application.class})
 public class StringLengthComparatorTest {
 	@Autowired
-	StringLengthComparator lengthComparator;
+	private StringLengthComparator lengthComparator;
 	
 	public static final String STR1 = "medium str";
 	public static final String STR2 = "longest string";
