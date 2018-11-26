@@ -1,5 +1,12 @@
 <div>
   <h1>Intelligent Data Assistant (IDA)</h1>
+  
+  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ffb33228db8a49919b15063ee05eca70)](https://www.codacy.com/app/nikit91/dice-ida?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nikit91/dice-ida&amp;utm_campaign=Badge_Grade)
+  
+  <a href="https://codecov.io/gh/dice-group/ida">
+  <img src="https://codecov.io/gh/dice-group/ida/branch/master/graph/badge.svg" />
+</a>
+  <br>
 <p>IDA aims to become an all-in-one natural language based interface for Data Science Workflows.
 It's core purpose is to ease the task of a Data Scientist by providing a chat interface. At the moment, IDA is capable of handling the following tasks:</p>
 <ul>
@@ -16,7 +23,5 @@ Coming soon:
 <li>Link to the deployed instance</li>
 <li>Directions on deploying locally</li>
 </ul>
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ffb33228db8a49919b15063ee05eca70)](https://www.codacy.com/app/nikit91/dice-ida?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nikit91/dice-ida&amp;utm_campaign=Badge_Grade)
 
 </div>
