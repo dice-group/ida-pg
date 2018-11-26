@@ -44,7 +44,12 @@ public class ParamsHandler implements Subroutine {
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 
 		try {
-		
+			
+			// Emptying the session
+			sessionUtil.getSessionMap().remove("clusterParams");
+			sessionUtil.getSessionMap().remove("colledtedParams");
+			sessionUtil.getSessionMap().remove("algoName");
+			
 			List<ClusterParam> paramList=  new ArrayList<>();
 			 /**
              * getting List of type ClusterParam for parameters of an algorithm
