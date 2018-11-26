@@ -23,8 +23,8 @@ matrix:
 #        - npm run test-headless
         
       after_success:
-#       - mvn cobertura:cobertura
-#       - export CODECOV_TOKEN="a147793a-a3ba-43f1-8192-261537314090"
-#       - bash <(curl -s https://codecov.io/bash)
+       - mvn cobertura:cobertura
+       - export CODECOV_TOKEN="a147793a-a3ba-43f1-8192-261537314090"
+       - bash <(curl -s https://codecov.io/bash)
   
 
