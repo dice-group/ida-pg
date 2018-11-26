@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import upb.ida.Application;
-import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.util.DataDumpUtil;
 @RunWith(SpringRunner.class)
 @WebMvcTest
