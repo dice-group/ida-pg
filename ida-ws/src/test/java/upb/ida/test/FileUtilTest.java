@@ -44,6 +44,8 @@ public class FileUtilTest {
 	
 	@Autowired
 	private FileUtil dem;
+	@Autowired
+	private FileUtil DemoMain;
 	
 	
 	@Test
@@ -91,6 +93,31 @@ public class FileUtilTest {
 		
 		
 		
+		
+	}
+	
+	@Test
+	
+	public void getDTFilePathTest() throws JsonProcessingException, IOException
+	{
+		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
+		File file = new File(dem.fetchSysFilePath(path));
+		List<Map<String, String>> dataMapList = dem.convertToMap(file);
+		//System.out.println(dataMapList);
+		Map<String, String> expect0 = new HashMap<String, String>();
+		expect0.put("city1","Berlin");
+		expect0.put("city2","Buenos Aires");
+		expect0.put("distance","7402");
+		Map<String, String> expect1 = new HashMap<String, String>();
+		expect1.put("city1","Berlin");
+		expect1.put("city2","Cairo");
+		expect1.put("distance","1795");
+		List<Object> expected = new ArrayList<Object>();
+		expected.add(expect0);
+		expected.add(expect1);
+		assertEquals(dataMapList,expected);
+	       
+	    
 		
 	}
 	
