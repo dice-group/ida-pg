@@ -67,11 +67,13 @@ public class GetCorrectParamTypesTest {
 		GetCorrectParamTypes paramsMap = new GetCorrectParamTypes();
 		mMap = paramsMap.correctTypeValues(paramMap, algoName, resList);
 		
-		System.out.println(mMap);
+		//System.out.println(mMap);
+		
 		HashMap<String, Object> expected = new HashMap<String, Object>();
 		expected.put("n_init", 10);
 		expected.put("n_clusters", 5);
 		expected.put("init", "random");
+		expected.put("n_jobs", 8);
 		assertEquals(mMap.size(),expected.size());
 		 for(Map.Entry<String, Object> m:mMap.entrySet()){  
 		      for(Map.Entry<String, Object> m1:expected.entrySet()){
@@ -84,3 +86,4 @@ public class GetCorrectParamTypesTest {
 
 }
 }
+
