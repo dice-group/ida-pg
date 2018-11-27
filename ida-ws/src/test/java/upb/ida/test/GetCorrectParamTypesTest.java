@@ -26,7 +26,6 @@ import upb.ida.util.SessionUtil;
 @RunWith(SpringRunner.class)
 @WebMvcTest
 @ContextConfiguration(classes = { Application.class })
-
 public class GetCorrectParamTypesTest {
 	@Autowired
 	private GetCorrectParamTypes getCorrectParamTypes;
