@@ -10,9 +10,15 @@ import {RestService} from '../../service/rest/rest.service';
 export class MessageFormComponent implements OnInit {
   @Output() msgemitter = new EventEmitter<Message>();
   constructor(private restservice: RestService) { }
-  public showBar = false;
+  public showBar = false;  
+  public recognition ;
+
+
   ngOnInit() {
     this.restservice.requestEvnt.subscribe(val => { this.toggleProgressBar(val); });
+    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;  
+    this.recognition = new SpeechRecognition();
+ 
   }
   toggleProgressBar(showBar) {
     this.showBar = showBar;
@@ -32,4 +38,14 @@ export class MessageFormComponent implements OnInit {
       btn._elementRef.nativeElement.click();
     }
   }*/
+
+public speechConversion(chatmsg) {
+ this.recognition.start();
+  this.recognition.onresult = (event) => {
+    const speechToText = event.results[0][0].transcript;     
+    chatmsg.value = speechToText;
+  }
+  };
+
+ 
 }

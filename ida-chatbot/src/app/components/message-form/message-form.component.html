@@ -5,6 +5,7 @@
 <form style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
   <mat-form-field fxFlex>
     <textarea #chatmsg matInput placeholder="Message"></textarea>
+	<i (click)="speechConversion(chatmsg)" class="fa fa-microphone" aria-hidden="true"></i>
   </mat-form-field>
   <div fxFlex>
     <button #sendbtn mat-raised-button (click)="sendMessage(chatmsg.value) || chatmsg.value = null" >Send</button>
