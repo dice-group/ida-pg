@@ -11,7 +11,7 @@ import com.rivescript.util.StringUtils;
 
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import upb.ida.temp.DemoMain;
+import upb.ida.util.FileUtil;
 
 /**
  * LoadDataContent is a subroutine that loads the data
@@ -22,7 +22,7 @@ import upb.ida.temp.DemoMain;
 @Component
 public class LoadDataContent implements Subroutine {
 	@Autowired
-	private DemoMain demoMain;
+	private FileUtil fileUtil;
 	@Autowired
 	private ResponseBean responseBean;
 
@@ -40,12 +40,12 @@ public class LoadDataContent implements Subroutine {
 		String message = StringUtils.join(args, " ")
 		                            .trim();
 		// String user = rs.currentUser();
-		if (DemoMain.datasetExists(message)) {
+		if (fileUtil.datasetExists(message)) {
 			try {
 				Map<String, Object> dataMap = responseBean.getPayload();
 				dataMap.put("label", message);
 				dataMap.put("dsName", message);
-				dataMap.put("dataset", demoMain.getDatasetContent(message));
+				dataMap.put("dataset", fileUtil.getDatasetContent(message));
 				responseBean.setPayload(dataMap);
 				responseBean.setActnCode(IDALiteral.UIA_LOADDS);
 				return IDALiteral.RESP_PASS_ROUTINE;

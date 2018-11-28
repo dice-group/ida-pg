@@ -1,0 +1,9 @@
+Readme
+This is python file
+To run this file Download Speech_recognisation and pyaudio packages
+to download on terminal type pip install SpeechRecognition and pip install pyaudio
+
+Note* Pyaudio is embedded in this project in SpeechRecognition package, that is why its not shown in imported option, but you have to install both packges
+
+Both packages are Free to use, also has Google Speech Recognition API support
+pyaudio is used to connect microphone.
