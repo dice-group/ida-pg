@@ -15,12 +15,9 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -29,11 +26,13 @@ import org.apache.log4j.PropertyConfigurator;
 @Aspect
 public class AspectLogger {
 
-	private final Logger log = Logger.getLogger(this.getClass());
 	@Autowired(required=true)
 	private HttpServletRequest request;
 	@Autowired
 	private ResponseBean response;
+	private Logger requestReponseLogger;
+	private Logger exceptionLogger;
+	private Logger datasetResponseLogger;
 	
     /**
      * Constructor of AspectLogger class
@@ -43,6 +42,9 @@ public class AspectLogger {
 		BasicConfigurator.configure();
 		String log4jConfigFile = System.getProperty("user.dir") + File.separator + "log4j.properties";
 		PropertyConfigurator.configure(log4jConfigFile);
+		requestReponseLogger = Logger.getLogger("RequestResponseLogger");
+		exceptionLogger = Logger.getLogger("ExceptionLogger");
+		datasetResponseLogger = Logger.getLogger("DatasetResponseLogger");
 	}
 	
 	@Pointcut("execution(* upb.ida.rest.MessageRestController*.*(..))")
@@ -72,8 +74,7 @@ public class AspectLogger {
         }
 
         logMessage.append(")");
-        log.setLevel(Level.INFO);
-        log.info(logMessage.toString());
+        requestReponseLogger.info(logMessage.toString());
     }
     
 
@@ -105,16 +106,13 @@ public class AspectLogger {
        if(returnBean.getActnCode() == IDALiteral.UIA_DTTABLE)
        {
     	   logMessage.append("Dataset");
-           log.setLevel(Level.INFO);
-           log.info(logMessage.toString());
-           log.setLevel(Level.TRACE);
-           log.trace(returnBean.toString());
+           requestReponseLogger.info(logMessage.toString());
+           datasetResponseLogger.trace(returnBean.toString());
        }
        else
        {
     	   logMessage.append(retVal.toString());
-    	   log.setLevel(Level.INFO);
-    	   log.info(logMessage.toString());
+    	   requestReponseLogger.info(logMessage.toString());
        }
    }
 
@@ -139,8 +137,7 @@ public class AspectLogger {
             logMessage.deleteCharAt(logMessage.length() - 1);
         }
         logMessage.append(")");
-        log.setLevel(Level.ERROR);
         response.setErrCode(1);
-        log.error(logMessage.toString(), exception);
+        exceptionLogger.error(logMessage.toString(), exception);
     }
 }
