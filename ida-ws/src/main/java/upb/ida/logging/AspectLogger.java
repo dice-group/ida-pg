@@ -12,10 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 @Component
 @Aspect
@@ -26,7 +28,14 @@ public class AspectLogger
 	@Autowired
 	private ResponseBean response;
 	@Autowired
-	private LoggerProvider loggerProvider;
+	@Qualifier("requestResponseLogger")
+	Logger reqRespLogger;
+	@Autowired
+	@Qualifier("exceptionLogger")
+	Logger exceptionLogger;
+	@Autowired
+	@Qualifier("datasetResponseLogger")
+	Logger datasetResponseLogger;
 	
     /**
      * Constructor of AspectLogger class
@@ -68,7 +77,7 @@ public class AspectLogger
         }
 
         logMessage.append(")");
-        loggerProvider.getRequestResponseLogger().info(logMessage.toString());
+        reqRespLogger.info(logMessage.toString());
     }
     
 
@@ -100,14 +109,13 @@ public class AspectLogger
        if(returnBean.getActnCode() == IDALiteral.UIA_DTTABLE)
        {
     	   logMessage.append("Dataset");
-    	   loggerProvider.getRequestResponseLogger().info(logMessage.toString());
-    	   loggerProvider.getDatasetReponseLogger().trace(returnBean.toString());
+    	   datasetResponseLogger.trace(returnBean.toString());
        }
        else
        {
     	   logMessage.append(retVal.toString());
-    	   loggerProvider.getRequestResponseLogger().info(logMessage.toString());
        }
+       reqRespLogger.info(logMessage.toString());
    }
 
     /**
@@ -132,6 +140,6 @@ public class AspectLogger
         }
         logMessage.append(")");
         response.setErrCode(1);
-        loggerProvider.getExceptionLogger().error(logMessage.toString(), exception);
+        exceptionLogger.error(logMessage.toString(), exception);
     }
 }

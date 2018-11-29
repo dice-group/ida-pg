@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import upb.ida.constant.IDALiteral;
 import upb.ida.util.FileUtil;
 
 @Component
@@ -35,7 +36,7 @@ public class LoggerProvider {
 	@Qualifier("requestResponseLogger")
 	public Logger getRequestResponseLogger() 
 	{
-		String log4jConfigFile = fileUtil.fetchSysFilePath("log4j.properties");
+		String log4jConfigFile = fileUtil.fetchSysFilePath(IDALiteral.ASPECTLOGGER_PROP_FILEPATH);
 		PropertyConfigurator.configure(log4jConfigFile);
 		return Logger.getLogger("RequestResponseLogger");
 	}
