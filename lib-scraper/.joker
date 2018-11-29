@@ -1,4 +1,4 @@
 {:ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
                              lib-scraper.core]
- :known-macros [skyscraper/defprocessor]}
+ :known-macros [proxy]}
