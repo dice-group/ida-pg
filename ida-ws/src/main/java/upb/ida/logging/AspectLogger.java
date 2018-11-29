@@ -20,12 +20,14 @@ import upb.ida.constant.IDALiteral;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
+import upb.ida.util.FileUtil;
 
 @Component
 @Aspect
-public class AspectLogger {
-
+public class AspectLogger 
+{
+	@Autowired
+	private FileUtil fileUtil;
 	@Autowired(required=true)
 	private HttpServletRequest request;
 	@Autowired
@@ -40,7 +42,8 @@ public class AspectLogger {
 	AspectLogger()
 	{
 		BasicConfigurator.configure();
-		String log4jConfigFile = System.getProperty("user.dir") + File.separator + "log4j.properties";
+		File file = new File(fileUtil.fetchSysFilePath("log4j.properties"));
+		String log4jConfigFile = fileUtil.fetchSysFilePath("log4j.properties");
 		PropertyConfigurator.configure(log4jConfigFile);
 		requestReponseLogger = Logger.getLogger("RequestResponseLogger");
 		exceptionLogger = Logger.getLogger("ExceptionLogger");
