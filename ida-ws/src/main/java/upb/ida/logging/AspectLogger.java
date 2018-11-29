@@ -8,8 +8,6 @@ package upb.ida.logging;
  *
  */
 
-import java.io.File;
-
 import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -18,23 +16,17 @@ import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import upb.ida.util.FileUtil;
 
 @Component
 @Aspect
 public class AspectLogger 
 {
-	@Autowired
-	private FileUtil fileUtil;
 	@Autowired(required=true)
 	private HttpServletRequest request;
 	@Autowired
 	private ResponseBean response;
-	private Logger requestReponseLogger;
-	private Logger exceptionLogger;
-	private Logger datasetResponseLogger;
+	@Autowired
+	private LoggerProvider loggerProvider;
 	
     /**
      * Constructor of AspectLogger class
@@ -42,16 +34,15 @@ public class AspectLogger
 	AspectLogger()
 	{
 		BasicConfigurator.configure();
-		File file = new File(fileUtil.fetchSysFilePath("log4j.properties"));
-		String log4jConfigFile = fileUtil.fetchSysFilePath("log4j.properties");
-		PropertyConfigurator.configure(log4jConfigFile);
-		requestReponseLogger = Logger.getLogger("RequestResponseLogger");
-		exceptionLogger = Logger.getLogger("ExceptionLogger");
-		datasetResponseLogger = Logger.getLogger("DatasetResponseLogger");
 	}
 	
+    /**
+     * Creates the point cut for the MessageRestController
+     * 
+     */
 	@Pointcut("execution(* upb.ida.rest.MessageRestController*.*(..))")
 	public void controller() {
+		//PointCut for MessageRestController
 	}
 
     /**
@@ -77,7 +68,7 @@ public class AspectLogger
         }
 
         logMessage.append(")");
-        requestReponseLogger.info(logMessage.toString());
+        loggerProvider.getRequestResponseLogger().info(logMessage.toString());
     }
     
 
@@ -109,13 +100,13 @@ public class AspectLogger
        if(returnBean.getActnCode() == IDALiteral.UIA_DTTABLE)
        {
     	   logMessage.append("Dataset");
-           requestReponseLogger.info(logMessage.toString());
-           datasetResponseLogger.trace(returnBean.toString());
+    	   loggerProvider.getRequestResponseLogger().info(logMessage.toString());
+    	   loggerProvider.getDatasetReponseLogger().trace(returnBean.toString());
        }
        else
        {
     	   logMessage.append(retVal.toString());
-    	   requestReponseLogger.info(logMessage.toString());
+    	   loggerProvider.getRequestResponseLogger().info(logMessage.toString());
        }
    }
 
@@ -141,6 +132,6 @@ public class AspectLogger
         }
         logMessage.append(")");
         response.setErrCode(1);
-        exceptionLogger.error(logMessage.toString(), exception);
+        loggerProvider.getExceptionLogger().error(logMessage.toString(), exception);
     }
 }
