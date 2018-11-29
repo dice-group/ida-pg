@@ -4,15 +4,17 @@
   [& preds]
   (fn [& args]
     (loop [[pred & preds] preds]
-      (if (and pred (apply pred args))
-        (recur preds) (nil? pred)))))
+      (if (nil? pred) true
+        (if (apply pred args)
+          (recur preds) false)))))
 
 (defn p-or
   [& preds]
   (fn [& args]
     (loop [[pred & preds] preds]
-      (if (or (nil? pred) (apply pred args))
-        true (recur preds)))))
+      (if (nil? pred) false
+        (if (apply pred args)
+          true (recur preds))))))
 
 (defn p-expire
   [limit]
