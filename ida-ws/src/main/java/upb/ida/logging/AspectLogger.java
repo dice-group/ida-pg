@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 @Component
@@ -29,21 +28,13 @@ public class AspectLogger
 	private ResponseBean response;
 	@Autowired
 	@Qualifier("requestResponseLogger")
-	Logger reqRespLogger;
+	private Logger reqRespLogger;
 	@Autowired
 	@Qualifier("exceptionLogger")
-	Logger exceptionLogger;
+	private Logger exceptionLogger;
 	@Autowired
 	@Qualifier("datasetResponseLogger")
-	Logger datasetResponseLogger;
-	
-    /**
-     * Constructor of AspectLogger class
-     */
-	AspectLogger()
-	{
-		BasicConfigurator.configure();
-	}
+	private Logger datasetResponseLogger;
 	
     /**
      * Creates the point cut for the MessageRestController
