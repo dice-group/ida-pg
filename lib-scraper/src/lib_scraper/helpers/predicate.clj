@@ -42,7 +42,8 @@
 
 (defn parse
   [preds expr]
-  (parse-base (merge {'and p-and
+  (parse-base (merge {'not not
+                      'and p-and
                       'or p-or
                       'expire p-expire}
                      preds)
