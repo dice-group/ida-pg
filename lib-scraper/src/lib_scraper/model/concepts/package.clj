@@ -1,6 +1,4 @@
-(ns lib-scraper.model.concepts.package
-  (:require [datascript.core :as d]
-            [datascript.db :as db]))
+(ns lib-scraper.model.concepts.package)
 
 (def spec {::name {:db/type :db.type/string
                    :db/unique :db.unique/identity

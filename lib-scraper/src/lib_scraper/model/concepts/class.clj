@@ -1,7 +1,7 @@
 (ns lib-scraper.model.concepts.class)
 
 (def spec {::name {:db/type :db.type/string
-                   :db/doc "Unique name of the class."}
+                   :db/doc "Name of the class."}
            ::package {:db/type :db.type/ref
                       :db/doc "Package of the class."}
            ::method {:db/type :db.type/ref
