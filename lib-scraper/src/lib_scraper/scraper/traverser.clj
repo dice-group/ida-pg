@@ -3,12 +3,12 @@
 
 (defn- queue
   ([] (clojure.lang.PersistentQueue/EMPTY))
-  ([coll]
-   (reduce conj clojure.lang.PersistentQueue/EMPTY coll)))
+  ([& s]
+   (reduce conj clojure.lang.PersistentQueue/EMPTY s)))
 
 (defn- traverser-fn
   [db doc]
-  (let [queue (queue [:document])]
+  (let [queue (queue :document)]
     queue))
 
 (defn traverser
