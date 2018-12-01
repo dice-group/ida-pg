@@ -2,8 +2,8 @@
 
 (def spec {::name {:db/type :db.type/string
                    :db/doc "Name of the class."}
-           ::package {:db/type :db.type/ref
-                      :db/doc "Package of the class."}
+           ::constructor {:db/type :db.type/ref
+                          :db/doc "Constructor of the class. A ref to a function."}
            ::method {:db/type :db.type/ref
                      :db/cardinality :db.cardinality/many
                      :db/doc "Method of the class. A ref to a function."}})
