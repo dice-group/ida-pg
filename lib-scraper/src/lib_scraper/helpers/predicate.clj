@@ -18,11 +18,32 @@
 
 (defn p-expire
   [limit]
-  (let [count (atom 0)]
-    (fn [& args] (<= (swap! count inc) limit))))
+  (if (= limit -1)
+    (constantly true)
+    (let [count (atom 0)]
+      (fn [& args] (<= (swap! count inc) limit)))))
 
 (defn p-log
   [f]
   (fn [& args]
     (println (apply f args))
     true))
+
+(defn parse-base
+  [preds expr]
+  (cond
+    (list? expr)
+    (let [[head & rest] expr]
+      (if-let [pred (preds head)]
+        (apply pred (map (partial parse-base preds) rest))
+        (throw (Exception. (str "Unknown predicate '" head "'.")))))
+    (symbol? expr) (throw (Exception. "Predicate expression must not contain free variables."))
+    :else expr))
+
+(defn parse
+  [preds expr]
+  (parse-base (merge {'and p-and
+                      'or p-or
+                      'expire p-expire}
+                     preds)
+              expr))
