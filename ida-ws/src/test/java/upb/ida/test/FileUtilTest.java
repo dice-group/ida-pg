@@ -1,8 +1,12 @@
 package upb.ida.test;
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,31 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
-import upb.ida.constant.IDALiteral;
 
 import upb.ida.Application;
-import upb.ida.util.DataDumpUtil;
 import upb.ida.util.FileUtil;
 @RunWith(SpringRunner.class)
 @WebMvcTest
@@ -79,16 +62,16 @@ public class FileUtilTest {
 		thirdrow.put("Gasoline", "1.28");
 		thirdrow.put("Avg Rent", "2607.95");
 		thirdrow.put("Avg Disposable Income", "3917.72");
-		List<Object> expected = new ArrayList<Object>() {{
-	        add(firstrow);
-	        add(secondrow);
-	        add(thirdrow);
-	    }};
+		List<Object> expected = new ArrayList<Object>(); 
+			expected.add(firstrow);
+			expected.add(secondrow);
+			expected.add(thirdrow);
+	    
 		
 	    
 	    assertEquals(dataMapList.size(),expected.size());
 	    
-	    boolean testPassed = expected.containsAll(dataMapList);
+	    //boolean testPassed = expected.containsAll(dataMapList);
 	    
 		
 		

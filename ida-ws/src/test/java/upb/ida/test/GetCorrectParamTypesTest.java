@@ -10,34 +10,26 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import upb.ida.Application;
-import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.bean.cluster.ParamEntryChecker;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.GetCorrectParamTypes;
-import upb.ida.util.SessionUtil;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest
 @ContextConfiguration(classes = { Application.class })
 public class GetCorrectParamTypesTest {
-	@Autowired
-	private GetCorrectParamTypes getCorrectParamTypes;
+	
 
-	@Autowired
-	@Qualifier("scktClstrDtDmp")
-	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
-
+	
 	@Autowired
 	private DataDumpUtil DataDumpUtil;
-	@Autowired
-	private SessionUtil sessionUtil;
+	
 
 	@Test
 	public void correctTypeValuesTest() {
