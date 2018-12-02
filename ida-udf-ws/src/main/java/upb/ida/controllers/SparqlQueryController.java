@@ -16,7 +16,7 @@ import java.io.IOException;
 @RestController
 public class SparqlQueryController {
 
-    protected static String fusekiQueryPath = "http://localhost:3030/ds/query";
+    protected static String fusekiQueryPath = "http://localhost:3330/ds/query";
     String outputStatement = null;
 
     @RequestMapping(value = "/queryParam")

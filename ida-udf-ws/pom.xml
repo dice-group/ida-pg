@@ -40,6 +40,16 @@
  		 <version>3.9.0</version>
  		 <type>pom</type>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-fuseki-main</artifactId>
+            <version>3.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.8.0-beta2</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -67,5 +77,6 @@
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
+
 
 </project>
