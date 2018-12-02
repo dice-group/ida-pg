@@ -9,13 +9,12 @@ import {RestService} from '../../service/rest/rest.service';
 })
 export class MessageFormComponent implements OnInit {
   @Output() msgemitter = new EventEmitter<Message>();
+  @ViewChild('chatmsg') chatmsg: ElementRef;
+
   constructor(private restservice: RestService) { }
   public showBar = false;
-  public recognition ;
   ngOnInit() {
     this.restservice.requestEvnt.subscribe(val => { this.toggleProgressBar(val); });
-	(<any>window).SpeechRecognition = (<any>window).webkitSpeechRecognition || (<any>window).SpeechRecognition;
-	this.recognition = new SpeechRecognition();
   }
   toggleProgressBar(showBar) {
     this.showBar = showBar;
@@ -30,17 +29,13 @@ export class MessageFormComponent implements OnInit {
     this.msgemitter.emit(message);
   }
 
-  keyDownFunction(event,msg: string) {
+  keyDownFunction(event, msg: string) {
     if (event.keyCode === 13) {
       this.sendMessage(msg);
     }
   }
-	
-  speechConversion(chatmsg) {
-  	this.recognition.start();
-  	this.recognition.onresult = (event) => {
-    	const speechToText = event.results[0][0].transcript;     
-    	chatmsg.value = speechToText;
-  	}
+
+  getVoiceToMsg(msg) {
+    this.chatmsg.nativeElement.value = msg;
   }
 }
