@@ -69,26 +69,31 @@ public class GetMatchingKeyTest {
 		for (int i = 0; i < actual.size(); i++) {
 
 			Map<String, String> aMap = actual.get(i);
-			//Map<String, String> bMap = expected.get(i);
+			Map<String, String> bMap = expected.get(i);
 
 			//Set<String> aKeys = aMap.keySet();
-			//Set<String> bKeys = bMap.keySet();
+			Set<String> bKeys = bMap.keySet();
 			
-			String eKey1 = "name";
-			String eKey2 = "weight";
-			String eKey3 = "height";
-			String eKey4 = "sibling";
-
-			String actualKey1 = barUtil.getMatchingKey(eKey1, aMap);
-			String actualKey2 = barUtil.getMatchingKey(eKey2, aMap);
-			String actualKey3 = barUtil.getMatchingKey(eKey3, aMap);
-			String actualKey4 = barUtil.getMatchingKey(eKey4, aMap);
-
-			assertEquals(eKey1, actualKey1);
-			assertEquals(eKey2, actualKey2);
-			assertEquals(eKey3, actualKey3);
-			assertEquals(eKey4, actualKey4);
-
+			for(String key : bKeys) {
+				
+				String actualKey = barUtil.getMatchingKey(key, aMap);
+				assertEquals(key, actualKey);
+			}
+			
+//			String eKey1 = "name";
+//			String eKey2 = "weight";
+//			String eKey3 = "height";
+//			String eKey4 = "sibling";
+//
+//			String actualKey1 = barUtil.getMatchingKey(eKey1, aMap);
+//			String actualKey2 = barUtil.getMatchingKey(eKey2, aMap);
+//			String actualKey3 = barUtil.getMatchingKey(eKey3, aMap);
+//			String actualKey4 = barUtil.getMatchingKey(eKey4, aMap);
+//
+//			assertEquals(eKey1, actualKey1);
+//			assertEquals(eKey2, actualKey2);
+//			assertEquals(eKey3, actualKey3);
+//			assertEquals(eKey4, actualKey4);
 		}
-	}
+	}	
 }
