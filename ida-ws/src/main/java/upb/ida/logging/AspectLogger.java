@@ -13,16 +13,14 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import org.apache.log4j.Logger;
 
-@Component
 @Aspect
 public class AspectLogger 
 {
-	@Autowired(required=true)
+	@Autowired
 	private HttpServletRequest request;
 	@Autowired
 	private ResponseBean response;
