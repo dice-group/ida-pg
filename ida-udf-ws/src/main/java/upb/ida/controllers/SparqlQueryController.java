@@ -3,6 +3,9 @@ package upb.ida.controllers;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
+import org.apache.jena.system.Txn;
 import org.apache.jena.util.FileManager;
 
 import org.springframework.web.bind.annotation.*;
@@ -19,45 +22,65 @@ public class SparqlQueryController {
     protected static String fusekiQueryPath = "http://localhost:3330/ds/query";
     String outputStatement = null;
 
-    @RequestMapping(value = "/queryParam")
-    public String getbyArtist(@RequestParam("Param") String queryParam, @RequestParam("output") String output){
-        FileManager.get().loadModel("/home/programmercore/Documents/PG/ida/ida-udf-ws/uploads/sampleresult.ttl");
-
+    @RequestMapping(value = "/")
+    public String getbyArtist(@RequestParam("Param") String queryParam){
+//        FileManager.get().loadModel("/home/programmercore/Documents/PG/ida/ida-udf-ws/uploads/sampleresult.ttl");
+        queryParam = "SELECT distinct ?c WHERE { ?a test:City ?c . }";
         String queryString = "PREFIX test:  <http://example.com#>" + queryParam;
-        QueryExecution qexec = QueryExecutionFactory.sparqlService(fusekiQueryPath, queryString);
-        ResultSet results = qexec.execSelect();
+//        QueryExecution qexec = QueryExecutionFactory.sparqlService(fusekiQueryPath, queryString);
+//        ResultSet results = qexec.execSelect();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 //        String outputStatement = null;
 
-        ResultSetFormatter.outputAsJSON(outputStream, results);
+//        ResultSetFormatter.outputAsJSON(outputStream, results);
 //        String json = new String(outputStream.toByteArray());
 //        return json;
-        if(output.toLowerCase() == "json"){
-
-            ResultSetFormatter.outputAsJSON(outputStream, results);
-            String json = new String(outputStream.toByteArray());
-
-            outputStatement = json;
-
-        } else if(output.toLowerCase() == "csv"){
-
-            ResultSetFormatter.outputAsCSV(outputStream, results);
-            String json = new String(outputStream.toByteArray());
-
-            outputStatement = json;
-
-        } else if(output.toLowerCase() == "xml"){
-
-            ResultSetFormatter.outputAsXML(outputStream, results);
-            String json = new String(outputStream.toByteArray());
-
-            outputStatement = json;
-
-        } else {
-            outputStatement = "Format not Supported!";
+        Model model = ModelFactory.createDefaultModel();
+        try{
+            model.read(new FileInputStream("/home/programmercore/Documents/PG/ida/ida-udf-ws/uploads/sampleresult.ttl"),null, "TURTLE");
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        return outputStatement;
+
+//        Dataset dataset = DatasetFactory.createTxnMem();
+        RDFConnection conn = RDFConnectionFactory.connect("http://localhost:3330/ds/query");
+        conn.load(model);
+        QueryExecution queryExecution = conn.query(queryString);
+        ResultSet results = queryExecution.execSelect();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(outputStream, results);
+        String json = new String(outputStream.toByteArray());
+        conn.end();
+        return json;
+//        String json = new String(outputStream.toByteArray());
+//        return json;
+//        if(output.toLowerCase() == "json"){
+//
+//            ResultSetFormatter.outputAsJSON(outputStream, results);
+//            String json = new String(outputStream.toByteArray());
+//
+//            outputStatement = json;
+//
+//        } else if(output.toLowerCase() == "csv"){
+//
+//            ResultSetFormatter.outputAsCSV(outputStream, results);
+//            String json = new String(outputStream.toByteArray());
+//
+//            outputStatement = json;
+//
+//        } else if(output.toLowerCase() == "xml"){
+//
+//            ResultSetFormatter.outputAsXML(outputStream, results);
+//            String json = new String(outputStream.toByteArray());
+//
+//            outputStatement = json;
+//
+//        } else {
+//            outputStatement = "Format not Supported!";
+//        }
+//        return outputStatement;
+//        return null;
     }
 
 //    @PostMapping("/fileUpload")
