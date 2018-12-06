@@ -13,3 +13,6 @@
 
 # Spring Tools
 .sts4-cache
+
+#Log files
+*.log
