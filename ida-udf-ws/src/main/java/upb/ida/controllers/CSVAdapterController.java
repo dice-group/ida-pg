@@ -13,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/adapter/csv")
 public class CSVAdapterController {
 
+    String csvMimeType = "text/csv";
+    String csvExtension = "csv";
+
     @PostMapping("/")
     public String convert(@RequestBody String text) {
         // (TODO): Request's Validation
@@ -26,17 +29,21 @@ public class CSVAdapterController {
      */
     @PostMapping("/file")
     public String singleFileUpload(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) {
-        // (TODO): File Validation
-        try {
-            // Reading file's content in bytes
-            byte[] bytes = file.getBytes();
-            UploadManager.saveFile(fileName, csvToRDF(bytes));
-        } catch (IOException e) {
-            e.printStackTrace();
+        String status;
+        if ( file.getContentType().equals(csvMimeType) &&
+                UploadManager.getFileExtension(file.getOriginalFilename()).equals(csvExtension)) {
+            try {
+                // Reading file's content in bytes
+                byte[] bytes = file.getBytes();
+                UploadManager.saveFile(fileName, csvToRDF(bytes));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            status = "done";
+        } else {
+            status = "fail";
         }
-
-        // (TODO) We need proper Response bean
-        return "done";
+        return status;
     }
 
     private byte[] csvToRDF(byte[] bytes) {
