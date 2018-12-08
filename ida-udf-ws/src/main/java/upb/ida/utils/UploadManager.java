@@ -23,4 +23,9 @@ public class UploadManager {
         }
         return success;
     }
+
+    public static String getFileExtension (String fileName) {
+        int dotIndex = fileName.lastIndexOf(".");
+        return dotIndex != -1 ? fileName.substring(dotIndex+1) : "";
+    }
 }
