@@ -2,7 +2,7 @@
 
 (def spec {:description {:db/type :db.type/string
                          :db/doc "Docstring for the concept."}
-           :type {:db/type :db.type/ref
+           :type {:db/type :db.type/keyword
                   :db/doc "Type of the concept."}
-           :package {:db/type :db.type/ref
-                     :db/doc "Package of the concept."}})
+           :datatype {:db/type :db.type/ref
+                      :db/doc "Datatype of the concept if applicable."}})

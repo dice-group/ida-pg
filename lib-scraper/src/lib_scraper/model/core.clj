@@ -2,6 +2,6 @@
   (:require [datascript.core :as d]
             [lib-scraper.model.concepts.core :refer [concepts]]))
 
-(defn create-db
+(defn conn
   []
   (d/create-conn concepts))
