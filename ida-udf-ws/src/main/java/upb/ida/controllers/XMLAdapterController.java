@@ -15,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/adapter/xml")
 public class XMLAdapterController {
 
+    String xmlMimeType = "application/xml";
+    String xmlExtension = "xml";
+
     @PostMapping("/")
     public String convert(@RequestBody String text) throws IOException, SAXException, ParserConfigurationException {
         // (TODO): Request's Validation
@@ -28,17 +31,23 @@ public class XMLAdapterController {
      */
     @PostMapping("/file")
     public String singleFileUpload(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) {
-        // (TODO): File Validation
-        try {
-            // Reading file's content in bytes
-            byte[] bytes = file.getBytes();
-            UploadManager.saveFile(fileName, xmlToRDF(bytes));
-        } catch (IOException | SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
-        }
+        String status;
 
-        // (TODO) We need proper Response bean
-        return "done";
+        if ( file.getContentType().equals(xmlMimeType) &&
+                UploadManager.getFileExtension(file.getOriginalFilename()).equals(xmlExtension)) {
+
+            try {
+                // Reading file's content in bytes
+                byte[] bytes = file.getBytes();
+                UploadManager.saveFile(fileName, xmlToRDF(bytes));
+            } catch (IOException | SAXException | ParserConfigurationException e) {
+                e.printStackTrace();
+            }
+            status =  "done";
+        } else {
+            status = "fail";
+        }
+        return status;
     }
 
     private byte[] xmlToRDF(byte[] bytes) throws IOException, SAXException, ParserConfigurationException {
