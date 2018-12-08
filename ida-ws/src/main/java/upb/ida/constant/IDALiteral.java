@@ -13,8 +13,7 @@ public interface IDALiteral {
 	public static final int UIA_BG = 3;
 	public static final int UIA_CLUSTER = 4;
 	public static final int UIA_DTTABLE = 5;
-	public static final int UIA_DTUV = 6; // Action code for dataset upload view
-
+	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
 	public static final String RS_USER = "user";

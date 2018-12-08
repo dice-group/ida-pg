@@ -1,7 +1,0 @@
-! version = 2.0
-
-//Greetings
-
-+ (i want to upload a dataset|upload a dataset)
-* <call>DatasetUploadViewHandler</call> == pass => Sure, A new tab\s
-^ has been added to the main view where you can upload your dataset

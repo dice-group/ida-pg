@@ -28,8 +28,6 @@ public class RiveScriptBeanProvider {
 	@Autowired
 	private FdgHandler fdgHandler;
 	@Autowired
-	private DatasetUploadViewHandler DatasetUploadViewHandler;
-	@Autowired
 	private BgdHandler bgdHandler;
 	@Autowired
 	private ClusterConHandler clusterConHandler;
@@ -74,7 +72,6 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("ClusterDataGetter", clusterDataGetter);
 		bot.setSubroutine("CheckParamCollected", checkParamCollected);
 		bot.setSubroutine("LoadDsMetadata", dsmdLoader);
-		bot.setSubroutine("DatasetUploadViewHandler", DatasetUploadViewHandler);
 		return bot;
 	}
 
