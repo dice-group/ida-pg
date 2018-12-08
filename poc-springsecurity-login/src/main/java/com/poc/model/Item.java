@@ -1,4 +1,4 @@
-package com.poc.springsecurity;
+package com.poc.model;
 
 public class Item {
 
