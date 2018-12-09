@@ -23,8 +23,7 @@
                                  document (when (instance? HtmlParseData parse-data)
                                             (-> ^HtmlParseData parse-data
                                                 (.getHtml) (h/parse) (h/as-hickory)))]
-                             (when document
-                               (visit document))))
+                             (when document (visit document))))
                   :max-depth max-depth}))
 
 (defn- parse-should-visit
@@ -37,8 +36,8 @@
 
 (defn scrape
   [{:keys [should-visit hooks] :as spec}]
-  (let [{:keys [traverser db]} (traverser hooks)]
+  (let [{:keys [traverser conn]} (traverser hooks)]
     (crawl (merge spec
                   {:should-visit (parse-should-visit should-visit)
                    :visit traverser}))
-    @db))
+    @conn))
