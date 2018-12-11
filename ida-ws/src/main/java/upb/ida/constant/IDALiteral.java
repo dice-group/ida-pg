@@ -7,12 +7,13 @@ package upb.ida.constant;
 public interface IDALiteral {
 	public static final String EXAMPLE = "this is an example constant string";
 	
-	//Action literals
+	//Action literals (User Interface Action)
 	public static final int UIA_LOADDS = 1;
 	public static final int UIA_FDG = 2;
 	public static final int UIA_BG = 3;
 	public static final int UIA_CLUSTER = 4;
 	public static final int UIA_DTTABLE = 5;
+	public static final int UIA_UPLOAD = 6;
 	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";

@@ -1,0 +1,36 @@
+! version = 2.0
+
+//User queries for dataset upload
+
+// first sentence
++ i would like you to upload a dataset
+- Sure, what would you like to call your dataset?
+
++ i want to upload a dataset
+- Sure, what would you like to call your dataset?
+
++ i have to upload a dataset
+- Sure, and what would you like to name it?
+
++ i would like for you to upload a dataset
+- Sure, what would you like to call your dataset?
+
+// dataset name
+
++ call dataset *
+* <call>UploadDataset <star></call> == pass => You may now proceed to upload the dataset.
+- Dataset already exists
+
++ i would like you to call it *
+@ call dataset <star>
+
++ call dataset *
+@ call dataset <star>
+
+@ call dataset <star>
+
++ call dataset *
+@ load <star> dataset
+
++ name it *
+@ @ call dataset <star>
