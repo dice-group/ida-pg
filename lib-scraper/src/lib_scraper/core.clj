@@ -13,6 +13,10 @@
                        {:trigger ::class/concept
                         :attribute ::class/name
                         :selector (s/descendant (s/tag :dt) (s/class :descname))
+                        :limit 1}
+                       {:trigger ::class/concept
+                        :attribute :description
+                        :selector (s/descendant (s/tag :dd) (s/tag :p))
                         :limit 1}]})
 
 (defn scrape-skl
