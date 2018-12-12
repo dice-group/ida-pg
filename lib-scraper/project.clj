@@ -16,8 +16,7 @@
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
-                                  [proto-repl-sayid "0.1.3"]
-                                  [com.cemerick/pomegranate "0.3.1"]]
+                                  [proto-repl-sayid "0.1.3"]]
                    :repl-options {:init-ns user
                                   :init (start)}
                    :eastwood {:exclude-linters []}}

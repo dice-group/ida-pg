@@ -7,7 +7,6 @@
 (defn start
   []
   (require '[lib-scraper.core :refer :all])
-  (set! *warn-on-reflection* true)
   (println "REPL started."))
 
 (defn refresh
