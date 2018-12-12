@@ -16,7 +16,7 @@
 
 (defn select-locs
   [selector loc]
-  (if-let [next (s/select-next-loc selector loc)]
+  (when-let [next (s/select-next-loc selector loc)]
     (lazy-seq (cons next (select-locs selector (zip/next next))))))
 
 (defmulti trigger-hook*
@@ -30,15 +30,22 @@
      :type concept
      :id id}))
 
-(defmethod trigger-hook* :attribute ; TODO: implement attribute hooks
-  [hook stack loc]
-  nil)
+(defmethod trigger-hook* :attribute
+  [{:keys [attribute]} stack loc]
+  (when-let [id (some :id stack)]
+    (let [value (->> (zip/node loc)
+                     :content
+                     (filter string?)
+                     (reduce str)
+                     (clojure.string/trim))]
+      {:tx [[:db/add id attribute value]]
+       :type attribute})))
 
 (defn trigger-hook
   [hook stack loc]
   (if-let [{:keys [tx type id]} (trigger-hook* hook stack loc)]
     {:tx tx
-     :entry (when (and id type)
+     :entry (when type
               {:id id, :type type, :loc loc})}))
 
 (defn trigger-hooks
@@ -56,7 +63,7 @@
   (let [merged-tx (transient [])]
     (loop [queue (queue (list {:type :document
                                :loc (hzip/hickory-zip doc)}))]
-      (if-not (empty? queue)
+      (when (seq queue)
         (let [stack (peek queue)
               effects (trigger-hooks hooks stack)
               tx (mapcat :tx effects)
