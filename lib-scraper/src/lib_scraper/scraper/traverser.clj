@@ -24,9 +24,14 @@
     (some (set (keys hook)) [:concept :attribute])))
 
 (defmethod trigger-hook* :concept
-  [{:keys [concept]} stack loc]
-  (let [id (tempid)]
-    {:tx [[:db/add id :type concept]]
+  [{:keys [concept ref-from-trigger]} stack loc]
+  (let [id (tempid)
+        tx [[:db/add id :type concept]]
+        tx (if ref-from-trigger
+             (let [parent (some :id stack)]
+               (conj tx [:db/add parent ref-from-trigger id]))
+             tx)]
+    {:tx tx
      :type concept
      :id id}))
 
@@ -40,6 +45,10 @@
                      (clojure.string/trim))]
       {:tx [[:db/add id attribute value]]
        :type attribute})))
+
+(defmethod trigger-hook* :default
+  [hook stack loc]
+  (println (str "Unknown hook type: " hook)))
 
 (defn trigger-hook
   [hook stack loc]
@@ -72,15 +81,20 @@
                          (map #(cons % stack)))]
           (run! (partial conj! merged-tx) tx)
           (recur (-> queue (pop) (into stacks))))))
-    (println (d/transact! conn (persistent! merged-tx)))))
+    (d/transact! conn (persistent! merged-tx))))
 
 (defn index-hooks
-  [hooks]
-  (group-by :trigger hooks))
+  [hooks patterns]
+  (->> hooks
+    (map (fn [hook]
+           (if-let [pattern (patterns (:pattern hook))]
+             (merge pattern hook)
+             hook)))
+    (group-by :trigger)))
 
 (defn traverser
-  [hooks]
+  [hooks patterns]
   (let [conn (m/conn)
-        hooks (index-hooks hooks)]
+        hooks (index-hooks hooks patterns)]
     {:conn conn
      :traverser (partial traverse! conn hooks)}))
