@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [edu.uci.ics/crawler4j "4.4.0"]
                  [hickory "0.7.1"]
-                 [datascript "0.16.9"]]
+                 [datascript "0.17.0"]]
   :repositories [["oracleReleases" {:url "https://download.oracle.com/maven"}]]
 
   :plugins [[lein-cljfmt "0.6.2"]]
