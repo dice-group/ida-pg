@@ -1,3 +1,21 @@
-<p>
-  dialog-modal works!
-</p>
+<h1 mat-dialog-title>Upload dataset</h1>
+<div mat-dialog-content>
+  <form>
+    <mat-form-field class="full-width">
+      <input matInput class="file-name" [value]="fileName" name="fileName" disabled>
+      <mat-hint>You can only select CSV or XML file.</mat-hint>
+    </mat-form-field>
+    <br>
+    <br>
+    <button mat-stroked-button (click)="fileInput.click()" class="full-width">
+      <mat-icon>cloud_upload</mat-icon>
+      <input #fileInput type="file" [hidden]="true" accept=".xml, .csv" (change)="fileManager($event)"/>
+    </button>
+  </form>
+</div>
+<br>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+  <button mat-stroked-button color="primary" [mat-dialog-close]="true">Upload</button>
+</mat-dialog-actions>

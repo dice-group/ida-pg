@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DialogModalComponent implements OnInit {
 
+  fileName = 'Select CSV or XML file...';
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  fileManager (event) {
+    this.fileName = event.target.files[0].name;
   }
 
 }
