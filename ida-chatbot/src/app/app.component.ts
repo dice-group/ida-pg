@@ -11,6 +11,8 @@ import {TabElement} from './models/tab-element';
 import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
 import {TabType} from './enums/tab-type.enum';
 import {IdaEventService} from './service/event/ida-event.service';
+import {MatDialog} from '@angular/material';
+import {DialogModalComponent} from './components/dialog-modal/dialog-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +33,7 @@ export class AppComponent {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService) {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService, public dialog: MatDialog) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
@@ -65,6 +67,10 @@ export class AppComponent {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, resp.payload.dataTable, true, true);
       this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 6) {
+      this.dialog.open(DialogModalComponent, {
+        width: '250px'
+      });
     }
   }
 

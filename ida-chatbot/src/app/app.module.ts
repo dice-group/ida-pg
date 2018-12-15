@@ -60,6 +60,7 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
+import { DialogModalComponent } from './components/dialog-modal/dialog-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,7 +79,8 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
     DatatableDetailComponent,
     SsbViewComponent,
     VennViewComponent,
-    DeckglHexViewComponent
+    DeckglHexViewComponent,
+    DialogModalComponent
   ],
   imports: [
     BrowserModule,
@@ -126,6 +128,7 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
     useClass: RestService ,
     multi: true
   }],
+  entryComponents: [DialogModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
