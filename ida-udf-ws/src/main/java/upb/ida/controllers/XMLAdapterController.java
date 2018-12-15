@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/adapter/xml")
 public class XMLAdapterController {
 
-    String xmlMimeType = "application/xml";
+    String xmlMimeType = "text/xml";
     String xmlExtension = "xml";
 
     @PostMapping("/")

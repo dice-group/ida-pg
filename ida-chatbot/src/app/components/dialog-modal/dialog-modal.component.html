@@ -17,5 +17,5 @@
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
   <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-  <button mat-stroked-button color="primary" [mat-dialog-close]="true">Upload</button>
+  <button mat-stroked-button color="primary" [disabled]="!fileSelected" (click)="uploadDataset()">Upload</button>
 </mat-dialog-actions>
