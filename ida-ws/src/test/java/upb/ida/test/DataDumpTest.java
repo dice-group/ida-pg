@@ -1,6 +1,7 @@
 package upb.ida.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,12 @@ public class DataDumpTest {
 	public void  getClusteringAlgoNamesTest() {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
+		resList.add("KMeans");
+		resList.add("AffinityPropagation");
 		resList.add("AffinityPropagation_TEST");
 		resList.add("KMeans_TEST");
 		assertEquals(algonames, resList);
-		assertEquals(algonames.size(),2);
+		assertNotEquals(algonames.size(),2);
 		
 		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
 	}
