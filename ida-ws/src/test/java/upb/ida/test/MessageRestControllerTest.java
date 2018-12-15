@@ -1,5 +1,9 @@
 package upb.ida.test;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -11,18 +15,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
-import upb.ida.rest.MessageRestController;
-import upb.ida.util.FileUtil;
 import upb.ida.fdg.FDG_Node;
 import upb.ida.fdg.FDG_Triple;
 import upb.ida.fdg.FDG_Util;
+import upb.ida.rest.MessageRestController;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {Application.class})
