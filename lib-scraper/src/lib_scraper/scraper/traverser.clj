@@ -17,8 +17,9 @@
 (def step-types {:following (constantly [identity zip/next zip/end?])
                  :children (constantly [zip/down zip/right some?])
                  :siblings (constantly [zip/leftmost zip/right some?])
-                 :follwing-siblings (constantly [zip/right zip/right some?])
-                 :preceding-siblings (constantly [zip/left zip/left some?])
+                 :following-siblings (constantly [identity zip/right some?])
+                 :preceding-siblings (constantly [identity zip/left some?])
+                 :ancestors (constantly [identity zip/up some?])
                  :descendants (fn [loc]
                                 [identity zip/next
                                  #(and (not (zip/end? %))
@@ -26,8 +27,12 @@
 
 (defn select-locs-spread-step
   [type loc]
-  (let [[init next continue?] ((step-types type) loc)]
-    (take-while continue? (iterate next (init loc)))))
+  (let [[type & {:keys [select limit skip]}] (if (vector? type) type [type])
+        [init next continue?] ((step-types type) loc)]
+    (cond->> (take-while continue? (iterate next (init loc)))
+      select (filter select)
+      limit (take limit)
+      skip (drop skip))))
 
 (defn select-locs
   [selectors loc]
@@ -35,16 +40,16 @@
          locs [loc]]
     (if-not selector locs
       (recur selectors
-             (if (keyword? selector)
-               (mapcat (partial select-locs-spread-step selector) locs)
-               (keep selector locs))))))
+             (if (fn? selector)
+               (keep selector locs)
+               (mapcat (partial select-locs-spread-step selector) locs))))))
 
 (defmulti trigger-hook*
-  (fn [hook stack loc]
+  (fn [hook stack index loc]
     (some (set (keys hook)) [:concept :attribute])))
 
 (defmethod trigger-hook* :concept
-  [{:keys [concept ref-from-trigger ref-to-trigger]} stack loc]
+  [{:keys [concept ref-from-trigger ref-to-trigger]} stack index loc]
   (let [id (tempid)
         parent (some :id stack)
         tx (cond-> [[:db/add id :type concept]]
@@ -55,25 +60,27 @@
      :id id}))
 
 (defmethod trigger-hook* :attribute
-  [{:keys [attribute]} stack loc]
+  [{:keys [attribute value] :or {value :content}} stack index loc]
   (when-let [id (some :id stack)]
-    (let [value (->> (zip/node loc)
-                     :content
-                     (filter string?)
-                     (reduce str)
-                     (clojure.string/trim))]
+    (let [value (case value
+                  :content (->> (zip/node loc)
+                                :content
+                                (filter string?)
+                                (reduce str)
+                                (clojure.string/trim))
+                  :trigger-index (:index (first stack)))]
       {:tx [[:db/add id attribute value]]
        :type attribute})))
 
 (defmethod trigger-hook* :default
-  [hook stack loc]
+  [hook stack index loc]
   (println (str "Unknown hook type: " hook)))
 
 (defn trigger-hook
-  [hook stack loc]
-  (if-let [{:keys [tx type id]} (trigger-hook* hook stack loc)]
+  [hook stack index loc]
+  (if-let [{:keys [tx type id]} (trigger-hook* hook stack index loc)]
     {:tx tx
-     :entry (when type {:id id, :type type, :loc loc})}))
+     :entry (when type {:id id, :type type, :loc loc, :index index})}))
 
 (defn trigger-hooks
   [hooks stack]
@@ -81,8 +88,8 @@
         triggered (hooks type)]
     (mapcat (fn [{:keys [selector limit] :as hook}]
               (let [selection (select-locs selector loc)]
-                (keep (partial trigger-hook hook stack)
-                      (if limit (take limit selection) selection))))
+                (keep-indexed (partial trigger-hook hook stack)
+                              (if limit (take limit selection) selection))))
             triggered)))
 
 (defn traverse!
