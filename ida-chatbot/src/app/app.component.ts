@@ -69,6 +69,9 @@ export class AppComponent {
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 6) {
       this.dialog.open(DatasetUploadModalComponent, {
+        data: {
+          datasetName: resp.payload.datasetName
+        },
         disableClose: true,
         width: '350px'
       });

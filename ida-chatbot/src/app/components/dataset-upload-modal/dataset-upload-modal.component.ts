@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError} from 'rxjs/operators';
-import {MatDialogRef, MatSnackBar} from '@angular/material';
+import {Component, Inject, Input, OnInit} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {MAT_DIALOG_DATA, MatDialogRef, MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-dialog-modal',
@@ -15,7 +14,10 @@ export class DatasetUploadModalComponent implements OnInit {
   fileSelected = false;
   showProgress = false;
 
-  constructor(private _http: HttpClient, public dialogRef: MatDialogRef<DatasetUploadModalComponent>, public snackBar: MatSnackBar) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
+              private _http: HttpClient,
+              public dialogRef: MatDialogRef<DatasetUploadModalComponent>,
+              public snackBar: MatSnackBar) {}
 
   ngOnInit() {
   }
@@ -29,10 +31,11 @@ export class DatasetUploadModalComponent implements OnInit {
   }
 
   uploadDataset() {
+    console.log(this.data.datasetName);
     this.showProgress = true;
     const formData = new FormData();
     formData.append('file', this.file);
-    formData.append('fileName', this.fileName);
+    formData.append('fileName', this.data.datasetName);
     this._http.post('http://localhost:3000/ida-udf-ws/adapter/xml/file', formData).subscribe(
       (res) => {
         this.dialogRef.close();
