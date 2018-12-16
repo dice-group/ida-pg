@@ -8,18 +8,21 @@
                :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/.+BaseEstimator\.html.*")
                :max-depth 1 ; restrict crawler for debugging purposes
                :max-pages 1 ; restrict crawler for debugging purposes
-               :patterns {:name {:selector (s/child (s/tag :dt) (s/class :descname))
+               :patterns {:name {:selector [:children (s/tag :dt)
+                                            :children (s/class :descname)]
                                  :limit 1}
-                          :desc {:attribute :description
-                                 :selector (s/child (s/tag :dd) (s/tag :p))
-                                 :limit 1}}
+                          :description {:attribute :description
+                                        :selector [:children (s/tag :dd)
+                                                   :children
+                                                   (s/and (s/tag :p)
+                                                          (s/not (s/class "rubric")))]}}
                :hooks [; concepts:
                        {:trigger :document
                         :concept ::class/concept
-                        :selector (s/descendant (s/and (s/tag :dl) (s/class :class)))}
+                        :selector [:descendants (s/and (s/tag :dl) (s/class :class))]}
                        {:trigger ::class/concept
                         :concept ::function/concept
-                        :selector (s/descendant (s/and (s/tag :dl) (s/class :method)))
+                        :selector [:descendants (s/and (s/tag :dl) (s/class :method))]
                         :ref-from-trigger ::class/method}
                        ; names:
                        {:trigger ::class/concept
@@ -29,8 +32,8 @@
                         :attribute ::function/name
                         :pattern :name}
                        ; descriptions:
-                       {:trigger ::class/concept, :pattern :desc}
-                       {:trigger ::function/concept, :pattern :desc}]})
+                       {:trigger ::class/concept, :pattern :description}
+                       {:trigger ::function/concept, :pattern :description}]})
 
 (defn scrape-skl
   []
