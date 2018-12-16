@@ -60,7 +60,7 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
-import { DialogModalComponent } from './components/dialog-modal/dialog-modal.component';
+import { DatasetUploadModalComponent } from './components/dataset-upload-modal/dataset-upload-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -80,7 +80,7 @@ import { DialogModalComponent } from './components/dialog-modal/dialog-modal.com
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
-    DialogModalComponent
+    DatasetUploadModalComponent
   ],
   imports: [
     BrowserModule,
@@ -129,7 +129,7 @@ import { DialogModalComponent } from './components/dialog-modal/dialog-modal.com
     useClass: RestService ,
     multi: true
   }],
-  entryComponents: [DialogModalComponent],
+  entryComponents: [DatasetUploadModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

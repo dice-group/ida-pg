@@ -5,18 +5,17 @@ import {MatDialogRef, MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-dialog-modal',
-  templateUrl: './dialog-modal.component.html',
-  styleUrls: ['./dialog-modal.component.css']
+  templateUrl: './dataset-upload-modal.component.html',
+  styleUrls: ['./dataset-upload-modal.component.css']
 })
-export class DialogModalComponent implements OnInit {
+export class DatasetUploadModalComponent implements OnInit {
 
   fileName = 'Select CSV or XML file...';
   file;
   fileSelected = false;
   showProgress = false;
 
-  constructor(private _http: HttpClient, public dialogRef: MatDialogRef<DialogModalComponent>, public snackBar: MatSnackBar) {
-  }
+  constructor(private _http: HttpClient, public dialogRef: MatDialogRef<DatasetUploadModalComponent>, public snackBar: MatSnackBar) {}
 
   ngOnInit() {
   }

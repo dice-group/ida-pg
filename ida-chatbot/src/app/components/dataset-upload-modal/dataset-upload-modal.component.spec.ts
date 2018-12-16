@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DialogModalComponent } from './dialog-modal.component';
+import { DatasetUploadModalComponent } from './dataset-upload-modal.component';
 
-describe('DialogModalComponent', () => {
-  let component: DialogModalComponent;
-  let fixture: ComponentFixture<DialogModalComponent>;
+describe('DatasetUploadModalComponent', () => {
+  let component: DatasetUploadModalComponent;
+  let fixture: ComponentFixture<DatasetUploadModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DialogModalComponent ]
+      declarations: [ DatasetUploadModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DialogModalComponent);
+    fixture = TestBed.createComponent(DatasetUploadModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

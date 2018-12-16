@@ -12,7 +12,7 @@ import {UniqueIdProviderService} from './service/misc/unique-id-provider.service
 import {TabType} from './enums/tab-type.enum';
 import {IdaEventService} from './service/event/ida-event.service';
 import {MatDialog} from '@angular/material';
-import {DialogModalComponent} from './components/dialog-modal/dialog-modal.component';
+import {DatasetUploadModalComponent} from './components/dataset-upload-modal/dataset-upload-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -68,7 +68,7 @@ export class AppComponent {
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, resp.payload.dataTable, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 6) {
-      this.dialog.open(DialogModalComponent, {
+      this.dialog.open(DatasetUploadModalComponent, {
         disableClose: true,
         width: '350px'
       });
