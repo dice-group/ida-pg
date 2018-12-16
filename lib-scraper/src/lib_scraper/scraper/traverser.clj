@@ -1,8 +1,8 @@
 (ns lib-scraper.scraper.traverser
-  (:require [hickory.select :as s]
-            [hickory.zip :as hzip]
+  (:require [hickory.zip :as hzip]
             [clojure.zip :as zip]
             [datascript.core :as d]
+            [lib-scraper.helpers.zip :refer [loc-at-node? is-parent?]]
             [lib-scraper.model.core :as m]))
 
 (defn- queue
@@ -14,23 +14,42 @@
   []
   (d/tempid nil))
 
+(def step-types {:following (constantly [identity zip/next zip/end?])
+                 :children (constantly [zip/down zip/right some?])
+                 :siblings (constantly [zip/leftmost zip/right some?])
+                 :follwing-siblings (constantly [zip/right zip/right some?])
+                 :preceding-siblings (constantly [zip/left zip/left some?])
+                 :descendants (fn [loc]
+                                [identity zip/next
+                                 #(and (not (zip/end? %))
+                                       (is-parent? loc %))])})
+
+(defn select-locs-spread-step
+  [type loc]
+  (let [[init next continue?] ((step-types type) loc)]
+    (take-while continue? (iterate next (init loc)))))
+
 (defn select-locs
-  [selector loc]
-  (when-let [next (s/select-next-loc selector loc)]
-    (lazy-seq (cons next (select-locs selector (zip/next next))))))
+  [selectors loc]
+  (loop [[selector & selectors] selectors
+         locs [loc]]
+    (if-not selector locs
+      (recur selectors
+             (if (keyword? selector)
+               (mapcat (partial select-locs-spread-step selector) locs)
+               (keep selector locs))))))
 
 (defmulti trigger-hook*
   (fn [hook stack loc]
     (some (set (keys hook)) [:concept :attribute])))
 
 (defmethod trigger-hook* :concept
-  [{:keys [concept ref-from-trigger]} stack loc]
+  [{:keys [concept ref-from-trigger ref-to-trigger]} stack loc]
   (let [id (tempid)
-        tx [[:db/add id :type concept]]
-        tx (if ref-from-trigger
-             (let [parent (some :id stack)]
-               (conj tx [:db/add parent ref-from-trigger id]))
-             tx)]
+        parent (some :id stack)
+        tx (cond-> [[:db/add id :type concept]]
+             ref-from-trigger (conj [:db/add parent ref-from-trigger id])
+             ref-to-trigger (conj [:db/add id ref-to-trigger parent]))]
     {:tx tx
      :type concept
      :id id}))
@@ -54,8 +73,7 @@
   [hook stack loc]
   (if-let [{:keys [tx type id]} (trigger-hook* hook stack loc)]
     {:tx tx
-     :entry (when type
-              {:id id, :type type, :loc loc})}))
+     :entry (when type {:id id, :type type, :loc loc})}))
 
 (defn trigger-hooks
   [hooks stack]
@@ -77,8 +95,8 @@
               effects (trigger-hooks hooks stack)
               tx (mapcat :tx effects)
               stacks (->> effects
-                         (keep :entry)
-                         (map #(cons % stack)))]
+                          (keep :entry)
+                          (map #(cons % stack)))]
           (run! (partial conj! merged-tx) tx)
           (recur (-> queue (pop) (into stacks))))))
     (d/transact! conn (persistent! merged-tx))))
