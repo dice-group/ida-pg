@@ -22,11 +22,15 @@ public class UploadDataset implements Subroutine {
 
     public String call(com.rivescript.RiveScript rs, String[] args) {
         String message = args[0].toLowerCase().trim();
+        Map<String, Object> dataMap = responseBean.getPayload();
+        dataMap.put("fdgData", message);
         String resp = IDALiteral.RESP_FAIL_ROUTINE;
         System.out.println(message);
         File file = new File(System.getProperty("user.dir") + "/upload-ds/" + message + ".ttl");
         if (! file.exists()) {
+
             responseBean.setActnCode(IDALiteral.UIA_UPLOAD);
+            responseBean.setPayload(dataMap);
             resp = IDALiteral.RESP_PASS_ROUTINE;
         }
         return resp;
