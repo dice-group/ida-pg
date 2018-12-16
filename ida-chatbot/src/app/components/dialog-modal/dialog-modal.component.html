@@ -17,5 +17,8 @@
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
   <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-  <button mat-stroked-button color="primary" [disabled]="!fileSelected" (click)="uploadDataset()">Upload</button>
+  <button mat-stroked-button color="primary" [disabled]="!fileSelected || showProgress" (click)="uploadDataset()">
+    <mat-spinner *ngIf="showProgress" [diameter]="20" style="margin: auto"></mat-spinner>
+    <span *ngIf="!showProgress">Upload</span>
+  </button>
 </mat-dialog-actions>

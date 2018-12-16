@@ -121,7 +121,8 @@ import { DialogModalComponent } from './components/dialog-modal/dialog-modal.com
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatSnackBarModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

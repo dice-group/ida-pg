@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
+import {MatDialogRef, MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-dialog-modal',
@@ -12,8 +13,9 @@ export class DialogModalComponent implements OnInit {
   fileName = 'Select CSV or XML file...';
   file;
   fileSelected = false;
+  showProgress = false;
 
-  constructor(private _http: HttpClient) {
+  constructor(private _http: HttpClient, public dialogRef: MatDialogRef<DialogModalComponent>, public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -28,15 +30,23 @@ export class DialogModalComponent implements OnInit {
   }
 
   uploadDataset() {
-    console.log('jklkjhjkl');
+    this.showProgress = true;
     const formData = new FormData();
     formData.append('file', this.file);
     formData.append('fileName', this.fileName);
     this._http.post('http://localhost:3000/ida-udf-ws/adapter/xml/file', formData).subscribe(
       (res) => {
-        console.log(res);
+        this.dialogRef.close();
+        this.snackBar.open('Dataset uploaded successfully', 'Close', {
+          duration: 3000,
+        });
       },
-      err => console.log(err)
+      (err) => {
+        this.snackBar.open('Dataset upload failed! Please try again', 'Close', {
+          duration: 3000,
+        });
+        this.showProgress = false;
+      }
     );
   }
 
