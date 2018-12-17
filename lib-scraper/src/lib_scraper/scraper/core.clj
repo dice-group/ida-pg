@@ -15,15 +15,16 @@
   (crawler/crawl {:seed seed
                   :should-visit (p-or (l/match-url seed)
                                       (p-and should-visit
-                                             (p-log (fn [_, ^Page page, ^WebURL url]
-                                                      (str "Traversed page: " url)))
                                              (p-expire max-pages)))
                   :visit (fn [_, ^Page page]
                            (let [parse-data (.getParseData page)
                                  document (when (instance? HtmlParseData parse-data)
                                             (-> ^HtmlParseData parse-data
                                                 (.getHtml) (h/parse) (h/as-hickory)))]
-                             (when document (visit document))))
+                             (when document
+                               (println "Traverse page:"
+                                        (-> page (.getWebURL) (.getURL)))
+                               (visit document))))
                   :max-depth max-depth}))
 
 (defn- parse-should-visit

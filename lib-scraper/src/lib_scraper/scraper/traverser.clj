@@ -39,7 +39,7 @@
        :type attribute})))
 
 (defmethod trigger-hook* :ref
-  [{:keys [ref from to]}])
+  [{:keys [ref from to]} stack index loc])
 
 (defmethod trigger-hook* :default
   [hook stack index loc]

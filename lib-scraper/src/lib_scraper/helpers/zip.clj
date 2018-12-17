@@ -12,9 +12,12 @@
 
 (defn loc-content
   [loc]
-  (->> loc (zip/node) :content
-       (filter string?) (reduce str)
-       (clojure.string/trim)))
+  (let [node (zip/node loc)]
+    (if (string? node)
+      (clojure.string/trim node)
+      (->> node :content
+           (filter string?) (reduce str)
+           (clojure.string/trim)))))
 
 (def step-types {:following (constantly [identity zip/next zip/end?])
                  :children (constantly [zip/down zip/right some?])
@@ -33,14 +36,15 @@
         [init next continue?] ((step-types type) loc)]
     (cond->> (take-while continue? (iterate next (init loc)))
       select (filter select)
-      limit (take limit)
-      skip (drop skip))))
+      limit  (take limit)
+      skip   (drop skip))))
 
 (defn select-locs
   [selectors loc]
   (loop [[selector & selectors] selectors
          locs [loc]]
-    (if-not selector locs
+    (if-not selector
+      locs
       (recur selectors
              (if (fn? selector)
                (keep selector locs)
