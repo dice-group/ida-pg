@@ -19,7 +19,7 @@ through REST calls and Websockets rather than ZeroMQ messages.
 
 #### Clone the repo
 
-Clone [this] (https://github.com/jupyter/kernel_gateway).
+Clone [this](https://github.com/jupyter/kernel_gateway).
  repository in a local directory
 
 ```
@@ -28,7 +28,7 @@ git clone https://github.com/jupyter/kernel_gateway.git
 ```
 
 ### Step-2
-Replace kernel-gateway\Makefile with [this](https://github.com/dice-group/ida/tree/master/jupyter-notebook/windows/Makefile) for windows and [this] (https://github.com/dice-group/ida/tree/master/jupyter-notebook/linux/Makefile) for linux.
+Replace kernel-gateway\Makefile with [this](https://github.com/dice-group/ida/tree/master/jupyter-notebook/windows/Makefile) for windows and [this](https://github.com/dice-group/ida/tree/master/jupyter-notebook/linux/Makefile) for linux.
 
 ### Step-3
 Install kernel gateway
@@ -60,7 +60,7 @@ conda install --name kernel-gateway-dev jupyter_kernel_gateway
 ### Step-5
 #### Adding clustering notebook to our kernel gateway
 
-Copy [this] (https://github.com/dice-group/ida/blob/master/jupyter-notebook/clustering.ipynb) notebook to \kernel_gateway\etc\api_examples\
+Copy [this](https://github.com/dice-group/ida/blob/master/jupyter-notebook/clustering.ipynb) notebook to \kernel_gateway\etc\api_examples\
 
 ### Step-6
 Install missing packages to the kernel-gateway-dev conda environment.
