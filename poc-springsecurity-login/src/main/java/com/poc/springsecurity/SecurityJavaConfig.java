@@ -9,7 +9,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -50,11 +54,12 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
 	    .antMatchers("/foos").authenticated()
 	    .antMatchers("/coupon").hasRole("ADMIN")
 	    .and()
-	    .formLogin()
-	    .successHandler(mySuccessHandler)
-	    .failureHandler(myFailureHandler)
-	    .and()
-	    .logout();
+		.formLogin()
+		.loginPage("/login")
+		.permitAll()
+		.defaultSuccessUrl("/foos",true)
+		.and()
+		.logout()
+		.permitAll();
 	}
-
 }
