@@ -2,7 +2,7 @@
   (:require [hickory.zip :as hzip]
             [clojure.zip :as zip]
             [datascript.core :as d]
-            [lib-scraper.helpers.zip :refer [loc-at-node? is-parent?]]
+            [lib-scraper.helpers.zip :as lzip]
             [lib-scraper.model.core :as m]))
 
 (defn- queue
@@ -13,36 +13,6 @@
 (defn- tempid
   []
   (d/tempid nil))
-
-(def step-types {:following (constantly [identity zip/next zip/end?])
-                 :children (constantly [zip/down zip/right some?])
-                 :siblings (constantly [zip/leftmost zip/right some?])
-                 :following-siblings (constantly [identity zip/right some?])
-                 :preceding-siblings (constantly [identity zip/left some?])
-                 :ancestors (constantly [identity zip/up some?])
-                 :descendants (fn [loc]
-                                [identity zip/next
-                                 #(and (not (zip/end? %))
-                                       (is-parent? loc %))])})
-
-(defn select-locs-spread-step
-  [type loc]
-  (let [[type & {:keys [select limit skip]}] (if (vector? type) type [type])
-        [init next continue?] ((step-types type) loc)]
-    (cond->> (take-while continue? (iterate next (init loc)))
-      select (filter select)
-      limit (take limit)
-      skip (drop skip))))
-
-(defn select-locs
-  [selectors loc]
-  (loop [[selector & selectors] selectors
-         locs [loc]]
-    (if-not selector locs
-      (recur selectors
-             (if (fn? selector)
-               (keep selector locs)
-               (mapcat (partial select-locs-spread-step selector) locs))))))
 
 (defmulti trigger-hook*
   (fn [hook stack index loc]
@@ -63,14 +33,13 @@
   [{:keys [attribute value] :or {value :content}} stack index loc]
   (when-let [id (some :id stack)]
     (let [value (case value
-                  :content (->> (zip/node loc)
-                                :content
-                                (filter string?)
-                                (reduce str)
-                                (clojure.string/trim))
+                  :content (lzip/loc-content loc)
                   :trigger-index (:index (first stack)))]
       {:tx [[:db/add id attribute value]]
        :type attribute})))
+
+(defmethod trigger-hook* :ref
+  [{:keys [ref from to]}])
 
 (defmethod trigger-hook* :default
   [hook stack index loc]
@@ -87,7 +56,7 @@
   (let [[{:keys [type loc]}] stack
         triggered (hooks type)]
     (mapcat (fn [{:keys [selector limit] :as hook}]
-              (let [selection (select-locs selector loc)]
+              (let [selection (lzip/select-locs selector loc)]
                 (keep-indexed (partial trigger-hook hook stack)
                               (if limit (take limit selection) selection))))
             triggered)))
