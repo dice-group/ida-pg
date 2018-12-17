@@ -6,9 +6,9 @@
             [lib-scraper.model.concepts.parameter :as parameter]))
 
 (def skl-spec {:seed "https://scikit-learn.org/0.20/modules/classes.html"
-               :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/.+BiclusterMixin\.html.*")
-               :max-depth 1 ; restrict crawler for debugging purposes
-               :max-pages 1 ; restrict crawler for debugging purposes
+               :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/.*")
+               :max-depth -1 ; restrict crawler for debugging purposes
+               :max-pages 2 ; restrict crawler for debugging purposes
                :patterns {:name {:selector [:children (s/tag :dt)
                                             :children (s/class :descname)]}
                           :description {:attribute :description
