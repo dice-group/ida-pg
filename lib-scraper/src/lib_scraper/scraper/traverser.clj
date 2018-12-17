@@ -111,11 +111,11 @@
 (defn index-hooks
   [hooks patterns]
   (->> hooks
-    (map (fn [hook]
-           (if-let [pattern (patterns (:pattern hook))]
-             (merge pattern hook)
-             hook)))
-    (group-by :trigger)))
+       (map (fn [hook]
+              (if-let [pattern (patterns (:pattern hook))]
+                (merge pattern hook)
+                hook)))
+       (group-by :trigger)))
 
 (defn traverser
   [hooks patterns]

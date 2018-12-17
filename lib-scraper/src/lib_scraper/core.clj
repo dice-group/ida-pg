@@ -36,9 +36,11 @@
                        ; parameters:
                        {:trigger ::function/concept
                         :concept ::parameter/concept
-                        :selector [:descendants (s/and (s/tag :th) (s/find-in-text #"Parameters"))
+                        :selector [:descendants
+                                   (s/and (s/tag :th) (s/find-in-text #"Parameters"))
                                    [:ancestors :select (s/tag :tr) :limit 1]
-                                   :descendants (s/tag :dt)]}
+                                   :descendants (s/tag :dt)]
+                        :ref-from-trigger ::function/param}
                        {:trigger ::parameter/concept
                         :attribute ::parameter/name
                         :selector [:children (s/tag :strong)]}
