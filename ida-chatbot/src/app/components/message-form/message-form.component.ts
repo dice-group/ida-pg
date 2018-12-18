@@ -11,6 +11,8 @@ export class MessageFormComponent implements OnInit {
   @Output() msgemitter = new EventEmitter<Message>();
   constructor(private restservice: RestService) { }
   public showBar = false;
+  @ViewChild('chatmsg') chatmsg: ElementRef;
+
   ngOnInit() {
     this.restservice.requestEvnt.subscribe(val => { this.toggleProgressBar(val); });
   }
@@ -18,18 +20,17 @@ export class MessageFormComponent implements OnInit {
     this.showBar = showBar;
   }
 
-  sendMessage(msg: string) {
-    if (msg == null || !msg) {
-      return false;
+  sendMessage() {
+    const msg = this.chatmsg.nativeElement.value.trim();
+    if (msg) {
+      const curTime = new Date();
+      const message = new Message(msg, 'User', 'user', curTime);
+      this.chatmsg.nativeElement.value = '';
+      this.msgemitter.emit(message);
     }
-    const curTime = new Date();
-    const message = new Message(msg, 'User', 'user', curTime);
-    this.msgemitter.emit(message);
   }
 
-  keyDownFunction(event,msg: string) {
-    if (event.keyCode === 13) {
-      this.sendMessage(msg);
-    }
+  keyDownFunction() {
+    this.sendMessage();
   }
 }

@@ -2,11 +2,11 @@
 <div style="height: 10px;margin-top: 10px;">
 <mat-progress-bar mode="indeterminate" *ngIf="showBar"></mat-progress-bar>
 </div>
-<form (keyup.enter)="keyDownFunction($event,chatmsg.value) || chatmsg.value = null" style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
+<form (keydown.enter)="keyDownFunction()" style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
   <mat-form-field fxFlex>
     <textarea #chatmsg matInput placeholder="Message"></textarea>
   </mat-form-field>
   <div fxFlex>
-    <button #sendbtn mat-raised-button (click)="sendMessage(chatmsg.value) || chatmsg.value = null" >Send</button>
+    <button #sendbtn mat-raised-button (click)="sendMessage()" >Send</button>
   </div>
 </form>
