@@ -2,7 +2,7 @@
 <div style="height: 10px;margin-top: 10px;">
 <mat-progress-bar mode="indeterminate" *ngIf="showBar"></mat-progress-bar>
 </div>
-<form (keydown.enter)="keyDownFunction()" style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
+<form (keydown.enter)="sendMessage()" (keydown.arrowup)="iterateMsgs('up')" (keydown.arrowdown)="iterateMsgs('down')" style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
   <mat-form-field fxFlex>
     <textarea #chatmsg matInput placeholder="Message"></textarea>
   </mat-form-field>
