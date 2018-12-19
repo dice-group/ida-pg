@@ -12,8 +12,8 @@ export class MessageFormComponent implements OnInit {
   @ViewChild('chatmsg') chatmsg: ElementRef;
 
   public showBar = false;
-  msgs_history = [];
-  msgs_tracker = 0;
+  msgs_history = []; // This will maintain history of all messages
+  msgs_tracker = 0; // This will keep position of current message from history
   constructor(private restservice: RestService) { }
 
   ngOnInit() {
@@ -35,7 +35,16 @@ export class MessageFormComponent implements OnInit {
     }
   }
 
+  /**
+   * This will let user to iterate over messages from history like
+   * Terminal
+   * Remember, its just in Browser memory so it will go away with
+   * Page refresh. We can later think about it to store in DB
+   *
+   * @param direction
+   */
   iterateMsgs(direction) {
+    // Checking if we have any message in history or not
     if (this.msgs_history.length) {
       if (direction === 'up' && this.msgs_tracker > 0) {
         this.chatmsg.nativeElement.value = this.msgs_history[--this.msgs_tracker];
