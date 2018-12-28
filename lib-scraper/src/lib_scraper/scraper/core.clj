@@ -1,5 +1,6 @@
 (ns lib-scraper.scraper.core
   (:require [hickory.core :as h]
+            [datascript.core :as d]
             [clojure.tools.logging :as log]
             [lib-scraper.crawler.core :as crawler]
             [lib-scraper.helpers.predicate :refer [p-and p-or p-expire p-log parse]]
@@ -15,8 +16,7 @@
     :or {max-depth -1, max-pages -1}}]
   (crawler/crawl {:seed seed
                   :should-visit (p-or (l/match-url seed)
-                                      (p-and should-visit
-                                             (p-expire max-pages)))
+                                      (p-and should-visit (p-expire max-pages)))
                   :visit (fn [_, ^Page page]
                            (let [parse-data (.getParseData page)
                                  document (when (instance? HtmlParseData parse-data)
@@ -25,7 +25,10 @@
                              (when document
                                (log/info "Traverse page:" (-> page (.getWebURL) (.getURL)))
                                (visit document))))
-                  :max-depth max-depth}))
+                  :max-depth max-depth
+                  :concurrency (let [p (.availableProcessors (Runtime/getRuntime))]
+                                 (if (or (< max-pages 0) (>= max-pages p))
+                                   p (inc max-pages)))}))
 
 (defn- parse-should-visit
   [expr]
@@ -42,3 +45,13 @@
                   {:should-visit (parse-should-visit should-visit)
                    :visit traverser}))
     @conn))
+
+(defn scrape-and-store!
+  [spec location]
+  (clojure.java.io/make-parents location)
+  (spit location (pr-str (scrape spec))))
+
+(defn load-stored
+  [location]
+  (clojure.edn/read-string {:readers d/data-readers}
+                           (slurp location)))

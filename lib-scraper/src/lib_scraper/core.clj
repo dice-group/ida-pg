@@ -1,6 +1,6 @@
 (ns lib-scraper.core
   (:require [hickory.select :as s]
-            [lib-scraper.scraper.core :refer [scrape]]
+            [lib-scraper.scraper.core :refer [scrape-and-store! load-stored]]
             [lib-scraper.model.concepts.package :as package]
             [lib-scraper.model.concepts.class :as class]
             [lib-scraper.model.concepts.function :as function]
@@ -8,9 +8,8 @@
             [lib-scraper.model.concepts.datatype :as datatype]))
 
 (def skl-spec {:seed "https://scikit-learn.org/0.20/modules/classes.html"
-               :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/sklearn\.neighbors\.kneighbors_graph.*")
-               :max-depth -1 ; restrict crawler for debugging purposes
-               :max-pages 2 ; restrict crawler for debugging purposes
+               :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/.*")
+               :max-pages 1 ; restrict crawler for debugging purposes
                :patterns {:name {:selector [:children (s/tag :dt)
                                             :children (s/class :descname)]}
                           :description {:attribute :description
@@ -74,6 +73,7 @@
                         :attribute ::datatype/name
                         :transform #"[A-Za-z]+"}]})
 
-(defn scrape-skl
+(defn scrape-skl!
   []
-  (scrape skl-spec))
+  (scrape-and-store! skl-spec "resources/scrapes/skl.edn")
+  (load-stored "resources/scrapes/skl.edn"))

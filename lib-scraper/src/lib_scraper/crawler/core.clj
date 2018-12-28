@@ -20,7 +20,7 @@
     :or {concurrency 1
          storage-folder "./crawl"
          max-depth -1
-         politeness-delay 50
+         politeness-delay 20
          binary-content false
          resumable false
          monitor-delay 2
