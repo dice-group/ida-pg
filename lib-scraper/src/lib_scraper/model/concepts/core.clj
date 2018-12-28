@@ -6,9 +6,9 @@
             [lib-scraper.model.concepts.parameter :as parameter]
             [lib-scraper.model.concepts.datatype :as datatype]))
 
-(def concepts (merge common/spec
-                     package/spec
-                     class/spec
-                     function/spec
-                     parameter/spec
-                     datatype/spec))
+(def spec (merge common/spec
+                 package/spec
+                 class/spec
+                 function/spec
+                 parameter/spec
+                 datatype/spec))
