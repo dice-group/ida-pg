@@ -2,10 +2,10 @@
   :description "Crawles through the documentation of software libraries and transforms them into a standardized format."
   :url "https://github.com/dice-group/ida"
 
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [edu.uci.ics/crawler4j "4.4.0"]
                  [hickory "0.7.1"]
-                 [datascript "0.17.0"]]
+                 [datascript "0.17.1"]]
   :repositories [["oracleReleases" {:url "https://download.oracle.com/maven"}]]
 
   :plugins [[lein-cljfmt "0.6.2"]]
