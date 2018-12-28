@@ -3,6 +3,7 @@
   :url "https://github.com/dice-group/ida"
 
   :dependencies [[org.clojure/clojure "1.10.0"]
+                 [org.clojure/tools.logging "0.4.1"]
                  [edu.uci.ics/crawler4j "4.4.0"]
                  [hickory "0.7.1"]
                  [datascript "0.17.1"]]

@@ -1,5 +1,6 @@
 (ns lib-scraper.scraper.core
   (:require [hickory.core :as h]
+            [clojure.tools.logging :as log]
             [lib-scraper.crawler.core :as crawler]
             [lib-scraper.helpers.predicate :refer [p-and p-or p-expire p-log parse]]
             [lib-scraper.match.links :as l]
@@ -22,8 +23,7 @@
                                             (-> ^HtmlParseData parse-data
                                                 (.getHtml) (h/parse) (h/as-hickory)))]
                              (when document
-                               (println "Traverse page:"
-                                        (-> page (.getWebURL) (.getURL)))
+                               (log/info "Traverse page:" (-> page (.getWebURL) (.getURL)))
                                (visit document))))
                   :max-depth max-depth}))
 

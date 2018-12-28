@@ -1,6 +1,7 @@
 (ns lib-scraper.scraper.traverser
   (:require [datascript.core :as d]
             [hickory.zip :as hzip]
+            [clojure.tools.logging :as log]
             [lib-scraper.helpers.zip :as lzip]
             [lib-scraper.model.core :as m])
   (:import (java.util.regex Pattern)))
@@ -41,13 +42,13 @@
 (defmethod trigger-hook* :attribute
   [{:keys [attribute value transform]} stack index loc]
   (when-let [id (some :id stack)]
-    (let [value (resolve-value value transform stack index loc)]
+    (if-let [value (resolve-value value transform stack index loc)]
       {:tx [[:db/add id attribute value]]
        :type attribute})))
 
 (defmethod trigger-hook* :default
   [hook stack index loc]
-  (println (str "Unknown hook type: " hook)))
+  (log/error (str "Unknown hook type: " hook)))
 
 (defn trigger-hook
   [hook stack index loc]

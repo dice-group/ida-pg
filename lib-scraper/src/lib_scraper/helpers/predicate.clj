@@ -1,4 +1,5 @@
-(ns lib-scraper.helpers.predicate)
+(ns lib-scraper.helpers.predicate
+  (:require [clojure.tools.logging :as log]))
 
 (defn p-and
   [& preds]
@@ -26,7 +27,7 @@
 (defn p-log
   [f]
   (fn [& args]
-    (println (apply f args))
+    (log/info (apply f args))
     true))
 
 (defn parse-base
