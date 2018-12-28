@@ -88,6 +88,11 @@
               (if-let [pattern (patterns (:pattern hook))]
                 (merge pattern hook)
                 hook)))
+       (mapcat (fn [hook]
+                 (if (seq? (:trigger hook))
+                   (map (partial assoc hook :trigger)
+                        (:trigger hook))
+                   [hook])))
        (group-by :trigger)))
 
 (defn traverser
