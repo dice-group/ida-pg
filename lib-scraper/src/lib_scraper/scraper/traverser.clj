@@ -22,6 +22,7 @@
                 :trigger-index (:index (first stack)))]
     (cond
       (instance? Pattern transform) (re-find transform value)
+      (fn? transform) (transform value)
       :else value)))
 
 (defmulti trigger-hook*
@@ -90,9 +91,8 @@
                 (merge pattern hook)
                 hook)))
        (mapcat (fn [hook]
-                 (if (seq? (:trigger hook))
-                   (map (partial assoc hook :trigger)
-                        (:trigger hook))
+                 (if (seqable? (:trigger hook))
+                   (map (partial assoc hook :trigger) (:trigger hook))
                    [hook])))
        (group-by :trigger)))
 

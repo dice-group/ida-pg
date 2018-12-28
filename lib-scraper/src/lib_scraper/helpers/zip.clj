@@ -41,7 +41,7 @@
 
 (defn select-locs
   [selectors loc]
-  (loop [[selector & selectors] selectors
+  (loop [[selector & selectors] (if (seqable? selectors) selectors [selectors])
          locs [loc]]
     (if-not selector
       locs

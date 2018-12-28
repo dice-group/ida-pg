@@ -16,7 +16,9 @@
                                         :selector [:children (s/tag :dd)
                                                    :children
                                                    (s/and (s/tag :p)
-                                                          (s/not (s/class "rubric")))]}}
+                                                          (s/not (s/class "rubric")))]}
+                          :parameter-info {:selector [:children (s/and (s/tag :span)
+                                                                       (s/class :classifier))]}}
                :hooks [; packages:
                        {:trigger [::class/concept ::function/concept]
                         :concept ::package/concept
@@ -64,14 +66,18 @@
                         :attribute :description
                         :selector [[:following-siblings :select (s/tag :dd) :limit 1]
                                    :children (s/tag :p)]}
+                       {:trigger ::parameter/concept
+                        :attribute ::parameter/optional
+                        :pattern :parameter-info
+                        :transform #(clojure.string/includes? % "optional")}
                        ; datatypes:
                        {:trigger ::parameter/concept
                         :concept ::datatype/concept
-                        :selector [:children (s/and (s/tag :span) (s/class :classifier))]
-                        :ref-to-trigger ::datatype/instance}
+                        :ref-to-trigger ::datatype/instance
+                        :pattern :parameter-info}
                        {:trigger ::datatype/concept
                         :attribute ::datatype/name
-                        :transform #"[A-Za-z]+"}]})
+                        :transform #"^[A-Za-z]+"}]})
 
 (defn scrape-skl!
   []
