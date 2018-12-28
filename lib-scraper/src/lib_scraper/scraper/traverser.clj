@@ -1,9 +1,9 @@
 (ns lib-scraper.scraper.traverser
-  (:require [hickory.zip :as hzip]
-            [clojure.zip :as zip]
-            [datascript.core :as d]
+  (:require [datascript.core :as d]
+            [hickory.zip :as hzip]
             [lib-scraper.helpers.zip :as lzip]
-            [lib-scraper.model.core :as m]))
+            [lib-scraper.model.core :as m])
+  (:import (java.util.regex Pattern)))
 
 (defn- queue
   ([] (clojure.lang.PersistentQueue/EMPTY))
@@ -13,6 +13,15 @@
 (defn- tempid
   []
   (d/tempid nil))
+
+(defn- resolve-value
+  [value transform stack index loc]
+  (let [value (case (or value :content)
+                :content (clojure.string/trim (lzip/loc-content loc))
+                :trigger-index (:index (first stack)))]
+    (cond
+      (instance? Pattern transform) (re-find transform value)
+      :else value)))
 
 (defmulti trigger-hook*
   (fn [hook stack index loc]
@@ -30,16 +39,11 @@
      :id id}))
 
 (defmethod trigger-hook* :attribute
-  [{:keys [attribute value] :or {value :content}} stack index loc]
+  [{:keys [attribute value transform]} stack index loc]
   (when-let [id (some :id stack)]
-    (let [value (case value
-                  :content (lzip/loc-content loc)
-                  :trigger-index (:index (first stack)))]
+    (let [value (resolve-value value transform stack index loc)]
       {:tx [[:db/add id attribute value]]
        :type attribute})))
-
-(defmethod trigger-hook* :ref
-  [{:keys [ref from to]} stack index loc])
 
 (defmethod trigger-hook* :default
   [hook stack index loc]

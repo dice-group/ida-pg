@@ -1,14 +1,15 @@
 (ns lib-scraper.core
   (:require [hickory.select :as s]
             [lib-scraper.scraper.core :refer [scrape]]
+            [lib-scraper.model.concepts.package :as package]
             [lib-scraper.model.concepts.class :as class]
             [lib-scraper.model.concepts.function :as function]
             [lib-scraper.model.concepts.parameter :as parameter]))
 
 (def skl-spec {:seed "https://scikit-learn.org/0.20/modules/classes.html"
-               :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/.*")
+               :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/sklearn\.neighbors.*")
                :max-depth -1 ; restrict crawler for debugging purposes
-               :max-pages 2 ; restrict crawler for debugging purposes
+               :max-pages 3 ; restrict crawler for debugging purposes
                :patterns {:name {:selector [:children (s/tag :dt)
                                             :children (s/class :descname)]}
                           :description {:attribute :description
@@ -16,7 +17,16 @@
                                                    :children
                                                    (s/and (s/tag :p)
                                                           (s/not (s/class "rubric")))]}}
-               :hooks [; classes:
+               :hooks [; packages:
+                       {:trigger ::class/concept
+                        :concept ::package/concept
+                        :selector [:children (s/tag :dt)
+                                   :children (s/class :descclassname)]
+                        :ref-to-trigger ::package/member}
+                       {:trigger ::package/concept
+                        :attribute ::package/name
+                        :transform #".*[^.]"}
+                       ; classes:
                        {:trigger :document
                         :concept ::class/concept
                         :selector [:descendants (s/and (s/tag :dl) (s/class :class))]}
