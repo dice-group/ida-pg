@@ -19,12 +19,13 @@
                                       (p-and should-visit (p-expire max-pages)))
                   :visit (fn [_, ^Page page]
                            (let [parse-data (.getParseData page)
+                                 url (-> page (.getWebURL) (.getURL))
                                  document (when (instance? HtmlParseData parse-data)
                                             (-> ^HtmlParseData parse-data
                                                 (.getHtml) (h/parse) (h/as-hickory)))]
                              (when document
-                               (log/info "Traverse page:" (-> page (.getWebURL) (.getURL)))
-                               (visit document))))
+                               (log/info "Traverse page:" url)
+                               (visit document url))))
                   :max-depth max-depth
                   :concurrency (let [p (.availableProcessors (Runtime/getRuntime))]
                                  (if (or (< max-pages 0) (>= max-pages p))

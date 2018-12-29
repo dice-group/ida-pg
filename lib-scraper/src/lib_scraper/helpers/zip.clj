@@ -26,9 +26,8 @@
                  :preceding-siblings (constantly [identity zip/left some?])
                  :ancestors (constantly [identity zip/up some?])
                  :descendants (fn [loc]
-                                [identity zip/next
-                                 #(and (not (zip/end? %))
-                                       (is-parent? loc %))])})
+                                [identity zip/next #(and (not (zip/end? %))
+                                                         (is-parent? loc %))])})
 
 (defn select-locs-spread-step
   [type loc]
