@@ -8,12 +8,9 @@
 
 (defn- queue
   ([] (clojure.lang.PersistentQueue/EMPTY))
-  ([& s]
-   (reduce conj clojure.lang.PersistentQueue/EMPTY s)))
+  ([& s] (reduce conj clojure.lang.PersistentQueue/EMPTY s)))
 
-(defn- tempid
-  []
-  (d/tempid nil))
+(defn- tempid [] (d/tempid nil))
 
 (defn- resolve-value
   [value transform stack index loc]
@@ -68,20 +65,21 @@
             triggered)))
 
 (defn traverse!
-  [conn hooks doc]
-  (let [merged-tx (transient [])]
-    (loop [queue (queue (list {:type :document
-                               :loc (hzip/hickory-zip doc)}))]
-      (when (seq queue)
-        (let [stack (peek queue)
-              effects (trigger-hooks hooks stack)
-              tx (mapcat :tx effects)
-              stacks (->> effects
-                          (keep :entry)
-                          (map #(cons % stack)))]
-          (run! (partial conj! merged-tx) tx)
-          (recur (-> queue (pop) (into stacks))))))
-    (d/transact! conn (persistent! merged-tx))))
+  [conn hooks doc url]
+  (let [tx (loop [merged-tx (transient [[:db/add :db/current-tx :source url]])
+                  queue (queue (list {:type :document
+                                      :loc (hzip/hickory-zip doc)}))]
+             (if (seq queue)
+               (let [stack (peek queue)
+                     effects (trigger-hooks hooks stack)
+                     tx (mapcat :tx effects)
+                     stacks (->> effects
+                                 (keep :entry)
+                                 (map #(cons % stack)))]
+                 (recur (reduce conj! merged-tx tx)
+                        (-> queue (pop) (into stacks))))
+               merged-tx))]
+    (d/transact! conn (persistent! tx))))
 
 (defn index-hooks
   [hooks patterns]
