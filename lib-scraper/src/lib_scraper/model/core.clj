@@ -1,7 +1,9 @@
 (ns lib-scraper.model.core
   (:require [datascript.core :as d]
-            [lib-scraper.model.concepts.core :as concepts]))
+            [lib-scraper.model.ecosystems.python :as python]))
+
+(def ecosystems {:python python/ecosystem})
 
 (defn conn
-  []
-  (d/create-conn concepts/spec))
+  [ecosystem]
+  (d/create-conn (:concept ecosystem)))

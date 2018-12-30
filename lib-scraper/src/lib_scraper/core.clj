@@ -10,6 +10,7 @@
 (def skl-spec {:seed "https://scikit-learn.org/0.20/modules/classes.html"
                :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/.*")
                :max-pages 1 ; restrict crawler for debugging purposes
+               :ecosystem :python
                :patterns {:name {:selector [:children (s/tag :dt)
                                             :children (s/class :descname)]}
                           :description {:attribute :description
