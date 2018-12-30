@@ -40,8 +40,8 @@
            expr)))
 
 (defn scrape
-  [{:keys [should-visit hooks patterns] :as spec}]
-  (let [{:keys [traverser conn]} (traverser hooks patterns)]
+  [{:keys [should-visit] :as spec}]
+  (let [{:keys [traverser conn]} (traverser spec)]
     (crawl (merge spec
                   {:should-visit (parse-should-visit should-visit)
                    :visit traverser}))

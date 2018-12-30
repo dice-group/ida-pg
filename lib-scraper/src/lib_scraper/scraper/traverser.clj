@@ -65,11 +65,13 @@
             triggered)))
 
 (defn traverse!
-  [conn hooks doc url]
-  (let [tx (loop [merged-tx (transient [[:db/add :db/current-tx :source url]])
+  [conn hooks ecosystem doc url]
+  (let [tx (transient [[:db/add :db/current-tx :source url]])
+        tx (loop [merged-tx tx
                   queue (queue (list {:type :document
                                       :loc (hzip/hickory-zip doc)}))]
-             (if (seq queue)
+             (if (empty? queue)
+               merged-tx
                (let [stack (peek queue)
                      effects (trigger-hooks hooks stack)
                      tx (mapcat :tx effects)
@@ -77,8 +79,7 @@
                                  (keep :entry)
                                  (map #(cons % stack)))]
                  (recur (reduce conj! merged-tx tx)
-                        (-> queue (pop) (into stacks))))
-               merged-tx))]
+                        (-> queue (pop) (into stacks))))))]
     (d/transact! conn (persistent! tx))))
 
 (defn index-hooks
@@ -95,8 +96,9 @@
        (group-by :trigger)))
 
 (defn traverser
-  [hooks patterns]
-  (let [conn (m/conn)
+  [{:keys [hooks patterns ecosystem]}]
+  (let [ecosystem (m/ecosystems ecosystem)
+        conn (m/conn ecosystem)
         hooks (index-hooks hooks patterns)]
     {:conn conn
-     :traverser (partial traverse! conn hooks)}))
+     :traverser (partial traverse! conn hooks ecosystem)}))
