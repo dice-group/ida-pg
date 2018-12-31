@@ -2,6 +2,7 @@
   (:require [datascript.core :as d]
             [hickory.zip :as hzip]
             [clojure.tools.logging :as log]
+            [clojure.spec.alpha :as s]
             [lib-scraper.helpers.zip :as lzip]
             [lib-scraper.model.core :as m])
   (:import (java.util.regex Pattern)))
@@ -30,7 +31,8 @@
   [{:keys [concept ref-from-trigger ref-to-trigger]} stack index loc]
   (let [id (tempid)
         parent (some :id stack)
-        tx (cond-> [[:db/add id :type concept]]
+        tx (cond-> [[:db/add id :type concept]
+                    [:db/add id :tempid id]]
              ref-from-trigger (conj [:db/add parent ref-from-trigger id])
              ref-to-trigger (conj [:db/add id ref-to-trigger parent]))]
     {:tx tx
@@ -67,19 +69,30 @@
 (defn traverse!
   [conn hooks ecosystem doc url]
   (let [tx (transient [[:db/add :db/current-tx :source url]])
-        tx (loop [merged-tx tx
-                  queue (queue (list {:type :document
-                                      :loc (hzip/hickory-zip doc)}))]
-             (if (empty? queue)
-               merged-tx
-               (let [stack (peek queue)
-                     effects (trigger-hooks hooks stack)
-                     tx (mapcat :tx effects)
-                     stacks (->> effects
-                                 (keep :entry)
-                                 (map #(cons % stack)))]
-                 (recur (reduce conj! merged-tx tx)
-                        (-> queue (pop) (into stacks))))))]
+        [tx ids] (loop [merged-tx tx
+                        merged-ids (transient [])
+                        queue (queue (list {:type :document
+                                            :loc (hzip/hickory-zip doc)}))]
+                   (if (empty? queue)
+                     [merged-tx (persistent! merged-ids)]
+                     (let [stack (peek queue)
+                           effects (trigger-hooks hooks stack)
+                           tx (mapcat :tx effects)
+                           ids (keep (comp :id :entry) effects)
+                           stacks (->> effects
+                                       (keep :entry)
+                                       (map #(cons % stack)))]
+                       (recur (reduce conj! merged-tx tx)
+                              (reduce conj! merged-ids ids)
+                              (-> queue (pop) (into stacks))))))
+        validate (fn [db ids]
+                   (mapcat (fn [tid]
+                             (let [{:keys [db/id type] :as e} (d/entity db [:tempid tid])]
+                               (if (s/valid? type e)
+                                 [[:db.fn/retractAttribute id :tempid]]
+                                 [[:db.fn/retractEntity id]])))
+                           ids))
+        tx (conj! tx [:db.fn/call validate ids])]
     (d/transact! conn (persistent! tx))))
 
 (defn index-hooks
@@ -95,10 +108,19 @@
                    [hook])))
        (group-by :trigger)))
 
+(def db-spec {:type {:db/type :db.type/keyword
+                     :db/doc "Type of the entity. Used to lookup specs for concepts."}
+              :source {:db/type :db.type/string
+                       :db/doc "The datasource this entity originates from. Typically a URL."}
+              :tempid {:db/type :db.type/long
+                       :db/cardinality :db.cardinality/many
+                       :db/unique :db.unique/identity
+                       :db/doc "Temporary bookkeeping property used by the scraper."}})
+
 (defn traverser
   [{:keys [hooks patterns ecosystem]}]
   (let [ecosystem (m/ecosystems ecosystem)
-        conn (m/conn ecosystem)
+        conn (d/create-conn (merge db-spec (:concept ecosystem)))
         hooks (index-hooks hooks patterns)]
     {:conn conn
      :traverser (partial traverse! conn hooks ecosystem)}))
