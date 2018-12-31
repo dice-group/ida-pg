@@ -1,17 +1,27 @@
 package upb.ida.rest;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+//import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+//import org.springframework.web.method.annotation.ModelFactory;
+import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
 import upb.ida.bean.ResponseBean;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
+import upb.ida.util.UploadManager;
+
+import javax.xml.crypto.Data;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot
@@ -69,6 +79,51 @@ public class MessageRestController {
 		response.setPayload(dataMap);
 		dataService.getDataTable(actvDs, actvTbl);
 		return response;
+	}
+
+	@PostMapping("/file")
+	public String convert(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) throws IOException, Exception{
+		String status;
+
+		if(file.getContentType().equals("text/xml") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("xml")){
+			byte[] bytes = file.getBytes();
+			UploadManager.saveFile(fileName, xmlToRDF(bytes));
+			status = "pass";
+		}
+		else if(file.getContentType().equals("text/csv") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("csv")){
+			byte[] bytes = file.getBytes();
+			UploadManager.saveFile(fileName, csvToRDF(bytes));
+			status = "pass";
+		}
+		else
+			status = "fail";
+
+		return status;
+	}
+
+	private byte[] xmlToRDF(byte[] bytes) throws IOException, SAXException, ParserConfigurationException {
+		InputStream inputStream = new ByteArrayInputStream(bytes);
+
+		BufferedInputStream in = new BufferedInputStream(inputStream);
+		Dataset dataset
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		//  converting it into turtle format
+		dataset.getDefaultModel().write(stream, "ttl");
+
+		return stream.toByteArray();
+	}
+
+	private byte[] csvToRDF(byte[] bytes) {
+		InputStream inputStream = new ByteArrayInputStream(bytes);
+
+		Model m = ModelFactory.createDefaultModel();
+		// (TODO) http://example.com must not be fixed
+		m.read(inputStream, "http://example.com", "csv");
+		m.setNsPrefix("test", "http://example.com#");
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		// Converting into turtle format
+		m.write(stream, "ttl");
+		return stream.toByteArray();
 	}
 
 }
