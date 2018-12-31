@@ -13,10 +13,10 @@
 
 (defmacro entity-keys
   [& {:keys [req opt req-un opt-un gen]}]
-  (let [req (filterwalk keyword? req)
-        req-un (filterwalk keyword? req-un)
-        selected-keys (concat req opt
-                              (map keyword-name req-un)
+  (let [req-filtered (filterwalk keyword? req)
+        req-un-filtered (filterwalk keyword? req-un)
+        selected-keys (concat req-filtered opt
+                              (map keyword-name req-un-filtered)
                               (map keyword-name opt-un))]
     `(s/and (s/conformer ~#(select-keys % selected-keys))
             (s/keys ~@(when req [:req req])
