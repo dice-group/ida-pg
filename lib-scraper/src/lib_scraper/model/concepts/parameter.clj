@@ -1,6 +1,7 @@
 (ns lib-scraper.model.concepts.parameter
   (:require [clojure.spec.alpha :as s]
-            [lib-scraper.helpers.spec :as hs]))
+            [lib-scraper.helpers.spec :as hs]
+            [lib-scraper.model.concepts.function :as function]))
 
 (def concept {::name {:db/type :db.type/string
                       :db/doc "Name of the parameter."}
@@ -12,5 +13,6 @@
 (s/def ::name string?)
 (s/def ::position int?)
 (s/def ::optional boolean?)
-(s/def ::concept (hs/entity-keys :req [::name ::position]
+(s/def ::concept (hs/entity-keys :req [::name ::position
+                                       ::function/_param]
                                  :opt [::optional]))
