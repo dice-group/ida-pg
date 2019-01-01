@@ -11,6 +11,7 @@
                        :db/doc "A parameter of the function."}})
 
 (s/def ::name string?)
-(s/def ::concept (hs/entity-keys :req [::name (or ::class/_method
-                                                  ::class/_constructor
-                                                  ::package/_member)]))
+(s/def ::concept (hs/entity-keys :req [::name
+                                       (or ::class/_method
+                                           ::class/_constructor
+                                           ::package/_member)]))

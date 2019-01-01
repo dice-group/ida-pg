@@ -4,6 +4,7 @@
             [clojure.tools.logging :as log]
             [clojure.spec.alpha :as s]
             [lib-scraper.helpers.zip :as lzip]
+            [lib-scraper.scraper.postprocessor :as pp]
             [lib-scraper.model.core :as m])
   (:import (java.util.regex Pattern)))
 
@@ -70,7 +71,7 @@
   [conn hooks ecosystem doc url]
   (let [tx (transient [[:db/add :db/current-tx :source url]])
         [tx ids] (loop [merged-tx tx
-                        merged-ids (transient [])
+                        merged-ids (transient #{})
                         queue (queue (list {:type :document
                                             :loc (hzip/hickory-zip doc)}))]
                    (if (empty? queue)
@@ -85,14 +86,7 @@
                        (recur (reduce conj! merged-tx tx)
                               (reduce conj! merged-ids ids)
                               (-> queue (pop) (into stacks))))))
-        validate (fn [db ids]
-                   (mapcat (fn [tid]
-                             (let [{:keys [db/id type] :as e} (d/entity db [:tempid tid])]
-                               (if (s/valid? type e)
-                                 [[:db.fn/retractAttribute id :tempid]]
-                                 [[:db.fn/retractEntity id]])))
-                           ids))
-        tx (conj! tx [:db.fn/call validate ids])]
+        tx (conj! tx [:db.fn/call pp/postprocess-transactions ids])]
     (d/transact! conn (persistent! tx))))
 
 (defn index-hooks
