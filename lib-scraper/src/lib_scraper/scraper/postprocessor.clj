@@ -9,8 +9,8 @@
 (defn validate-transaction
   [db ids]
   (let [{:keys [valid invalid]} (group-by (fn [id]
-                                            (let [e (d/entity db id)]
-                                              (if (s/valid? (:type e) e)
+                                            (let [{:keys [type] :as e} (d/entity db id)]
+                                              (if (and type (s/valid? type e))
                                                 :valid :invalid)))
                                           ids)]
     (if (empty? invalid)
@@ -20,8 +20,17 @@
             ; to check whether they are still valid:
             [:db.fn/call validate-transaction valid]))))
 
+(defn ecosystem-postprocessing
+  [db {:keys [postprocess]} ids]
+  (keep (fn [id]
+          (when-let [processor (some-> (d/entity db id)
+                                       :type postprocess)]
+            [:db.fn/call processor id]))
+        ids))
+
 (defn postprocess-transactions
-  [db tids]
+  [db ecosystem tids]
   (let [ids (map #(d/entid db [:tempid %]) tids)]
     [[:db.fn/call retract-tempids ids]
+     [:db.fn/call ecosystem-postprocessing ecosystem ids]
      [:db.fn/call validate-transaction ids]]))
