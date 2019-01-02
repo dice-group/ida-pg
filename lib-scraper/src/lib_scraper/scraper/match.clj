@@ -1,4 +1,4 @@
-(ns lib-scraper.match.links
+(ns lib-scraper.scraper.match
   (:require [clojure.string :as s])
   (:import (edu.uci.ics.crawler4j.crawler Page)
            (edu.uci.ics.crawler4j.url WebURL)))
