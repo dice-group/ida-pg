@@ -5,7 +5,7 @@
   (case (count fns)
     0 (constantly [])
     1 (first fns)
-    (let [calls (mapv #(vector :db.fn/call %) (set fns))]
+    (let [calls (mapv #(vector :db.fn/call %) fns)]
       (fn [db & args]
         (mapv #(into % args) calls)))))
 
@@ -13,6 +13,5 @@
   [& maps]
   (into {} (for [key (set (mapcat keys maps))]
              [key (->> maps
-                       (map key)
-                       (remove nil?)
+                       (keep key) (set)
                        (merge-fns))])))
