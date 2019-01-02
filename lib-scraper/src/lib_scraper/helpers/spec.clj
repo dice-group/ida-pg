@@ -15,12 +15,14 @@
   [& {:keys [req opt req-un opt-un gen]}]
   (let [req-filtered (filterwalk keyword? req)
         req-un-filtered (filterwalk keyword? req-un)
-        selected-keys (concat req-filtered opt
-                              (map keyword-name req-un-filtered)
-                              (map keyword-name opt-un))]
-    `(s/and (s/conformer ~#(select-keys % selected-keys))
+        keys (concat req-filtered opt
+                     (map keyword-name req-un-filtered)
+                     (map keyword-name opt-un))]
+    `(s/and (s/conformer ~#(with-meta (select-keys % keys)
+                                      {:entity %}))
             (s/keys ~@(when req [:req req])
                     ~@(when opt [:opt opt])
                     ~@(when req-un [:req-un req-un])
                     ~@(when opt-un [:opt-un opt-un])
-                    ~@(when gen [:gen gen])))))
+                    ~@(when gen [:gen gen]))
+            (s/conformer ~(comp :entity meta)))))
