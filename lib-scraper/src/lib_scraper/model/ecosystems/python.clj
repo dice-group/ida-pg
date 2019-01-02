@@ -1,6 +1,8 @@
 (ns lib-scraper.model.ecosystems.python
   (:require [datascript.core :as d]
-            [lib-scraper.helpers.transaction :refer [merge-fn-maps]]
+            [clojure.spec.alpha :as s]
+            [lib-scraper.helpers.transaction :refer [merge-fn-maps]
+                                             :rename {merge-fn-maps fn-merge}]
             [lib-scraper.model.paradigms.oo :as oo]
             [lib-scraper.model.paradigms.functional :as functional]
             [lib-scraper.model.concepts.class :as class]
@@ -17,8 +19,12 @@
     (map (fn [[ctr]] [:db/add id ::class/constructor ctr])
          ctrs)))
 
+(s/def ::function (s/or :oo ::oo/function
+                        :fn ::functional/function))
+
 (def ecosystem {:concept (merge oo/concept
                                 functional/concept)
-                :postprocess (merge-fn-maps oo/postprocess
-                                            functional/postprocess
-                                            {::class/concept postprocess-class})})
+                :postprocess (fn-merge oo/postprocess
+                                       functional/postprocess
+                                       {::class/concept postprocess-class})
+                :spec {::function/concept ::function}})
