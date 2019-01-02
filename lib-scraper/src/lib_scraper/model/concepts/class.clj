@@ -17,13 +17,10 @@
                         :db/doc "Method of the class. A ref to a function."}})
 
 (s/def ::name string?)
-(s/def ::concept (hs/entity-keys :req [::id ::name]
-                                 :opt [::package/_member]))
+(s/def ::concept (hs/entity-keys :req [::id ::name ::package/_member]))
 
 (defn postprocess
   [db id]
   (let [e (d/entity db id)]
-    [[:db/add id ::id
-      (if-let [pname (-> e ::package/_member ::package/name)]
-        (str pname "." (::name e))
-        (::name e))]]))
+      (when-let [pname (some-> e ::package/_member ::package/name)]
+        [[:db/add id ::id (str pname "." (::name e))]])))
