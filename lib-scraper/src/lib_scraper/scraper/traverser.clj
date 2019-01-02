@@ -2,7 +2,6 @@
   (:require [datascript.core :as d]
             [hickory.zip :as hzip]
             [clojure.tools.logging :as log]
-            [clojure.spec.alpha :as s]
             [lib-scraper.helpers.zip :as lzip]
             [lib-scraper.scraper.postprocessor :as pp]
             [lib-scraper.model.core :as m])
@@ -86,7 +85,7 @@
                        (recur (reduce conj! merged-tx tx)
                               (reduce conj! merged-ids ids)
                               (-> queue (pop) (into stacks))))))
-        tx (conj! tx [:db.fn/call pp/postprocess-transactions ids])]
+        tx (conj! tx [:db.fn/call pp/postprocess-transactions ecosystem ids])]
     (d/transact! conn (persistent! tx))))
 
 (defn index-hooks

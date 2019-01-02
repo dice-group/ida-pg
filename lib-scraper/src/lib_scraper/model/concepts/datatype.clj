@@ -2,10 +2,9 @@
   (:require [clojure.spec.alpha :as s]
             [lib-scraper.helpers.spec :as hs]))
 
-(def concept {::name {:db/type :db.type/string
-                      :db/unique :db.unique/identity
+(def concept {::name {:db/unique :db.unique/identity
                       :db/doc "Unique name of the datatype."}
-              ::instance {:db/type :db.type/ref
+              ::instance {:db/valueType :db.type/ref
                           :db/cardinality :db.cardinality/many
                           :db/doc "Concepts of this type."}})
 

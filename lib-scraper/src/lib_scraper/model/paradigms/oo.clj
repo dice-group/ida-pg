@@ -12,3 +12,5 @@
                     function/concept
                     parameter/concept
                     datatype/concept))
+
+(def postprocess {::class/concept class/postprocess})

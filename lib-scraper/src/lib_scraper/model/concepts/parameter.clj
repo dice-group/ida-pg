@@ -3,15 +3,12 @@
             [lib-scraper.helpers.spec :as hs]
             [lib-scraper.model.concepts.function :as function]))
 
-(def concept {::name {:db/type :db.type/string
-                      :db/doc "Name of the parameter."}
-              ::position {:db/type :db.type/long
-                          :db/doc "Position of the parameter."}
-              ::optional {:db/type :db.type/boolean
-                          :db/doc "Denotes whether this parameter is optional."}})
+(def concept {::name {:db/doc "Name of the parameter."}
+              ::position {:db/doc "Position of the parameter."}
+              ::optional {:db/doc "Denotes whether this parameter is optional."}})
 
 (s/def ::name string?)
-(s/def ::position int?)
+(s/def ::position (s/and int? #(<= 0 %)))
 (s/def ::optional boolean?)
 (s/def ::concept (hs/entity-keys :req [::name ::position
                                        ::function/_param]
