@@ -1,6 +1,7 @@
 (ns lib-scraper.core
   (:require [hickory.select :as s]
             [lib-scraper.scraper.core :refer [scrape-and-store! load-stored]]
+            [lib-scraper.model.core :as m]
             [lib-scraper.model.concepts.package :as package]
             [lib-scraper.model.concepts.class :as class]
             [lib-scraper.model.concepts.function :as function]
@@ -10,7 +11,7 @@
 (def skl-spec {:seed "https://scikit-learn.org/0.20/modules/classes.html"
                :should-visit '(match-url #"https://scikit-learn\.org/0\.20/modules/generated/.*")
                :max-pages 1 ; restrict crawler for debugging purposes
-               :ecosystem :python
+               :ecosystem (m/ecosystems :python)
                :patterns {:name {:selector [:children (s/tag :dt)
                                             :children (s/class :descname)]}
                           :description {:attribute :description
@@ -21,62 +22,62 @@
                           :parameter-info {:selector [:children (s/and (s/tag :span)
                                                                        (s/class :classifier))]}}
                :hooks [; packages:
-                       {:trigger [::class/concept ::function/concept]
-                        :concept ::package/concept
+                       {:trigger [:class :function]
+                        :concept :package
                         :selector [:children (s/tag :dt)
                                    :children (s/class :descclassname)]
                         :ref-to-trigger ::package/member}
-                       {:trigger ::package/concept
+                       {:trigger :package
                         :attribute ::package/name
                         :transform #".*[^.]"}
                        ; classes:
                        {:trigger :document
-                        :concept ::class/concept
+                        :concept :class
                         :selector [:descendants (s/and (s/tag :dl) (s/class :class))]}
-                       {:trigger ::class/concept
+                       {:trigger :class
                         :attribute ::class/name
                         :pattern :name}
-                       {:trigger ::class/concept, :pattern :description}
+                       {:trigger :class, :pattern :description}
                        ; functions:
                        {:trigger :document
-                        :concept ::function/concept
+                        :concept :function
                         :selector [:descendants (s/and (s/tag :dl) (s/class :function))]}
-                       {:trigger ::class/concept
-                        :concept ::function/concept
+                       {:trigger :class
+                        :concept :function
                         :selector [:descendants (s/and (s/tag :dl) (s/class :method))]
                         :ref-from-trigger ::class/method}
-                       {:trigger ::function/concept
+                       {:trigger :function
                         :attribute ::function/name
                         :pattern :name}
-                       {:trigger ::function/concept, :pattern :description}
+                       {:trigger :function, :pattern :description}
                        ; parameters:
-                       {:trigger ::function/concept
-                        :concept ::parameter/concept
+                       {:trigger :function
+                        :concept :parameter
                         :selector [:descendants
                                    (s/and (s/tag :th) (s/find-in-text #"Parameters"))
                                    [:ancestors :select (s/tag :tr) :limit 1]
                                    :descendants (s/tag :dt)]
-                        :ref-from-trigger ::function/param}
-                       {:trigger ::parameter/concept
+                        :ref-from-trigger ::function/parameter}
+                       {:trigger :parameter
                         :attribute ::parameter/name
                         :selector [:children (s/tag :strong)]}
-                       {:trigger ::parameter/concept
+                       {:trigger :parameter
                         :attribute ::parameter/position
                         :value :trigger-index}
-                       {:trigger ::parameter/concept
+                       {:trigger :parameter
                         :attribute :description
                         :selector [[:following-siblings :select (s/tag :dd) :limit 1]
                                    :children (s/tag :p)]}
-                       {:trigger ::parameter/concept
+                       {:trigger :parameter
                         :attribute ::parameter/optional
                         :pattern :parameter-info
                         :transform #(clojure.string/includes? % "optional")}
                        ; datatypes:
-                       {:trigger ::parameter/concept
-                        :concept ::datatype/concept
+                       {:trigger :parameter
+                        :concept :datatype
                         :ref-to-trigger ::datatype/instance
                         :pattern :parameter-info}
-                       {:trigger ::datatype/concept
+                       {:trigger :datatype
                         :attribute ::datatype/name
                         :transform #"^[A-Za-z]+"}]})
 

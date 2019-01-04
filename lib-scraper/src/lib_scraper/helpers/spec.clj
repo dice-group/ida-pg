@@ -1,5 +1,6 @@
 (ns lib-scraper.helpers.spec
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s])
+  (:refer-clojure :exclude [and]))
 
 (def ^:private keyword-name (comp keyword name))
 
@@ -26,3 +27,28 @@
                     ~@(when opt-un [:opt-un opt-un])
                     ~@(when gen [:gen gen]))
             (s/conformer ~(comp :entity meta)))))
+
+(defmacro keys*
+  "Like clojure.spec.alpha/keys* but always conforms to and allows maps."
+  [& args]
+  `(s/and (s/or :map (s/and map? (s/keys ~@args))
+                :default (s/keys* ~@args))
+          (s/conformer ~(fn [[_ map]] (if (nil? map) {} map)))))
+
+(defn and
+  "A function wrapper around clojure.spec.alpha/and."
+  [& [first second third :as pred-forms]]
+  (case (count pred-forms)
+    0 any?
+    1 first
+    2 (s/and first second)
+    3 (s/and first second third)
+    (loop [res (first pred-forms)
+           [form & forms] (rest pred-forms)]
+      (if form
+        (recur (s/and res form) forms)
+        res))))
+
+(defn vec-of
+  [pred-form]
+  (s/and vector? (s/coll-of pred-form)))

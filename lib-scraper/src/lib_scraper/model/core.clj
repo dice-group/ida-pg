@@ -1,4 +1,4 @@
 (ns lib-scraper.model.core
-  (:require [lib-scraper.model.ecosystems.python :as python]))
+  (:require [lib-scraper.model.ecosystems.python :refer [python]]))
 
-(def ecosystems {:python python/ecosystem})
+(def ecosystems {:python python})
