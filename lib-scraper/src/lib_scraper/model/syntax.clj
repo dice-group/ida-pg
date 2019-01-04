@@ -1,5 +1,6 @@
 (ns lib-scraper.model.syntax
   (:require [clojure.spec.alpha :as s]
+            [clojure.set :as set]
             [lib-scraper.helpers.spec :as hs]
             [lib-scraper.helpers.map :as map]
             [lib-scraper.helpers.transaction :as tx]
@@ -10,7 +11,8 @@
   (let [merged (apply map/merge-by-key
                       {:attributes merge
                        :spec hs/and
-                       :postprocess tx/merge}
+                       :postprocess tx/merge
+                       :extends set/union}
                       (conj extends concept))]
     (if (contains? merged :spec)
       merged
@@ -22,18 +24,22 @@
 
 (defn no-attribute-collisions?
   [{:keys [concept extends]}]
-  (apply distinct? (map name (mapcat (comp keys :attributes)
-                                     (conj extends concept)))))
+  (let [attr-names (->> (conj extends concept)
+                        (mapcat (comp keys :attributes))
+                        (map name))]
+    (or (empty? attr-names)
+        (apply distinct? attr-names))))
 
-(s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::postprocess]))
+(s/def ::concept-desc-inner (hs/keys* :opt-un [::attributes ::spec ::postprocess]))
 (s/def ::attributes (s/every-kv keyword? any?))
 (s/def ::postprocess fn?)
 (s/def ::concept-desc (s/and (s/cat :extends (s/? (hs/vec-of ::concept))
                                     :concept (s/* any?))
-                             (s/keys :req-un [::concept])
+                             (s/keys :opt-un [::concept])
                              no-attribute-collisions?
                              (s/conformer (fn [{:keys [concept extends]}]
                                             (merge-concepts concept extends)))))
+
 (s/def ::concept-overlay
        (s/and (s/or :overlay (s/keys :req-un [::concept]
                                      :opt-un [::spec ::postprocess])
@@ -56,26 +62,36 @@
 (s/def ::ecosystem-desc
        (s/and ::paradigm-desc
               (s/conformer (fn [m]
-                             {:aliases (into {} (for [[c {:keys [attributes]}] m
-                                                      :let [cns (namespace c)
-                                                            cns (str (if cns (str cns "."))
-                                                                     (name c))]
-                                                      attribute (keys attributes)]
-                                                  [(keyword cns (name attribute)) attribute]))
-                              :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
-                                                       (into a attributes))
-                                                     common/attributes m)
-                              :specs (map/map-kv :spec m)
-                              :postprocessors (map/keep-kv :postprocess m)}))))
+                             (let [aliases (map/map-v :ident m)
+                                   aliases (into aliases
+                                                 (for [[c {:keys [attributes]}] m
+                                                         :let [cns (namespace c)
+                                                               cns (str (if cns (str cns "."))
+                                                                        (name c))]
+                                                         attribute (keys attributes)]
+                                                     [(keyword cns (name attribute)) attribute]))]
+                               {:aliases aliases
+                                :subtypes (map/map-kv (comp (juxt :ident :extends) second) m)
+                                :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
+                                                         (into a attributes))
+                                                       common/attributes m)
+                                :specs (map/map-v :spec m)
+                                :postprocessors (map/keep-v :postprocess m)})))))
 
 (defmacro defconcept
-  [name & concept]
-  `(let [concept# ~(vec concept)
-         conformed# (s/conform ::concept-desc concept#)]
+  [name & concept-desc]
+  `(let [concept-desc# ~(vec concept-desc)
+         conformed# (s/conform ::concept-desc concept-desc#)]
      (if (s/invalid? conformed#)
        (throw (Exception. (str "Invalid concept definition.\n"
-                               (s/explain-str ::concept-desc concept#))))
-       (def ~name conformed#))))
+                               (s/explain-str ::concept-desc concept-desc#))))
+       (let [name# (quote ~name)
+             name# (if (qualified-symbol? name#)
+                     (keyword name#) (keyword (str *ns*) (str name#)))
+             concept# (-> conformed#
+                          (assoc :ident name#)
+                          (update :extends set/union #{name#}))]
+         (def ~name concept#)))))
 
 (defmacro defparadigm
   [name & paradigm]
