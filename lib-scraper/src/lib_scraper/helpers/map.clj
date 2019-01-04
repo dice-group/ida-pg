@@ -13,8 +13,16 @@
 
 (defn map-kv
   [f m]
+  (into {} (for [e m] (f e))))
+
+(defn map-v
+  [f m]
   (into {} (for [[k v] m] [k (f v)])))
 
 (defn keep-kv
+  [f m]
+  (into {} (for [e m :let [w (f e)] :when w] w)))
+
+(defn keep-v
   [f m]
   (into {} (for [[k v] m :let [w (f v)] :when w] [k w])))
