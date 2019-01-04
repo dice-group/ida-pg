@@ -1,4 +1,7 @@
 {:ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
                              lib-scraper.core]
- :known-macros [proxy]}
+ :known-macros [lib-scraper.model.syntax/defconcept
+                lib-scraper.model.syntax/defparadigm
+                lib-scraper.model.syntax/defecosystem
+                lib-scraper.helpers.spec/entity-keys]}

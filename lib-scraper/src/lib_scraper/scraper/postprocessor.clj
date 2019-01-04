@@ -7,10 +7,10 @@
   (mapv #(vector :db.fn/retractAttribute % :tempid) ids))
 
 (defn validate-transaction
-  [db {:keys [spec] :as ecosystem} ids]
+  [db {:keys [specs] :as ecosystem} ids]
   (let [{:keys [valid invalid]} (group-by (fn [id]
                                             (let [{:keys [type] :as e} (d/entity db id)
-                                                  spec-key (spec type type)]
+                                                  spec-key (specs type)]
                                               (if (and spec-key (s/valid? spec-key e))
                                                 :valid :invalid)))
                                           ids)]
@@ -22,9 +22,9 @@
             [:db.fn/call validate-transaction ecosystem valid]))))
 
 (defn ecosystem-postprocessing
-  [db {:keys [postprocess]} ids]
+  [db {:keys [postprocessors]} ids]
   (keep (fn [id]
-          (when-let [processor (some-> (d/entity db id) :type postprocess)]
+          (when-let [processor (some-> (d/entity db id) :type postprocessors)]
             [:db.fn/call processor id]))
         ids))
 

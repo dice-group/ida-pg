@@ -3,8 +3,7 @@
             [hickory.zip :as hzip]
             [clojure.tools.logging :as log]
             [lib-scraper.helpers.zip :as lzip]
-            [lib-scraper.scraper.postprocessor :as pp]
-            [lib-scraper.model.core :as m])
+            [lib-scraper.scraper.postprocessor :as pp])
   (:import (java.util.regex Pattern)))
 
 (defn- queue
@@ -112,8 +111,7 @@
 
 (defn traverser
   [{:keys [hooks patterns ecosystem]}]
-  (let [ecosystem (m/ecosystems ecosystem)
-        conn (d/create-conn (merge db-spec (:concept ecosystem)))
+  (let [conn (d/create-conn (merge db-spec (:attributes ecosystem)))
         hooks (index-hooks hooks patterns)]
     {:conn conn
      :traverser (partial traverse! conn hooks ecosystem)}))

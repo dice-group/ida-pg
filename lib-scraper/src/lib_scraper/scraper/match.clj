@@ -12,7 +12,7 @@
       (some? (re-matches pattern (.getURL url))))))
 
 (defn require-classes
-  [required-classes]
+  [& required-classes]
   (fn [_, ^Page page, ^WebURL url]
     (let [{:strs [class] :or {class ""}} (into {} (.getAttributes url))
           classes (set (map s/lower-case (s/split class #"\s+")))]
