@@ -16,4 +16,6 @@ public interface UserService {
     void delete(Long id);
 
     User saveOrUpdateProductForm(UserForm userForm);
+
+	User getByUsername(String username);
 }

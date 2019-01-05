@@ -89,6 +89,14 @@
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-ogm-http-driver</artifactId>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-jdbc-driver -->
+		<dependency>
+    		<groupId>org.neo4j</groupId>
+    		<artifactId>neo4j-jdbc-driver</artifactId>
+    		<version>3.4.0</version>
+		</dependency>
+
     </dependencies>
 
     <build>
