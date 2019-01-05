@@ -1,18 +1,16 @@
 (ns lib-scraper.model.concepts.parameter
   (:require [clojure.spec.alpha :as s]
-            [lib-scraper.model.syntax :refer [defconcept]]
             [lib-scraper.helpers.spec :as hs]
-            [lib-scraper.model.concepts.function :as function]))
+            [lib-scraper.model.syntax :refer [defconcept]]
+            [lib-scraper.model.concepts.named :refer [named]]
+            [lib-scraper.model.concepts.callable :as callable]))
 
-(defconcept parameter
-  :attributes {::name {:db/doc "Name of the parameter."}
-               ::position {:db/doc "Position of the parameter."}
+(defconcept parameter [named]
+  :attributes {::position {:db/doc "Position of the parameter."}
                ::optional {:db/doc "Denotes whether this parameter is optional."}}
   :spec ::parameter)
 
-(s/def ::parameter (hs/entity-keys :req [::name ::position
-                                         ::function/_parameter]
+(s/def ::parameter (hs/entity-keys :req [::position ::callable/_parameter]
                                    :opt [::optional]))
-(s/def ::name string?)
 (s/def ::position (s/and int? #(<= 0 %)))
 (s/def ::optional boolean?)

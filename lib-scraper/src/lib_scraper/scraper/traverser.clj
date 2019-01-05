@@ -56,9 +56,9 @@
      :entry (when type {:id id, :type type, :loc loc, :index index})}))
 
 (defn trigger-hooks
-  [hooks stack]
+  [extends hooks stack]
   (let [[{:keys [type loc]}] stack
-        triggered (hooks type)]
+        triggered (mapcat hooks (extends type))]
     (mapcat (fn [{:keys [selector limit] :as hook}]
               (let [selection (lzip/select-locs selector loc)]
                 (keep-indexed (partial trigger-hook hook stack)
@@ -68,6 +68,7 @@
 (defn traverse!
   [conn hooks ecosystem doc url]
   (let [tx (transient [[:db/add :db/current-tx :source url]])
+        extends (assoc (:extends ecosystem) :document #{:document})
         [tx ids] (loop [merged-tx tx
                         merged-ids (transient #{})
                         queue (queue (list {:type :document
@@ -75,7 +76,7 @@
                    (if (empty? queue)
                      [merged-tx (persistent! merged-ids)]
                      (let [stack (peek queue)
-                           effects (trigger-hooks hooks stack)
+                           effects (trigger-hooks extends hooks stack)
                            tx (mapcat :tx effects)
                            ids (keep (comp :id :entry) effects)
                            stacks (->> effects
@@ -100,12 +101,10 @@
                    [hook])))
        (group-by :trigger)))
 
-(def db-spec {:type {:db/type :db.type/keyword
+(def db-spec {:type {:db/cardinality :db.cardinality/many
                      :db/doc "Type of the entity. Used to lookup specs for concepts."}
-              :source {:db/type :db.type/string
-                       :db/doc "The datasource this entity originates from. Typically a URL."}
-              :tempid {:db/type :db.type/long
-                       :db/cardinality :db.cardinality/many
+              :source {:db/doc "The datasource this entity originates from. Typically a URL."}
+              :tempid {:db/cardinality :db.cardinality/many
                        :db/unique :db.unique/identity
                        :db/doc "Temporary bookkeeping property used by the scraper."}})
 
