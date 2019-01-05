@@ -1,5 +1,9 @@
 package com.poc.springsecurity;
 
+import java.sql.*;
+import java.util.*;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+
+import com.poc.services.UserService;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -30,13 +37,21 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
 
 	private SimpleUrlAuthenticationFailureHandler myFailureHandler = new SimpleUrlAuthenticationFailureHandler();
 	
-	@Override
-	protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-	    auth.inMemoryAuthentication()
-	        .withUser("admin").password(encoder().encode("adminPass")).roles("ADMIN")
-	        .and()
-	        .withUser("user").password(encoder().encode("userPass")).roles("USER");
-	}
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
+    
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    	auth.authenticationProvider(authProvider);
+    }
+    
+//	@Override
+//	protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+//	    auth.inMemoryAuthentication()
+//	        .withUser("admin").password(encoder().encode("adminPass")).roles("ADMIN")
+//	        .and()
+//	        .withUser("user").password(encoder().encode("userPass")).roles("USER");
+//	}
 	 
 	@Bean
 	public PasswordEncoder  encoder() {
@@ -44,15 +59,15 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
 	}
 	
 	protected void configure(HttpSecurity http) throws Exception { 
-	    http
+		http
 	    .csrf().disable()
 	    .exceptionHandling()
 	    .authenticationEntryPoint(restAuthenticationEntryPoint)
 	    .and()
 	    .authorizeRequests()
-	    .antMatchers("/getItem").permitAll()
+	    .antMatchers("/login").permitAll()
 	    .antMatchers("/foos").authenticated()
-	    .antMatchers("/coupon").hasRole("ADMIN")
+	    .antMatchers("/users/list").hasRole("ADMIN")
 	    .and()
 		.formLogin()
 		.loginPage("/login")
