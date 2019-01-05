@@ -1,5 +1,11 @@
 (ns lib-scraper.helpers.transaction
+  (:require [datascript.core :as d])
   (:refer-clojure :exclude [merge]))
+
+(defn add-attr
+  [attr f]
+  (fn [db id]
+    [[:db/add id attr (f (d/entity db id))]]))
 
 (defn merge
   [& fns]

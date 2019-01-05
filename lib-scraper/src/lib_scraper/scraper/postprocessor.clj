@@ -1,6 +1,7 @@
 (ns lib-scraper.scraper.postprocessor
   (:require [datascript.core :as d]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [lib-scraper.helpers.spec :as hs]))
 
 (defn retract-tempids
   [db ids]
@@ -10,8 +11,9 @@
   [db {:keys [specs] :as ecosystem} ids]
   (let [{:keys [valid invalid]} (group-by (fn [id]
                                             (let [{:keys [type] :as e} (d/entity db id)
-                                                  spec-key (specs type)]
-                                              (if (and spec-key (s/valid? spec-key e))
+                                                  specs (keep specs type)]
+                                              (if (and (seq specs)
+                                                       (s/valid? (apply hs/and specs) e))
                                                 :valid :invalid)))
                                           ids)]
     (if (empty? invalid)

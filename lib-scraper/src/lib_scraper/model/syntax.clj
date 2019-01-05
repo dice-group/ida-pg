@@ -30,7 +30,7 @@
     (or (empty? attr-names)
         (apply distinct? attr-names))))
 
-(s/def ::concept-desc-inner (hs/keys* :opt-un [::attributes ::spec ::postprocess]))
+(s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::postprocess]))
 (s/def ::attributes (s/every-kv keyword? any?))
 (s/def ::postprocess fn?)
 (s/def ::concept-desc (s/and (s/cat :extends (s/? (hs/vec-of ::concept))
@@ -39,25 +39,14 @@
                              no-attribute-collisions?
                              (s/conformer (fn [{:keys [concept extends]}]
                                             (merge-concepts concept extends)))))
-
-(s/def ::concept-overlay
-       (s/and (s/or :overlay (s/keys :req-un [::concept]
-                                     :opt-un [::spec ::postprocess])
-                    :concept ::concept)
-              (s/conformer (fn [[type {:keys [concept spec postprocess] :as m}]]
-                             (case type
-                               :concept m
-                               :overlay (cond-> (or concept {})
-                                          spec (assoc :spec spec)
-                                          postprocess (assoc :postprocess postprocess)))))))
-(s/def ::concept-overlays (s/and (hs/keys*) (s/map-of keyword? ::concept-overlay)))
+(s/def ::concepts (s/and (hs/keys*) (s/map-of keyword? ::concept)))
 
 (s/def ::paradigm-desc (s/and (s/cat :extends (s/? (hs/vec-of ::paradigm))
                                      :paradigm (s/* any?))
                               (s/keys :req-un [::paradigm])
                               (s/conformer (fn [{:keys [paradigm extends]}]
                                              (merge-paradigms paradigm extends)))))
-(s/def ::paradigm ::concept-overlays)
+(s/def ::paradigm ::concepts)
 
 (s/def ::ecosystem-desc
        (s/and ::paradigm-desc
@@ -71,11 +60,11 @@
                                                          attribute (keys attributes)]
                                                      [(keyword cns (name attribute)) attribute]))]
                                {:aliases aliases
-                                :subtypes (map/map-kv (comp (juxt :ident :extends) second) m)
+                                :extends (map/map-kv (comp (juxt :ident :extends) second) m)
                                 :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
                                                          (into a attributes))
                                                        common/attributes m)
-                                :specs (map/map-v :spec m)
+                                :specs (map/map-kv (comp (juxt :ident :spec) second) m)
                                 :postprocessors (map/keep-v :postprocess m)})))))
 
 (defmacro defconcept

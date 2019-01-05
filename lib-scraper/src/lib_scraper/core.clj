@@ -3,8 +3,11 @@
             [lib-scraper.scraper.core :refer [scrape-and-store! load-stored]]
             [lib-scraper.model.core :as m]
             [lib-scraper.model.concepts.package :as package]
-            [lib-scraper.model.concepts.class :as class]
-            [lib-scraper.model.concepts.function :as function]
+            [lib-scraper.model.concepts.named :as named]
+            [lib-scraper.model.concepts.callable :as callable]
+            [lib-scraper.model.paradigms.oo.class :as class]
+            [lib-scraper.model.paradigms.oo.method :as method]
+            [lib-scraper.model.paradigms.functional.function :as function]
             [lib-scraper.model.concepts.parameter :as parameter]
             [lib-scraper.model.concepts.datatype :as datatype]))
 
@@ -22,63 +25,66 @@
                           :parameter-info {:selector [:children (s/and (s/tag :span)
                                                                        (s/class :classifier))]}}
                :hooks [; packages:
-                       {:trigger [:class :function]
-                        :concept :package
+                       {:trigger [::class/class ::function/function]
+                        :concept ::package/package
                         :selector [:children (s/tag :dt)
                                    :children (s/class :descclassname)]
                         :ref-to-trigger ::package/member}
-                       {:trigger :package
-                        :attribute ::package/name
+                       {:trigger ::package/package
+                        :attribute ::named/name
                         :transform #".*[^.]"}
                        ; classes:
                        {:trigger :document
-                        :concept :class
+                        :concept ::class/class
                         :selector [:descendants (s/and (s/tag :dl) (s/class :class))]}
-                       {:trigger :class
-                        :attribute ::class/name
+                       {:trigger ::class/class
+                        :attribute ::named/name
                         :pattern :name}
-                       {:trigger :class, :pattern :description}
-                       ; functions:
+                       {:trigger ::class/class, :pattern :description}
+                       ; callables:
                        {:trigger :document
-                        :concept :function
+                        :concept ::function/function
                         :selector [:descendants (s/and (s/tag :dl) (s/class :function))]}
-                       {:trigger :class
-                        :concept :function
+                       {:trigger ::class/class
+                        :concept ::method/method
                         :selector [:descendants (s/and (s/tag :dl) (s/class :method))]
                         :ref-from-trigger ::class/method}
-                       {:trigger :function
-                        :attribute ::function/name
+                       {:trigger ::method/method
+                        :attribute ::named/name
                         :pattern :name}
-                       {:trigger :function, :pattern :description}
+                       {:trigger ::function/function
+                        :attribute ::named/name
+                        :pattern :name}
+                       {:trigger ::callable/callable, :pattern :description}
                        ; parameters:
-                       {:trigger :function
-                        :concept :parameter
+                       {:trigger ::callable/callable
+                        :concept ::parameter/parameter
                         :selector [:descendants
                                    (s/and (s/tag :th) (s/find-in-text #"Parameters"))
                                    [:ancestors :select (s/tag :tr) :limit 1]
                                    :descendants (s/tag :dt)]
-                        :ref-from-trigger ::function/parameter}
-                       {:trigger :parameter
-                        :attribute ::parameter/name
+                        :ref-from-trigger ::callable/parameter}
+                       {:trigger ::parameter/parameter
+                        :attribute ::named/name
                         :selector [:children (s/tag :strong)]}
-                       {:trigger :parameter
+                       {:trigger ::parameter/parameter
                         :attribute ::parameter/position
                         :value :trigger-index}
-                       {:trigger :parameter
+                       {:trigger ::parameter/parameter
                         :attribute :description
                         :selector [[:following-siblings :select (s/tag :dd) :limit 1]
                                    :children (s/tag :p)]}
-                       {:trigger :parameter
+                       {:trigger ::parameter/parameter
                         :attribute ::parameter/optional
                         :pattern :parameter-info
                         :transform #(clojure.string/includes? % "optional")}
                        ; datatypes:
-                       {:trigger :parameter
-                        :concept :datatype
+                       {:trigger ::parameter/parameter
+                        :concept ::datatype/datatype
                         :ref-to-trigger ::datatype/instance
                         :pattern :parameter-info}
-                       {:trigger :datatype
-                        :attribute ::datatype/name
+                       {:trigger ::datatype/datatype
+                        :attribute ::named/name
                         :transform #"^[A-Za-z]+"}]})
 
 (defn scrape-skl!
