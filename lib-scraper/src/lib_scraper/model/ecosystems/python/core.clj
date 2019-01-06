@@ -9,5 +9,3 @@
 (defecosystem python [oo functional]
   :callable callable
   :class class)
-
-python

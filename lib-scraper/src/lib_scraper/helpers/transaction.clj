@@ -26,13 +26,16 @@
 
 (defn- map-id
   [m db tx]
-  (if (sequential? tx)
+  (when (sequential? tx)
     (let [[op e a v] tx
-          w (if (db/ref? db a) (m v v) v)]
-      [op (m e e) a w])))
+          es (m e e)
+          vs (if (db/ref? db a) (m v v) [v])]
+      (println e [op es a v])
+      (for [e es, v vs]
+        [op e a v]))))
 
 (defn map-ids
   [m f]
   (fn [db & args]
-    (map (partial map-id m db)
+    (mapcat (partial map-id m db)
          (apply f db args))))

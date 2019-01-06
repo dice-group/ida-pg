@@ -3,6 +3,7 @@
             [hickory.zip :as hzip]
             [clojure.tools.logging :as log]
             [lib-scraper.helpers.zip :as lzip]
+            [lib-scraper.helpers.map :as map]
             [lib-scraper.scraper.postprocessor :as pp])
   (:import (java.util.regex Pattern)))
 
@@ -17,10 +18,7 @@
   (let [value (case (or value :content)
                 :content (clojure.string/trim (lzip/loc-content loc))
                 :trigger-index (:index (first stack)))]
-    (cond
-      (instance? Pattern transform) (re-find transform value)
-      (fn? transform) (transform value)
-      :else value)))
+    (if transform (transform value) value)))
 
 (defmulti trigger-hook*
   (fn [hook stack index loc]
@@ -34,6 +32,7 @@
                     [:db/add id :tempid id]]
              ref-from-trigger (conj [:db/add parent ref-from-trigger id])
              ref-to-trigger (conj [:db/add id ref-to-trigger parent]))]
+    ;(println id index concept (keep :type stack))
     {:tx tx
      :type concept
      :id id}))
@@ -85,8 +84,11 @@
                        (recur (reduce conj! merged-tx tx)
                               (reduce conj! merged-ids ids)
                               (-> queue (pop) (into stacks))))))
-        tx (conj! tx [:db.fn/call pp/postprocess-transactions ecosystem ids])]
-    (d/transact! conn (persistent! tx))))
+        tx (-> tx
+               (conj! [:db.fn/call pp/postprocess-transactions ecosystem ids])
+               (persistent!))]
+    (doall (map println tx))
+    (d/transact! conn tx)))
 
 (defn index-hooks
   [hooks patterns]
@@ -101,6 +103,19 @@
                    [hook])))
        (group-by :trigger)))
 
+(defn resolve-hook-aliases
+  [hooks {:keys [concept-aliases attribute-aliases]}]
+  (map/map-kv (fn [[k v]]
+                [(concept-aliases k k)
+                 (mapv #(-> %
+                            (map/update-keys [:concept] concept-aliases)
+                            (map/update-keys [:attribute
+                                              :ref-from-trigger
+                                              :ref-to-trigger]
+                                             attribute-aliases))
+                       v)])
+              hooks))
+
 (def db-spec {:source {:db/doc "The datasource this entity originates from. Typically a URL."}
               :tempid {:db/cardinality :db.cardinality/many
                        :db/unique :db.unique/identity
@@ -109,6 +124,8 @@
 (defn traverser
   [{:keys [hooks patterns ecosystem]}]
   (let [conn (d/create-conn (merge db-spec (:attributes ecosystem)))
-        hooks (index-hooks hooks patterns)]
+        hooks (-> hooks
+                  (index-hooks patterns)
+                  (resolve-hook-aliases ecosystem))]
     {:conn conn
      :traverser (partial traverse! conn hooks ecosystem)}))

@@ -30,23 +30,26 @@
     (or (empty? attr-names)
         (apply distinct? attr-names))))
 
+(def common-attribute-aliases (as-> (keys common/attributes) $
+                                    (zipmap $ $)
+                                    (dissoc $ :type)))
+
 (defn ecosystem-desc->ecosystem
   [m]
-  (let [aliases (map/map-v :ident m)
-        aliases (into aliases
-                      (for [[c {:keys [attributes]}] m
-                              :let [cns (namespace c)
-                                    cns (str (if cns (str cns "."))
-                                             (name c))]
-                              attribute (keys attributes)]
-                          [(keyword cns (name attribute)) attribute]))]
-    {:aliases aliases
-     :extends (map/map-kv (comp (juxt :ident :extends) second) m)
-     :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
-                              (into a attributes))
-                            common/attributes m)
-     :specs (map/map-kv (comp (juxt :ident :spec) second) m)
-     :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) m)}))
+  {:concept-aliases (map/map-v :ident m)
+   :attribute-aliases (into common-attribute-aliases
+                            (for [[c {:keys [attributes]}] m
+                                  :let [cns (namespace c)
+                                        cns (str (if cns (str cns "."))
+                                                 (name c))]
+                                  attribute (keys attributes)]
+                              [(keyword cns (name attribute)) attribute]))
+   :extends (map/map-kv (comp (juxt :ident :extends) second) m)
+   :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
+                            (into a attributes))
+                          common/attributes m)
+   :specs (map/map-kv (comp (juxt :ident :spec) second) m)
+   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) m)})
 
 (s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::postprocess]))
 (s/def ::attributes (s/every-kv keyword? any?))
