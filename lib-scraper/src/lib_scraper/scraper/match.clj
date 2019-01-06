@@ -5,7 +5,7 @@
 
 (defn match-url
   [pattern]
-  (if (instance? String pattern)
+  (if (string? pattern)
     (fn [_, ^Page page, ^WebURL url]
       (= pattern (.getURL url)))
     (fn [_, ^Page page, ^WebURL url]

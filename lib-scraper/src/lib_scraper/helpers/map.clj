@@ -11,6 +11,14 @@
                          (keep key)
                          (apply (get mergers key default)))]))))
 
+(defn update-keys
+  [m keys f & args]
+  (reduce (fn [m key]
+            (if (contains? m key)
+              (apply update m key f args)
+              m))
+          m keys))
+
 (defn map-kv
   [f m]
   (into {} (for [e m] (f e))))

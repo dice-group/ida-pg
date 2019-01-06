@@ -3,7 +3,7 @@
             [datascript.core :as d]
             [clojure.tools.logging :as log]
             [lib-scraper.crawler.core :as crawler]
-            [lib-scraper.helpers.predicate :refer [p-and p-or p-expire p-log parse]]
+            [lib-scraper.helpers.predicate :refer [p-and p-or p-expire parse]]
             [lib-scraper.scraper.match :as m]
             [lib-scraper.scraper.traverser :refer [traverser]])
   (:import (edu.uci.ics.crawler4j.crawler Page)
@@ -31,19 +31,11 @@
                                  (if (or (< max-pages 0) (>= max-pages p))
                                    p (inc max-pages)))}))
 
-(defn- parse-should-visit
-  [expr]
-  (if (fn? expr) expr
-    (parse {'require-classes m/require-classes
-            'match-url m/match-url
-            're-pattern re-pattern}
-           expr)))
-
 (defn scrape
   [{:keys [should-visit] :as spec}]
   (let [{:keys [traverser conn]} (traverser spec)]
     (crawl (merge spec
-                  {:should-visit (parse-should-visit should-visit)
+                  {:should-visit should-visit
                    :visit traverser}))
     @conn))
 

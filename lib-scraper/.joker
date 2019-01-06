@@ -1,6 +1,7 @@
 {:ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
-                             lib-scraper.core]
+                             lib-scraper.core
+                             hickory.select]
  :known-macros [lib-scraper.model.syntax/defconcept
                 lib-scraper.model.syntax/defparadigm
                 lib-scraper.model.syntax/defecosystem
