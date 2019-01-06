@@ -2,7 +2,7 @@
   (:require [hickory.select :as s]
             [lib-scraper.scraper.core :refer [scrape-and-store! load-stored]]
             [lib-scraper.model.core :as m]
-            [lib-scraper.model.concepts.package :as package]
+            [lib-scraper.model.concepts.namespace :as namespace]
             [lib-scraper.model.concepts.named :as named]
             [lib-scraper.model.concepts.callable :as callable]
             [lib-scraper.model.paradigms.oo.class :as class]
@@ -24,13 +24,13 @@
                                                           (s/not (s/class "rubric")))]}
                           :parameter-info {:selector [:children (s/and (s/tag :span)
                                                                        (s/class :classifier))]}}
-               :hooks [; packages:
+               :hooks [; Namespaces:
                        {:trigger [::class/class ::function/function]
-                        :concept ::package/package
+                        :concept ::namespace/namespace
                         :selector [:children (s/tag :dt)
                                    :children (s/class :descclassname)]
-                        :ref-to-trigger ::package/member}
-                       {:trigger ::package/package
+                        :ref-to-trigger ::namespace/member}
+                       {:trigger ::namespace/namespace
                         :attribute ::named/name
                         :transform #".*[^.]"}
                        ; classes:
