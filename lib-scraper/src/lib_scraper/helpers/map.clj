@@ -21,7 +21,7 @@
 
 (defn keep-kv
   [f m]
-  (into {} (for [e m :let [w (f e)] :when w] w)))
+  (into {} (for [e m :let [[k w] (f e)] :when w] [k w])))
 
 (defn keep-v
   [f m]

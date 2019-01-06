@@ -101,9 +101,7 @@
                    [hook])))
        (group-by :trigger)))
 
-(def db-spec {:type {:db/cardinality :db.cardinality/many
-                     :db/doc "Type of the entity. Used to lookup specs for concepts."}
-              :source {:db/doc "The datasource this entity originates from. Typically a URL."}
+(def db-spec {:source {:db/doc "The datasource this entity originates from. Typically a URL."}
               :tempid {:db/cardinality :db.cardinality/many
                        :db/unique :db.unique/identity
                        :db/doc "Temporary bookkeeping property used by the scraper."}})
