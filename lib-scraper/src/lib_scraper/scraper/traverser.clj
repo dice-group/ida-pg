@@ -1,5 +1,6 @@
 (ns lib-scraper.scraper.traverser
   (:require [datascript.core :as d]
+            [flatland.ordered.set :refer [ordered-set]]
             [hickory.zip :as hzip]
             [clojure.tools.logging :as log]
             [lib-scraper.helpers.zip :as lzip]
@@ -32,7 +33,6 @@
                     [:db/add id :tempid id]]
              ref-from-trigger (conj [:db/add parent ref-from-trigger id])
              ref-to-trigger (conj [:db/add id ref-to-trigger parent]))]
-    ;(println id index concept (keep :type stack))
     {:tx tx
      :type concept
      :id id}))
@@ -69,7 +69,7 @@
   (let [tx (transient [[:db/add :db/current-tx :source url]])
         extends (assoc (:extends ecosystem) :document #{:document})
         [tx ids] (loop [merged-tx tx
-                        merged-ids (transient #{})
+                        merged-ids (transient (ordered-set))
                         queue (queue (list {:type :document
                                             :loc (hzip/hickory-zip doc)}))]
                    (if (empty? queue)
@@ -87,7 +87,6 @@
         tx (-> tx
                (conj! [:db.fn/call pp/postprocess-transactions ecosystem ids])
                (persistent!))]
-    (doall (map println tx))
     (d/transact! conn tx)))
 
 (defn index-hooks

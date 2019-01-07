@@ -16,6 +16,7 @@
 
   :profiles {:dev {:source-paths ["dev" "src" "test"]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
+                                  [org.flatland/ordered "1.5.7"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
                                   [proto-repl-sayid "0.1.3"]]
