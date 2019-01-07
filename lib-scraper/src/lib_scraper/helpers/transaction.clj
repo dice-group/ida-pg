@@ -1,6 +1,5 @@
 (ns lib-scraper.helpers.transaction
-  (:require [datascript.core :as d]
-            [datascript.db :as db])
+  (:require [datascript.core :as d])
   (:refer-clojure :exclude [merge]))
 
 (defn add-attr
@@ -24,18 +23,16 @@
   ^Boolean [x]
   (or (and (number? x) (neg? x)) (string? x)))
 
-(defn- map-id
-  [m db tx]
-  (when (sequential? tx)
-    (let [[op e a v] tx
-          es (m e e)
-          vs (if (db/ref? db a) (m v v) [v])]
-      (println e [op es a v])
-      (for [e es, v vs]
-        [op e a v]))))
-
-(defn map-ids
-  [m f]
-  (fn [db & args]
-    (mapcat (partial map-id m db)
-         (apply f db args))))
+(defn replace-id
+  [from to txs]
+  (map (fn [tx]
+         (cond
+           (sequential? tx)
+           (let [[op e a v] tx]
+             (if (= op :db/add)
+               [op (if (= e from) to e) a v]
+               tx))
+           (and (map? tx) (= (:db/id tx) from))
+           (assoc tx :db/id to)
+           :else tx))
+       txs))

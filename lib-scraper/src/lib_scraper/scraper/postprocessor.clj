@@ -26,22 +26,25 @@
             [:db.fn/call validate-transaction ecosystem valid]))))
 
 (defn ecosystem-postprocessing
-  [db {:keys [postprocessors]} ids]
-  (let [id->tids (zipmap ids (map #(:tempid (d/pull db [:tempid] %))
-                                  ids))]
-    (println "retry" (zipmap ids (map #(d/pull db [:tempid :type] %)
-                                      ids)))
-    (mapcat (fn [id]
-              (when-let [types (some-> (d/pull db [:type] id) :type)]
-                (->> types
-                 (keep postprocessors)
-                 (map (partial tx/map-ids id->tids))
-                 (map #(vector :db.fn/call % id)))))
-            ids)))
+  [db {:keys [postprocessors]} ids tids tid->id]
+  (let [results (into {} (for [id ids
+                               :let [types (:type (d/pull db [:type] id))
+                                     procs (keep postprocessors types)]
+                               :when (seq procs)
+                               :let [proc (apply tx/merge procs)]]
+                           [id (delay (proc db id))]))]
+    (keep (fn [tid]
+            (let [id (tid->id tid)
+                  result (results id)]
+              (if result
+                [:db.fn/call (fn [_] (tx/replace-id id tid @result))])))
+          tids)))
 
 (defn postprocess-transactions
   [db ecosystem tids]
-  (let [ids (distinct (map #(d/entid db [:tempid %]) tids))]
-    [[:db.fn/call ecosystem-postprocessing ecosystem ids]
-     [:db.fn/call retract-tempids ids]
+  (let [ids (map #(d/entid db [:tempid %]) tids)
+        tid->id (zipmap tids ids)
+        ids (distinct ids)]
+    [[:db.fn/call retract-tempids ids]
+     [:db.fn/call ecosystem-postprocessing ecosystem ids tids tid->id]
      [:db.fn/call validate-transaction ecosystem ids]]))
