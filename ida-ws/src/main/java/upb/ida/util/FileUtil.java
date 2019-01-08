@@ -200,4 +200,20 @@ public class FileUtil {
 		return getClass().getClassLoader().getResource(path).getFile();
 	}
 
+	/**
+	 * Method to read data of a column of csv
+	 * @param datasetContenMap
+	 * 		You can get it from getDatasetContent method
+	 * @param columnName
+	 * @return ArrayList of column data
+	 */
+	public ArrayList<String> readColumnData (List<Map<String, String>> datasetContentMap, String columnName) {
+        ArrayList<String> columnData = new ArrayList<String>();
+        for (Map<String, String> data : datasetContentMap) {
+            if (data.containsKey(columnName)) {
+                columnData.add(data.get(columnName));
+            }
+        }
+        return columnData;
+	}
 }
