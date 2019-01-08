@@ -1,0 +1,7 @@
++ show me a venn diagram
+- alright! tell me with which sets?
+^ <br> (HINT: you can select columns from table <br> e.g. set1 = column_1_name and set2 = column_2_name ..)
++ set1 = * and set2 = *
+* <call> VennDiagramHandler "<star1>" "<star2>"</call> == fail => wait
+
+
