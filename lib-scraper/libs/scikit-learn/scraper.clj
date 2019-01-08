@@ -5,7 +5,6 @@
 
   :seed "https://scikit-learn.org/0.20/modules/classes.html"
   :should-visit #"https://scikit-learn\.org/0\.20/modules/generated/.*"
-  :max-pages 1
 
   :patterns {:name {:attribute :named/name
                     :selector [:children (tag :dt)
