@@ -51,15 +51,14 @@ public class VennDiagramHandler implements Subroutine {
 			 * function call takes file path and arguments as
 			 * input to get data for force directed graph
 			 */
-            VENN_Util.generateVennDiagram(path, args);
-//			dataMap.put("vennDiagramData", VENN_Util.generateVennDiagram(path, args));
-//
-//            Map<String, Object> dataMap = responseBean.getPayload();
-//            dataMap.put("label", "Fdg Data");
-//			//dataMap.put("actvScrId", actvScrId);
-//			responseBean.setPayload(dataMap);
-//			responseBean.setActnCode(IDALiteral.UIA_FDG);
-//			return "fail";
+			Map<String, Object> dataMap = responseBean.getPayload();
+			
+			dataMap.put("vennDiagramData", VENN_Util.generateVennDiagram(path, args));
+            dataMap.put("label", "venn diagram data");
+			//dataMap.put("actvScrId", actvScrId);
+			responseBean.setPayload(dataMap);
+			responseBean.setActnCode(IDALiteral.UIA_VENNDIAGRAM);
+			return "fail";
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
