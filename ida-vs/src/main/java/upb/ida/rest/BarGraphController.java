@@ -25,7 +25,7 @@ import upb.ida.util.BarGraphUtil;
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/vs")
-public class MessageRestController {
+public class BarGraphController {
 	@Autowired
 	private ResponseBean response;
 	
