@@ -35,7 +35,7 @@ public class VENN_Util {
     private FileUtil dem;
     public static final int MAX_STR = 10;
 
-    public ArrayList<HashMap<String, Object>>  generateVennDiagram (String filePath, String[] args)
+    public HashMap<String, Object>  generateVennDiagram (String filePath, String[] args)
             throws JsonProcessingException, IOException, ParseException  {
         System.out.println(Arrays.toString(args));
         File file = new File(dem.fetchSysFilePath(filePath));
@@ -48,9 +48,6 @@ public class VENN_Util {
 
         System.out.println( args[0] + ": total: " + set1.size() + " after: " + new HashSet<String>(set1).size());
         System.out.println( args[2] + ": total: " + set2.size() + " after: " + new HashSet<String>(set2).size());
-//        System.out.println(limit);
-//        System.out.println(set1);
-//        System.out.println(set2);
         
         
         Map<String, Long> set2_stats = set2.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
@@ -63,8 +60,10 @@ public class VENN_Util {
                 .collect(
                         toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                             LinkedHashMap::new));
-        
-        ArrayList<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
+
+        HashMap<String, Object> results = new HashMap<>();
+        results.put("label", args[0]);
+        ArrayList<HashMap<String, Object>> diagramData = new ArrayList<>();
         System.out.println(set2_stats);
         
        for (String ele : set2_stats.keySet()) {
@@ -74,9 +73,9 @@ public class VENN_Util {
     	   circle.put("sets", setArrayList);
     	   circle.put("label", ele);
     	   circle.put("size", set2_stats.get(ele));
-    	   result.add(circle);
+    	   diagramData.add(circle);
        }
-        
-        return result;
+        results.put("data", diagramData);
+        return results;
     }
 }

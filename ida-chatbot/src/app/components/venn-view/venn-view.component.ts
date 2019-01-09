@@ -47,7 +47,7 @@ export class VennViewComponent implements OnInit, AfterViewInit {
     const svg = d3.select('#' + this.vennContainerId).node();
     if (svg) {
       clearInterval(this.intervalId);
-      renderVennDiagram(this.vennContainerId, this.vennMainId, this.demDt, 'soldiers');
+      renderVennDiagram(this.vennContainerId, this.vennMainId, this.demDt.data, this.demDt.label);
     }
   }
 }
