@@ -122,6 +122,10 @@ public class FdgRestController {
 			
 			response.setPayload(dataMap);
 			response.setValues(true);
+			sessionVal.getData().remove("source");
+			sessionVal.getData().remove("target");
+			sessionVal.getData().remove("strength");
+			sessionVal.getData().remove("sparql");
 			
 		}
 		

@@ -98,6 +98,9 @@ public class BarGraphController {
 			barGraph.generateBarGraphData((String) sessionVal.getData().get("xAxis"),(String) sessionVal.getData().get("yAxis"),data , response);
 			} 	    
 			response.setValues(true);
+			sessionVal.getData().remove("xAxis");
+			sessionVal.getData().remove("yAxis");
+			sessionVal.getData().remove("sparql");
 			
 		}
 		
