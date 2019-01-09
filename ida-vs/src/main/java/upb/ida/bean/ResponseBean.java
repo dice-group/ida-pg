@@ -21,6 +21,7 @@ public class ResponseBean {
 	 * Payload contains the data map to be sent
 	 */
 	private Map<String, Object> payload;
+	private boolean values;
 	/**
 	 * Chat Message for the request
 	 */
@@ -32,6 +33,12 @@ public class ResponseBean {
 	 */
 	public void setPayload(Map<String, Object> payload) {
 		this.payload = payload;
+	}
+	public boolean isValues() {
+		return values;
+	}
+	public void setValues(boolean values) {
+		this.values = values;
 	}
 		
 }
