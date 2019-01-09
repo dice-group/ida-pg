@@ -1,9 +1,12 @@
 package upb.ida.rest;
 
 import java.io.*;
+import java.nio.file.attribute.AclEntry;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer;
+import no.acando.xmltordf.Builder;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.ui.Model;
@@ -19,9 +22,12 @@ import org.apache.jena.rdf.model.ModelFactory;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 import upb.ida.util.UploadManager;
+import upb.ida.util.FileConversionUtil;
 
 import javax.xml.crypto.Data;
 import javax.xml.parsers.ParserConfigurationException;
+
+import static upb.ida.util.FileConversionUtil.csvToRDF;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot
@@ -87,43 +93,18 @@ public class MessageRestController {
 
 		if(file.getContentType().equals("text/xml") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("xml")){
 			byte[] bytes = file.getBytes();
-			UploadManager.saveFile(fileName, xmlToRDF(bytes));
+			UploadManager.saveFile(fileName, FileConversionUtil.xmlToRDF(bytes));
 			status = "pass";
 		}
 		else if(file.getContentType().equals("text/csv") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("csv")){
 			byte[] bytes = file.getBytes();
-			UploadManager.saveFile(fileName, csvToRDF(bytes));
+			UploadManager.saveFile(fileName, FileConversionUtil.csvToRDF(bytes));
 			status = "pass";
 		}
 		else
 			status = "fail";
 
 		return status;
-	}
-
-	private byte[] xmlToRDF(byte[] bytes) throws IOException, SAXException, ParserConfigurationException {
-		InputStream inputStream = new ByteArrayInputStream(bytes);
-
-		BufferedInputStream in = new BufferedInputStream(inputStream);
-		Dataset dataset
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		//  converting it into turtle format
-		dataset.getDefaultModel().write(stream, "ttl");
-
-		return stream.toByteArray();
-	}
-
-	private byte[] csvToRDF(byte[] bytes) {
-		InputStream inputStream = new ByteArrayInputStream(bytes);
-
-		Model m = ModelFactory.createDefaultModel();
-		// (TODO) http://example.com must not be fixed
-		m.read(inputStream, "http://example.com", "csv");
-		m.setNsPrefix("test", "http://example.com#");
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		// Converting into turtle format
-		m.write(stream, "ttl");
-		return stream.toByteArray();
 	}
 
 }
