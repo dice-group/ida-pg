@@ -16,9 +16,9 @@ public class RdfDataService {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Map<String, String>> getData(Map<String, Object> req) {
+	public List<Map<String, String>> getData(Object query) {
 		//Fetch data from rdf end point
-		String sparql = (String) req.get("query");
+		String sparql = (String) query;
 		QueryExecution qe = QueryExecutionFactory.sparqlService(
                 "http://localhost:3030/query", sparql);
         ResultSet results = qe.execSelect();

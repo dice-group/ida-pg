@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import upb.ida.bean.ResponseBean;
+import upb.ida.bean.SessionValues;
 import upb.ida.service.RdfDataService;
 import upb.ida.util.BarGraphUtil;
 /**
@@ -28,6 +26,9 @@ import upb.ida.util.BarGraphUtil;
 public class BarGraphController {
 	@Autowired
 	private ResponseBean response;
+	
+	@Autowired
+	private SessionValues sessionVal;
 	
 	@Autowired 
 	private RdfDataService rdfDataFetch;
@@ -45,29 +46,68 @@ public class BarGraphController {
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
 	}
-	@RequestMapping(value = "/visualization" , method = RequestMethod.GET , headers="Accept=application/json")
-		public String process(@RequestParam Map<String,String> jsn)throws Exception {
-		//ObjectMapper mapper = new ObjectMapper();
+	
+	@RequestMapping(value = "/vs/bargraph/xaxis" , method = RequestMethod.GET , headers="Accept=application/json")
+	public ResponseBean xAxis(@RequestParam Map<String,String> jsn)throws Exception {
 		
-//		Map<String, Object> jsonRequest = mapper.readValues(jsn,
-//			    new TypeReference<Map<String,Object>>(){});
-		 
-		if( jsn.get("vName") != null) {
-			return "git it ";
+		if( jsn.get("xAxis") != null) {
+			Map<String,Object> dataVal = new HashMap<String,Object>();
+			dataVal.put("xAxis",jsn.get("xAxis") );
+			sessionVal.setData(dataVal);
+			response.setValues(true);
+		}
 		
-//			List<Map<String, String>> data = rdfDataFetch.getData(jsonRequest);
-//		
-//		    if(jsonRequest.get("vName") == "bg") {
-//		    	barGraph.generateBarGraphData((String) jsonRequest.get("xaxis"), (String)jsonRequest.get("yaxis"),data , response);
-		    }
-		return "not good";	
+		else{
+			response.setValues(false);
 			
 		}
-//		response.setPayload(dataMap);
-
-//		return response;
+		
+		return response;
+	}
+		
+	@RequestMapping(value = "/vs/bargraph/yaxis" , method = RequestMethod.GET , headers="Accept=application/json")
+	public ResponseBean yAxis(@RequestParam Map<String,String> jsn)throws Exception {
+		
+		if( jsn.get("yAxis") != null) {
+			Map<String,Object> dataVal = new HashMap<String,Object>();
+			dataVal.put("yAxis",jsn.get("yAxis") );
+			sessionVal.setData(dataVal);
+			response.setValues(true);
+		}
+		
+		else{
+			response.setValues(false);
+			
+		}
+		
+		return response;
+		
+	}
 	
+	@RequestMapping(value = "/vs/bargraph/sparql" , method = RequestMethod.GET , headers="Accept=application/json")
+	public ResponseBean sparqlQuery(@RequestParam Map<String,String> jsn)throws Exception {
+		
+		if( jsn.get("query") != null) {
+			Map<String,Object> dataVal = new HashMap<String,Object>();
+			dataVal.put("sparql",jsn.get("query") );
+			sessionVal.setData(dataVal);
+			
+			if(sessionVal.getData().size() == 3) {
+			List<Map<String, String>> data =  rdfDataFetch.getData(sessionVal.getData().get("sparql"));
+				
+			barGraph.generateBarGraphData((String) sessionVal.getData().get("xAxis"),(String) sessionVal.getData().get("yAxis"),data , response);
+			} 	    
+			response.setValues(true);
+			
+		}
+		
+		else{
+			response.setValues(false);
+			
+		}
+		
+		return response;
+	}
 	
-	
-
 }
+		
