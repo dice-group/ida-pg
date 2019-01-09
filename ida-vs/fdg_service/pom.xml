@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>upb</groupId>
-	<artifactId>ida-vs-bg</artifactId>
+	<artifactId>ida-vs-fdg</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ida-vs-bg</name>
+	<name>ida-vs-fdg</name>
 	<description>[boot][devtools][dice-ida visualization_seervice]</description>
 
 	<parent>
