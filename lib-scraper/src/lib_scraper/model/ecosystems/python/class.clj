@@ -16,9 +16,10 @@
                     :where [?class ::class/method ?method]
                            [?method ::named/name "__init__"]]
                   db id)]
-    (conj (map (fn [[ctr]] [:db/add id ::class/constructor ctr])
-               ctrs)
-          [:db/add id :type (constructor :ident)])))
+    (mapcat (fn [[ctr]]
+              [[:db/add id ::class/constructor ctr]
+               [:db/add ctr :type (constructor :ident)]])
+            ctrs)))
 
 (defconcept class [oo-class]
   :postprocess postprocess)
