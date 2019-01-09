@@ -1,12 +1,36 @@
 (ns lib-scraper.io.config
   (:require [clojure.spec.alpha :as s]
             [clojure.walk :as w]
+            [clojure.java.io :as io]
             [hickory.select]
             [lib-scraper.model.core :as m]
             [lib-scraper.helpers.zip :as hzip]
             [lib-scraper.helpers.predicate :as predicate]
             [lib-scraper.scraper.match :as match])
   (:import (java.util.regex Pattern)))
+
+(defn defscraper*
+  [name config]
+  (let [conformed (s/conform ::config config)]
+    (if (s/invalid? conformed)
+      (throw (Exception. (str "Invalid scraper configuration.\n"
+                              (s/explain-str ::config config))))
+      (assoc conformed :name (str name)))))
+
+(defmacro defscraper
+  [name & config]
+  `(def ~name ~(defscraper* name config)))
+
+(def ^:dynamic *cwd* nil)
+
+(defn read-config
+  [path]
+  (binding [*read-eval* false]
+    (let [file (if *cwd* (io/file *cwd* path) (io/file path))
+          config (read-string (slurp file))
+          {:keys [name config]} (s/conform ::config-outer config)]
+      (binding [*cwd* (-> file (.getAbsoluteFile) (.getParent))]
+        (defscraper* name config)))))
 
 (s/def ::config-outer (s/cat :defscraper #(= % 'defscraper)
                              :name #(or (string? %) (symbol? %))
@@ -16,6 +40,7 @@
                           #(contains? m/ecosystems %)
                           (s/conformer m/ecosystems)))
 
+(s/def ::extends string?)
 (s/def ::seed string?)
 (s/def ::max-pages int?)
 (s/def ::max-depth int?)
@@ -84,31 +109,24 @@
                                 :pattern ::pattern-fn)
                           (s/conformer second)))
 
-
-(s/def ::config (s/and (s/keys* :req-un [::ecosystem
-                                         ::seed
-                                         ::should-visit
-                                         ::hooks]
-                                :opt-un [::patterns
-                                         ::max-pages
-                                         ::max-depth])
-                       (s/every-kv keyword? any?)))
-
-(defn defscraper*
-  [name config]
-  (let [conformed (s/conform ::config config)]
-    (if (s/invalid? conformed)
-      (throw (Exception. (str "Invalid scraper configuration.\n"
-                              (s/explain-str ::config config))))
-      (assoc conformed :name (str name)))))
-
-(defmacro defscraper
-  [name & config]
-  `(def ~name ~(defscraper* name config)))
-
-(defn read-config
-  [path]
-  (binding [*read-eval* false]
-    (let [config (read-string (slurp path))
-          {:keys [name config]} (s/conform ::config-outer config)]
-      (defscraper* name config))))
+(s/def ::config
+       (s/and (s/or :extension
+                    (s/and (s/keys* :req-un [::extends]
+                                    :opt-un [::ecosystem
+                                             ::seed
+                                             ::should-visit
+                                             ::hooks
+                                             ::patterns
+                                             ::max-pages
+                                             ::max-depth])
+                           (s/conformer #(merge (read-config (:extends %)) %)))
+                    :root
+                    (s/keys* :req-un [::ecosystem
+                                      ::seed
+                                      ::should-visit
+                                      ::hooks]
+                             :opt-un [::patterns
+                                      ::max-pages
+                                      ::max-depth]))
+              (s/conformer second)
+              (s/every-kv keyword? any?)))
