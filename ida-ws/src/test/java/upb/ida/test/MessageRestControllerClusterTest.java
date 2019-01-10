@@ -1,5 +1,6 @@
 package upb.ida.test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -33,7 +34,7 @@ public class MessageRestControllerClusterTest {
 	@Autowired
 	private MessageRestController mrc;
 	@Test
-	public void  sendmessagetest() throws Exception  {
+	public void  sendmessagetestpos() throws Exception  {
 		ResponseBean responseBean;
 		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city");
@@ -45,7 +46,7 @@ public class MessageRestControllerClusterTest {
 		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city");
 		
-		//System.out.println(responseBean.getPayload().get("clusterData"));
+		System.out.println(responseBean.getPayload().get("clusterData"));
 		
 		List<String> clusterResult = new ArrayList<String>();
 		clusterResult.add("2");
@@ -108,6 +109,95 @@ public class MessageRestControllerClusterTest {
 		
 		
 	}
+	
+	
+	
+	@Test
+	public void  sendmessagetestNeg() throws Exception  {
+		ResponseBean responseBean;
+		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Optional parameters should be init and n_init", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Set init as random", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Set n_init as 5", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city");
+		
+		//System.out.println(responseBean.getPayload().get("clusterData"));
+		
+		List<String> clusterResult = new ArrayList<String>();
+		clusterResult.add("2");
+		clusterResult.add("2");
+		clusterResult.add("5");
+		clusterResult.add("2");
+		clusterResult.add("0");
+		clusterResult.add("4");
+		clusterResult.add("0");
+		clusterResult.add("4");
+		clusterResult.add("3");
+		clusterResult.add("1");
+		clusterResult.add("0");
+		Map<String,Object> dataMap = new HashMap<String,Object>();
+		dataMap.put("actvScrId", "1");
+		dataMap.put("actvDs", "city");
+		dataMap.put("actvTbl", "movehubcostofliving.csv");
+		
+		List<String> columnsForResponse = new ArrayList<String>();
+		columnsForResponse.add("city");
+		columnsForResponse.add("wine");
+		columnsForResponse.add("cinema");
+		//columnsForResponse.add("gasoline");
+		
+		List<Map<String, Object>> responseList=new ArrayList<>();
+		File responseReader = new File(demoMain.fetchSysFilePath("dataset/city/movehubcostofliving.csv"));
+		List<Map<String, String>> responseFileContent = demoMain.convertToMap(responseReader);
+		List <String> responseColumnsKeyValue = new ArrayList <String> ();
+		for(int i=0;i<columnsForResponse.size();i++) {
+			responseColumnsKeyValue.add(getMatchingKey(columnsForResponse.get(i), responseFileContent.get(0)));
+			
+		}
+		for (int i = 0; i < responseFileContent.size(); i++) {
+		
+			Map<String,Object> innerMap=new HashMap<String,Object>();
+			for(int x=0;x<responseColumnsKeyValue.size();x++) {
+			    if(x==0) {
+					innerMap.put(columnsForResponse.get(x),responseFileContent.get(i).get(responseColumnsKeyValue.get(x)));
+					
+			    }
+			    else {
+				innerMap.put(columnsForResponse.get(x),Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
+			    }
+			}
+			innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
+			responseList.add(innerMap);
+		}
+		
+		
+		dataMap.put("clusterData", responseList);
+		//dataMap.put("tabLabel","Clustered"+" "+actvTbl);
+		//dataMap.put("tabLabel","Clustered Data");
+		//responseBean.setPayload(dataMap);
+		//responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
+		
+		
+		
+		
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> predicted = (List<Map<String, Object>>) responseBean.getPayload().get("clusterData");
+		//assertArrayEquals(predicted,responseList);
+		
+		//assertThat(responseList, hasItems("gasoline"));
+		
+		assertNotEquals(responseList.get(0).keySet(),predicted.get(0).keySet());
+		//System.out.println(responseList.get(0).keySet());
+		//System.out.println(predicted.get(0).keySet());
+		
+	}
+	
+
+	
 	
 	//* Method to get all the columns
 	
