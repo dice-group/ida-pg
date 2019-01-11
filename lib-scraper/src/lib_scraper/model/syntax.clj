@@ -11,6 +11,7 @@
   (let [merged (apply map/merge-by-key
                       {:attributes merge
                        :spec hs/and
+                       :preprocess (partial map/merge-by-key tx/merge-direct)
                        :postprocess tx/merge
                        :extends set/union}
                       (conj extends concept))]
@@ -49,11 +50,13 @@
                             (into a attributes))
                           common/attributes m)
    :specs (map/map-kv (comp (juxt :ident :spec) second) m)
+   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) m)
    :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) m)})
 
-(s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::postprocess]))
+(s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::preprocess ::postprocess]))
 (s/def ::attributes (s/every-kv keyword? any?))
 (s/def ::postprocess fn?)
+(s/def ::preprocess (s/every-kv keyword? fn?))
 (s/def ::concept-desc (s/and (s/cat :extends (s/? (hs/vec-of ::concept))
                                     :concept (s/* any?))
                              (s/keys :opt-un [::concept])

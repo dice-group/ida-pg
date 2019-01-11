@@ -9,4 +9,4 @@
                ::instance {:db/valueType :db.type/ref
                            :db/cardinality :db.cardinality/many
                            :db/doc "Concepts of this type."}}
-  :postprocess (add-attr ::id ::named/name))
+  :preprocess {::named/name (add-attr ::id)})
