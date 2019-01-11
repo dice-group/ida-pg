@@ -6,5 +6,10 @@
 (defn scrape-skl!
   []
   (let [skl-spec (config/read-config "libs/scikit-learn/scraper.clj")]
-    (scrape-and-store! skl-spec "libs/scikit-learn/scrapedb.edn")
-    (load-stored "libs/scikit-learn/scrapedb.edn")))
+    (scrape-and-store! skl-spec "libs/scikit-learn/scrapedb.edn")))
+    ;(load-stored "libs/scikit-learn/scrapedb.edn")))
+
+(defn scrape-skl-cluster!
+  []
+  (let [skl-spec (config/read-config "libs/scikit-learn-cluster/scraper.clj")]
+    (scrape-and-store! skl-spec "libs/scikit-learn-cluster/scrapedb.edn")))
