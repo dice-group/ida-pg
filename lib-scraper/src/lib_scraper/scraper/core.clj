@@ -31,9 +31,11 @@
                                    p (inc max-pages)))}))
 
 (defn scrape
-  [{:keys [should-visit] :as spec}]
+  [{:keys [name should-visit] :as spec}]
   (let [{:keys [traverser finalize]} (traverser spec)]
+    (log/info (str "Starting scrape " name "..."))
     (crawl (merge spec
                   {:should-visit should-visit
                    :visit traverser}))
-    (finalize)))
+    (finalize)
+    (log/info (str "Successfully scraped " name "."))))

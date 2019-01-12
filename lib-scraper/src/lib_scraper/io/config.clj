@@ -1,5 +1,6 @@
 (ns lib-scraper.io.config
   (:require [clojure.spec.alpha :as s]
+            [clojure.tools.logging :as log]
             [clojure.walk :as w]
             [me.raynes.fs :as fs]
             [hickory.select]
@@ -9,7 +10,7 @@
             [lib-scraper.scraper.match :as match])
   (:import (java.util.regex Pattern)))
 
-(def default-config-name "scraper.clj")
+(def default-name "scraper.clj")
 
 (defn defscraper*
   [name config]
@@ -26,13 +27,27 @@
 (defn read-config
   [path]
   (binding [*read-eval* false]
-    (let [file (if (fs/directory? path)
-                 (fs/file path default-config-name)
-                 (fs/file path))
+    (let [file (cond
+                 (fs/directory? path) (fs/file path default-name)
+                 (fs/file?) (fs/file path)
+                 :else (throw (Error. "Invalid config path.")))
+          file (fs/normalized file)
+          _ (log/info (str "Reading config from " file "..."))
           config (read-string (slurp file))
           {:keys [name config]} (s/conform ::config-outer config)]
       (fs/with-cwd (fs/parent file)
         (defscraper* name config)))))
+
+(defn- parse-should-visit
+  [expr]
+  (cond
+    (fn? expr) expr
+    (or (string? expr) (instance? Pattern expr))
+    (match/match-url expr)
+    :else
+    (predicate/parse {'require-classes match/require-classes
+                      'match-url match/match-url}
+                     expr)))
 
 (s/def ::config-outer (s/cat :defscraper #(= % 'defscraper)
                              :name #(or (string? %) (symbol? %))
@@ -47,17 +62,6 @@
 (s/def ::max-pages int?)
 (s/def ::max-depth int?)
 (s/def ::meta map?)
-
-(defn- parse-should-visit
-  [expr]
-  (cond
-    (fn? expr) expr
-    (or (string? expr) (instance? Pattern expr))
-    (match/match-url expr)
-    :else
-    (predicate/parse {'require-classes match/require-classes
-                      'match-url match/match-url}
-                     expr)))
 
 (s/def ::should-visit (s/and (s/conformer parse-should-visit) fn?))
 
@@ -74,6 +78,7 @@
 (s/def ::trigger (s/and (s/or :single keyword?
                               :multiple (s/coll-of keyword?))
                         (s/conformer second)))
+
 (s/def ::concept keyword?)
 (s/def ::ref-to-trigger keyword?)
 (s/def ::ref-from-trigger keyword?)
@@ -88,6 +93,7 @@
 
 (s/def ::spread-op (partial contains? (set (keys hzip/step-types))))
 (s/def ::limit int?)
+
 (s/def ::select (s/and seq?
                        (s/conformer (fn [form]
                                       (eval (w/postwalk-replace select-kws form))))))
@@ -98,17 +104,21 @@
                                     (s/conformer (fn [{:keys [spread-op args]}]
                                                    (into [spread-op] (flatten (seq args)))))))
               (s/conformer second)))
+
 (s/def ::selector-part (s/and (s/or :spread ::spread
                                     :select ::select)
                               (s/conformer second)))
+
 (s/def ::selector (s/and seqable?
                          (s/coll-of ::selector-part)))
 
 (s/def ::fn-form (s/and seq?
                         #(contains? #{'fn* 'fn} (first %))
                         (s/conformer eval)))
+
 (s/def ::pattern-fn (s/and #(instance? Pattern %)
                            (s/conformer (fn [p] #(re-find p %)))))
+
 (s/def ::transform (s/and (s/or :fn fn?
                                 :fn-form ::fn-form
                                 :pattern ::pattern-fn)

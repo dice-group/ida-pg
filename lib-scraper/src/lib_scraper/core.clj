@@ -1,6 +1,7 @@
 (ns lib-scraper.core
   (:require [lib-scraper.io.core :as io]
             [lib-scraper.io.config :as config]
+            [lib-scraper.io.scrape :as scrape]
             [clojure.pprint :as pp]
             [say-cheez.core :refer [capture-build-env-to]]
             [cli-matic.core :refer [run-cmd run-cmd*]])
@@ -22,7 +23,7 @@
 
 (defn print-scrape
   [{:keys [scrape mode]}]
-  (mode-print (io/load-scrape scrape) mode))
+  (mode-print (scrape/read-scrape scrape) mode))
 
 (defn print-config
   [{:keys [config mode]}]
