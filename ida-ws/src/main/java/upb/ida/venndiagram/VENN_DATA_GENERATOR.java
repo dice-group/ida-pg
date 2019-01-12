@@ -1,4 +1,4 @@
-package upb.ida.temp;
+package upb.ida.venndiagram;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class VennDataGenerator<T, U> {
+public class VENN_DATA_GENERATOR<T, U> {
 	private Map<T, Set<U>> dataMap;
 
-	public VennDataGenerator(Map<T, Set<U>> dataMap) {
+	public VENN_DATA_GENERATOR(Map<T, Set<U>> dataMap) {
 		super();
 		this.dataMap = dataMap;
 	}
 
-	public Set<VennItem<T>> generateVennItems() {
-		Set<VennItem<T>> vennItems = new HashSet<>();
+	public Set<VENN_ITEM<T>> generateVennItems() {
+		Set<VENN_ITEM<T>> vennItems = new HashSet<>();
 		Set<Set<T>> powerSet = powerSet(dataMap.keySet());
 		String label;
 		for (Set<T> entry : powerSet) {
@@ -40,7 +40,7 @@ public class VennDataGenerator<T, U> {
 				}
 			}
 			if (tempSet.size() > 0) {
-				VennItem<T> vennItem = new VennItem<>(entry, tempSet.size(), label);
+				VENN_ITEM<T> vennItem = new VENN_ITEM<>(entry, tempSet.size(), label);
 				vennItems.add(vennItem);
 			}
 		}
