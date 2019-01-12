@@ -1,0 +1,3 @@
++ show me the geo spatial diagram
+* <call> GeoDiagramHandler </call> == pass => All good, loading geo Spatial diagram in a moment!
+
