@@ -7,7 +7,8 @@
 
 (defn start
   []
-  (require '[lib-scraper.core :refer :all])
+  (require '[lib-scraper.core :refer [main*]]
+           '[lib-scraper.io.core :refer :all])
   (log/info "REPL started."))
 
 (defn refresh

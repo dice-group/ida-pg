@@ -1,7 +1,8 @@
 {:ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
+                             hickory.select
                              lib-scraper.core
-                             hickory.selec
+                             lib-scraper.io.core
                              lib-scraper.crawler.factory]
  :known-macros [say-cheez.core/capture-build-env-to
                 lib-scraper.helpers.spec/entity-keys
