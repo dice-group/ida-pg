@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
 
 declare var deck;
@@ -12,7 +12,9 @@ declare function IconLayer(a): void;
   styleUrls: ['./deckgl-hex-view.component.css']
 })
 export class DeckglHexViewComponent implements OnInit, AfterViewInit {
+  // @Input('data') public demDt;
   public deckContainerId;
+  public intervalId: any;
   public demdata = [
     {'ADDRESS': '939 ELLIS ST', 'RACKS': 2, 'SPACES': 4, 'COORDINATES': [-122.42177834, 37.78346622]},
     {'ADDRESS': '1380 HOWARD ST', 'RACKS': 1, 'SPACES': 2, 'COORDINATES': [-122.414411, 37.774458]},
@@ -2544,6 +2546,17 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.intervalId = setInterval(x => {
+      this.renderGraph();
+    }, 400);
+  }
+
+  isIconVisible(deckobj) {
+    console.log(deckobj);
+  }
+
+  renderGraph () {
+    clearInterval(this.intervalId);
     const iconDt = [{'COORDINATES': [-122.408778, 37.782887]}];
     const deckobj = new deck.DeckGL({
       container: this.deckContainerId,
@@ -2591,9 +2604,5 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
         })
       ]
     });
-  }
-
-  isIconVisible(deckobj) {
-    console.log(deckobj);
   }
 }
