@@ -41,13 +41,11 @@ public class VennDiagramHandler implements Subroutine {
 		try {
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
-			String actvScrId = (String) responseBean.getPayload().get("actvScrid");
 			String path = DemoMain.getDTFilePath(actvDs, actvTbl);
 			Map<String, Object> dataMap = responseBean.getPayload();
 			
 			dataMap.put("vennDiagramData", VENN_Util.generateVennDiagram(path, args));
             dataMap.put("label", "venn diagram data");
-			dataMap.put("actvScrId", actvScrId);
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_VENNDIAGRAM);
 			return "pass";
