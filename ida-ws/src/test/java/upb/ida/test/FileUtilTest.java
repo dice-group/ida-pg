@@ -80,13 +80,14 @@ public class FileUtilTest {
 	}
 	
 	
+	
 	@Test
 	public void fetchPosTest() throws JsonProcessingException, IOException
 	{
 		String filePath= "dataset/city/movehubcostofliving.csv";
 		File file = new File(dem.fetchSysFilePath(filePath));
 		List<Map<String, String>> dataMapList = dem.convertToMap(file);
-		//System.out.println(dataMapList);
+		System.out.println(dataMapList.get(0));
 		Map<String,String> firstrow = new LinkedHashMap<String,String>();
 		firstrow.put("City", "Lausanne");
 		firstrow.put("Cappuccino", "3.15");
@@ -111,86 +112,17 @@ public class FileUtilTest {
 		thirdrow.put("Gasoline", "1.28");
 		thirdrow.put("Avg Rent", "2607.95");
 		thirdrow.put("Avg Disposable Income", "3917.72");
-		Map<String,String> forthrow = new LinkedHashMap<String,String>();
-		forthrow.put("City", "Basel");
-		forthrow.put("Cappuccino", "3.5");
-		forthrow.put("Cinema", "11.89");
-		forthrow.put("Wine", "7.35");
-		forthrow.put("Gasoline", "1.25");
-		forthrow.put("Avg Rent", "1649.29");
-		forthrow.put("Avg Disposable Income", "3847.76");
-		Map<String,String> fifthrow = new LinkedHashMap<String,String>();
-		fifthrow.put("City", "Perth");
-		fifthrow.put("Cappuccino", "2.87");
-		fifthrow.put("Cinema", "11.43");
-		fifthrow.put("Wine", "10.08");
-		fifthrow.put("Gasoline", "0.97");
-		fifthrow.put("Avg Rent", "2083.14");
-		fifthrow.put("Avg Disposable Income", "3358.55");
-		Map<String,String> sixthrow = new LinkedHashMap<String,String>();
-		sixthrow.put("City", "Nashville");
-		sixthrow.put("Cappuccino", "3.84");
-		sixthrow.put("Cinema", "12");
-		sixthrow.put("Wine", "13.5");
-		sixthrow.put("Gasoline", "0.65");
-		sixthrow.put("Avg Rent", "2257.14");
-		sixthrow.put("Avg Disposable Income", "3089.75");
-		Map<String,String> seventhrow = new LinkedHashMap<String,String>();
-		seventhrow.put("City", "Canberra");
-		seventhrow.put("Cappuccino", "2.35");
-		seventhrow.put("Cinema", "11.42");
-		seventhrow.put("Wine", "10.08");
-		seventhrow.put("Gasoline", "0.99");
-		seventhrow.put("Avg Rent", "1984.74");
-		seventhrow.put("Avg Disposable Income", "3023.91");
-		Map<String,String> eightrow = new LinkedHashMap<String,String>();
-		eightrow.put("City", "Bergen");
-		eightrow.put("Cappuccino", "3.92");
-		eightrow.put("Cinema", "12.32");
-		eightrow.put("Wine", "12.32");
-		eightrow.put("Gasoline", "1.57");
-		eightrow.put("Avg Rent", "1725.37");
-		eightrow.put("Avg Disposable Income", "3002.59");
-		Map<String,String> ninthrow = new LinkedHashMap<String,String>();
-		ninthrow.put("City", "Luxembourg");
-		ninthrow.put("Cappuccino", "2.13");
-		ninthrow.put("Cinema", "7.25");
-		ninthrow.put("Wine", "4.26");
-		ninthrow.put("Gasoline", "1.15");
-		ninthrow.put("Avg Rent", "1704.96");
-		ninthrow.put("Avg Disposable Income", "2983.69");
-		Map<String,String> tenthrow = new LinkedHashMap<String,String>();
-		tenthrow.put("City", "Stavanger");
-		tenthrow.put("Cappuccino", "4.48");
-		tenthrow.put("Cinema", "10.65");
-		tenthrow.put("Wine", "13.44");
-		tenthrow.put("Gasoline", "1.68");
-		tenthrow.put("Avg Rent", "2240.74");
-		tenthrow.put("Avg Disposable Income", "2957.77");
-		Map<String,String> elevenrow = new LinkedHashMap<String,String>();
-		elevenrow.put("City", "Adelaide");
-		elevenrow.put("Cappuccino", "2.49");
-		elevenrow.put("Cinema", "11.42");
-		elevenrow.put("Wine", "10.08");
-		elevenrow.put("Gasoline", "0.95");
-		elevenrow.put("Avg Rent", "1382.26");
-		elevenrow.put("Avg Disposable Income", "2911.69");
+		
 		List<Object> expected = new ArrayList<Object>(); 
 		expected.add(firstrow);
 			expected.add(secondrow);
 			expected.add(thirdrow);
-			expected.add(forthrow);
-			expected.add(fifthrow);
-			expected.add(sixthrow);
-			expected.add(seventhrow);
-			expected.add(eightrow);
-			expected.add(ninthrow);
-			expected.add(tenthrow);
-			expected.add(elevenrow);
+			
 			
 	    
-	     assertEquals(dataMapList,expected);
-			
+	     assertEquals(dataMapList.get(0),expected.get(0));
+	     assertEquals(dataMapList.get(1),expected.get(1));
+	     assertEquals(dataMapList.get(2),expected.get(2));
 			
 	    
 	    //boolean testPassed = expected.containsAll(dataMapList);
@@ -201,6 +133,7 @@ public class FileUtilTest {
 		
 	}
 	
+
 	@Test
 	public void fetchExtTest() throws JsonProcessingException, IOException
 	{
@@ -212,7 +145,7 @@ public class FileUtilTest {
 		firstrow.put("City", "Lausanne");
 		firstrow.put("Cappuccino", "3.15");
 		firstrow.put("Cinema", "12.59");
-		firstrow.put("Wine", "8.4");
+		firstrow.put("We", "8.4");
 		firstrow.put("Gasoline", "1.32");
 		firstrow.put("Avg Rent", "1714");
 		firstrow.put("Avg Disposable Income", "4266.11");
@@ -232,86 +165,16 @@ public class FileUtilTest {
 		thirdrow.put("Gasoline", "1.28");
 		thirdrow.put("Avg Rent", "2607.95");
 		thirdrow.put("Avg Disposable Income", "3917.72");
-		Map<String,String> forthrow = new LinkedHashMap<String,String>();
-		forthrow.put("City", "Basel");
-		forthrow.put("Cappuccino", "3.5");
-		forthrow.put("Cinema", "11.89");
-		forthrow.put("Wine", "7.35");
-		forthrow.put("Gasoline", "1.25");
-		forthrow.put("Avg Rent", "1649.29");
-		forthrow.put("Avg Disposable Income", "3847.76");
-		Map<String,String> fifthrow = new LinkedHashMap<String,String>();
-		fifthrow.put("City", "Perth");
-		fifthrow.put("Cappuccino", "2.87");
-		fifthrow.put("Cinema", "11.43");
-		fifthrow.put("Wine", "10.08");
-		fifthrow.put("Gasoline", "0.97");
-		fifthrow.put("Avg Rent", "2083.14");
-		fifthrow.put("Avg Disposable Income", "3358.55");
-		Map<String,String> sixthrow = new LinkedHashMap<String,String>();
-		sixthrow.put("City", "Nashville");
-		sixthrow.put("Cappuccino", "3.84");
-		sixthrow.put("Cinema", "12");
-		sixthrow.put("Wine", "13.5");
-		sixthrow.put("Gasoline", "0.65");
-		sixthrow.put("Avg Rent", "2257.14");
-		sixthrow.put("Avg Disposable Income", "3089.75");
-		Map<String,String> seventhrow = new LinkedHashMap<String,String>();
-		seventhrow.put("City", "Canberra");
-		seventhrow.put("Cappuccino", "2.35");
-		seventhrow.put("Cinema", "11.42");
-		seventhrow.put("Wine", "10.08");
-		seventhrow.put("Gasoline", "0.99");
-		seventhrow.put("Avg Rent", "1984.74");
-		seventhrow.put("Avg Disposable Income", "3023.91");
-		Map<String,String> eightrow = new LinkedHashMap<String,String>();
-		eightrow.put("City", "Bergen");
-		eightrow.put("Cappuccino", "3.92");
-		eightrow.put("Cinema", "12.32");
-		eightrow.put("Wine", "12.32");
-		eightrow.put("Gasoline", "1.57");
-		eightrow.put("Avg Rent", "1725.37");
-		eightrow.put("Avg Disposable Income", "3002.59");
-		Map<String,String> ninthrow = new LinkedHashMap<String,String>();
-		ninthrow.put("City", "Luxembourg");
-		ninthrow.put("Cappuccino", "2.13");
-		ninthrow.put("Cinema", "7.25");
-		ninthrow.put("Wine", "4.26");
-		ninthrow.put("Gasoline", "1.15");
-		ninthrow.put("Avg Rent", "1704.96");
-		ninthrow.put("Avg Disposable Income", "2983.69");
-		Map<String,String> tenthrow = new LinkedHashMap<String,String>();
-		tenthrow.put("City", "Stavanger");
-		tenthrow.put("Cappuccino", "4.48");
-		tenthrow.put("Cinema", "10.65");
-		tenthrow.put("Wine", "13.44");
-		tenthrow.put("Gasoline", "1.68");
-		tenthrow.put("Avg Rent", "2240.74");
-		tenthrow.put("Avg Disposable Income", "2957.77");
-		Map<String,String> elevenrow = new LinkedHashMap<String,String>();
-		elevenrow.put("City", "Adelaide");
-		elevenrow.put("Cappuccino", "2.49");
-		elevenrow.put("Cinema", "11.42");
-		elevenrow.put("Wine", "10.08");
-		elevenrow.put("Gasoline", "0.95");
-		elevenrow.put("Avg Rent", "1382.26");
-		elevenrow.put("Avg Disposable Income", "2911.69");
+		
 		List<Object> expected = new ArrayList<Object>(); 
 		expected.add(firstrow);
 			expected.add(secondrow);
 			expected.add(thirdrow);
-			expected.add(forthrow);
-			expected.add(fifthrow);
-			expected.add(sixthrow);
-			expected.add(seventhrow);
-			expected.add(eightrow);
-			expected.add(ninthrow);
-			expected.add(tenthrow);
-			expected.add(elevenrow);
+			
 			
 	    
-	     assertNotEquals(dataMapList,expected);
-	     assertEquals(dataMapList.size(),expected.size());
+	     assertNotEquals(dataMapList.get(0),expected.get(0));
+	    assertNotEquals(dataMapList.get(1),expected.get(1));
 			
 			
 	    
