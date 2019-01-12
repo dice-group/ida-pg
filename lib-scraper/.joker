@@ -1,8 +1,10 @@
 {:ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
                              lib-scraper.core
-                             hickory.select]
- :known-macros [lib-scraper.model.syntax/defconcept
+                             hickory.selec
+                             lib-scraper.crawler.factory]
+ :known-macros [say-cheez.core/capture-build-env-to
+                lib-scraper.helpers.spec/entity-keys
+                lib-scraper.model.syntax/defconcept
                 lib-scraper.model.syntax/defparadigm
-                lib-scraper.model.syntax/defecosystem
-                lib-scraper.helpers.spec/entity-keys]}
+                lib-scraper.model.syntax/defecosystem]}

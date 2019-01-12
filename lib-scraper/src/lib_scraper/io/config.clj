@@ -1,13 +1,15 @@
 (ns lib-scraper.io.config
   (:require [clojure.spec.alpha :as s]
             [clojure.walk :as w]
-            [clojure.java.io :as io]
+            [me.raynes.fs :as fs]
             [hickory.select]
             [lib-scraper.model.core :as m]
             [lib-scraper.helpers.zip :as hzip]
             [lib-scraper.helpers.predicate :as predicate]
             [lib-scraper.scraper.match :as match])
   (:import (java.util.regex Pattern)))
+
+(def default-config-name "scraper.clj")
 
 (defn defscraper*
   [name config]
@@ -21,15 +23,15 @@
   [name & config]
   `(def ~name ~(defscraper* name config)))
 
-(def ^:dynamic *cwd* nil)
-
 (defn read-config
   [path]
   (binding [*read-eval* false]
-    (let [file (if *cwd* (io/file *cwd* path) (io/file path))
+    (let [file (if (fs/directory? path)
+                 (fs/file path default-config-name)
+                 (fs/file path))
           config (read-string (slurp file))
           {:keys [name config]} (s/conform ::config-outer config)]
-      (binding [*cwd* (-> file (.getAbsoluteFile) (.getParent))]
+      (fs/with-cwd (fs/parent file)
         (defscraper* name config)))))
 
 (s/def ::config-outer (s/cat :defscraper #(= % 'defscraper)
@@ -44,6 +46,7 @@
 (s/def ::seed string?)
 (s/def ::max-pages int?)
 (s/def ::max-depth int?)
+(s/def ::meta map?)
 
 (defn- parse-should-visit
   [expr]
@@ -118,6 +121,7 @@
                                              ::seed
                                              ::should-visit
                                              ::hooks
+                                             ::meta
                                              ::patterns
                                              ::max-pages
                                              ::max-depth])
@@ -127,7 +131,8 @@
                                       ::seed
                                       ::should-visit
                                       ::hooks]
-                             :opt-un [::patterns
+                             :opt-un [::meta
+                                      ::patterns
                                       ::max-pages
                                       ::max-depth]))
               (s/conformer second)
