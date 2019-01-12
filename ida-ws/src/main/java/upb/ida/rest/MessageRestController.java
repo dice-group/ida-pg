@@ -53,6 +53,7 @@ public class MessageRestController {
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
 		String reply = rsService.getRSResponse(msg);
+		
 		response.setChatmsg(reply);
 		return response;
 	}
