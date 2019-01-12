@@ -186,7 +186,6 @@ public class FileUtil {
 
 	public static int sumNum(int a, int b) {
 		return a + b;
-
 	}
 
 	/**

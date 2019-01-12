@@ -23,8 +23,6 @@ public class VENN_Util {
     @Autowired
     private FileUtil dem;
 
-    public static final int MAX_STR = 10;
-
     public HashMap<String, Object> generateVennDiagram (String filePath, String[] args)
             throws IOException  {
         System.out.println(Arrays.toString(args));
