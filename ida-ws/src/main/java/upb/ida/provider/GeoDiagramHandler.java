@@ -7,11 +7,10 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.util.FileUtil;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
- * vennDiagramHandler is a subroutine that is used to generate data for
+ * GeoDiagramHandler is a subroutine that is used to generate data for
  * Venn diagram .
  *
  * @author Maqbool
@@ -25,7 +24,7 @@ public class GeoDiagramHandler implements Subroutine {
 	private ResponseBean responseBean;
 	
 	/**
-	 * Method to create response for Venn Diagram visualization
+	 * Method to create response for Geo Spatial Diagram visualization
 	 * @param rs
 	 *            - {@link call#rs}
 	 * @param args
@@ -34,21 +33,16 @@ public class GeoDiagramHandler implements Subroutine {
 	 */
 	
 	public String call (com.rivescript.RiveScript rs, String[] args) {
-//		try {
-//			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
-//			String actvDs = (String) responseBean.getPayload().get("actvDs");
-//			String path = DemoMain.getDTFilePath(actvDs, actvTbl);
-//			Map<String, Object> dataMap = responseBean.getPayload();
+
+		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
+		String actvDs = (String) responseBean.getPayload().get("actvDs");
+//		String path = DemoMain.getDTFilePath(actvDs, actvTbl);
+		Map<String, Object> dataMap = responseBean.getPayload();
 //
-//			dataMap.put("vennDiagramData", VENN_Util.generateVennDiagram(path, args));
-//            dataMap.put("label", "venn diagram data");
-//			responseBean.setPayload(dataMap);
-//			responseBean.setActnCode(IDALiteral.UIA_VENNDIAGRAM);
-//			return "pass";
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		System.out.print("well");
+//		dataMap.put("gsDiagramData", VENN_Util.generateVennDiagram(path, args));
+		dataMap.put("label", "geo spatial diagram data");
+		responseBean.setPayload(dataMap);
+		responseBean.setActnCode(IDALiteral.UIA_GSDIAGRAM);
 		return "pass";
 	}
 }
