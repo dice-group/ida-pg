@@ -8,7 +8,6 @@ import java.io.IOException;
  * @author Maqbool
  *
  */
-import java.text.ParseException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class VennDiagramHandler implements Subroutine {
 	private ResponseBean responseBean;
 	
 	/**
-	 *Method to create response for Venn Diagram visualization
+	 * Method to create response for Venn Diagram visualization
 	 * @param rs
 	 *            - {@link call#rs}
 	 * @param args
@@ -40,7 +39,6 @@ public class VennDiagramHandler implements Subroutine {
 	
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		try {
-			
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			String actvScrId = (String) responseBean.getPayload().get("actvScrid");
@@ -52,7 +50,7 @@ public class VennDiagramHandler implements Subroutine {
 			dataMap.put("actvScrId", actvScrId);
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_VENNDIAGRAM);
-			return "fail";
+			return "pass";
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
