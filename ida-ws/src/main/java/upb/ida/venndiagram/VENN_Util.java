@@ -26,7 +26,7 @@ public class VENN_Util {
     public static final int MAX_STR = 10;
 
     public HashMap<String, Object> generateVennDiagram (String filePath, String[] args)
-            throws JsonProcessingException, IOException, ParseException  {
+            throws IOException  {
         System.out.println(Arrays.toString(args));
         File file = new File(dem.fetchSysFilePath(filePath));
         Map<String, String> columns = dem.convertToMap(file).get(0);
