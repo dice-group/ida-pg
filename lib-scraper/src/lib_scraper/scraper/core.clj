@@ -33,11 +33,11 @@
 
 (defn scrape
   [{:keys [should-visit] :as spec}]
-  (let [{:keys [traverser conn]} (traverser spec)]
+  (let [{:keys [traverser finalize]} (traverser spec)]
     (crawl (merge spec
                   {:should-visit should-visit
                    :visit traverser}))
-    @conn))
+    (finalize)))
 
 (defn scrape-and-store!
   [spec location]

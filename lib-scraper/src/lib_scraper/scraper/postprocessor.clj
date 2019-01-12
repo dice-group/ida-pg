@@ -2,28 +2,36 @@
   (:require [datascript.core :as d]
             [clojure.spec.alpha :as s]
             [lib-scraper.helpers.spec :as hs]
-            [lib-scraper.helpers.transaction :as tx]))
+            [lib-scraper.helpers.transaction :as tx]
+            [lib-scraper.helpers.transients :refer [into!]]))
 
 (defn retract-tempids
   [db ids]
   (mapv #(vector :db.fn/retractAttribute % :tempid) ids))
 
+(defn complete-ids
+  [ids]
+  (mapv #(vector :db.fn/retractAttribute % :allow-incomplete) ids))
+
 (defn validate-transaction
   [db {:keys [specs] :as ecosystem} ids]
-  (let [{:keys [valid invalid]}
+  (let [{:keys [valid invalid completed]}
         (group-by (fn [id]
-                    (let [{:keys [type] :as e} (d/entity db id)
+                    (let [{:keys [type allow-incomplete] :as e} (d/entity db id)
                           specs (keep specs type)]
-                      (if (and (seq specs)
-                               (s/valid? (apply hs/and specs) e))
-                        :valid :invalid)))
-                  ids)]
+                      (if (and (seq specs) (s/valid? (apply hs/and specs) e))
+                        (if allow-incomplete :completed :valid)
+                        (if allow-incomplete :incomplete :invalid))))
+                  ids)
+        tx (complete-ids completed)]
     (if (empty? invalid)
-      []
-      (conj (mapv #(vector :db.fn/retractEntity %) invalid)
-            ; revalidate remaining concepts after concept removal
-            ; to check whether they are still valid:
-            [:db.fn/call validate-transaction ecosystem valid]))))
+      tx
+      (-> (transient tx)
+          (into! (map #(vector :db.fn/retractEntity %) invalid))
+          ; revalidate remaining concepts after concept removal
+          ; to check whether they are still valid:
+          (conj! [:db.fn/call validate-transaction ecosystem (concat valid completed)])
+          (persistent!)))))
 
 (defn ecosystem-postprocessing
   [db {:keys [postprocessors]} ids tids tid->id]

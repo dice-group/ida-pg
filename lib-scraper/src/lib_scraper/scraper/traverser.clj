@@ -34,13 +34,14 @@
     (some (set (keys hook)) [:concept :attribute])))
 
 (defmethod trigger-hook* :concept
-  [{:keys [concept ref-from-trigger ref-to-trigger]} [parent] _ _ _]
+  [{:keys [concept ref-from-trigger ref-to-trigger allow-incomplete]} [parent] _ _ _]
   (let [id (tempid)
         pid (:id parent)
         tx (cond-> [[:db/add id :tempid id]
                     [:db/add id :type concept]]
              ref-from-trigger (conj [:db/add pid ref-from-trigger id])
-             ref-to-trigger (conj [:db/add id ref-to-trigger pid]))]
+             ref-to-trigger (conj [:db/add id ref-to-trigger pid])
+             allow-incomplete (conj [:db/add id :allow-incomplete true]))]
     {:id id
      :type concept
      :tx tx}))
@@ -112,6 +113,13 @@
                (persistent!))]
     (d/transact! conn (concat itx tx))))
 
+(defn finalize
+  "Remove entities that were not completed by the end of the scrape."
+  [conn]
+  (let [db @conn
+        res (d/q '[:find ?id :where [?id :allow-incomplete true]])]
+    (d/db-with db (mapv (comp #(vector :db.fn/retractEntity %) first) res))))
+
 (defn index-hooks
   [hooks patterns]
   (->> hooks
@@ -141,7 +149,9 @@
 (def db-spec {:source {:db/doc "The datasource this entity originates from. Typically a URL."}
               :tempid {:db/cardinality :db.cardinality/many
                        :db/unique :db.unique/identity
-                       :db/doc "Temporary bookkeeping property used by the scraper."}})
+                       :db/doc "Temporary bookkeeping property used by the scraper."}
+              :allow-incomplete {:db/index true
+                                 :db/doc "Temporary bookkeeping property used by the scraper."}})
 
 (defn traverser
   [{:keys [hooks patterns ecosystem]}]
@@ -149,5 +159,5 @@
         hooks (-> hooks
                   (index-hooks patterns)
                   (resolve-hook-aliases ecosystem))]
-    {:conn conn
-     :traverser (partial traverse! conn hooks ecosystem)}))
+    {:traverser (partial traverse! conn hooks ecosystem)
+     :finalize (partial finalize conn)}))

@@ -4,7 +4,8 @@
             [lib-scraper.model.syntax :refer [defconcept]]))
 
 (defconcept named
-  :attributes {::name {:db/doc "Name of the concept."}}
+  :attributes {::name {:db/index true
+                       :db/doc "Name of the concept."}}
   :spec ::named)
 
 (s/def ::named (hs/entity-keys :req [::name]))
