@@ -217,7 +217,8 @@ public class FileUtil {
 	}
 
 	public int getColumnId (Map<String, String> columns, String columnName) {
-		int columnId = 0, tracker = 0;
+		int columnId = 0;
+		int tracker = 0;
 		for (String column : columns.keySet()) {
 			if (column.equals(columnName)) {
 				columnId = tracker;
