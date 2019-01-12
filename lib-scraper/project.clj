@@ -1,26 +1,31 @@
 (defproject lib-scraper "0.1.0-SNAPSHOT"
-  :description "Crawles through the documentation of software libraries and transforms them into a standardized format."
+  :description "Crawls through the documentation of software libraries and transforms them into a standardized format."
   :url "https://github.com/dice-group/ida"
 
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/tools.logging "0.4.1"]
                  [edu.uci.ics/crawler4j "4.4.0"]
+                 [org.flatland/ordered "1.5.7"]
                  [hickory "0.7.1"]
-                 [datascript "0.17.1"]]
+                 [datascript "0.17.1"]
+                 [clj-commons/fs "1.5.0"]
+                 [say-cheez "0.1.1"]
+                 [cli-matic "0.3.3"]]
   :repositories [["oracleReleases" {:url "https://download.oracle.com/maven"}]]
 
   :plugins [[lein-cljfmt "0.6.2"]]
 
-  :main lib-scraper.core
   :aot [lib-scraper.crawler.factory]
 
   :profiles {:dev {:source-paths ["dev" "src" "test"]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
-                                  [org.flatland/ordered "1.5.7"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
                                   [proto-repl-sayid "0.1.3"]]
                    :repl-options {:init-ns user
                                   :init (start)}
                    :eastwood {:exclude-linters []}}
-             :uberjar {:aot :all}})
+             :scraper {:main lib-scraper.core
+                       :aot :all
+                       :uberjar-name "lib-scraper.jar"}}
+  :aliases {"build-scraper" ["with-profile" "scraper" "uberjar"]})

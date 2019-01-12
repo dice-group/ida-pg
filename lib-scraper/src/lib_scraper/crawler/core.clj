@@ -1,9 +1,13 @@
 (ns lib-scraper.crawler.core
+  (:require [me.raynes.fs :as fs]
+            [lib-scraper.crawler.factory])
   (:import (edu.uci.ics.crawler4j.crawler CrawlConfig CrawlController)
            (edu.uci.ics.crawler4j.fetcher PageFetcher)
            (edu.uci.ics.crawler4j.robotstxt RobotstxtConfig
                                             RobotstxtServer)
            (lib_scraper.crawler Factory)))
+
+(def crawler-storage (str (fs/temp-dir "lib-scraper-data")))
 
 (defn crawl
   [{:keys [^String seed
@@ -18,7 +22,7 @@
            ^int shutdown-delay
            ^int cleanup-delay]
     :or {concurrency 1
-         storage-folder "./crawl"
+         storage-folder crawler-storage
          max-depth -1
          politeness-delay 20
          binary-content false
@@ -42,4 +46,6 @@
         crawler-factory (Factory. {:should-visit should-visit
                                    :visit visit})]
     (.addSeed controller seed)
-    (.start controller crawler-factory concurrency)))
+    (.start controller crawler-factory concurrency)
+    (if-not resumable
+      (fs/delete-dir crawler-storage))))

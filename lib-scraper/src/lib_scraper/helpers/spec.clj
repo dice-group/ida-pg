@@ -2,8 +2,6 @@
   (:require [clojure.spec.alpha :as s])
   (:refer-clojure :exclude [and]))
 
-(def ^:private keyword-name (comp keyword name))
-
 (defn filterwalk
   [f form]
   (if (f form)
@@ -14,19 +12,20 @@
 
 (defmacro entity-keys
   [& {:keys [req opt req-un opt-un gen]}]
-  (let [req-filtered (filterwalk keyword? req)
-        req-un-filtered (filterwalk keyword? req-un)
-        keys (concat req-filtered opt
-                     (map keyword-name req-un-filtered)
-                     (map keyword-name opt-un))]
-    `(s/and (s/conformer ~#(with-meta (select-keys % keys)
-                                      {:entity %}))
+  `(let [req-filtered# (filterwalk keyword? ~req)
+         req-un-filtered# (filterwalk keyword? ~req-un)
+         kw-name# (comp keyword name)
+         keys# (concat req-filtered# ~opt
+                       (map kw-name# req-un-filtered#)
+                       (map kw-name# ~opt-un))]
+     (s/and (s/conformer #(with-meta (select-keys % keys#)
+                                     {:entity %}))
             (s/keys ~@(when req [:req req])
                     ~@(when opt [:opt opt])
                     ~@(when req-un [:req-un req-un])
                     ~@(when opt-un [:opt-un opt-un])
                     ~@(when gen [:gen gen]))
-            (s/conformer ~(comp :entity meta)))))
+            (s/conformer (comp :entity meta)))))
 
 (defmacro keys*
   "Like clojure.spec.alpha/keys* but always conforms to and allows maps."

@@ -1,7 +1,7 @@
 (defscraper scikit-learn
   :ecosystem :python
-  :python/version "3.7.2"
-  :python/dependencies [[scikit-learn "0.20.2"]]
+  :meta {:python/version "3.7.2"
+         :python/dependencies [[scikit-learn "0.20.2"]]}
 
   :seed "https://scikit-learn.org/0.20/modules/classes.html"
   :should-visit #"https://scikit-learn\.org/0\.20/modules/generated/.*"
@@ -64,7 +64,8 @@
           {:trigger :parameter
            :attribute :parameter/optional
            :pattern :parameter-info
-           :transform #(clojure.string/includes? % "optional")}
+           :transform #(or (clojure.string/includes? % "optional")
+                           (clojure.string/includes? % "default"))}
 
           ; datatypes:
           {:trigger :parameter

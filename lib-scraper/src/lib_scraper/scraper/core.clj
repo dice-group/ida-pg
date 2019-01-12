@@ -1,6 +1,5 @@
 (ns lib-scraper.scraper.core
   (:require [hickory.core :as h]
-            [datascript.core :as d]
             [clojure.tools.logging :as log]
             [lib-scraper.crawler.core :as crawler]
             [lib-scraper.helpers.predicate :refer [p-and p-or p-expire parse]]
@@ -38,13 +37,3 @@
                   {:should-visit should-visit
                    :visit traverser}))
     (finalize)))
-
-(defn scrape-and-store!
-  [spec location]
-  (clojure.java.io/make-parents location)
-  (spit location (pr-str (scrape spec))))
-
-(defn load-stored
-  [location]
-  (clojure.edn/read-string {:readers d/data-readers}
-                           (slurp location)))
