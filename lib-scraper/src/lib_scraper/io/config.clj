@@ -65,7 +65,8 @@
                                       ::attribute
                                       ::value
                                       ::transform
-                                      ::pattern])))
+                                      ::pattern
+                                      ::allow-incomplete])))
 
 (s/def ::trigger (s/and (s/or :single keyword?
                               :multiple (s/coll-of keyword?))
@@ -76,6 +77,7 @@
 (s/def ::attribute keyword?)
 (s/def ::value (partial contains? #{:content :trigger-index}))
 (s/def ::pattern keyword?)
+(s/def ::allow-incomplete boolean?)
 (s/def ::hooks (s/coll-of ::hook))
 (s/def ::patterns (s/map-of keyword? ::hook))
 
