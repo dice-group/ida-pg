@@ -2,8 +2,8 @@ package upb.ida.provider;
 
 import java.io.IOException;
 /**
- * fdgHandler is a subroutine that is used to create response for UI
- * of Force Directed Graph by taking inputs from user through rivescript  .
+ * vennDiagramHandler is a subroutine that is used to generate data for
+ * Venn diagram .
  * 
  * @author Maqbool
  *
@@ -30,7 +30,7 @@ public class VennDiagramHandler implements Subroutine {
 	private ResponseBean responseBean;
 	
 	/**
-	 *Method to create response for Force Directed Graph visualization
+	 *Method to create response for Venn Diagram visualization
 	 * @param rs
 	 *            - {@link call#rs}
 	 * @param args
@@ -39,32 +39,23 @@ public class VennDiagramHandler implements Subroutine {
 	 */
 	
 	public String call (com.rivescript.RiveScript rs, String[] args) {
-		
-		//		String user = rs.currentUser();
 		try {
+			
 			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
-			//String actvScrId = (String) responseBean.getPayload().get("actvScrid");
+			String actvScrId = (String) responseBean.getPayload().get("actvScrid");
 			String path = DemoMain.getDTFilePath(actvDs, actvTbl);
-			/**
-			 * function call takes file path and arguments as
-			 * input to get data for force directed graph
-			 */
 			Map<String, Object> dataMap = responseBean.getPayload();
 			
 			dataMap.put("vennDiagramData", VENN_Util.generateVennDiagram(path, args));
             dataMap.put("label", "venn diagram data");
-			//dataMap.put("actvScrId", actvScrId);
+			dataMap.put("actvScrId", actvScrId);
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_VENNDIAGRAM);
 			return "fail";
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return "fail";
-	
 	}
 }
