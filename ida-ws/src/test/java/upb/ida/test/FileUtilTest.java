@@ -34,7 +34,7 @@ public class FileUtilTest {
 	
 	
 	@Test
-	public void fetchSysFilePathNegTest() throws JsonProcessingException, IOException
+	public void fetchNegTest() throws JsonProcessingException, IOException
 	{
 		String filePath= "dataset/city/movehubcostofliving.csv";
 		File file = new File(dem.fetchSysFilePath(filePath));
@@ -81,7 +81,7 @@ public class FileUtilTest {
 	
 	
 	@Test
-	public void fetchSysFilePathPosTest() throws JsonProcessingException, IOException
+	public void fetchPosTest() throws JsonProcessingException, IOException
 	{
 		String filePath= "dataset/city/movehubcostofliving.csv";
 		File file = new File(dem.fetchSysFilePath(filePath));
@@ -202,7 +202,7 @@ public class FileUtilTest {
 	}
 	
 	@Test
-	public void fetchSysFilePathExtTest() throws JsonProcessingException, IOException
+	public void fetchExtTest() throws JsonProcessingException, IOException
 	{
 		String filePath= "dataset/city/movehubcostofliving.csv";
 		File file = new File(dem.fetchSysFilePath(filePath));
