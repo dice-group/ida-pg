@@ -216,4 +216,15 @@ public class FileUtil {
         }
         return columnData;
 	}
+
+	public int getColumnId (Map<String, String> columns, String columnName) {
+		int columnId = 0, tracker = 0;
+		for (String column : columns.keySet()) {
+			if (column.equals(columnName)) {
+				columnId = tracker;
+			}
+			tracker++;
+		}
+		return columnId;
+	}
 }
