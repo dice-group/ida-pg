@@ -1,0 +1,13 @@
+.spacer {
+    flex: 1 1 auto;
+}
+
+.signup-form{
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.full-width {
+    width: 100%;
+}
