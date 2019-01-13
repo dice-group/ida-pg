@@ -23,6 +23,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import upb.ida.constant.IDALiteral;
 
+import static upb.ida.constant.IDALiteral.DS_PATH;
+
 /**
  * Class to expose util methods for File based operations in IDA
  * 
@@ -164,6 +166,11 @@ public class FileUtil {
 	 */
 	public boolean datasetExists(String keyword) {
 		return dsPathMap.get(keyword.toLowerCase()) != null;
+	}
+
+	public boolean dsExists(String filename){
+		File file = new File(DS_PATH + filename.toLowerCase() + ".ttl");
+		return file.exists();
 	}
 
 	/**

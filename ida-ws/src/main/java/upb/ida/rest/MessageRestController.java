@@ -8,6 +8,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer;
 import no.acando.xmltordf.Builder;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.jena.query.*;
+import org.apache.jena.util.FileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import upb.ida.bean.ResponseBean;
-import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import upb.ida.service.DataService;
@@ -27,6 +28,7 @@ import upb.ida.util.FileConversionUtil;
 import javax.xml.crypto.Data;
 import javax.xml.parsers.ParserConfigurationException;
 
+import static upb.ida.constant.IDALiteral.DS_PATH;
 import static upb.ida.util.FileConversionUtil.csvToRDF;
 
 /**
@@ -93,18 +95,35 @@ public class MessageRestController {
 
 		if(file.getContentType().equals("text/xml") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("xml")){
 			byte[] bytes = file.getBytes();
-			UploadManager.saveFile(fileName, FileConversionUtil.xmlToRDF(bytes));
+			UploadManager.saveFile(fileName.toLowerCase(), FileConversionUtil.xmlToRDF(bytes));
 			status = "pass";
 		}
 		else if(file.getContentType().equals("text/csv") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("csv")){
 			byte[] bytes = file.getBytes();
-			UploadManager.saveFile(fileName, FileConversionUtil.csvToRDF(bytes));
+			UploadManager.saveFile(fileName.toLowerCase(), FileConversionUtil.csvToRDF(bytes));
 			status = "pass";
 		}
 		else
 			status = "fail";
 
 		return status;
+	}
+
+	@GetMapping(value = "/sparql")
+	public String getbyArtist(@RequestParam("query") String queryString, @RequestParam("datasetName") String datasetName) {
+		// TODO: Error handling e.g. if dataset name is invalid
+
+		Model model = FileManager.get().loadModel(DS_PATH + datasetName + ".ttl");
+		Query query = QueryFactory.create(queryString);
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+
+		ResultSet results = qexec.execSelect();
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ResultSetFormatter.outputAsJSON(outputStream, results);
+		String json = new String(outputStream.toByteArray());
+
+		return json;
 	}
 
 }

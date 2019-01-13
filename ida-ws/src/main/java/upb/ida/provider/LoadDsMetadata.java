@@ -1,8 +1,11 @@
 package upb.ida.provider;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.util.FileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,9 @@ import com.rivescript.util.StringUtils;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.util.FileUtil;
+import upb.ida.util.SessionUtil;
+
+import static upb.ida.constant.IDALiteral.DS_PATH;
 
 /**
  * LoadDataContent is a subroutine that loads the data
@@ -25,7 +31,8 @@ public class LoadDsMetadata implements Subroutine {
 	private FileUtil fileUtil;
 	@Autowired
 	private ResponseBean responseBean;
-
+	@Autowired
+	SessionUtil sessionUtil;
 	/**
 	 * Method to create response for loading the data set
 	 * 
@@ -41,6 +48,12 @@ public class LoadDsMetadata implements Subroutine {
 		if (fileUtil.datasetExists(message)) {
 			try {
 				Map<String, Object> dataMap = responseBean.getPayload();
+				Model model = FileManager.get().loadModel(DS_PATH + message + ".ttl");
+				Map<String, Object> dsMap = new HashMap<>();
+				if(dsMap.containsKey(message)){
+					dsMap.put(message, model);
+					sessionUtil.getSessionMap().put("DSModel", dsMap);
+				}
 				dataMap.put("label", message);
 				dataMap.put("dsName", message);
 				dataMap.put("dsMd", fileUtil.getDatasetMetaData(message));

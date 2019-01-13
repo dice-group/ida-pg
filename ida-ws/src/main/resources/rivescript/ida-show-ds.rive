@@ -1,0 +1,8 @@
+! version = 2.0
+
+//User queries for datasets show
++ show all datasets
+- <call>ShowDataset </call>
+
++ show me all the datasets
+- <call>ShowDataset </call>

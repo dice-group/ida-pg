@@ -34,4 +34,6 @@ public interface IDALiteral {
 	//Metadata File name Pattern
 	public static final String DSMD_FILE_PATTERN = ".*_dsmd\\.[jJ][sS][oO][nN]$";
 
+	public static final String DS_PATH = System.getProperty("user.dir") + "/uploads/";
+
 }

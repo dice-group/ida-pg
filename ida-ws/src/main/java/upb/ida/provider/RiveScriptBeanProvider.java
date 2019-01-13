@@ -47,6 +47,8 @@ public class RiveScriptBeanProvider {
 	private LoadDsMetadata dsmdLoader;
 	@Autowired
 	private UploadDataset uploadDataset;
+	@Autowired
+	private ShowDataset showDataset;
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
 	 * @return - RiveScript Instance
@@ -75,6 +77,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("CheckParamCollected", checkParamCollected);
 		bot.setSubroutine("LoadDsMetadata", dsmdLoader);
 		bot.setSubroutine("UploadDataset", uploadDataset);
+		bot.setSubroutine("ShowDataset", showDataset);
 		return bot;
 	}
 
