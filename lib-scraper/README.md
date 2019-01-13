@@ -14,7 +14,7 @@ First install the following tools:
 * JDK >=8
 * [Leiningen 2.8](https://leiningen.org/)
 
-Then run `lein build-scraper` to create an executable uberjar in `target/lib-scraper.jar`.
+Then run `lein do clean, build-scraper` to create an executable uberjar in `target/lib-scraper.jar`.
 
 ### 1.2. Scraping a library
 

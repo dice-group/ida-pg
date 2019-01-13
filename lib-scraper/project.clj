@@ -1,4 +1,4 @@
-(defproject lib-scraper "0.1.0-SNAPSHOT"
+(defproject upb/lib-scraper "0.0.1-SNAPSHOT"
   :description "Crawls through the documentation of software libraries and transforms them into a standardized format."
   :url "https://github.com/dice-group/ida"
 
@@ -16,9 +16,10 @@
 
   :plugins [[lein-cljfmt "0.6.2"]]
 
-  :aot [lib-scraper.crawler.factory]
+  :aot :all
 
   :profiles {:dev {:source-paths ["dev" "src" "test"]
+                   :aot ^:replace [lib-scraper.crawler.factory]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
@@ -27,6 +28,13 @@
                                   :init (start)}
                    :eastwood {:exclude-linters []}}
              :scraper {:main lib-scraper.core
-                       :aot :all
                        :uberjar-name "lib-scraper.jar"}}
-  :aliases {"build-scraper" ["with-profile" "scraper" "uberjar"]})
+
+  :aliases {"build-scraper" ["with-profile" "scraper" "uberjar"]}
+
+  :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.8.1"
+                 [:extensions true
+                  :configuration ([:sourceDirectories [:sourceDirectory "src"]]
+                                  [:testSourceDirectories [:testSourceDirectory "test"]])
+                  :executions [:execution ([:goals [:goal "compile"]]
+                                           [:phase "compile"])]]]])
