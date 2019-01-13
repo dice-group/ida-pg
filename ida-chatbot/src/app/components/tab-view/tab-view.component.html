@@ -7,5 +7,5 @@
   <app-datatable-view *ngSwitchCase="tabType.DTTBL" [data]="tabElement.content"></app-datatable-view>
   <app-datatable-detail *ngSwitchCase="tabType.DSDET" [dsdetail]="tabElement.content"></app-datatable-detail>
   <app-venn-view *ngSwitchCase="tabType.VENND" [data]="tabElement.content"></app-venn-view>
-  <app-deckgl-hex-view *ngSwitchCase="tabType.GSD" ></app-deckgl-hex-view>
+  <app-deckgl-hex-view *ngSwitchCase="tabType.GSD" [data]="tabElement.content"></app-deckgl-hex-view>
 </ng-container>

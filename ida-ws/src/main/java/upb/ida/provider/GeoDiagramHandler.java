@@ -7,7 +7,9 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.util.FileUtil;
 
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * GeoDiagramHandler is a subroutine that is used to generate data for
@@ -25,8 +27,6 @@ public class GeoDiagramHandler implements Subroutine {
 	
 	/**
 	 * Method to create response for Geo Spatial Diagram visualization
-	 * @param rs
-	 *            - {@link call#rs}
 	 * @param args
 	 *            - {@link call#args}
 	 * @return  String - pass or fail
@@ -36,13 +36,37 @@ public class GeoDiagramHandler implements Subroutine {
 
 		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 		String actvDs = (String) responseBean.getPayload().get("actvDs");
-//		String path = DemoMain.getDTFilePath(actvDs, actvTbl);
 		Map<String, Object> dataMap = responseBean.getPayload();
-//
-//		dataMap.put("gsDiagramData", VENN_Util.generateVennDiagram(path, args));
-		dataMap.put("label", "geo spatial diagram data");
-		responseBean.setPayload(dataMap);
-		responseBean.setActnCode(IDALiteral.UIA_GSDIAGRAM);
+		String path = DemoMain.getDTFilePath(actvDs, actvTbl);
+
+		ArrayList<HashMap<String, ArrayList<Double>>> response = new ArrayList<>();
+		try {
+			double maxLat;
+			double maxLon;
+			List<Map<String, String>> data = DemoMain.convertToMap(new File(DemoMain.fetchSysFilePath(path)));
+			for (Map<String, String> ele : data) {
+				HashMap<String, ArrayList<Double>> row = new HashMap<>();
+				ArrayList<Double> coordinates = new ArrayList<>(2);
+				double lat = Double.parseDouble(ele.get(args[0]));
+				double lon = Double.parseDouble(ele.get(args[1]));
+				maxLat = lat;
+				maxLon = lon;
+
+				coordinates.add(lon);
+				coordinates.add(lat);
+				row.put("COORDINATES", coordinates);
+				response.add(row);
+
+				dataMap.put("label", "geo spatial diagram data");
+				dataMap.put("lat", maxLat);
+				dataMap.put("lon", maxLon);
+				responseBean.setActnCode(IDALiteral.UIA_GSDIAGRAM);
+				responseBean.setPayload(dataMap);
+			}
+			dataMap.put("gsDiagramData", response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return "pass";
 	}
 }

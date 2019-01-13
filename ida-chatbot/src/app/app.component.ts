@@ -71,7 +71,7 @@ export class AppComponent {
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 8) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.GSD, resp.payload.gsDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.GSD, resp.payload, true, true);
       this.addNewTab(newTab, resp);
     }
   }
