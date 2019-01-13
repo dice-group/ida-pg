@@ -11,4 +11,4 @@
                          :db/cardinality :db.cardinality/many
                          :db/isComponent true
                          :db/doc "Concept is member of the namespace."}}
-  :postprocess (add-attr ::id ::named/name))
+  :preprocess {::named/name (add-attr ::id)})

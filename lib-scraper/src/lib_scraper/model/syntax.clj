@@ -32,8 +32,7 @@
         (apply distinct? attr-names))))
 
 (def common-attribute-aliases (as-> (keys common/attributes) $
-                                    (zipmap $ $)
-                                    (dissoc $ :type)))
+                                    (zipmap $ $)))
 
 (defn ecosystem-desc->ecosystem
   [m]

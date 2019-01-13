@@ -10,7 +10,8 @@
                  [datascript "0.17.1"]
                  [clj-commons/fs "1.5.0"]
                  [say-cheez "0.1.1"]
-                 [cli-matic "0.3.3"]]
+                 [cli-matic "0.3.3"]
+                 [io.forward/semver "0.1.0"]]
   :repositories [["oracleReleases" {:url "https://download.oracle.com/maven"}]]
 
   :plugins [[lein-cljfmt "0.6.2"]]
