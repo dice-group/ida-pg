@@ -50,13 +50,14 @@
                      expr)))
 
 (s/def ::config-outer (s/cat :defscraper #(= % 'defscraper)
-                             :name #(or (string? %) (symbol? %))
+                             :name ::name
                              :config (s/* any?)))
 
 (s/def ::ecosystem (s/and keyword?
                           #(contains? m/ecosystems %)
                           (s/conformer m/ecosystems)))
 
+(s/def ::name #(or (string? %) (symbol? %)))
 (s/def ::extends string?)
 (s/def ::seed string?)
 (s/def ::max-pages int?)

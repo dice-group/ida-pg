@@ -16,7 +16,7 @@ First install the following tools:
 
 Then run `lein build-scraper` to create an executable uberjar in `target/lib-scraper.jar`.
 
-### 1.2. Run
+### 1.2. Scraping a library
 
 The scraper provides a simple CLI to create scrapes:
 ```shell
@@ -31,9 +31,28 @@ This can be changed by providing an output path as a second argument to `scrape`
 
 For debugging purposes the scraper also provides the commands `print-scrape` and `print-config` to print validated and postprocessed versions of the scrape database and configuration.
 
-For more information run `java -jar target/lib-scraper.jar -?`. 
+To see all available commands run `java -jar target/lib-scraper.jar -?`.
+To get more information about a specific command run `java -jar target/lib-scraper.jar [cmd] -?`.
 
-### 1.3. Writing your own scrape configurations
+### 1.3. Querying a scraped library via the CLI
+
+Despite the fact that scrapes are meant to be used programmatically via the lib-scraper Java API, they can also be queried via the CLI for debugging and testing purposes.
+
+lib-scraper stores scrapes as gzipped serializations of [Datascript](https://github.com/tonsky/datascript) databases.
+Those scrape databases can be queries using [Datalog](https://docs.datomic.com/on-prem/query.html) queries:
+```shell
+java -jar target/lib-scraper.jar query libs/scikit-learn \
+  '[:find ?name :where [?p :type :namespace] [?p :namespace/name ?name]]'
+# => Prints the names of all the namespaces of scikit-learn.
+```
+
+A good introduction to Datalog can be found [here](http://www.learndatalogtoday.org/).
+To see which attributes and types are available for queries, you can use the `print-schema` command:
+```shell
+java -jar target/lib-scraper.jar print-schema python
+```
+
+### 1.4. Writing your own scrape configurations
 
 **[TODO: Documentation]**
 
