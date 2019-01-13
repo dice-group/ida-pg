@@ -36,7 +36,7 @@ export class DatasetUploadModalComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', this.file);
     formData.append('fileName', this.data.datasetName);
-    this._http.post('http://localhost:3000/ida-udf-ws/adapter/xml/file', formData).subscribe(
+    this._http.post('http://localhost:8080/ida-ws/message/file', formData).subscribe(
       (res) => {
         this.dialogRef.close();
         this.snackBar.open('Dataset uploaded successfully', 'Close', {

@@ -50,7 +50,7 @@ public class LoadDsMetadata implements Subroutine {
 				Map<String, Object> dataMap = responseBean.getPayload();
 				Model model = FileManager.get().loadModel(DS_PATH + message + ".ttl");
 				Map<String, Object> dsMap = new HashMap<>();
-				if(dsMap.containsKey(message)){
+				if(!dsMap.containsKey(message)){
 					dsMap.put(message, model);
 					sessionUtil.getSessionMap().put("DSModel", dsMap);
 				}
