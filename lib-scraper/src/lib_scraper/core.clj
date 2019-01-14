@@ -2,7 +2,6 @@
   (:require [lib-scraper.io.core :as io]
             [lib-scraper.io.config :as config]
             [lib-scraper.io.scrape :as scrape]
-            [lib-scraper.model.db :as mdb]
             [lib-scraper.model.core :as m]
             [clojure.pprint :as pp]
             [say-cheez.core :refer [capture-build-env-to]]
@@ -35,15 +34,14 @@
 
 (defn query
   [{:keys [scrape query mode]}]
-  (let [{:keys [scrape ecosystem]} (scrape/read-scrape scrape)
-        res (mdb/q ecosystem query scrape)]
-    (mode-print res mode)))
+  (mode-print (io/query-file scrape query) mode))
 
 (defn print-schema
   [{:keys [ecosystem]}]
-  (if-let [{:keys [concept-aliases attribute-aliases attributes]} (m/ecosystems ecosystem)]
+  (if-let [{:keys [concept-aliases attribute-aliases attributes version]} (m/ecosystems ecosystem)]
     (do
-      (println "Attributes:")
+      (println (str "Current " (name ecosystem) " schema version: " version))
+      (println "\nAttributes:")
       (pp/print-table ["attribute" "description"]
                       (->> attribute-aliases
                            (sort-by (comp #(str (namespace %) "/" (name %)) first))

@@ -17,7 +17,11 @@
        (scrape/write-scrape scrape-file config
                             (scraper/scrape config))))))
 
-(defn query
-  [scrape-file query]
-  (let [{:keys [scrape ecosystem]} (scrape/read-scrape scrape-file)]
-    (mdb/q ecosystem query scrape)))
+(defn query-scrape
+  [scrape query & args]
+  (let [{:keys [scrape ecosystem]} scrape]
+    (apply mdb/q ecosystem query scrape args)))
+
+(defn query-file
+  [scrape-file query & args]
+  (apply query-scrape (scrape/read-scrape scrape-file) query args))
