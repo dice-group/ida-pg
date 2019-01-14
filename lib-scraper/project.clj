@@ -19,7 +19,8 @@
   :aot :all
 
   :profiles {:dev {:source-paths ["dev" "src" "test"]
-                   :aot ^:replace [lib-scraper.crawler.factory]
+                   :aot ^:replace [lib-scraper.crawler.factory
+                                   lib-scraper.interop.scrape]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
