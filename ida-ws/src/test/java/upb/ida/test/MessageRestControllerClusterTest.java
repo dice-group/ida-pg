@@ -101,7 +101,7 @@ public class MessageRestControllerClusterTest {
 		dataMap.put("tabLabel","Clustered Data");
 		responseBean.setPayload(dataMap);
 		responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
-		System.out.println(responseList);
+		//System.out.println(responseList);
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> predicted = (List<Map<String, Object>>) responseBean.getPayload().get("clusterData");
