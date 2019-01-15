@@ -3,13 +3,14 @@
             [lib-scraper.io.scrape :as scrape]
             [clojure.edn :as edn])
   (:import (java.util ArrayList))
-  (:gen-class :name lib_scraper.Scrape
+  (:gen-class :name lib_scraper.interop.Scrape
               :prefix "scrape-"
+              :state scrape
               :init init
               :factory load
-              :state scrape
+              :main false
               :constructors {[String] []
-                             [java.io.File] []}
+                                   [java.io.File] []}
               :methods [[query [String] java.util.ArrayList]
                         [query [String java.lang.Iterable] java.util.ArrayList]
                         [getName [] String]
