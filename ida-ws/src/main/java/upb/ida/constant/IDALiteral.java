@@ -28,6 +28,7 @@ public interface IDALiteral {
 	//Property File Paths
 	public static final String IDA_PROP_FILEPATH = "ida.properties";
 	public static final String DSMAP_PROP_FILEPATH = "datasetmap.properties";
+	public static final String ASPECTLOGGER_PROP_FILEPATH = "log4j.properties";
 	
 	//CSV File name Pattern
 	public static final String CSV_FILE_PATTERN = ".*[cC][sS][vV]$";

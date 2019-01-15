@@ -2,11 +2,17 @@ package upb.ida.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
+
+import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.util.DataDumpUtil;
+import upb.ida.util.SessionUtil;
 /**
  * ParamsHandler is a subroutine that fetches paramameters
  * for a gven algorithm.
@@ -16,9 +22,16 @@ import upb.ida.util.DataDumpUtil;
  */
 @Component
 public class ParamsHandler implements Subroutine {
+	@Autowired
+	@Qualifier("scktClstrDtDmp")
+	private Map<String, ClusterAlgoDesc> scktClstrDtDmp;
 	
 	@Autowired
 	private DataDumpUtil DataDumpUtil;
+	
+	@Autowired
+	private SessionUtil sessionUtil;
+	
 	/**
 	 * Method to send parameters list with optiional tags to the user
 	 * as a response when user selects an algorithm for clustering
@@ -31,11 +44,25 @@ public class ParamsHandler implements Subroutine {
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 
 		try {
-		
+			
+			// Emptying the session
+			sessionUtil.getSessionMap().remove("clusterParams");
+			sessionUtil.getSessionMap().remove("colledtedParams");
+			sessionUtil.getSessionMap().remove("algoName");
+			
 			List<ClusterParam> paramList=  new ArrayList<>();
 			 /**
              * getting List of type ClusterParam for parameters of an algorithm
              */
+			
+//			Storing exact name of the clustering algorithm in the session for future use
+			for (ClusterAlgoDesc entry : scktClstrDtDmp.values()) {
+				if (entry.getFnName().equalsIgnoreCase(args[0].trim())) {
+					sessionUtil.getSessionMap().put("algoName",entry.getFnName());
+					break;
+				}
+			}
+			
 			paramList=DataDumpUtil.getClusterAlgoParams(args[0]);
             String algoStr = null;
             /**
