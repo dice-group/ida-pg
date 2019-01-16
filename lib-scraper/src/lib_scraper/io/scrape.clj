@@ -34,7 +34,8 @@
                          (io/output-stream)
                          (GZIPOutputStream.))]
       (io/copy (pr-str out) data))
-    (log/info (str "Successfully wrote scrape to " file "."))))
+    (log/info (str "Successfully wrote scrape to " file "."))
+    file))
 
 (defn read-scrape
   [file]
