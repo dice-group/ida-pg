@@ -4,7 +4,8 @@
             [lib-scraper.model.paradigms.oo.class :as class
                                                   :refer [class]
                                                   :rename {class oo-class}]
-            [lib-scraper.model.paradigms.oo.constructor :refer [constructor]]
+            [lib-scraper.model.ecosystems.python.constructor :as constructor
+                                                             :refer [constructor]]
             [lib-scraper.model.concepts.named :as named])
   (:refer-clojure :exclude [class]))
 
@@ -17,9 +18,12 @@
                            [?method ::named/name "__init__"]]
                   db id)]
     (mapcat (fn [[ctr]]
-              [[:db/add id ::class/constructor ctr]
-               [:db/add ctr :type (constructor :ident)]])
+              [[:db/add ctr ::constructor/class id]
+               [:db/add ctr :type (constructor :ident)]
+               [:db/add id ::class/constructor ctr]])
             ctrs)))
 
 (defconcept class [oo-class]
+  :preprocess {::class/constructor
+               (fn [ctr id] [[:db/add ctr ::constructor/class id]])}
   :postprocess postprocess)
