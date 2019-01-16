@@ -16,11 +16,9 @@
 
   :plugins [[lein-cljfmt "0.6.2"]]
 
-  :aot :all
+  :aot [lib-scraper.crawler.factory]
 
   :profiles {:dev {:source-paths ["dev" "src" "test"]
-                   :aot ^:replace [lib-scraper.crawler.factory
-                                   lib-scraper.interop.scrape]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
@@ -29,7 +27,9 @@
                                   :init (start)}
                    :eastwood {:exclude-linters []}}
              :scraper {:main lib-scraper.core
-                       :uberjar-name "lib-scraper.jar"}}
+                       :aot :all
+                       :uberjar-name "lib-scraper.jar"}
+             :generator {:aot :all}}
 
   :aliases {"build-scraper" ["with-profile" "scraper" "uberjar"]}
 
