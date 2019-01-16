@@ -3,6 +3,8 @@
             [lib-scraper.io.config :as config]
             [lib-scraper.io.scrape :as scrape]
             [lib-scraper.model.core :as m]
+            [lib-scraper.scraper.attributes :as sattrs]
+            [lib-scraper.helpers.transaction :as tx]
             [clojure.pprint :as pp]
             [say-cheez.core :refer [capture-build-env-to]]
             [cli-matic.core :refer [run-cmd run-cmd*]])
@@ -42,12 +44,23 @@
     (do
       (println (str "Current " (name ecosystem) " schema version: " version))
       (println "\nAttributes:")
-      (pp/print-table ["attribute" "description"]
-                      (->> attribute-aliases
-                           (sort-by (comp #(str (namespace %) "/" (name %)) first))
-                           (map (fn [[alias ident]]
-                                  {"attribute" alias
-                                   "description" (-> ident attributes :db/doc)}))))
+      (let [scraper-attrs-keys (keys sattrs/attributes)
+            attribute-aliases (merge attribute-aliases
+                                     (zipmap scraper-attrs-keys scraper-attrs-keys))
+            attributes (merge attributes sattrs/attributes)]
+        (pp/print-table ["attribute" "description" "unique?" "ref?" "many?"]
+                        (->> attribute-aliases
+                             (sort-by (comp #(str (namespace %) "/" (name %)) first))
+                             (keep (fn [[alias ident]]
+                                     (when-let [attr (attributes ident)]
+                                       (when-not (:lib-scraper/internal attr)
+                                         {"attribute" alias
+                                          "description" (:db/doc attr)
+                                          "unique?" (when (tx/unique-attr? attr) "✔")
+                                          "ref?" (when (tx/ref-attr? attr) "✔")
+                                          "many?" (when (= (:db/cardinality attr)
+                                                           :db.cardinality/many)
+                                                    "✔")})))))))
       (println "\nConcept types (possible values of the :type attribute):")
       (pp/pprint (keys concept-aliases)))
     (throw (Exception. (str "Unknown ecosystem '" ecosystem "'. "
@@ -60,7 +73,7 @@
                             "Supported ecosystems: " ecosystems-string)})
 
 (def CONFIGURATION
-  {:app {:command (:project PROJECT)
+  {:app {:command (-> PROJECT :project symbol name)
          :description "Crawls through the documentation of software libraries and transforms them into a standardized format."
          :version (str (:version PROJECT) " (" (:git-build PROJECT) ")")}
    :commands [{:command "scrape" :short "s"
@@ -102,7 +115,6 @@
                :description "Prints the database schema of a given ecosystem."
                :opts [{:option "ecosystem" :as (:ecosystem descs) :short 0
                        :type :keyword}]}]})
-
 
 (defn main*
   "Like -main but does not terminate. For runtime use only."
