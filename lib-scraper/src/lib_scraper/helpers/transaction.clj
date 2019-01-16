@@ -34,16 +34,35 @@
   ^Boolean [x]
   (or (and (number? x) (neg? x)) (string? x)))
 
-(defn replace-id
-  [from to txs]
-  (map (fn [tx]
-         (cond
-           (sequential? tx)
-           (let [[op e a v] tx]
-             (if (= op :db/add)
-               [op (if (= e from) to e) a v]
-               tx))
-           (and (map? tx) (= (:db/id tx) from))
-           (assoc tx :db/id to)
-           :else tx))
-       txs))
+(defn unique-attr?
+  [attr]
+  (-> attr :db/unique (= :db.unique/identity)))
+
+(defn ref-attr?
+  [attr]
+  (-> attr :db/valueType (= :db.type/ref)))
+
+(defn indexing-tx?
+  [attrs [_ _ attr _]]
+  (unique-attr? (attrs attr)))
+
+(defn ref-tx?
+  [attrs [_ _ attr _]]
+  (ref-attr? (attrs attr)))
+
+(defn replace-ids
+  [m f]
+  (fn [& args]
+    (map (fn [tx]
+           (cond
+             (sequential? tx)
+             (let [[op e a v] tx]
+               (case op
+                 :db/add [op (get m e e) a v]
+                 :db.fn/call (into [op (replace-ids m e)]
+                                   (nnext tx))
+                 tx))
+             (and (map? tx) (contains? m (:db/id tx)))
+             (update tx :db/id m)
+             :else tx))
+         (apply f args))))

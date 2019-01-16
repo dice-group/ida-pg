@@ -5,6 +5,7 @@
             [clojure.tools.logging :as log]
             [lib-scraper.helpers.zip :as lzip]
             [lib-scraper.helpers.map :as map]
+            [lib-scraper.helpers.transaction :as tx]
             [lib-scraper.scraper.postprocessor :as pp])
   (:import (java.util.regex Pattern)))
 
@@ -13,14 +14,6 @@
   ([& s] (reduce conj clojure.lang.PersistentQueue/EMPTY s)))
 
 (defn- tempid [] (d/tempid nil))
-
-(defn- unique-attr?
-  [attrs attr]
-  (-> (attrs attr) :db/unique (= :db.unique/identity)))
-
-(defn- indexing-tx?
-  [attrs [_ _ attr _]]
-  (unique-attr? attrs attr))
 
 (defn- resolve-value
   [value transform parent index loc]
@@ -34,30 +27,41 @@
     (some (set (keys hook)) [:concept :attribute])))
 
 (defmethod trigger-hook* :concept
-  [{:keys [concept ref-from-trigger ref-to-trigger allow-incomplete]} [parent] _ _ _]
+  [{:keys [concept ref-from-trigger ref-to-trigger allow-incomplete]} [parent]
+   {:keys [preprocessors attributes]} _ _]
   (let [id (tempid)
-        pid (:id parent)
-        tx (cond-> [[:db/add id :tempid id]
-                    [:db/add id :type concept]]
-             ref-from-trigger (conj [:db/add pid ref-from-trigger id])
-             ref-to-trigger (conj [:db/add id ref-to-trigger pid])
-             allow-incomplete (conj [:db/add id :allow-incomplete true]))]
+        [pid ptype] ((juxt :id :type) parent)
+        tx-base (cond-> [[:db/add id :tempid id]
+                         [:db/add id :type concept]]
+                  allow-incomplete (conj [:db/add id :allow-incomplete true]))
+        tx-from (when ref-from-trigger
+                  (let [processor (get-in preprocessors [ptype ref-from-trigger])]
+                    (conj (if processor (processor id pid) [])
+                          [:db/add pid ref-from-trigger id])))
+        tx-to (when ref-to-trigger
+                (let [processor (get-in preprocessors [type ref-to-trigger])]
+                  (conj (if processor (processor pid id) [])
+                        [:db/add id ref-to-trigger pid])))
+        {itx true, tx false} (group-by (partial tx/indexing-tx? attributes)
+                                       (concat tx-from tx-to))]
     {:id id
      :type concept
-     :tx tx}))
+     :triggers concept
+     :itx itx :tx (concat tx-base tx)}))
 
 (defmethod trigger-hook* :attribute
-  [{:keys [attribute value transform]} [parent] {:keys [preprocessors attributes]} index loc]
+  [{:keys [attribute value transform]} [parent]
+   {:keys [preprocessors attributes]} index loc]
   (if-let [value (resolve-value value transform parent index loc)]
     (let [{:keys [id type]} parent
           processor (get-in preprocessors [type attribute])
           tx (conj (if processor (processor value id) [])
                    [:db/add id attribute value])
-          {itx true, tx false} (group-by (partial indexing-tx? attributes) tx)]
+          {itx true, tx false} (group-by (partial tx/indexing-tx? attributes) tx)]
       {:id id
-       :type attribute
-       :itx itx
-       :tx tx})))
+       :type type
+       :triggers attribute
+       :itx itx :tx tx})))
 
 (defmethod trigger-hook* :default
   [hook _ _ _ _]
@@ -65,15 +69,17 @@
 
 (defn trigger-hook
   [hook stack ecosystem index loc]
-  (if-let [{:keys [itx tx type id]} (trigger-hook* hook stack ecosystem index loc)]
-    {:itx itx
-     :tx tx
-     :entry (when type {:id id, :type type, :loc loc, :index index})}))
+  (if-let [{:keys [itx tx type triggers id]}
+           (trigger-hook* hook stack ecosystem index loc)]
+    {:itx itx :tx tx
+     :entry (when triggers {:id id
+                            :type type :triggers triggers
+                            :loc loc :index index})}))
 
 (defn trigger-hooks
   [extends hooks stack ecosystem]
-  (let [[{:keys [type loc]}] stack
-        triggered (mapcat hooks (extends type))]
+  (let [[{:keys [triggers loc]}] stack
+        triggered (mapcat hooks (extends triggers))]
     (mapcat (fn [{:keys [selector limit] :as hook}]
               (let [selection (lzip/select-locs selector loc)]
                 (keep-indexed (partial trigger-hook hook stack ecosystem)
@@ -85,12 +91,12 @@
   (let [; index transactions:
         itx (transient [])
         ; non-index transactions:
-        tx (transient [[:db/add :db/current-tx :source url]])
+        tx (transient [[:db/add :db/current-tx :tx/source url]])
         extends (assoc (:extends ecosystem) :document #{:document})
         [itx tx ids] (loop [merged-itx itx
                             merged-tx tx
                             merged-ids (transient (ordered-set))
-                            queue (queue (list {:type :document
+                            queue (queue (list {:triggers :document
                                                 :loc (hzip/hickory-zip doc)}))]
                        (if (empty? queue)
                          [merged-itx merged-tx merged-ids]

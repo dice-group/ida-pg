@@ -37,6 +37,7 @@
     (crawl (merge spec
                   {:should-visit should-visit
                    :visit traverser}))
+    (log/info "Finalizing scrape " name "...")
     (let [result (finalize)]
       (log/info (str "Successfully scraped " name "."))
       result)))
