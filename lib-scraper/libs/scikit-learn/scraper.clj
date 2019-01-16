@@ -31,6 +31,10 @@
            :selector [:descendants (and (tag :dl) (class :class))]}
           {:trigger :class, :pattern :name}
           {:trigger :class, :pattern :description}
+          {:trigger :class
+           :concept :constructor
+           :selector [[:descendants :select (tag :table) :limit 1]]
+           :ref-from-trigger :class/constructor}
 
           ; functions and methods:
           {:trigger :document
@@ -46,8 +50,9 @@
           ; parameters:
           {:trigger :callable
            :concept :parameter
-           :selector [:descendants
-                      (and (tag :th) (find-in-text #"Parameters"))
+           :selector [[:descendants
+                       :select (and (tag :th) (find-in-text #"Parameters"))
+                       :limit 1]
                       [:ancestors :select (tag :tr) :limit 1]
                       :descendants (tag :dt)]
            :ref-from-trigger :callable/parameter}
