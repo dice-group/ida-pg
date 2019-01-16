@@ -31,12 +31,13 @@
 
 (defn select-locs-spread-step
   [type loc]
-  (let [[type & {:keys [select limit skip]}] (if (vector? type) type [type])
+  (let [[type & {:keys [select while skip limit]}] (if (vector? type) type [type])
         [init next continue?] ((step-types type) loc)]
     (cond->> (take-while continue? (iterate next (init loc)))
+      while  (take-while while)
       select (filter select)
-      limit  (take limit)
-      skip   (drop skip))))
+      skip   (drop skip)
+      limit  (take limit))))
 
 (defn select-locs
   [selectors loc]

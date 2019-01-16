@@ -9,10 +9,15 @@
   :patterns {:name {:attribute :named/name
                     :selector [:children (tag :dt)
                                :children (class :descname)]}
+             :description-summary {:attribute :description-summary
+                                   :selector [:children (tag :dd)
+                                              [:children
+                                               :select (and (tag :p) (not (class :rubric)))
+                                               :limit 1]]}
              :description {:attribute :description
                            :selector [:children (tag :dd)
-                                      :children
-                                      (and (tag :p) (not (class :rubric)))]}
+                                      [:children
+                                       :select (and (tag :p) (not (class :rubric)))]]}
              :parameter-info {:selector [:children (and (tag :span) (class :classifier))]}}
 
   :hooks [; namespaces:
@@ -30,6 +35,7 @@
            :concept :class
            :selector [:descendants (and (tag :dl) (class :class))]}
           {:trigger :class, :pattern :name}
+          {:trigger :class, :pattern :description-summary}
           {:trigger :class, :pattern :description}
           {:trigger :class
            :concept :constructor
@@ -45,6 +51,7 @@
            :selector [:descendants (and (tag :dl) (class :method))]
            :ref-from-trigger :class/method}
           {:trigger :callable, :pattern :name}
+          {:trigger :callable, :pattern :description-summary}
           {:trigger :callable, :pattern :description}
 
           ; parameters:
@@ -63,7 +70,7 @@
            :attribute :parameter/position
            :value :trigger-index}
           {:trigger :parameter
-           :attribute :description
+           :attribute [:description-summary :description]
            :selector [[:following-siblings :select (tag :dd) :limit 1]
                       :children (tag :p)]}
           {:trigger :parameter

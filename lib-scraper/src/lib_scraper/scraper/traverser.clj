@@ -54,9 +54,12 @@
    {:keys [preprocessors attributes]} index loc]
   (if-let [value (resolve-value value transform parent index loc)]
     (let [{:keys [id type]} parent
-          processor (get-in preprocessors [type attribute])
-          tx (conj (if processor (processor value id) [])
-                   [:db/add id attribute value])
+          preprocessors (preprocessors type)
+          tx (mapcat (fn [attribute]
+                       (let [processor (get preprocessors attribute)]
+                         (conj (if processor (processor value id) [])
+                               [:db/add id attribute value])))
+                     (if (seqable? attribute) attribute [attribute]))
           {itx true, tx false} (group-by (partial tx/indexing-tx? attributes) tx)]
       {:id id
        :type type

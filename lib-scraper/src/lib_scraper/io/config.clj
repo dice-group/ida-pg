@@ -83,7 +83,7 @@
 (s/def ::concept keyword?)
 (s/def ::ref-to-trigger keyword?)
 (s/def ::ref-from-trigger keyword?)
-(s/def ::attribute keyword?)
+(s/def ::attribute #(or (keyword? %) (every? keyword? %)))
 (s/def ::value (partial contains? #{:content :trigger-index}))
 (s/def ::pattern keyword?)
 (s/def ::allow-incomplete boolean?)
@@ -94,14 +94,17 @@
 
 (s/def ::spread-op (partial contains? (set (keys hzip/step-types))))
 (s/def ::limit int?)
+(s/def ::drop int?)
 
 (s/def ::select (s/and seq?
                        (s/conformer (fn [form]
                                       (eval (w/postwalk-replace select-kws form))))))
+(s/def ::while ::select)
+
 (s/def ::spread
        (s/and (s/or :basic ::spread-op
                     :complex (s/and (s/cat :spread-op ::spread-op
-                                           :args (s/keys* :opt-un [::select ::limit]))
+                                           :args (s/keys* :opt-un [::select ::while ::drop ::limit]))
                                     (s/conformer (fn [{:keys [spread-op args]}]
                                                    (into [spread-op] (flatten (seq args)))))))
               (s/conformer second)))
