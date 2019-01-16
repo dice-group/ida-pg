@@ -1,6 +1,7 @@
 {:ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
                              hickory.select
+                             repl-tools
                              lib-scraper.core
                              lib-scraper.io.core
                              lib-scraper.crawler.factory]
