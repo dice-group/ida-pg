@@ -34,25 +34,22 @@
           (persistent!)))))
 
 (defn ecosystem-postprocessing
-  [db {:keys [postprocessors]} ids tids tid->id]
-  (let [results (into {} (for [id ids
-                               :let [types (:type (d/pull db [:type] id))
-                                     procs (keep postprocessors types)]
-                               :when (seq procs)
-                               :let [proc (apply tx/merge procs)]]
-                           [id (delay (proc db id))]))]
-    (keep (fn [tid]
-            (let [id (tid->id tid)
-                  result (results id)]
-              (if result
-                [:db.fn/call (fn [_] (tx/replace-id id tid @result))])))
-          tids)))
+  [db {:keys [postprocessors]} ids id->tid]
+  (keep (fn [id]
+          (let [types (:type (d/pull db [:type] id))
+                procs (->> types
+                           (keep postprocessors)
+                           (map #(fn [_] (% db id))))]
+            (when (seq procs)
+              ; Use calls instead of mapcatting all results for lazy evaluation:
+              [:db.fn/call (tx/replace-ids id->tid (apply tx/merge procs))])))
+        ids))
 
 (defn postprocess-transactions
   [db ecosystem tids]
   (let [ids (map #(d/entid db [:tempid %]) tids)
-        tid->id (zipmap tids ids)
+        id->tid (zipmap ids tids) ; if tids were unified, the last tid wins
         ids (distinct ids)]
-    [[:db.fn/call retract-tempids ids]
-     [:db.fn/call ecosystem-postprocessing ecosystem ids tids tid->id]
+    [[:db.fn/call ecosystem-postprocessing ecosystem ids id->tid]
+     [:db.fn/call retract-tempids ids]
      [:db.fn/call validate-transaction ecosystem ids]]))
