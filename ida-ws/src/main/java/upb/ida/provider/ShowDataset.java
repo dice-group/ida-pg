@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 
 import java.io.File;
-import java.util.Arrays;
 
 import static upb.ida.constant.IDALiteral.DS_PATH;
 
@@ -18,10 +17,15 @@ public class ShowDataset implements Subroutine {
     private ResponseBean responseBean;
 
     public String call(com.rivescript.RiveScript rs, String[] args) {
-//        String message = args[0].toLowerCase().trim();
         File directory = new File(DS_PATH);
-        String files1 = Arrays.toString(directory.list());
+        String[] files = directory.list();
+        String temp = "Datasets: ";
+        for (String file: files) {
+            temp = temp + FilenameUtils.removeExtension(file) + ", ";
+        }
+
         responseBean.setChatmsg(DS_PATH);
-        return FilenameUtils.removeExtension(files1);
+        temp = temp.substring(0, temp.length() - 1);
+        return temp;
     }
 }

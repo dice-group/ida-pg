@@ -1,35 +1,23 @@
 package upb.ida.rest;
 
 import java.io.*;
-import java.nio.file.attribute.AclEntry;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer;
-import no.acando.xmltordf.Builder;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.query.*;
 import org.apache.jena.util.FileManager;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-//import org.springframework.web.method.annotation.ModelFactory;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 import upb.ida.bean.ResponseBean;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 import upb.ida.util.UploadManager;
 import upb.ida.util.FileConversionUtil;
 
-import javax.xml.crypto.Data;
-import javax.xml.parsers.ParserConfigurationException;
-
 import static upb.ida.constant.IDALiteral.DS_PATH;
-import static upb.ida.util.FileConversionUtil.csvToRDF;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot
@@ -71,7 +59,7 @@ public class MessageRestController {
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
 		String reply = rsService.getRSResponse(msg);
-		
+
 		response.setChatmsg(reply);
 		return response;
 	}
@@ -90,23 +78,23 @@ public class MessageRestController {
 	}
 
 	@PostMapping("/file")
-	public String convert(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) throws IOException, Exception{
-		String status;
+	public ResponseBean convert(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) throws IOException, Exception{
+//		String status;
 
 		if(file.getContentType().equals("text/xml") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("xml")){
 			byte[] bytes = file.getBytes();
 			UploadManager.saveFile(fileName.toLowerCase(), FileConversionUtil.xmlToRDF(bytes));
-			status = "pass";
+//			status = "pass";
 		}
 		else if(file.getContentType().equals("text/csv") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("csv")){
 			byte[] bytes = file.getBytes();
 			UploadManager.saveFile(fileName.toLowerCase(), FileConversionUtil.csvToRDF(bytes));
-			status = "pass";
+//			status = "pass";
 		}
-		else
-			status = "fail";
+//		else
+//			status = "fail";
 
-		return status;
+		return response;
 	}
 
 	@GetMapping(value = "/sparql")
