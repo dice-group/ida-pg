@@ -3,9 +3,10 @@
             [lib-scraper.helpers.spec :as hs]
             [lib-scraper.model.syntax :refer [defconcept]]
             [lib-scraper.model.concepts.named :refer [named]]
+            [lib-scraper.model.concepts.typed :refer [typed]]
             [lib-scraper.model.concepts.callable :as callable]))
 
-(defconcept parameter [named]
+(defconcept parameter [named typed]
   :attributes {::position {:db/doc "Position of the parameter."}
                ::optional {:db/doc "Denotes whether this parameter is optional."}}
   :spec ::parameter)
