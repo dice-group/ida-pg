@@ -11,3 +11,4 @@
 
 #Log files
 *.log
+*.log.*
