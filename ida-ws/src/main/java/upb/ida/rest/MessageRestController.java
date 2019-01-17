@@ -14,6 +14,7 @@ import upb.ida.bean.ResponseBean;
 import org.apache.jena.rdf.model.Model;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
+import upb.ida.util.SessionUtil;
 import upb.ida.util.UploadManager;
 import upb.ida.util.FileConversionUtil;
 
@@ -35,6 +36,10 @@ public class MessageRestController {
 	private RiveScriptService rsService;
 	@Autowired 
 	private DataService dataService;
+	@Autowired
+	SessionUtil sessionUtil;
+	int id = 0;
+
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
@@ -79,21 +84,24 @@ public class MessageRestController {
 
 	@PostMapping("/file")
 	public ResponseBean convert(@RequestParam(value="file") MultipartFile file, @RequestParam(value="fileName") String fileName) throws IOException, Exception{
-//		String status;
+//		TODO: ID unique implementation required
 
 		if(file.getContentType().equals("text/xml") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("xml")){
 			byte[] bytes = file.getBytes();
 			UploadManager.saveFile(fileName.toLowerCase(), FileConversionUtil.xmlToRDF(bytes));
-//			status = "pass";
 		}
 		else if(file.getContentType().equals("text/csv") && UploadManager.getFileExtension(file.getOriginalFilename()).equals("csv")){
 			byte[] bytes = file.getBytes();
 			UploadManager.saveFile(fileName.toLowerCase(), FileConversionUtil.csvToRDF(bytes));
-//			status = "pass";
 		}
-//		else
-//			status = "fail";
-
+//		Map<String, Object> fileMap = new HashMap<>();
+		Map<Integer, String> idMap = new HashMap<>();
+		idMap.put(id, DS_PATH + fileName + ".ttl");
+//		fileMap.put("FileMap", idMap);
+		id++;
+//		response.setPayload(fileMap);
+		sessionUtil.getSessionMap().put("FileMap", idMap);
+		response.setChatmsg("Please download the file at: <a href=" + DS_PATH + fileName + ".ttl" + ">" + fileName + "</a>");
 		return response;
 	}
 
