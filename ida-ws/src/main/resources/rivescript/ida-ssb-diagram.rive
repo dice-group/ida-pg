@@ -1,0 +1,6 @@
++ show me the sequence sun burst diagram
+- alright! tell me which columns should i use?
+^ <br> (HINT: you can tell as <br> e.g. use column1 sequenced on column2)
++ use * sequenced on *
+* <call> SSBDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading sequence sun burst diagram in a moment!
+
