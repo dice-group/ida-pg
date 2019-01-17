@@ -1,7 +1,5 @@
 package com.poc.services;
 
-import com.poc.commands.UserForm;
-import com.poc.converters.UserFormToUser;
 import com.poc.model.User;
 import com.poc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +13,14 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-    private UserFormToUser userFormToUser;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserFormToUser userFormToUser) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userFormToUser = userFormToUser;
     }
 
-
     @Override
-    public List<User> listAll() {
+    public List<User> listAllUsers() {
         List<User> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add); //fun with Java 8
         return users;
@@ -50,13 +45,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
-    }
-
-    @Override
-    public User saveOrUpdateProductForm(UserForm userForm) {
-        User savedUser = saveOrUpdate(userFormToUser.convert(userForm));
-
-        System.out.println("Saved User Id: " + savedUser.getId());
-        return savedUser;
     }
 }
