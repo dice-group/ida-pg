@@ -45,11 +45,19 @@ java -jar target/lib-scraper.jar query libs/scikit-learn \
   '[:find ?name :where [?p :type :namespace] [?p :namespace/name ?name]]'
 # => Prints the names of all the namespaces of scikit-learn.
 ```
-
 A good introduction to Datalog can be found [here](http://www.learndatalogtoday.org/).
+
 To see which attributes and types are available for queries, you can use the `print-schema` command:
 ```shell
 java -jar target/lib-scraper.jar print-schema python
+# => Prints the attributes and concept types of python library scrapes.
+```
+
+Alternatively the CLI also supports so called [pull queries](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
+```shell
+java -jar target/lib-scraper.jar pull libs/scikit-learn \
+	'[*]' '[:class/id "sklearn.cluster.KMeans"]'
+# => Prints all attributes and subattributes of the KMeans class.
 ```
 
 ### 1.4. Writing your own scrape configurations

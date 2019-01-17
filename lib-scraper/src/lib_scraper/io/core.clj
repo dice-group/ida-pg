@@ -25,3 +25,12 @@
 (defn query-file
   [scrape-file query & args]
   (apply query-scrape (scrape/read-scrape scrape-file) query args))
+
+(defn pull-scrape
+  [scrape selector eid]
+  (let [{:keys [scrape ecosystem]} scrape]
+    (mdb/pull ecosystem scrape selector eid)))
+
+(defn pull-file
+  [scrape-file selector eid]
+  (pull-scrape (scrape/read-scrape scrape-file) selector eid))

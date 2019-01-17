@@ -5,8 +5,5 @@
 
 (defconcept datatype [named]
   :attributes {::id {:db/unique :db.unique/identity
-                     :db/doc "Unique name of the datatype."}
-               ::instance {:db/valueType :db.type/ref
-                           :db/cardinality :db.cardinality/many
-                           :db/doc "Concepts of this type."}}
+                     :db/doc "Unique name of the datatype."}}
   :preprocess {::named/name (add-attr ::id)})

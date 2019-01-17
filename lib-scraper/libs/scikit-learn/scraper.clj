@@ -82,7 +82,7 @@
           ; datatypes:
           {:trigger :parameter
            :concept :datatype
-           :ref-to-trigger :datatype/instance
+           :ref-from-trigger :parameter/datatype
            :pattern :parameter-info}
           {:trigger :datatype
            :attribute :datatype/name

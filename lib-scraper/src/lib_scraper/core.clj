@@ -38,6 +38,10 @@
   [{:keys [scrape query mode]}]
   (mode-print (io/query-file scrape query) mode))
 
+(defn pull
+  [{:keys [scrape selector eid mode]}]
+  (mode-print (io/pull-file scrape selector eid) mode))
+
 (defn print-schema
   [{:keys [ecosystem]}]
   (if-let [{:keys [concept-aliases attribute-aliases attributes version]} (m/ecosystems ecosystem)]
@@ -107,6 +111,19 @@
                        :type :string}
                       {:option "query" :short 1
                        :as "A Datalog query. See https://docs.datomic.com/on-prem/query.html."
+                       :type :edn}
+                      {:option "mode" :as (:mode descs) :short "m"
+                       :type :string, :default "pretty"}]}
+              {:command "pull" :short "p"
+               :runs pull
+               :description "Selects the given attributes of a given entity from a given scrape file."
+               :opts [{:option "scrape" :as (:scrape descs) :short 0
+                       :type :string}
+                      {:option "selector" :short 1
+                       :as "A pull selector. See https://docs.datomic.com/on-prem/pull.html."
+                       :type :edn}
+                      {:option "eid" :short 2
+                       :as "The id that should be selected."
                        :type :edn}
                       {:option "mode" :as (:mode descs) :short "m"
                        :type :string, :default "pretty"}]}
