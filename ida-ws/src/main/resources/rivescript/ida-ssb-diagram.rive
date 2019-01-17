@@ -4,3 +4,11 @@
 + use * sequenced on *
 * <call> SSBDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading sequence sun burst diagram in a moment!
 
+
++ i want sequence-sunburst diagram for this table
+@ show me the sequence sun burst diagram
++ i want ssb for this table
+@ show me the sequence sun burst diagram
++ i want sequence-sunburst diagram
+@ show me the sequence sun burst diagram
+
