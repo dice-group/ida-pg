@@ -7,14 +7,16 @@ function build_container() {
     echo "Building $1:"
     tag=$registry/ida/$1:$version
     echo "Building $tag..."
-    docker build . -f $2 -t $tag
-    echo "Successfully built $tag."
-    docker push $tag
-    echo "Successfully pushed $tag."
+    if docker build ${@:2} -t $tag; then
+        echo "Successfully built $tag."
+        if docker push $tag; then
+            echo "Successfully pushed $tag."
+        fi
+    fi
 }
 
-build_container nginx ./Dockerfile-nginx
-build_container ida-ws ida-ws/Dockerfile
+build_container nginx . -f Dockerfile-nginx
+build_container ida-ws ida-ws
 
 export REGISTRY=$registry
 export VERSION=$version
