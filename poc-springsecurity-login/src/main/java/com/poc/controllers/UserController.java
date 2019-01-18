@@ -1,5 +1,6 @@
 package com.poc.controllers;
 
+import com.poc.ResponseBean;
 import com.poc.model.User;
 import com.poc.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,32 +13,69 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class UserController {
 	
 	@Autowired
     private UserService userService;
+	
+	@Autowired
+	private ResponseBean responseBean;
 
     @RequestMapping(value="/user/list", method=RequestMethod.GET)
     @ResponseBody
-    public List<User> listUsers(){
-        return userService.listAllUsers();
+    public ResponseBean listUsers(){
+    	List<User> users = userService.listAllUsers();
+    	if(users.isEmpty() || users == null)
+    	{
+    		responseBean.setErrCode(404);
+    	}
+    	else 
+    	{
+    		Map<String, Object> returnMap = new HashMap<String, Object>();
+    		returnMap.put("users", users);
+    		responseBean.setPayload(returnMap);
+    	}
+        return responseBean; 
     }
 
-    @RequestMapping(value="user/edit/{id}", method=RequestMethod.GET)
+    @RequestMapping(value="/user/update", method=RequestMethod.POST)
     @ResponseBody
-    public User edit(@PathVariable String id){
-        User user = userService.getById(Long.valueOf(id));
-        return user;
+    public ResponseBean updateUser(@RequestBody final User user){
+    	User updatedUser = userService.saveOrUpdate(user);
+    	if(updatedUser == null)
+    	{
+    		responseBean.setErrCode(404);
+    	}
+    	else 
+    	{
+    		Map<String, Object> returnMap = new HashMap<String, Object>();
+    		returnMap.put("updatedUser", updatedUser);
+    		responseBean.setPayload(returnMap);
+    	}
+        return responseBean; 
     }
     
     @RequestMapping(value="/user/new", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void createNewUser(@RequestBody final User user) {
-        userService.saveOrUpdate(user);
+    public ResponseBean createNewUser( final User user) {  
+    	User newUser = userService.saveOrUpdate(user);
+    	if(newUser == null)
+    	{
+    		responseBean.setErrCode(404);
+    	}
+    	else 
+    	{
+    		Map<String, Object> returnMap = new HashMap<String, Object>();
+    		returnMap.put("newUser", newUser);
+    		responseBean.setPayload(returnMap);
+    	}
+        return responseBean; 
     }
 
     @RequestMapping("/user/delete/{id}")
