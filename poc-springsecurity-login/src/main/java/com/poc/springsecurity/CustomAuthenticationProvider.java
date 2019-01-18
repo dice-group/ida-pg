@@ -24,23 +24,25 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) 
       throws AuthenticationException {
-  
+    	
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
         
         User currentUser = userService.getByUsername(name);
        
+        if (currentUser == null) return null;
         if(currentUser.getUsername().equals(name) && currentUser.getPassword().equals(password)) {//shouldAuthenticateAgainstThirdPartySystem()) {
   
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
+            if(currentUser.getUserRole().equals("ADMIN"))
+            	grantedAuths.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
-            grantedAuths.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            // use the credentials
-            // and authenticate against the third-party system
+            
             return new UsernamePasswordAuthenticationToken(
               name, password, grantedAuths);
         } else {
-            return null;
+        	authentication.setAuthenticated(false);
+            return authentication;
         }
     }
  

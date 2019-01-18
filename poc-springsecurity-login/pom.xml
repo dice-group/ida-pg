@@ -96,6 +96,14 @@
     		<artifactId>neo4j-jdbc-driver</artifactId>
     		<version>3.4.0</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>mail</artifactId>
+		    <version>1.4</version>
+		</dependency>
+		
 
     </dependencies>
 

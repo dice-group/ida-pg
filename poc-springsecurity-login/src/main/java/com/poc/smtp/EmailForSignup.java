@@ -1,24 +1,21 @@
 package com.poc.smtp;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.activation.*;
 
 public class EmailForSignup {
 
 	private static String ToUserName;
 	
-	private static final String FROM = "dice-ida@mail.uni-paderborn.de";
-	private static final String FROMNAME = "DICE Manager";
-	private static final String SMTP_USERNAME = "";
-	private static final String SMTP_PASSWORD = "";
+	private static final String FROM = "idapg@mail.uni-paderborn.de";
+	private static final String FROMNAME = "DICE IDA TEAM";
+	private static final String SMTP_USERNAME = "idapg@mail.uni-paderborn.de";
+	private static final String SMTP_PASSWORD = "diceIDA1-";
 	private static final String CONFIGSET = "ConfigSet";
     
 	private static final String HOST = "mail.uni-paderborn.de"; 
@@ -80,7 +77,7 @@ public class EmailForSignup {
     }
     
 //    public static void main(String[] args) throws Exception {
-//    	String userName = "itsayazmaqbool@gmail.com";
+//    	String userName = "ayazmaqbooluet@gmail.com";
 //    	EmailForSignup.sendEmail(userName);
 //    }
 }
