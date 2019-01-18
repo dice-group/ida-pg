@@ -48,7 +48,6 @@ public class ClusterDataGetter implements Subroutine {
 	 * @return - String "pass" or "fail"
 	 */
 
-	
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 
 		String columns;
@@ -144,8 +143,6 @@ public class ClusterDataGetter implements Subroutine {
 	
 	}
 	
-	
-	
 	/** Method to get all columns 
 	 * 
 	 * @param key - column names provided by user
@@ -153,7 +150,6 @@ public class ClusterDataGetter implements Subroutine {
 	 * 
 	 * @return - String
 	 */
-	
 	private String getMatchingKey(String key, Map<String, String> dataMap) {
 		Set<String> keySet = dataMap.keySet();
 		String res = null;
@@ -181,7 +177,6 @@ public class ClusterDataGetter implements Subroutine {
 	 * 
 	 * 
 	 */
-	
 	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 		
 		List<Map<String, Object>> responseList=new ArrayList<>();
@@ -216,8 +211,6 @@ public class ClusterDataGetter implements Subroutine {
 		responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
 		
 	}
-	
-	
 }
 
 
