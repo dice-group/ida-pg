@@ -62,7 +62,7 @@ public class DataDumpTest {
 	
 
 	@Test
-	public void Âlgoparams() {
+	public void Algoparams() {
 		//System.out.println(dataDumpUtil.getClusterAlgoParams("KMeans_TEST"));
 	}
 	

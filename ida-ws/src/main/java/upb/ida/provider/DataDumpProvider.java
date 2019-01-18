@@ -74,9 +74,6 @@ public class DataDumpProvider {
 		
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(fqn));
 		
-		if(res.size() == 0)
-			throw new RuntimeException(fqn + " does not exist in the scrape.");
-		
 		List<Object> data = res.get(0);
 		Long id = (Long) data.get(0);
 		String name = (String) data.get(1);
@@ -100,9 +97,6 @@ public class DataDumpProvider {
 		
 		@SuppressWarnings("unchecked")
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(pid));
-		
-		if(res.size() == 0)
-			throw new RuntimeException(pid + " is not fully specified.");
 		
 		List<Object> data = res.get(0);
 		String name = (String) data.get(0);
