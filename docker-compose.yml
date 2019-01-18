@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  nginx:
+    image: $REGISTRY/ida/nginx:$VERSION
+    ports:
+      - 80:80
+    networks:
+      - ida-net
+  ida-ws:
+    image: $REGISTRY/ida/ida-ws:$VERSION
+    networks:
+      - ida-net
+
+networks:
+  ida-net:
