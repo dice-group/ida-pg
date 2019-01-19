@@ -2,10 +2,19 @@ package upb.ida.bean;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @NodeEntity
 public class User {
 
+	@Bean
+	public PasswordEncoder encoder() {
+	    return new BCryptPasswordEncoder();
+	}
+    
     @GraphId
     private Long id;
     private String username;
@@ -13,6 +22,7 @@ public class User {
     private String firstname;
     private String lastname;
     private String userrole;
+    private String email;
     
     public User() {
 		this.userrole = "USER";
@@ -39,7 +49,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = encoder().encode(password);
     }
 
     public String getFirstname() {
@@ -64,5 +74,13 @@ public class User {
 
     public void setUserRole(String userrole) {
         this.userrole = userrole;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
