@@ -2,7 +2,10 @@ package upb.ida.rest;
 
 import upb.ida.bean.ResponseBean;
 import upb.ida.bean.User;
+import upb.ida.constant.IDALiteral;
 import upb.ida.service.UserService;
+import upb.ida.smtp.EmailForSignup;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -30,9 +33,9 @@ public class UserController {
     @ResponseBody
     public ResponseBean listUsers(){
     	List<User> users = userService.listAllUsers();
-    	if(users.isEmpty() || users == null)
+    	if(users == null)
     	{
-    		responseBean.setErrCode(404);
+    		responseBean.setErrCode(IDALiteral.FAILURE_USERLIST);
     	}
     	else 
     	{
@@ -49,7 +52,7 @@ public class UserController {
     	User updatedUser = userService.saveOrUpdate(user);
     	if(updatedUser == null)
     	{
-    		responseBean.setErrCode(404);
+    		responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
     	}
     	else 
     	{
@@ -63,17 +66,30 @@ public class UserController {
     @RequestMapping(value="/user/new", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ResponseBean createNewUser(@RequestBody final User user) {  
+    public ResponseBean createNewUser(@RequestBody final User user) throws Exception {
+    	
+    	if(userService.getByUsername(user.getUsername()) != null)
+    	{
+    		responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
+    		return responseBean;
+    	}
     	User newUser = userService.saveOrUpdate(user);
     	if(newUser == null)
     	{
-    		responseBean.setErrCode(404);
+    		responseBean.setErrCode(IDALiteral.FAILURE_NEWUSER);
     	}
     	else 
     	{
     		Map<String, Object> returnMap = new HashMap<String, Object>();
     		returnMap.put("newUser", newUser);
     		responseBean.setPayload(returnMap);
+    		try{
+    			EmailForSignup.sendEmail(newUser.getEmail());
+    		}catch(Exception ex)
+    		{
+    			responseBean.setErrCode(IDALiteral.FAILURE_EMAILSENT);
+    			responseBean.setErrMsg(ex.getMessage());
+    		}
     	}
         return responseBean; 
     }
