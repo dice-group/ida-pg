@@ -63,7 +63,7 @@ public class UserController {
     @RequestMapping(value="/user/new", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ResponseBean createNewUser( final User user) {  
+    public ResponseBean createNewUser(@RequestBody final User user) {  
     	User newUser = userService.saveOrUpdate(user);
     	if(newUser == null)
     	{

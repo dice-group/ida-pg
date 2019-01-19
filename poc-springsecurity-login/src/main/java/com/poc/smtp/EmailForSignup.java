@@ -10,11 +10,12 @@ import javax.mail.internet.MimeMessage;
 
 public class EmailForSignup {
 
+	private static boolean emailSent = false;
 	private static String ToUserName;
 	
 	private static final String FROM = "idapg@mail.uni-paderborn.de";
 	private static final String FROMNAME = "DICE IDA TEAM";
-	private static final String SMTP_USERNAME = "idapg@mail.uni-paderborn.de";
+	private static final String SMTP_USERNAME = "idapg";
 	private static final String SMTP_PASSWORD = "diceIDA1-";
 	private static final String CONFIGSET = "ConfigSet";
     
@@ -36,9 +37,9 @@ public class EmailForSignup {
     	    + "DICE TEAM</p>"
     	);
 
-    public static void sendEmail(String userName) throws Exception
+    public static boolean sendEmail(String userName) throws Exception
     {
-    	if(userName.isEmpty()) return;
+    	if(userName.isEmpty()) return emailSent;
     	ToUserName = userName;
     	Properties props = System.getProperties();
     	props.put("mail.transport.protocol", "smtp");
@@ -60,24 +61,15 @@ public class EmailForSignup {
         try
         {          
             transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
-        	
             transport.sendMessage(msg, msg.getAllRecipients());
-            System.out.println("Email sent!");
+            emailSent = true;
         }catch (MessagingException mex) {
             mex.printStackTrace();
-        }
-        catch (Exception ex) {
-            System.out.println("The email was not sent.");
-            System.out.println("Error message: " + ex.getMessage());
         }
         finally
         {
             transport.close();
         }
+        return emailSent;
     }
-    
-//    public static void main(String[] args) throws Exception {
-//    	String userName = "ayazmaqbooluet@gmail.com";
-//    	EmailForSignup.sendEmail(userName);
-//    }
 }
