@@ -59,12 +59,4 @@ public class DataDumpTest {
 		
 		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
 	}
-	
-
-	@Test
-	public void Algoparams() {
-		//System.out.println(dataDumpUtil.getClusterAlgoParams("KMeans_TEST"));
-	}
-	
-	
 }
