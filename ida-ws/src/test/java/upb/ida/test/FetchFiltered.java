@@ -1,6 +1,8 @@
 package upb.ida.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -27,7 +29,9 @@ public class FetchFiltered {
 
 	@Autowired
 	FileUtil fileutil;
+	@Autowired
 	BarGraphUtil barutil;
+	@Autowired
 	ListMapsForFilteringCheck filterMaps;
 	
 	
@@ -36,30 +40,69 @@ public class FetchFiltered {
 		
 			File filterTest = new File(fileutil.fetchSysFilePath("FilterTest.csv"));
 		List<Map<String, String>> listMapA = fileutil.convertToMap(filterTest);
-			String[] topAsc = {"TopN" ,"3", "height", "ascending" };
+		
+			String[] topAsc = {"TOPN" ,"3", "height", "ascending"};
 			String[] topDes =  {"TopN" ,"3", "height", "descending" };
-			String[] firstN =  {"firstN" ,"3", "height", "ascending" };
-			String[] lastN =  {"lastN" ,"3", "height", "ascending" };
+			String[] firstN =  {"FIRSTN" ,"3" };
+			String[] lastN =  {"LASTN" ,"3", "height", "ascending" };
+			//String[] fromTo =  {"FROMTO" ,"1", "3"};
 		
 		
-		List<Map<String,String>> actualHeightAsc = barutil.fetchFilteredData(listMapA, topAsc); 
+		List<Map<String,String>> actualHeightAsc = barutil.fetchFilteredData(listMapA, topAsc);
 		List<Map<String,String>> expectedHeightAsc = filterMaps.generateMapsforTopAsc();
+		
+		for (int i = 0; i < actualHeightAsc.size(); i++) {
+
+			Map<String, String> aMap = actualHeightAsc.get(i);
+			Map<String, String> bMap = expectedHeightAsc.get(i);
+     		boolean result = ListMapsForFilteringCheck.compareMaps(aMap, bMap);
+     		assertTrue(result);
+		}		
+				
 		
 		List<Map<String,String>> actualHeightDes = barutil.fetchFilteredData(listMapA, topDes); 
 		List<Map<String,String>> expectedHeightDes = filterMaps.generateMapsforTopAsc();
 		
-		List<Map<String,String>> actualFirstN = barutil.fetchFilteredData(listMapA, firstN); 
-		List<Map<String,String>> expectedFirstN = filterMaps.generateMapsforTopAsc();
-		
-		List<Map<String,String>> actualLastN = barutil.fetchFilteredData(listMapA, lastN); 
-		List<Map<String,String>> expectedLastN = filterMaps.generateMapsforTopAsc();
-		//System.out.println(expected);
+         for (int i = 0; i < actualHeightDes.size(); i++) {
 
-	
-		assertEquals(expectedHeightAsc, actualHeightAsc);
-		assertEquals(expectedHeightDes, actualHeightDes);
-		assertEquals(expectedFirstN, actualFirstN);
-		assertEquals(expectedLastN, actualLastN);
+		Map<String, String> aMap = actualHeightDes.get(i);
+		Map<String, String> bMap = expectedHeightDes.get(i);
+ 		boolean result = ListMapsForFilteringCheck.compareMaps(aMap, bMap);
+ 		assertTrue(result);
+	}		
 		
-	}	
+		List<Map<String,String>> actualFirstN = barutil.fetchFilteredData(listMapA, firstN); 
+    	List<Map<String,String>> expectedFirstN = filterMaps.generateMapsforTopAsc();
+    	
+    	for (int i = 0; i < actualFirstN.size(); i++) {
+
+    		Map<String, String> aMap = actualFirstN.get(i);
+    		Map<String, String> bMap = expectedFirstN.get(i);
+     		boolean result = ListMapsForFilteringCheck.compareMaps(aMap, bMap);
+     		assertTrue(result);
+    	}		
+	
+		List<Map<String,String>> actualLastN = barutil.fetchFilteredData(listMapA, lastN);
+		List<Map<String,String>> expectedLastN = filterMaps.generateMapsforTopAsc();
+		
+		for (int i = 0; i < actualLastN.size(); i++) {
+
+    		Map<String, String> aMap = actualFirstN.get(i);
+    		Map<String, String> bMap = expectedLastN.get(i);
+     		boolean result = ListMapsForFilteringCheck.compareMaps(aMap, bMap);
+     		assertTrue(result);
+    	}		
+		
+//		List<Map<String,String>> actualFromTo = barutil.fetchFilteredData(listMapA, fromTo);
+//		System.out.println(actualFromTo);
+////		List<Map<String,String>> expectedFromTo = filterMaps.generateMapsforTopAsc();
+//		
+//		for (int i = 0; i < actualLastN.size(); i++) {
+//
+//    		Map<String, String> aMap = actualFromTo.get(i);
+//    		Map<String, String> bMap = expectedFromTo.get(i);
+//     		boolean result = ListMapsForFilteringCheck.compareMaps(aMap, bMap);
+//     		assertTrue(result);
+//    	}		
+	}
 }
