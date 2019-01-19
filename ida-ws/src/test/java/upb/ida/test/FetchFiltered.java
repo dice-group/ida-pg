@@ -38,6 +38,8 @@ public class FetchFiltered {
 		List<Map<String, String>> listMapA = fileutil.convertToMap(filterTest);
 			String[] topAsc = {"TopN" ,"3", "height", "ascending" };
 			String[] topDes =  {"TopN" ,"3", "height", "descending" };
+			String[] firstN =  {"firstN" ,"3", "height", "ascending" };
+			String[] lastN =  {"lastN" ,"3", "height", "ascending" };
 		
 		
 		List<Map<String,String>> actualHeightAsc = barutil.fetchFilteredData(listMapA, topAsc); 
@@ -45,11 +47,19 @@ public class FetchFiltered {
 		
 		List<Map<String,String>> actualHeightDes = barutil.fetchFilteredData(listMapA, topDes); 
 		List<Map<String,String>> expectedHeightDes = filterMaps.generateMapsforTopAsc();
+		
+		List<Map<String,String>> actualFirstN = barutil.fetchFilteredData(listMapA, firstN); 
+		List<Map<String,String>> expectedFirstN = filterMaps.generateMapsforTopAsc();
+		
+		List<Map<String,String>> actualLastN = barutil.fetchFilteredData(listMapA, lastN); 
+		List<Map<String,String>> expectedLastN = filterMaps.generateMapsforTopAsc();
 		//System.out.println(expected);
 
 	
 		assertEquals(expectedHeightAsc, actualHeightAsc);
 		assertEquals(expectedHeightDes, actualHeightDes);
+		assertEquals(expectedFirstN, actualFirstN);
+		assertEquals(expectedLastN, actualLastN);
 		
 	}	
 }
