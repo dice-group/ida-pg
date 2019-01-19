@@ -3,8 +3,14 @@ package upb.ida.service;
 import upb.ida.bean.User;
 import upb.ida.repository.UserRepository;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +23,9 @@ public class UserService{
     private UserRepository userRepository;
 
     public List<User> listAllUsers() {
-        List<User> users = new ArrayList<>();
+    	List<User> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add); //fun with Java 8
+        users.forEach(user -> user.setPassword(""));
         return users;
     }
 

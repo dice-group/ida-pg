@@ -14,6 +14,13 @@ public interface IDALiteral {
 	public static final int UIA_CLUSTER = 4;
 	public static final int UIA_DTTABLE = 5;
 	
+	//Error Literals
+	public static final int FAILURE_USERLIST = 15;
+	public static final int FAILURE_UPDATEUSER = 16;
+	public static final int FAILURE_NEWUSER = 17;
+	public static final int FAILURE_EMAILSENT = 18;
+	public static final int FAILURE_USEREXISTS = 19;
+	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
 	public static final String RS_USER = "user";

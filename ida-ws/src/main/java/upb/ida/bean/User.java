@@ -49,7 +49,10 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = encoder().encode(password);
+    	if (password.isEmpty())
+    		this.password = null;
+    	else
+    		this.password = encoder().encode(password);
     }
 
     public String getFirstname() {
