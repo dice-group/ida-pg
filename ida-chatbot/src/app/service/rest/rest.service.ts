@@ -1,12 +1,21 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest} from '@angular/common/http';
+import {
+  HttpClient,
+  HttpEvent,
+  HttpHandler,
+  HttpHeaders,
+  HttpInterceptor,
+  HttpParams,
+  HttpRequest
+} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestService implements HttpInterceptor {
-  private hosturl = 'http://131.234.28.84:8080/ida-ws/';
+  private hosturl = 'http://127.0.0.1:8080/ida-ws/';
+  // private hosturl = 'http://131.234.28.84:8080/ida-ws/';
   public requestEvnt: EventEmitter<boolean> = new EventEmitter();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -44,4 +53,31 @@ export class RestService implements HttpInterceptor {
     const reqObs = this.http.get(this.getFullUrl(path), {params: params});
     return reqObs;
   }
+
+  public postRequest(path: string, body: object,  prmobj: object): Observable<any> {
+    // let params = new HttpParams();
+    // for (const x in prmobj) {
+    //   if (prmobj[x] != null) {
+    //     params = params.set(x, prmobj[x]);
+    //   }
+    // }
+    // this.requestEvnt.emit(true);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    const options = {headers: headers};
+    const reqObs = this.http.post(this.getFullUrl(path), body, options);
+    return reqObs;
+  }
+
+  public deleteRequest(path: string): Observable<any> {
+    this.requestEvnt.emit(true);
+    // const headers = new HttpHeaders({
+    //   'Content-Type': 'application/json',
+    // });
+    const options = {};
+    const reqObs = this.http.delete(this.getFullUrl(path), options);
+    return reqObs;
+  }
+
 }
