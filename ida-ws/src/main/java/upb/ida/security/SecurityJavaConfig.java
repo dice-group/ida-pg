@@ -30,6 +30,9 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
 	@Autowired(required=true)
 	private CustomAuthenticationFailureHandler myFailureHandler;
 	
+	@Autowired(required=true)
+	private CustomLogoutSuccessHandler logoutSuccessHandler;
+	
     @Autowired
     private CustomAuthenticationProvider authProvider;
     
@@ -51,7 +54,7 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
 		  .failureHandler(myFailureHandler)
 		  .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
 		  .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
-		  .logoutSuccessUrl("/auth/response?logout")
+		  .logoutSuccessHandler(logoutSuccessHandler)
 		  .and()
           .httpBasic();
     }
