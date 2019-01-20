@@ -15,7 +15,7 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/auth")
 public class LoginController {
 	
