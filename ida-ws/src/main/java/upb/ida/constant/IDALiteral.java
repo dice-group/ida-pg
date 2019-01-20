@@ -20,6 +20,10 @@ public interface IDALiteral {
 	public static final int FAILURE_NEWUSER = 17;
 	public static final int FAILURE_EMAILSENT = 18;
 	public static final int FAILURE_USEREXISTS = 19;
+	public static final int FAILURE_CREDENTIALSINCORRECT = 20;
+	public static final int LOGIN_REQUIRED = 21;
+	public static final int FAILURE_USERNOTEXISTS = 22;
+	public static final int ALREADY_LOGGEDIN = 23;
 	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";

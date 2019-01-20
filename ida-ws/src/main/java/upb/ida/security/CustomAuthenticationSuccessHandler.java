@@ -16,7 +16,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication arg2)
             throws IOException, ServletException {
-        RequestDispatcher rd = request.getRequestDispatcher("/login?success");
+        RequestDispatcher rd = request.getRequestDispatcher("/auth/response?success");
         rd.forward(request, response);
         
     }

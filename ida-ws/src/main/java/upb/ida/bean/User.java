@@ -22,7 +22,6 @@ public class User {
     private String firstname;
     private String lastname;
     private String userrole;
-    private String email;
     
     public User() {
 		this.userrole = "USER";
@@ -77,13 +76,5 @@ public class User {
 
     public void setUserRole(String userrole) {
         this.userrole = userrole;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

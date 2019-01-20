@@ -16,7 +16,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException, ServletException {
-        RequestDispatcher rd = request.getRequestDispatcher("/login?error");
+        RequestDispatcher rd = request.getRequestDispatcher("/auth/response?error");
         rd.forward(request, response);
     }
 }
