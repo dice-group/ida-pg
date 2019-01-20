@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/admin/user")
 public class UserController {
 	
 	@Autowired
@@ -29,7 +30,7 @@ public class UserController {
 	@Autowired
 	private ResponseBean responseBean;
 
-    @RequestMapping(value="/user/list", method=RequestMethod.GET)
+    @RequestMapping(value="/list", method=RequestMethod.GET)
     @ResponseBody
     public ResponseBean listUsers(){
     	List<User> users = userService.listAllUsers();
@@ -46,7 +47,7 @@ public class UserController {
         return responseBean; 
     }
 
-    @RequestMapping(value="/user/update", method=RequestMethod.POST)
+    @RequestMapping(value="/update", method=RequestMethod.POST)
     @ResponseBody
     public ResponseBean updateUser(@RequestBody final User user){
     	User updatedUser = userService.saveOrUpdate(user);
@@ -63,7 +64,7 @@ public class UserController {
         return responseBean; 
     }
     
-    @RequestMapping(value="/user/new", method = RequestMethod.POST)
+    @RequestMapping(value="/new", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseBean createNewUser(@RequestBody final User user) throws Exception {
@@ -84,7 +85,7 @@ public class UserController {
     		returnMap.put("newUser", newUser);
     		responseBean.setPayload(returnMap);
     		try{
-    			EmailForSignup.sendEmail(newUser.getEmail());
+    			EmailForSignup.sendEmail(newUser.getUsername());
     		}catch(Exception ex)
     		{
     			responseBean.setErrCode(IDALiteral.FAILURE_EMAILSENT);
@@ -94,9 +95,17 @@ public class UserController {
         return responseBean; 
     }
 
-    @RequestMapping("/user/delete/{id}")
+    @RequestMapping("/delete/{id}")
     @ResponseBody
-    public void deleteUser(@PathVariable String id){
-    	userService.delete(Long.valueOf(id));
+    public ResponseBean deleteUser(@PathVariable String id){
+    	if (userService.getById(Long.valueOf(id)) == null)
+    	{
+    		responseBean.setErrCode(IDALiteral.ALREADY_LOGGEDIN);
+    	}else
+    	{
+    		userService.delete(Long.valueOf(id));
+    		responseBean.setErrMsg("User Deleted");
+    	}
+    	return responseBean;
     }
 }
