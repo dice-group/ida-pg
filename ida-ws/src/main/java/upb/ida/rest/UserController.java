@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@CrossOrigin
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/user")
 public class UserController {
 	
