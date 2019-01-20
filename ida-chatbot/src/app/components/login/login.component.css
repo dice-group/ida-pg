@@ -1,0 +1,15 @@
+mat-form-field{
+    width: 400px;
+}
+mat-card-title{
+    text-align: center;
+}
+mat-card{
+    width: 400px;
+    margin: 70px auto;
+}
+mat-spinner{
+    position: absolute;
+    top: 50%;
+    left: 38%;
+}
