@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     min-width: 450px;
-    min-height: 345px;
+    min-height: 285px;
 }
 
 .container > * {
@@ -10,7 +10,7 @@
 }
 
 .container form{
-    min-height: 345px;
+    min-height: 285px;
 }
 
 .form {

@@ -11,6 +11,8 @@ import {TabElement} from '../../models/tab-element';
 import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
 import {TabType} from '../../enums/tab-type.enum';
 import {IdaEventService} from '../../service/event/ida-event.service';
+import {UserService} from '../../service/user/user.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +23,7 @@ export class HomeComponent implements OnInit {
 
   idCount = 1;
   title = 'app';
+  isHidden = true;
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];
@@ -32,13 +35,15 @@ export class HomeComponent implements OnInit {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService) {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService,
+              private ies: IdaEventService, private userservice: UserService, private router: Router) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
   }
 
   ngOnInit() {
+    this.checkLoggedIn();
   }
 
   HomeComponent() {
@@ -124,6 +129,17 @@ export class HomeComponent implements OnInit {
       // load the dataset
       this.actionHandler(resp);
     }
+  }
+
+  checkLoggedIn() {
+    this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+      const returnResp = this.userservice.processUserResponse(resp);
+      if (returnResp.status === true) {
+        this.isHidden = false;
+      } else {
+        this.router.navigate(['login']);
+      }
+    });
   }
 
   public getActiveMainView(): DataViewContainerComponent {

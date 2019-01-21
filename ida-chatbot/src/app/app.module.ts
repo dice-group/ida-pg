@@ -67,6 +67,7 @@ import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import { HomeComponent } from './components/home/home.component';
+import { TopbarComponent } from './components/topbar/topbar.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,7 +92,8 @@ import { HomeComponent } from './components/home/home.component';
     SignupComponent,
     DeleteDialogComponent,
     UpdateDialogComponent,
-    HomeComponent
+    HomeComponent,
+    TopbarComponent
   ],
   imports: [
     BrowserModule,

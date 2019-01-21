@@ -46,14 +46,17 @@ export class UpdateDialogComponent implements  OnInit {
         password: updateFormValue.password
       }
       this.restservice.postRequest('user/update', user, {}).subscribe(resp => {
-        // this.dataSource = this.userservice.processUserResponse(resp);
-
-        this.snackBar.open('User updated successfully', '', {
-          duration: 3000,
-        });
-
-      } );
-        // this.userService.callAPI('update', 'user/update', this.data);
+        const returnResp = this.userservice.processUserResponse(resp);
+        if (returnResp.status === false) {
+          this.snackBar.open(returnResp.respMsg, '', {
+            duration: 4000,
+          });
+        } else {
+          this.snackBar.open('User updated successfully', '', {
+            duration: 3000,
+          });
+        }
+      });
     }
 
     onNoClick(): void {
