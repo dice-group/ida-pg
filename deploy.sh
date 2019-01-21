@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=`cat VERSION`
+version=$(cat VERSION)
 registry=${1:-localhost:5000}
 
 function build_container() {
