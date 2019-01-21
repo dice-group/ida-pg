@@ -11,9 +11,9 @@ public class idaAutomate {
 		// TODO Auto-generated method stub
 		
 		idaAutomate obj = new idaAutomate();
-		//obj.FDG();
+		obj.FDG();
 		obj.clusterAlgo();
-		//obj.barGraph();
+		obj.barGraph();
 
 	}
 	
