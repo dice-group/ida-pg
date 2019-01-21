@@ -1,11 +1,6 @@
 /target/
 /bin/
 
-# Eclipse
-.classpath
-.project
-/.settings/
-
 # IntelliJ
 /.idea/
 /out/
@@ -16,3 +11,4 @@
 
 #Log files
 *.log
+*.log.*
