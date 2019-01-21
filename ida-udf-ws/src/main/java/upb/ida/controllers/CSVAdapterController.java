@@ -13,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/adapter/csv")
 public class CSVAdapterController {
 
-    String csvMimeType = "text/csv";
-    String csvExtension = "csv";
+    private String csvMimeType = "text/csv";
+    private String csvExtension = "csv";
 
     @PostMapping("/")
     public String convert(@RequestBody String text) {

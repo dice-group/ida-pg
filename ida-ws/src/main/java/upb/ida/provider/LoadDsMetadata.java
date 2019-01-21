@@ -32,7 +32,7 @@ public class LoadDsMetadata implements Subroutine {
 	@Autowired
 	private ResponseBean responseBean;
 	@Autowired
-	SessionUtil sessionUtil;
+	private SessionUtil sessionUtil;
 	/**
 	 * Method to create response for loading the data set
 	 * 

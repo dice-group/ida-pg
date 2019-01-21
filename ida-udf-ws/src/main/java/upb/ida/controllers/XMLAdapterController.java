@@ -15,8 +15,8 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/adapter/xml")
 public class XMLAdapterController {
 
-    String xmlMimeType = "text/xml";
-    String xmlExtension = "xml";
+    private String xmlMimeType = "text/xml";
+    private String xmlExtension = "xml";
 
     @PostMapping("/")
     public String convert(@RequestBody String text) throws IOException, SAXException, ParserConfigurationException {

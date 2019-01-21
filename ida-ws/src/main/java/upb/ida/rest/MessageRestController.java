@@ -37,8 +37,9 @@ public class MessageRestController {
 	@Autowired 
 	private DataService dataService;
 	@Autowired
-	SessionUtil sessionUtil;
-	int id = 0;
+	private SessionUtil sessionUtil;
+	
+	private int id = 0;
 
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
