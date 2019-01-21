@@ -3,8 +3,6 @@
 
         <div class="form">
             <mat-form-field color="primary">
-                <!--<input matInput #input class="form-control" placeholder="Username" [(ngModel)]="data.username" name="username" required >-->
-                <!--<mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>-->
               <input matInput #input class="form-control" type="text" placeholder="Username"  formControlName="username" id="username">
               <mat-error *ngIf="hasError('username', 'required')">Username is required</mat-error>
               <mat-error *ngIf="hasError('username', 'maxlength')">You have more than 60 characters</mat-error>
@@ -24,24 +22,11 @@
               <input matInput #input class="form-control" type="text" placeholder="Last name"  formControlName="lastname" id="lastname">
               <mat-error *ngIf="hasError('lastname', 'required')">Last name is required</mat-error>
               <mat-error *ngIf="hasError('lastname', 'maxlength')">You have more than 60 characters</mat-error>
-                <!--<input matInput #input class="form-control" placeholder="Last name" [(ngModel)]="data.lastname" name="lastname" required >-->
-                <!--<mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>-->
-            </mat-form-field>
-        </div>
-
-        <div class="form">
-            <mat-form-field color="primary">
-              <input matInput #input type="email" placeholder="Email" formControlName="email" id="email" name="email" required>
-              <mat-error *ngIf="hasError('email', 'required')">Email is required</mat-error>
-              <mat-error *ngIf="hasError('email', 'email')">Incorrect format</mat-error>
-                <!--<input matInput #input class="form-control" placeholder="Email" [(ngModel)]="data.email" name="email" required >-->
-                <!--<mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>-->
             </mat-form-field>
         </div>
 
         <div mat-dialog-actions>
             <button mat-button [type]="submit" [disabled]="!updateForm.valid" [mat-dialog-close]="1" (click)="submit(updateForm.value)">Save</button>
-          <!--<button mat-raised-button color="primary" [disabled]="!signupForm.valid">Signup</button>-->
             <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
         </div>
     </form>

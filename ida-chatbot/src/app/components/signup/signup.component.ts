@@ -22,6 +22,7 @@ export class SignupComponent implements OnInit {
     constructor(private restservice: RestService, private userservice: UserService, private router: Router, public snackBar: MatSnackBar) { }
 
     ngOnInit() {
+      this.checkLoggedIn();
         this.signupForm = new FormGroup({
             username: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(60)]),
             firstname: new FormControl('', [Validators.required, Validators.maxLength(60)]),
@@ -40,7 +41,17 @@ export class SignupComponent implements OnInit {
         }
     }
 
+    checkLoggedIn() {
+      this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+        const returnResp = this.userservice.processUserResponse(resp);
+        if (returnResp.status === true) {
+          this.router.navigate(['']);
+        }
+      });
+    }
+
     signup(signupFormValue) {
+        this.errMsg = '';
         this.showSpinner = true;
 
         const user = {
@@ -50,13 +61,19 @@ export class SignupComponent implements OnInit {
             password: signupFormValue.password
         }
 
-      this.restservice.postRequest('user/new', {user: user}, {}).subscribe(resp => {
-        // this.dataSource = this.userservice.processUserResponse(resp);
+      this.restservice.postRequest('user/new', user, {}).subscribe(resp => {
+        const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
-        this.snackBar.open('Signup successful', '', {
-          duration: 3000,
-        });
-        this.router.navigate(['login']);
-      } );
+        if (returnResp.status === false) {
+          this.snackBar.open(returnResp.respMsg, '', {
+            duration: 4000,
+          });
+        } else {
+          this.snackBar.open('Signup successful', '', {
+            duration: 3000,
+          });
+          this.router.navigate(['login']);
+        }
+      });
     }
 }

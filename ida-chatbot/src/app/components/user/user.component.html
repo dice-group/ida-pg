@@ -1,10 +1,5 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row class="layout-row layout-align-end-start">
-    <span class="spacer"></span>
-    <a mat-button (click)="logout()">Logout</a>
-  </mat-toolbar-row>
-</mat-toolbar>
-
+<div *ngIf="!this.isHidden">
+  <app-topbar></app-topbar>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
   <ng-container matColumnDef="id">
@@ -48,7 +43,4 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 <mat-spinner style="margin:0 auto;" mode="indeterminate" [style.display]="this.showSpinner ? 'block' : 'none'"></mat-spinner>
-
-<!--<div class="no-results" [style.display]="dataSource.renderedData.length == 0 ? '' : 'none'">-->
-  <!--No results found-->
-<!--</div>-->
+</div>

@@ -14,8 +14,7 @@ import {Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class RestService implements HttpInterceptor {
-  private hosturl = 'http://127.0.0.1:8080/ida-ws/';
-  // private hosturl = 'http://131.234.28.84:8080/ida-ws/';
+  private hosturl = 'http://131.234.28.84:8080/ida-ws/';
   public requestEvnt: EventEmitter<boolean> = new EventEmitter();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -55,18 +54,11 @@ export class RestService implements HttpInterceptor {
   }
 
   public postRequest(path: string, body: object,  prmobj: object): Observable<any> {
-    // let params = new HttpParams();
-    // for (const x in prmobj) {
-    //   if (prmobj[x] != null) {
-    //     params = params.set(x, prmobj[x]);
-    //   }
-    // }
-    // this.requestEvnt.emit(true);
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
+      'Content-Type': path === 'auth/login-action' ? 'application/x-www-form-urlencoded' : 'application/json'
     });
     const options = {headers: headers};
-    const reqObs = this.http.post(this.getFullUrl(path), body, options);
+    const reqObs = this.http.post(this.getFullUrl(path), path === 'auth/login-action' ? this.getFormUrlEncoded(body) : body, options);
     return reqObs;
   }
 
@@ -78,6 +70,16 @@ export class RestService implements HttpInterceptor {
     const options = {};
     const reqObs = this.http.delete(this.getFullUrl(path), options);
     return reqObs;
+  }
+
+  public getFormUrlEncoded(toConvert) {
+    const formBody = [];
+    for(const property in toConvert) {
+      const encodedKey = encodeURIComponent(property);
+      const encodedValue = encodeURIComponent(toConvert[property]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    return formBody.join('&');
   }
 
 }

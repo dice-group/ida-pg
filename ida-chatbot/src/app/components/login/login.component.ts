@@ -4,6 +4,7 @@ import {UserService} from '../../service/user/user.service';
 // import {User} from '../../interfaces/user';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {RestService} from '../../service/rest/rest.service';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-login',
@@ -14,12 +15,12 @@ export class LoginComponent implements OnInit {
 
     public loginForm: FormGroup;
 
-    errMsg = '';
     showSpinner = false;
 
-    constructor(private restservice: RestService,private userService: UserService, private router: Router) { }
+    constructor(private restservice: RestService, private userservice: UserService, private router: Router , public snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    this.checkLoggedIn();
       this.loginForm = new FormGroup({
           username: new FormControl('', [Validators.required, Validators.email]),
           password: new FormControl('', [Validators.required]),
@@ -36,40 +37,35 @@ export class LoginComponent implements OnInit {
         }
     }
 
+    checkLoggedIn() {
+      this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+        const returnResp = this.userservice.processUserResponse(resp);
+        if (returnResp.status === true) {
+          this.router.navigate(['']);
+        }
+      });
+    }
+
     login(loginFormValue) {
-        const user = {username: loginFormValue.username , password : loginFormValue.loginFormValue};
+      const user = {username: loginFormValue.username , password : loginFormValue.password};
 
-        this.showSpinner = true;
+      this.showSpinner = true;
 
-      this.restservice.postRequest('login', {user: user}, {}).subscribe(resp => {
-        // this.dataSource = this.userservice.processUserResponse(resp);
-
+      this.restservice.postRequest('auth/login-action', user, {}).subscribe(resp => {
+        const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
-        this.router.navigate(['']);
+        if (returnResp.status === false) {
+          this.snackBar.open(returnResp.respMsg, '', {
+            duration: 4000,
+          });
+        } else {
+          this.snackBar.open('Login successful', '', {
+            duration: 3000,
+          });
+          this.router.navigate(['']);
+        }
       } );
 
-        // this.userService
-        //     .callAPI('post', 'user/new', user)
-        //     .subscribe(resp => {
-        //         console.log(resp);
-        //         this.showSpinner = false;
-        //         // this.router.navigate(['login']);
-        //         // this.snackBar.open('Signup successful', '', {
-        //         //     duration: 2000,
-        //         // });
-        //
-        //         // if(resp.payload.id > 0) {
-        //         //     this
-        //         //     .router
-        //         //     .navigate(['login']);
-        //         // } else {
-        //         //     this.errMsg = resp.errMsg;
-        //         // }
-        //         this.showSpinner = false;
-        //
-        //     }, error => {
-        //         console.log(error);
-        //     });
     }
 
 }

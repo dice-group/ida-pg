@@ -65,7 +65,7 @@ public class UserController {
     	}
         return responseBean; 
     }
-    
+
     @RequestMapping(value="/new", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -86,18 +86,18 @@ public class UserController {
     		Map<String, Object> returnMap = new HashMap<String, Object>();
     		returnMap.put("newUser", newUser);
     		responseBean.setPayload(returnMap);
-    		try{
-    			EmailForSignup.sendEmail(newUser.getUsername());
-    		}catch(Exception ex)
-    		{
-    			responseBean.setErrCode(IDALiteral.FAILURE_EMAILSENT);
-    			responseBean.setErrMsg(ex.getMessage());
-    		}
+//    		try{
+//    			EmailForSignup.sendEmail(newUser.getUsername());
+//    		}catch(Exception ex)
+//    		{
+//    			responseBean.setErrCode(IDALiteral.FAILURE_EMAILSENT);
+//    			responseBean.setErrMsg(ex.getMessage());
+//    		}
     	}
         return responseBean; 
     }
 
-    @RequestMapping("/delete/{id}")
+    @RequestMapping(value="/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseBean deleteUser(@PathVariable String id){
     	if (userService.getById(Long.valueOf(id)) == null)

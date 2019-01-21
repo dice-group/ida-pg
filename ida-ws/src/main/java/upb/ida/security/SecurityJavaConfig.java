@@ -6,6 +6,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -19,11 +20,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@CrossOrigin
 public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
-	
+
 	@Autowired(required=true)
 	private CustomAuthenticationSuccessHandler mySuccessHandler;
 
@@ -40,11 +43,13 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     	auth.authenticationProvider(authProvider);
     }
-	
+
+    @CrossOrigin
     @Override
     protected void configure(HttpSecurity http) 
       throws Exception {
         http.csrf().disable()
+          .cors().and()
           .authorizeRequests()
           .antMatchers("/user/new").permitAll()
           .antMatchers("/main/**").authenticated()

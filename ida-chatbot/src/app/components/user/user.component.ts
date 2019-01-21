@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {UserService} from '../../service/user/user.service';
 // import {User} from '../../interfaces/user';
 import {Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {UpdateDialogComponent} from '../../dialogs/update/update.dialog.component';
 import {DeleteDialogComponent} from '../../dialogs/delete/delete.dialog.component';
 import {RestService} from '../../service/rest/rest.service';
@@ -17,14 +17,16 @@ export class UserComponent implements OnInit {
 
     index: number;
     id: number;
+    isHidden = false;
 
     displayedColumns: string[] = ['id', 'username', 'firstname', 'lastname', 'actions'];
     dataSource = [];
     showSpinner = false;
 
-  constructor(private restservice: RestService, private userservice: UserService, private router: Router, public dialog: MatDialog) {}
+  constructor(private restservice: RestService, private userservice: UserService, private router: Router, public dialog: MatDialog , public snackBar: MatSnackBar) {}
 
   ngOnInit() {
+      this.isAdmin();
       this.loadUser();
   }
 
@@ -57,12 +59,30 @@ export class UserComponent implements OnInit {
         });
     }
 
+    isAdmin() {
+      this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+        const returnResp = this.userservice.processUserResponse(resp);
+        if (returnResp.status === true && returnResp.respData['isAdmin'] === true) {
+          this.isHidden = false;
+        } else {
+          this.router.navigate(['']);
+        }
+      });
+    }
+
     loadUser() {
       this.showSpinner = true;
       this.restservice.getRequest('user/list', {}).subscribe(resp => {
-        this.dataSource = this.userservice.processUserResponse(resp);
-      } );
+        const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
+        if (returnResp.status === false) {
+          this.snackBar.open(returnResp.respMsg, '', {
+            duration: 4000,
+          });
+        } else {
+          this.dataSource = returnResp.respData;
+        }
+      });
     }
 
 }
