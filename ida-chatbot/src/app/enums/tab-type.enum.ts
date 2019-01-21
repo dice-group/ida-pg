@@ -1,3 +1,3 @@
 export enum TabType {
-  BG, FDG, DTTBL, GEN, DSDET, VENND
+  BG, FDG, DTTBL, GEN, DSDET, VENND, GSD
 }
