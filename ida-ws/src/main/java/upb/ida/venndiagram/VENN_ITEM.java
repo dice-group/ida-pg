@@ -1,13 +1,13 @@
-package upb.ida.temp;
+package upb.ida.venndiagram;
 
 import java.util.Set;
 
-public class VennItem<T> {
+public class VENN_ITEM<T> {
 	private Set<T> sets;
 	private int size;
 	private String label;
 
-	public VennItem(Set<T> itersectionSet, int count, String label) {
+	public VENN_ITEM(Set<T> itersectionSet, int count, String label) {
 		super();
 		this.sets = itersectionSet;
 		this.size = count;
