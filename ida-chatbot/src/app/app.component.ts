@@ -65,6 +65,10 @@ export class AppComponent {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, resp.payload.dataTable, true, true);
       this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 7) {
+      // Open new tab with DataTable
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.VENND, resp.payload.vennDiagramData, true, true);
+      this.addNewTab(newTab, resp);
     }
   }
 
