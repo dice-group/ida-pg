@@ -11,9 +11,9 @@ public class idaAutomate {
 		// TODO Auto-generated method stub
 		
 		idaAutomate obj = new idaAutomate();
-		obj.FDG();
+		//obj.FDG();
 		obj.clusterAlgo();
-		obj.barGraph();
+		//obj.barGraph();
 
 	}
 	
@@ -22,7 +22,7 @@ public class idaAutomate {
 		System.setProperty("webdriver.gecko.driver", "E:\\Jars\\geckodriver-v0.23.0-win64\\geckodriver.exe");
 		WebDriver driver = new FirefoxDriver();
 		
-		driver.get("http://131.234.28.84:4200/");
+		driver.get("http://localhost:4200/");
 		driver.manage().window().maximize();
 		
 		// Loading city dataset
@@ -37,7 +37,7 @@ public class idaAutomate {
 		// Send Enterkey
 		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys(Keys.ENTER);
 		 try {
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -97,7 +97,7 @@ public class idaAutomate {
 		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys(Keys.ENTER);
 		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys("Strength between the nodes should be represented by distance");
 		 try {
-				Thread.sleep(500);
+				Thread.sleep(2000);
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -121,7 +121,7 @@ public class idaAutomate {
 		System.setProperty("webdriver.gecko.driver", "E:\\Jars\\geckodriver-v0.23.0-win64\\geckodriver.exe");
 		WebDriver driver = new FirefoxDriver();
 		
-		driver.get("http://131.234.28.84:4200/");
+		driver.get("http://localhost:4200/");
 		driver.manage().window().maximize();
 		
 		// Loading city dataset
@@ -227,6 +227,15 @@ public class idaAutomate {
 				e.printStackTrace();
 			}
 		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys(Keys.ENTER);
+		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys("set precompute_distances as auto");
+		 try {
+				Thread.sleep(500);
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys(Keys.ENTER);
 		 driver.findElement(By.xpath("//textarea[@id='mat-input-0']")).sendKeys("Clustering features are wine, cinema and gasoline");
 		 try {
 				Thread.sleep(500);
@@ -262,7 +271,7 @@ public class idaAutomate {
 		System.setProperty("webdriver.gecko.driver", "E:\\Jars\\geckodriver-v0.23.0-win64\\geckodriver.exe");
 		WebDriver driver = new FirefoxDriver();
 		
-		driver.get("http://131.234.28.84:4200/");
+		driver.get("http://localhost:4200/");
 		driver.manage().window().maximize();
 		
 		// Loading city dataset
