@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-@EnableNeo4jRepositories("upb.ida.repository")
+@EnableNeo4jRepositories("upb.ida.repository.UserRepository")
 @ImportResource({
 	"classpath:config/bean-config.xml",
 	"classpath:config/startup-config.xml"
