@@ -8,10 +8,10 @@ through REST calls and Websockets rather than ZeroMQ messages.
 
 ## Prerequisites
 
-1. python 3 or better
-2. Miniconda
-3. GNU make
-4. jupyter notebook ```pip install jupyter```
+* python 3 or better.
+* Miniconda.
+* GNU make.
+* jupyter notebook ```pip install jupyter```
 
 ## Installation steps
 
@@ -82,7 +82,7 @@ Install any missing notebook dependencies into the environment.
 ### Step-7
 #### Run kernel gateway
 
-```
+```make
 #run kernel as notebook-http mode
 make dev-http
 ```
