@@ -1,13 +1,13 @@
 package upb.ida;
 
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-@EnableNeo4jRepositories("upb.ida.repository.UserRepository")
+@EntityScan("upb.ida.bean.User")
 @ImportResource({
 	"classpath:config/bean-config.xml",
 	"classpath:config/startup-config.xml"
