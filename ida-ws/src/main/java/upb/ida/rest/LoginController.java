@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,18 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import upb.ida.service.UserService;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/auth")
 public class LoginController {
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
 	private ResponseBean responseBean;

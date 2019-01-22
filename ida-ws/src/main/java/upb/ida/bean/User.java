@@ -2,18 +2,12 @@ package upb.ida.bean;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @NodeEntity
 public class User {
-
-	@Bean
-	public PasswordEncoder encoder() {
-	    return new BCryptPasswordEncoder();
-	}
     
     @GraphId
     private Long id;
@@ -25,6 +19,11 @@ public class User {
     
     public User() {
 		this.userrole = "USER";
+	}
+    
+	@Bean
+	public PasswordEncoder encoder() {
+	    return new BCryptPasswordEncoder();
 	}
     
     public Long getId() {

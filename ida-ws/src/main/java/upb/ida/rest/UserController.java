@@ -4,7 +4,7 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.bean.User;
 import upb.ida.constant.IDALiteral;
 import upb.ida.service.UserService;
-import upb.ida.smtp.EmailForSignup;
+//import upb.ida.smtp.EmailForSignup;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
