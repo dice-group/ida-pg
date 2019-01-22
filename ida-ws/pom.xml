@@ -184,6 +184,11 @@
     		<version>3.4.0</version>
 		</dependency>
 		
+		<dependency>
+    		<groupId>org.neo4j</groupId>
+    		<artifactId>neo4j-ogm-embedded-driver</artifactId>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
 		    <groupId>javax.mail</groupId>
