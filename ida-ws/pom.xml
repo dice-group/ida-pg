@@ -171,6 +171,7 @@
         <dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-neo4j</artifactId>
+			<version>5.1.4.RELEASE</version>
 		</dependency>
 		<dependency> <!-- If you're using the HTTP driver -->
 			<groupId>org.neo4j</groupId>
