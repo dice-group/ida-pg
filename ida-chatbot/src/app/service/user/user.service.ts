@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpClientModule, HttpHeaders} from '@angular/common/http';
 import {ResponseBean} from '../../models/response-bean';
+import {User} from '../../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+
+  public user: User;
 
   constructor(private http: HttpClient) { }
 
@@ -55,8 +58,13 @@ export class UserService {
         responseStatus = {
           status: true,
           respMsg: '',
-          respData: []
+          respData: resp.payload
         };
+        const primaryUser = new User(resp.payload.loggedInUser.id,
+          resp.payload.loggedInUser.firstname,
+          resp.payload.loggedInUser.lastname,
+          resp.payload.loggedInUser.username);
+          localStorage.setItem('user', JSON.stringify(primaryUser));
       } else {
         responseStatus = {
           status: true,
@@ -66,5 +74,4 @@ export class UserService {
       }
       return responseStatus;
     }
-
 }
