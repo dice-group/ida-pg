@@ -171,11 +171,12 @@
         <dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-neo4j</artifactId>
-		</dependency>
-		<dependency> <!-- If you're using the HTTP driver -->
+			</dependency>
+		<!-- If you're using the HTTP driver -->
+		<dependency> 
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-ogm-http-driver</artifactId>
-		</dependency>
+			</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-jdbc-driver -->
 		<dependency>
@@ -187,12 +188,12 @@
 		<dependency>
     		<groupId>org.neo4j</groupId>
     		<artifactId>neo4j-ogm-embedded-driver</artifactId>
-		</dependency>
+    		</dependency>
 		
 		<dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-ogm-bolt-driver</artifactId>
-        </dependency>
+            </dependency>
 		
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
