@@ -44,10 +44,13 @@ public class BarGraphUtil {
 	 * @param y - string value for y-axis
 	 * @param lstt - List of data read from csv file based on x and y axis
 	 * @param dataMap - setting values for responseBean payload
+	 * @return 
 	 * @return - void
 	 */
-	public void newJsonObjct(String x, String y, List<Map<String, String>> lstt, Map<String, Object> dataMap)
+	public  void newJsonObjct(String x, String y, List<Map<String, String>> lstt, Map<String, Object> dataMap)
 			throws IOException, NumberFormatException, ParseException {
+		System.out.println("Inside newJsonObjct funtion");
+		
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode nodeArr1 = mapper.createArrayNode();
 		String xKey = getMatchingKey(x, lstt.get(0));
@@ -69,6 +72,7 @@ public class BarGraphUtil {
 			nodeArr1.add(mapper.readTree(mapper.writeValueAsString(mMap)));
 		}
 		dataMap.put("baritems", nodeArr1);
+		
 	}
 	/**
 	 * Method to match user x and y axis values 
@@ -78,7 +82,9 @@ public class BarGraphUtil {
 	 * @param dataMap - map containing data from csv files
 	 * @return - String returning orignal key if matched
 	 */
-	private String getMatchingKey(String key, Map<String, String> dataMap) {
+	public String getMatchingKey(String key, Map<String, String> dataMap) {
+		
+		System.out.println("Inside getMatchingKey funtion");
 		Set<String> keySet = dataMap.keySet();
 		String res = null;
 		for (String entry : keySet) {
@@ -103,7 +109,7 @@ public class BarGraphUtil {
 
 	public void fileCsv(File input, String x, String y, Map<String, Object> dataMap, String[] args)
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
-
+		System.out.println("Inside fileCsv funtion");
 		List<Map<String, String>> lstt = demoMain.convertToMap(input);
 		// Filter data
 		lstt = fetchFilteredData(lstt, args);
@@ -122,6 +128,7 @@ public class BarGraphUtil {
 	 */
 	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap, String args[])
 			throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+		System.out.println("Inside getJsonData funtion");
 		File file = new File(demoMain.fetchSysFilePath(filepath));
 		fileCsv(file, x, y, dataMap, args);
 
@@ -133,6 +140,8 @@ public class BarGraphUtil {
 	 * @return - FilterOption instance
 	 */
 	public FilterOption getFilterOption(String filterType, String[] params) {
+		
+		System.out.println("Inside getFilterOption funtion");
 		FilterOption filterOption = null;
 		if (filterType.equalsIgnoreCase(FIRST_N_REC)) {
 			// Get Filter Option for First N records
@@ -160,7 +169,7 @@ public class BarGraphUtil {
 		return filterOption;
 	}
 	/**
-	 * Method to create response for bar gaph visualization request
+	 * Method to create response for bar graph visualization request
 	 * 
 	 * @param input - current file for bar graph visualization
 	 * @param args -  arguments of for filtering
@@ -171,6 +180,7 @@ public class BarGraphUtil {
 	public void generateBarGraphData(String[] args, ResponseBean responseBean)
 			throws NumberFormatException, JsonProcessingException, IOException, ParseException {
 
+		System.out.println("Inside generateBarGraphData funtion");
 		// Fetch active dataset details
 		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 		String actvDs = (String) responseBean.getPayload().get("actvDs");
@@ -198,6 +208,13 @@ public class BarGraphUtil {
 	 */
 	public List<Map<String, String>> fetchFilteredData(List<Map<String, String>> data, String[] args)
 			throws NumberFormatException, ParseException {
+		
+	System.out.println("Inside fetchFilteredData funtion");
+	//	System.out.println("Input args" + args.toString());
+	
+		//for (String var: args) {
+	//		System.out.println(var);
+		//}
 		List<Map<String, String>> resList = null;
 		String filterType = args[0];
 		String[] params = null;
