@@ -51,36 +51,22 @@ public class BgMsgRestControllerTest {
 
 		System.out.println(responseBean.getPayload().get("bgData"));
 
-		// System.out.println(actualMap);
-
-		// List<Map<String, String>> inputList = new ArrayList<>();
-		//
-		// HashMap<String, String> mapE1 = new HashMap<String, String>();
-		// mapE1.put("city", "nashville");
-		// mapE1.put("wine", "13.5");
-		//
-		// HashMap<String, String> mapE2 = new HashMap<String, String>();
-		// mapE2.put("city", "stavanger");
-		// mapE2.put("wine", "13.44");
-		//
-		// inputList.add(mapE1);
-		// inputList.add(mapE2);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jArray = mapper.createArrayNode();
 
 		ObjectNode user1 = mapper.createObjectNode();
-		user1.put("Wine", 13.5);
-		user1.put("City", "Nashville");
+		user1.put("Wine", 10.49);
+		user1.put("City", "Geneva");
 
 		ObjectNode user2 = mapper.createObjectNode();
-		user2.put("Wine", 13.44);
-		user2.put("City", "Stavanger");
+		user2.put("Wine", 8.4);
+		user2.put("City", "Zurich");
 		
 		jArray.add(user1);
 		jArray.add(user2);
 
-		System.out.print(jArray);
+		//System.out.print(jArray);
 		// Object keys = "city";
 		List<String> keys = new ArrayList<String>();
 	
@@ -104,7 +90,7 @@ public class BgMsgRestControllerTest {
 		// dataMap.put("barItems", inputList);
 		// System.out.println(dataMap);
 
-		// barGraph.newJsonObjct("city", "wine", inputList);
+		// barGraph.newJsonObjct("city", "wine", );("city", "wine", expected);
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> actual = (Map<String, Object>) responseBean.getPayload().get("bgData");
