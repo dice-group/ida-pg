@@ -46,10 +46,9 @@ public class BgMsgRestControllerTest {
 				"movehubcostofliving.csv", "city");
 		responseBean = msgRstCntrl.sendmessage("x-axis is city", "1", "movehubcostofliving.csv", "city2");
 		responseBean = msgRstCntrl.sendmessage("y-axis is wine", "1", "movehubcostofliving.csv", "city2");
-		responseBean = msgRstCntrl.sendmessage("Top 2 records, sorted descending on wine", "1",
-				"movehubcostofliving.csv", "city2");
+		responseBean = msgRstCntrl.sendmessage("Top 2 records, sorted descending on wine", "1", "movehubcostofliving.csv", "city2");
 
-		System.out.println(responseBean.getPayload().get("bgData"));
+		//System.out.println(responseBean.getPayload().get("bgData"));
 
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -78,7 +77,8 @@ public class BgMsgRestControllerTest {
 		expected.put("keys", keys);
 		 expected.put("baritems", jArray);
 		 expected.put("yaxisname", "Wine");
-		 System.out.println(expected);
+		
+		
 
 		// String xKey = "City";
 		// String yKey = "wine";
@@ -94,6 +94,8 @@ public class BgMsgRestControllerTest {
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> actual = (Map<String, Object>) responseBean.getPayload().get("bgData");
+		// System.out.println(expected);
+		 //System.out.println(actual);
 		assertEquals(expected, actual);
 
 	}
