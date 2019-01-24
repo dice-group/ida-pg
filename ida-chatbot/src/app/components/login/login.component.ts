@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {UserService} from '../../service/user/user.service';
-// import {User} from '../../interfaces/user';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {RestService} from '../../service/rest/rest.service';
 import {MatSnackBar} from '@angular/material';
@@ -47,11 +46,10 @@ export class LoginComponent implements OnInit {
     }
 
     login(loginFormValue) {
-      const user = {username: loginFormValue.username , password : loginFormValue.password};
+      const userData = {username: loginFormValue.username , password : loginFormValue.password};
 
       this.showSpinner = true;
-
-      this.restservice.postRequest('auth/login-action', user, {}).subscribe(resp => {
+      this.restservice.postRequest('auth/login-action', userData, {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
         if (returnResp.status === false) {
@@ -64,7 +62,7 @@ export class LoginComponent implements OnInit {
           });
           this.router.navigate(['']);
         }
-      } );
+      });
 
     }
 
