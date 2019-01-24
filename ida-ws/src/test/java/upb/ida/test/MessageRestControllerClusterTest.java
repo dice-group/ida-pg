@@ -47,7 +47,7 @@ public class MessageRestControllerClusterTest {
 		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city");
 		
-		//System.out.println(responseBean.getPayload().get("clusterData"));
+		
 		
 		List<String> clusterResult = new ArrayList<String>();
 		clusterResult.add("2");
@@ -98,16 +98,16 @@ public class MessageRestControllerClusterTest {
 		
 		
 		dataMap.put("clusterData", responseList);
-		//dataMap.put("tabLabel","Clustered"+" "+actvTbl);
+		
 		dataMap.put("tabLabel","Clustered Data");
 		responseBean.setPayload(dataMap);
 		responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
-		//System.out.println(responseList);
+		
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> predicted = (List<Map<String, Object>>) responseBean.getPayload().get("clusterData");
 		assertEquals(predicted,responseList);
-		//System.out.println(predicted);
+		
 		
 		
 	}
@@ -129,7 +129,7 @@ public class MessageRestControllerClusterTest {
 		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city");
 		
-		//System.out.println(responseBean.getPayload().get("clusterData"));
+		
 		
 		List<String> clusterResult = new ArrayList<String>();
 		clusterResult.add("2");
@@ -152,7 +152,7 @@ public class MessageRestControllerClusterTest {
 		columnsForResponse.add("city");
 		columnsForResponse.add("wine");
 		columnsForResponse.add("cinema");
-		//columnsForResponse.add("gasoline");
+		
 		
 		List<Map<String, Object>> responseList=new ArrayList<>();
 		File responseReader = new File(demoMain.fetchSysFilePath("dataset/city/movehubcostofliving.csv"));
@@ -180,23 +180,19 @@ public class MessageRestControllerClusterTest {
 		
 		
 		dataMap.put("clusterData", responseList);
-		//dataMap.put("tabLabel","Clustered"+" "+actvTbl);
-		//dataMap.put("tabLabel","Clustered Data");
-		//responseBean.setPayload(dataMap);
-		//responseBean.setActnCode(IDALiteral.UIA_CLUSTER);
+		
 		
 		
 		
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> predicted = (List<Map<String, Object>>) responseBean.getPayload().get("clusterData");
-		//assertArrayEquals(predicted,responseList);
 		
-		//assertThat(responseList, hasItems("gasoline"));
+		
+		
 		
 		assertNotEquals(responseList.get(0).keySet(),predicted.get(0).keySet());
-		//System.out.println(responseList.get(0).keySet());
-		//System.out.println(predicted.get(0).keySet());
+		
 		
 	}
 	
