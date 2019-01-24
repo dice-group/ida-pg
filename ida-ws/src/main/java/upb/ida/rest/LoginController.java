@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import upb.ida.bean.ResponseBean;
+import upb.ida.bean.User;
 import upb.ida.constant.IDALiteral;
+import upb.ida.service.UserService;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +25,9 @@ public class LoginController {
 
     @Autowired
 	private ResponseBean responseBean;
+    
+    @Autowired
+	private UserService userService;
 	
 	@RequestMapping(value = "/response", method = {RequestMethod.GET,RequestMethod.POST})
     public ResponseBean login(@RequestParam(value = "error", required = false) String error,
@@ -32,6 +38,10 @@ public class LoginController {
             responseBean.setErrMsg("Username/Password Incorrect");
         } else if (success != null) {
             responseBean.setErrMsg("Login Successful");
+            User loggedInuser = userService.getByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+            Map<String, Object> returnMap = new HashMap<String, Object>();
+            returnMap.put("loggedInUser", loggedInuser);
+            responseBean.setPayload(returnMap);
         } else if (logout != null) {
             responseBean.setErrMsg("Logout Successful");
         } else {
@@ -47,7 +57,6 @@ public class LoginController {
         if (! (auth instanceof AnonymousAuthenticationToken)) {
         	String username = auth.getName();
         	boolean isadmin = auth.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
-//            User currentUser = userService.getByUsername(username);
             responseBean.setErrCode(IDALiteral.ALREADY_LOGGEDIN);
             responseBean.setErrMsg("User logged in: "+username);
             Map<String, Object> returnMap = new HashMap<String, Object>();

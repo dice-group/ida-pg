@@ -16,7 +16,7 @@ public class UserService{
 
     public List<User> listAllUsers() {
     	List<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add); //fun with Java 8
+        userRepository.findAll().forEach(users::add);
         users.forEach(user -> user.setPassword(""));
         return users;
     }

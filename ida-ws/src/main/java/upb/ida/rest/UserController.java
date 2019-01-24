@@ -86,6 +86,7 @@ public class UserController {
     		Map<String, Object> returnMap = new HashMap<String, Object>();
     		returnMap.put("newUser", newUser);
     		responseBean.setPayload(returnMap);
+//    		TODO: This email functionality is commented just for now. (Tested and working)
 //    		try{
 //    			EmailForSignup.sendEmail(newUser.getUsername());
 //    		}catch(Exception ex)
