@@ -1,4 +1,4 @@
-package upb.ida.temp;
+package upb.ida.venndiagram;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,10 +13,10 @@ import org.dice_research.topicmodeling.commons.sort.AssociativeSort;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-public class DummyVennDataGenerator {
+public class VENN_DATA_FILTER {
 	public Map<Integer, Set<Integer>> dataMap = new HashMap<>();
 
-	private void createDataMap(File inputFile, int labelColIndx, int dataColIndx) throws IOException {
+	public void createDataMap(File inputFile, int labelColIndx, int dataColIndx) throws IOException {
 		// create csvreaderbuilder for dnstTbl
 		CSVReaderBuilder rBuilder = new CSVReaderBuilder(new FileReader(inputFile));
 		// build the reader
@@ -37,16 +37,6 @@ public class DummyVennDataGenerator {
 		} finally {
 			csvReader.close();
 		}
-	}
-
-	public static void main(String[] args) throws IOException {
-		File inputFile = new File("D:\\Nikit\\ProjectGroup_WS\\Datasets\\ss-dienstalterliste\\tbl_ssfuehrer_orden.csv");
-		DummyVennDataGenerator dataGenerator = new DummyVennDataGenerator();
-		dataGenerator.createDataMap(inputFile, 2, 1);
-		dataGenerator.filterDataMap(5);
-		VennDataGenerator<Integer, Integer> vennDataGenerator = new VennDataGenerator<>(dataGenerator.dataMap);
-		Set<VennItem<Integer>> vennItems = vennDataGenerator.generateVennItems();
-		System.out.println(vennItems);
 	}
 
 	public void filterDataMap(int topLimit) {
