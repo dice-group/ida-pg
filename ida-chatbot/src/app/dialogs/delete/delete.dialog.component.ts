@@ -22,9 +22,6 @@ export class DeleteDialogComponent {
 
     confirmDelete(): void {
       this.restservice.deleteRequest('user/delete/' + this.data.id).subscribe(resp => {
-        // this.dataSource = this.userservice.processUserResponse(resp);
-
-        // this.onNoClick();
         this.snackBar.open('User deleted successfully', '', {
           duration: 3000,
         });

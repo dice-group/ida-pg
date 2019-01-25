@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row class="layout-row layout-align-end-start">
+    <p>Welcome {{this.user.firstname}}</p>
     <span class="spacer"></span>
     <a routerLink="/user" *ngIf="this.showButton" mat-button >User Listing</a>
     <a routerLink="" *ngIf="this.showButton" mat-button >Chatbot</a>
