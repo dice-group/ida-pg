@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {UserService} from '../../service/user/user.service';
-// import {User} from '../../interfaces/user';
 import {Router} from '@angular/router';
 import {MatDialog, MatSnackBar} from '@angular/material';
 import {UpdateDialogComponent} from '../../dialogs/update/update.dialog.component';
 import {DeleteDialogComponent} from '../../dialogs/delete/delete.dialog.component';
 import {RestService} from '../../service/rest/rest.service';
-import {ResponseBean} from '../../models/response-bean';
 
 @Component({
   selector: 'app-user',
