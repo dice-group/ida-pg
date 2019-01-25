@@ -15,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import upb.ida.bean.User;
+import upb.ida.domains.User;
 import upb.ida.service.UserService;
 
 @Component

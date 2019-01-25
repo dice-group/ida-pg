@@ -1,9 +1,11 @@
 package upb.ida.service;
 
-import upb.ida.bean.User;
+import upb.ida.domains.User;
 import upb.ida.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class UserService{
 	@Autowired
     private UserRepository userRepository;
 
+	@Transactional(readOnly = true)
     public List<User> listAllUsers() {
     	List<User> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add);
@@ -21,18 +24,22 @@ public class UserService{
         return users;
     }
 
+	@Transactional(readOnly = true)
     public User getById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
     
+	@Transactional(readOnly = true)
     public User getByUsername(String username) {
         return userRepository.findUserByUsername(username);
     }
 
+	@Transactional(readOnly = false)
     public User saveOrUpdate(User user) {
     	return userRepository.save(user);
     }
 
+	@Transactional(readOnly = false)
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
