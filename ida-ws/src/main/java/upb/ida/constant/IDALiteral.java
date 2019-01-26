@@ -13,6 +13,10 @@ public interface IDALiteral {
 	public static final int UIA_BG = 3;
 	public static final int UIA_CLUSTER = 4;
 	public static final int UIA_DTTABLE = 5;
+	public static final int UIA_VENNDIAGRAM = 7;
+	public static final int UIA_GSDIAGRAM = 8;
+	public static final int UIA_SSBDIAGRAM = 9;
+
 	
 	//Error Literals
 	public static final int FAILURE_USERLIST = 15;

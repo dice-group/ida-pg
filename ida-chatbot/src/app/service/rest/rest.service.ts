@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {EventEmitter, Injectable} from '@angular/core';
 import {
   HttpClient,
