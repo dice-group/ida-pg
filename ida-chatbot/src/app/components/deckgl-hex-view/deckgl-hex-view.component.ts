@@ -91,7 +91,7 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
     if (object) {
       tooltip.style.top = `${y}px`;
       tooltip.style.left = `${x}px`;
-      tooltip.innerHTML = object.points.length + ' soldiers <br>';
+      tooltip.innerHTML = object.points.length + ' Entry(s) <br>';
     } else {
       tooltip.innerHTML = '';
     }
