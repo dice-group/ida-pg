@@ -16,8 +16,4 @@
 		scope="request">
 		<aop:scoped-proxy proxy-target-class="true" />
 	</bean>
-	<bean id="aspectLogger" class="upb.ida.logging.AspectLogger" />
-	<aop:aspectj-autoproxy proxy-target-class="true">
-  		<aop:include name="aspectLogger"/>
-	</aop:aspectj-autoproxy>
 </beans>

@@ -13,9 +13,6 @@ public interface IDALiteral {
 	public static final int UIA_BG = 3;
 	public static final int UIA_CLUSTER = 4;
 	public static final int UIA_DTTABLE = 5;
-	public static final int UIA_VENNDIAGRAM = 7;
-	public static final int UIA_GSDIAGRAM = 8;
-
 	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
@@ -30,7 +27,6 @@ public interface IDALiteral {
 	//Property File Paths
 	public static final String IDA_PROP_FILEPATH = "ida.properties";
 	public static final String DSMAP_PROP_FILEPATH = "datasetmap.properties";
-	public static final String ASPECTLOGGER_PROP_FILEPATH = "log4j.properties";
 	
 	//CSV File name Pattern
 	public static final String CSV_FILE_PATTERN = ".*[cC][sS][vV]$";

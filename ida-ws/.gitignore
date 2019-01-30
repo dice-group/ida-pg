@@ -1,6 +1,11 @@
 /target/
 /bin/
 
+# Eclipse
+.classpath
+.project
+/.settings/
+
 # IntelliJ
 /.idea/
 /out/
@@ -8,7 +13,3 @@
 
 # Spring Tools
 .sts4-cache
-
-#Log files
-*.log
-*.log.*
