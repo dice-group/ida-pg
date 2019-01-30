@@ -93,9 +93,5 @@ public class ResponseBean {
 	public void setChatmsg(String chatmsg) {
 		this.chatmsg = chatmsg;
 	}
-	@Override
-	public String toString() {
-		return "ResponseBean [actnCode=" + actnCode + ", errCode=" + errCode + ", errMsg=" + errMsg + ", payload="
-				+ payload + ", chatmsg=" + chatmsg + "]";
-	}
+	
 }
