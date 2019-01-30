@@ -60,7 +60,6 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
-import { SpeechInputComponent } from './components/speech-input/speech-input.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,8 +78,7 @@ import { SpeechInputComponent } from './components/speech-input/speech-input.com
     DatatableDetailComponent,
     SsbViewComponent,
     VennViewComponent,
-    DeckglHexViewComponent,
-    SpeechInputComponent
+    DeckglHexViewComponent
   ],
   imports: [
     BrowserModule,
