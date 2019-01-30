@@ -11,12 +11,10 @@ export class MessageFormComponent implements OnInit {
   @Output() msgemitter = new EventEmitter<Message>();
   @ViewChild('chatmsg') chatmsg: ElementRef;
 
-
-  constructor(private restservice: RestService) { }
-
   public showBar = false;
   msgs_history = []; // This will maintain history of all messages
   msgs_tracker = 0; // This will keep position of current message from history
+  constructor(private restservice: RestService) { }
 
   ngOnInit() {
     this.restservice.requestEvnt.subscribe(val => { this.toggleProgressBar(val); });
@@ -54,9 +52,5 @@ export class MessageFormComponent implements OnInit {
         this.chatmsg.nativeElement.value = this.msgs_history[++this.msgs_tracker];
       }
     }
-  }
-
-  getVoiceToMsg(msg) {
-    this.chatmsg.nativeElement.value = msg;
   }
 }
