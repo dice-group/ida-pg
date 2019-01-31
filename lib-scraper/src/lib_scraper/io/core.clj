@@ -12,10 +12,10 @@
    (let [scrape-file (cond
                        (some? scrape-file) scrape-file
                        (fs/directory? config-file) config-file
-                       (fs/file? config-file) (fs/parent config-file))]
-     (let [config (config/read-config config-file)]
-       (scrape/write-scrape scrape-file config
-                            (scraper/scrape config))))))
+                       (fs/file? config-file) (fs/parent config-file))
+         config (config/read-config config-file)]
+     (scrape/write-scrape scrape-file config
+                          (scraper/scrape config)))))
 
 (defn query-scrape
   [scrape query & args]

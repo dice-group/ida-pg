@@ -1,5 +1,6 @@
 (ns lib-scraper.helpers.zip
-  (:require [clojure.zip :as zip]))
+  (:require [clojure.zip :as zip]
+            [clojure.string :as string]))
 
 (defn loc-at-node?
   [node loc]
@@ -14,10 +15,10 @@
   [loc]
   (let [node (zip/node loc)]
     (if (string? node)
-      (clojure.string/trim node)
+      (string/trim node)
       (->> node :content
            (filter string?) (reduce str)
-           (clojure.string/trim)))))
+           (string/trim)))))
 
 (def step-types {:following (constantly [identity zip/next zip/end?])
                  :children (constantly [zip/down zip/right some?])

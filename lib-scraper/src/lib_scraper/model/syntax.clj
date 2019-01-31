@@ -40,7 +40,7 @@
    :attribute-aliases (into common-attribute-aliases
                             (for [[c {:keys [attributes]}] m
                                   :let [cns (namespace c)
-                                        cns (str (if cns (str cns "."))
+                                        cns (str (when cns (str cns "."))
                                                  (name c))]
                                   attribute (keys attributes)]
                               [(keyword cns (name attribute)) attribute]))
@@ -83,7 +83,8 @@
                                (s/explain-str ::concept-desc concept-desc#))))
        (let [name# (quote ~name)
              name# (if (qualified-symbol? name#)
-                     (keyword name#) (keyword (str *ns*) (str name#)))
+                     (keyword name#)
+                     (keyword (str *ns*) (str name#)))
              concept# (-> conformed#
                           (assoc :ident name#)
                           (update :extends set/union #{name#}))]

@@ -29,7 +29,7 @@
   (binding [*read-eval* false]
     (let [file (cond
                  (fs/directory? path) (fs/file path default-name)
-                 (fs/file?) (fs/file path)
+                 (fs/file? path) (fs/file path)
                  :else (throw (Error. "Invalid config path.")))
           file (fs/normalized file)
           _ (log/info (str "Reading config from " file "..."))

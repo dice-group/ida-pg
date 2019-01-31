@@ -47,5 +47,5 @@
                                    :visit visit})]
     (.addSeed controller seed)
     (.start controller crawler-factory concurrency)
-    (if-not resumable
+    (when-not resumable
       (fs/delete-dir crawler-storage))))

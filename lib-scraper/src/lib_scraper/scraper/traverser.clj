@@ -3,6 +3,7 @@
             [flatland.ordered.set :refer [ordered-set]]
             [hickory.zip :as hzip]
             [clojure.tools.logging :as log]
+            [clojure.string :as string]
             [lib-scraper.helpers.zip :as lzip]
             [lib-scraper.helpers.map :as map]
             [lib-scraper.helpers.transaction :as tx]
@@ -18,7 +19,7 @@
 (defn- resolve-value
   [value transform parent index loc]
   (let [value (case (or value :content)
-                :content (clojure.string/trim (lzip/loc-content loc))
+                :content (string/trim (lzip/loc-content loc))
                 :trigger-index (:index parent))]
     (if transform (transform value) value)))
 
@@ -52,7 +53,7 @@
 (defmethod trigger-hook* :attribute
   [{:keys [attribute value transform]} [parent]
    {:keys [preprocessors attributes]} index loc]
-  (if-let [value (resolve-value value transform parent index loc)]
+  (when-let [value (resolve-value value transform parent index loc)]
     (let [{:keys [id type]} parent
           preprocessors (preprocessors type)
           tx (mapcat (fn [attribute]
@@ -72,8 +73,8 @@
 
 (defn trigger-hook
   [hook stack ecosystem index loc]
-  (if-let [{:keys [itx tx type triggers id]}
-           (trigger-hook* hook stack ecosystem index loc)]
+  (when-let [{:keys [itx tx type triggers id]}
+             (trigger-hook* hook stack ecosystem index loc)]
     {:itx itx :tx tx
      :entry (when triggers {:id id
                             :type type :triggers triggers
