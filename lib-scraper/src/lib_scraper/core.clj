@@ -6,6 +6,7 @@
             [lib-scraper.scraper.attributes :as sattrs]
             [lib-scraper.helpers.transaction :as tx]
             [clojure.pprint :as pp]
+            [clojure.string :as string]
             [say-cheez.core :refer [capture-build-env-to]]
             [cli-matic.core :refer [run-cmd run-cmd*]])
   (:gen-class))
@@ -13,7 +14,7 @@
 (capture-build-env-to BUILD)
 (def PROJECT (:project BUILD))
 
-(def ^:private ecosystems-string (clojure.string/join ", " (map name (keys m/ecosystems))))
+(def ^:private ecosystems-string (string/join ", " (map name (keys m/ecosystems))))
 
 (defn- mode-print
   [val mode]

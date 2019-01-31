@@ -1,5 +1,5 @@
 (ns lib-scraper.scraper.match
-  (:require [clojure.string :as s])
+  (:require [clojure.string :as string])
   (:import (edu.uci.ics.crawler4j.crawler Page)
            (edu.uci.ics.crawler4j.url WebURL)))
 
@@ -15,5 +15,5 @@
   [& required-classes]
   (fn [_, ^Page page, ^WebURL url]
     (let [{:strs [class] :or {class ""}} (into {} (.getAttributes url))
-          classes (set (map s/lower-case (s/split class #"\s+")))]
-      (every? (comp classes s/lower-case) required-classes))))
+          classes (set (map string/lower-case (string/split class #"\s+")))]
+      (every? (comp classes string/lower-case) required-classes))))

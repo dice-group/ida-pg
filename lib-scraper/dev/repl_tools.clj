@@ -2,4 +2,4 @@
   (:require [lib-scraper.io.core :refer [create-scrape]]
             [lib-scraper.io.scrape :refer [read-scrape]]))
 
-(def show-scrape (comp :scrape read-scrape create-scrape #(str "libs/" %)))
+(def show-scrape (comp :scrape read-scrape create-scrape))

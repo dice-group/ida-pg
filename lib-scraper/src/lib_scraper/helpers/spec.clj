@@ -42,7 +42,7 @@
     1 first
     2 (s/and first second)
     3 (s/and first second third)
-    (loop [res (first pred-forms)
+    (loop [res first
            [form & forms] (rest pred-forms)]
       (if form
         (recur (s/and res form) forms)
