@@ -36,14 +36,14 @@
 
 (defn and
   "A function wrapper around clojure.spec.alpha/and."
-  [& [first second third :as pred-forms]]
+  [& [first second third & rest :as pred-forms]]
   (case (count pred-forms)
     0 any?
     1 first
     2 (s/and first second)
     3 (s/and first second third)
-    (loop [res first
-           [form & forms] (rest pred-forms)]
+    (loop [res (s/and first second third)
+           [form & forms] rest]
       (if form
         (recur (s/and res form) forms)
         res))))
