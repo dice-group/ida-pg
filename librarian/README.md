@@ -2,9 +2,9 @@
 
 Librarian is a modular toolkit to programmatically work with software libraries.
 It consists of the following modules:
-* `librarian/model`: A tool to build abstract models of language ecosystems. It comes with a model for Python but can also be used to describe other ecosystems. It additionally offers a uniform interface to read, write and query facts about a given ecosystem (e.g. the names of the classes in a particular Python namespace). Such collections of model facts are called *scrapes*.
-* `librarian/scraper`: A tool that crawls the documentation of software libraries and produces library scrapes. The scraped information is validated and categorized using a `librarian/model` ecosystem.
-* `librarian/generator` **(NOT IMPLEMENTED YET)**: A tools that automatically generates source code from a given library scrape and a user request. 
+*   `librarian/model`: A tool to build abstract models of language ecosystems. It comes with a model for Python but can also be used to describe other ecosystems. It additionally offers a uniform interface to read, write and query facts about a given ecosystem (e.g. the names of the classes in a particular Python namespace). Such collections of model facts are called *scrapes*.
+*   `librarian/scraper`: A tool that crawls the documentation of software libraries and produces library scrapes. The scraped information is validated and categorized using a `librarian/model` ecosystem.
+*   `librarian/generator` **(NOT IMPLEMENTED YET)**: A tools that automatically generates source code from a given library scrape and a user request. 
 
 Librarian also comes with a prebuilt scrape for scikit-learn in `libs/scikit-learn`.
 
