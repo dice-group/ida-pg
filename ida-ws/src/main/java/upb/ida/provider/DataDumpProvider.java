@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import lib_scraper.interop.Scrape;
+import librarian.model.Scrape;
 import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.util.FileUtil;
