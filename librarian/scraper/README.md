@@ -6,20 +6,16 @@ The scraped information will be automatically linked, sanitized, validated and t
 
 ## 1. Build
 
-First install the following tools:
-* JDK >=8
-* [Leiningen 2.8](https://leiningen.org/)
-
-Then run `lein do clean, build-scraper` to create an executable uberjar in `target/librarian-scraper.jar`.
+Just run `lein do clean, build-scraper` to create an executable uberjar in `target/librarian-scraper.jar`.
 
 ## 2. Scraping a library
 
 The scraper provides a simple CLI to create scrapes:
 ```shell
-java -jar target/librarian-scraper.jar scrape libs/scikit-learn
+java -jar target/librarian-scraper.jar scrape ../libs/scikit-learn
 ```
 The `scrape` command requires the path to a scrape configuration.
-librarian-scraper comes with a scrape configuration for scikit-learn at `libs/scikit-learn/scraper.clj`.
+librarian-scraper comes with a scrape configuration for scikit-learn at `../libs/scikit-learn/scraper.clj`.
 If the configuration is called `scraper.clj`, the filename can be omitted as seen above.
 
 The resulting scrape will be written to `scrape.db` in the parent directory of the scrape configuration by default.
@@ -37,7 +33,7 @@ Despite the fact that scrapes are meant to be used programmatically via the libr
 librarian-scraper stores scrapes as gzipped serializations of [Datascript](https://github.com/tonsky/datascript) databases.
 Those scrape databases can be queries using [Datalog](https://docs.datomic.com/on-prem/query.html) queries:
 ```shell
-java -jar target/librarian-scraper.jar query libs/scikit-learn \
+java -jar target/librarian-scraper.jar query ../libs/scikit-learn \
   '[:find ?name :where [?p :type :namespace] [?p :namespace/name ?name]]'
 # => Prints the names of all the namespaces of scikit-learn.
 ```
@@ -51,7 +47,7 @@ java -jar target/librarian-scraper.jar print-schema python
 
 Alternatively the CLI also supports so called [pull queries](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
 ```shell
-java -jar target/librarian-scraper.jar pull libs/scikit-learn \
+java -jar target/librarian-scraper.jar pull ../libs/scikit-learn \
 	'[*]' '[:class/id "sklearn.cluster.KMeans"]'
 # => Prints all attributes and subattributes of the KMeans class.
 ```
