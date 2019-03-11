@@ -3,6 +3,7 @@ package upb.ida.provider;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,23 +76,25 @@ public class DataDumpProvider {
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(fqn));
 		
 		List<Object> data = res.get(0);
-		Long id = (Long) data.get(0);
+		Integer id = (Integer) data.get(0);
 		String name = (String) data.get(1);
 		String summary = (String) data.get(2);
-		List<String> descs = (List<String>) data.get(3);
-		List<Long> paramIds = (List<Long>) data.get(4);
+		Collection<String> descs = (Collection<String>) data.get(3);
+		Collection<Long> paramIds = (Collection<Long>) data.get(4);
 		List<ClusterParam> params = paramIds.stream()
 				.map(pid -> queryClusterParam(scrape, pid))
+				.sorted((a, b) -> a.getPosition() - b.getPosition())
 				.collect(Collectors.toList());
 		
 		return new ClusterAlgoDesc(id.intValue(), name, summary, String.join("\n", descs), params);
 	}
 	
 	private ClusterParam queryClusterParam(Scrape scrape, Long pid) {
-		String q = ":find ?name ?optional ?tname "
+		String q = ":find ?name ?optional ?tname ?position "
 				+ ":in $ ?param :where "
 				+ "[?param :parameter/name ?name] "
 				+ "[(get-else $ ?param :parameter/optional false) ?optional] "
+				+ "[(get-else $ ?param :parameter/position -1) ?position]"
 				+ "[(get-else $ ?param :parameter/datatype -1) ?type] "
 				+ "[(get-else $ ?type :datatype/name \"\") ?tname]";
 		
@@ -102,8 +105,9 @@ public class DataDumpProvider {
 		String name = (String) data.get(0);
 		Boolean optional = (Boolean) data.get(1);
 		String type = (String) data.get(2);
+		Long position = (Long) data.get(3);
 		
-		return new ClusterParam(name, Arrays.asList(type), optional.booleanValue());
+		return new ClusterParam(name, Arrays.asList(type), optional.booleanValue(), position.intValue());
 	}
 
 }
