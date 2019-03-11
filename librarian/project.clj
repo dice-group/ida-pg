@@ -8,7 +8,7 @@
 
   :modules {:versions {org.clojure/clojure "1.10.0"
                        org.clojure/tools.logging "0.4.1"
-                       datascript "0.17.1"
+                       datascript "0.18.2"
                        clj-commons/fs "1.5.0"
 
                        librarian/helpers "1.0.0-SNAPSHOT"
@@ -24,7 +24,7 @@
 
   :aliases {"pom" ["modules" "pom"]} ; lein pom should only update the submodule poms
 
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
+  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha4"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
                                   [proto-repl-sayid "0.1.3"]]

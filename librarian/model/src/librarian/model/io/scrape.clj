@@ -23,7 +23,7 @@
 (defn write-scrape
   [file {:keys [name ecosystem meta]} scrape]
   (let [file (get-file file)
-        out {:scrape scrape
+        out {:db scrape
              :name name
              :created (java.util.Date.)
              :ecosystem (:alias ecosystem)
@@ -46,16 +46,16 @@
                                     (GZIPInputStream.))]
                  (edn/read-string {:readers d/data-readers}
                                   (slurp data)))
-        conformed (s/conform ::scrape-outer scrape)]
+        conformed (s/conform ::scrape scrape)]
     (if (s/invalid? conformed)
       (throw (Exception. (str "Invalid scrape."
-                              (s/explain-str ::scrape-outer scrape))))
+                              (s/explain-str ::scrape scrape))))
       conformed)))
 
 (defn query-scrape
   [scrape query & args]
-  (let [{:keys [scrape ecosystem]} scrape]
-    (apply mdb/q ecosystem query scrape args)))
+  (let [{:keys [db ecosystem]} scrape]
+    (apply mdb/q ecosystem query db args)))
 
 (defn query-file
   [scrape-file query & args]
@@ -63,8 +63,8 @@
 
 (defn pull-scrape
   [scrape selector eid]
-  (let [{:keys [scrape ecosystem]} scrape]
-    (mdb/pull ecosystem scrape selector eid)))
+  (let [{:keys [db ecosystem]} scrape]
+    (mdb/pull ecosystem db selector eid)))
 
 (defn pull-file
   [scrape-file selector eid]
@@ -75,8 +75,8 @@
   (= (-> v1 semver/parse :major)
      (-> v2 semver/parse :major)))
 
-(s/def ::scrape-outer
-       (s/and (s/keys :req-un [::scrape
+(s/def ::scrape
+       (s/and (s/keys :req-un [::db
                                ::name
                                ::created
                                ::ecosystem
@@ -84,7 +84,7 @@
               #(semver-compat (get-in % [:ecosystem :version])
                               (:ecosystem/version %))))
 
-(s/def ::scrape d/db?)
+(s/def ::db d/db?)
 (s/def ::name #(or (string? %) (symbol? %)))
 (s/def ::created inst?)
 (s/def ::ecosystem (s/and keyword?

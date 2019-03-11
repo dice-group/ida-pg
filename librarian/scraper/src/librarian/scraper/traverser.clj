@@ -171,3 +171,10 @@
                   (resolve-hook-aliases ecosystem))]
     {:traverser (partial traverse! conn hooks ecosystem)
      :finalize (partial finalize conn)}))
+
+(-> (d/empty-db {:x {:db/unique :db.unique/identity
+                     :db/valueType :db.type/ref}})
+    (d/with [[:db/add -1 :y "foo"]
+             [:db/add -2 :y "bar"]
+             [:db/add -1 :x -2]])
+    :db-after)

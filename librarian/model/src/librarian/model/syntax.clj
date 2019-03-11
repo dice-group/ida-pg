@@ -6,7 +6,9 @@
             [librarian.helpers.transaction :as tx]
             [librarian.model.common :as common]))
 
-(defn merge-concepts
+; Fns:
+
+(defn- merge-concepts
   [concept extends]
   (let [merged (apply map/merge-by-key
                       {:attributes merge
@@ -19,11 +21,11 @@
       merged
       (assoc merged :spec any?))))
 
-(defn merge-paradigms
+(defn- merge-paradigms
   [paradigm extends]
-  (apply merge-with merge (conj extends paradigm)))
+  (apply merge (conj extends paradigm)))
 
-(defn no-attribute-collisions?
+(defn- no-attribute-collisions?
   [{:keys [concept extends]}]
   (let [attr-names (->> (conj extends concept)
                         (mapcat (comp keys :attributes))
@@ -31,48 +33,37 @@
     (or (empty? attr-names)
         (apply distinct? attr-names))))
 
-(def common-attribute-aliases (as-> (keys common/attributes) $
-                                    (zipmap $ $)))
+(def ^:private common-attribute-aliases
+  (as-> (keys common/attributes) $
+        (zipmap $ $)))
 
-(defn ecosystem-desc->ecosystem
-  [m]
-  {:concept-aliases (map/map-v :ident m)
+(defn paradigm->ecosystem
+  [paradigm]
+  {:paradigm paradigm
+   :concept-aliases (map/map-v :ident paradigm)
    :attribute-aliases (into common-attribute-aliases
-                            (for [[c {:keys [attributes]}] m
+                            (for [[c {:keys [attributes]}] paradigm
                                   :let [cns (namespace c)
                                         cns (str (when cns (str cns "."))
                                                  (name c))]
                                   attribute (keys attributes)]
                               [(keyword cns (name attribute)) attribute]))
-   :extends (map/map-kv (comp (juxt :ident :extends) second) m)
+   :extends (map/map-kv (comp (juxt :ident :extends) second) paradigm)
    :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
                             (into a attributes))
-                          common/attributes m)
-   :specs (map/map-kv (comp (juxt :ident :spec) second) m)
-   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) m)
-   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) m)})
+                          common/attributes paradigm)
+   :specs (map/map-kv (comp (juxt :ident :spec) second) paradigm)
+   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) paradigm)
+   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) paradigm)})
 
-(s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::preprocess ::postprocess]))
-(s/def ::attributes (s/every-kv keyword? any?))
-(s/def ::postprocess fn?)
-(s/def ::preprocess (s/every-kv keyword? fn?))
-(s/def ::concept-desc (s/and (s/cat :extends (s/? (hs/vec-of ::concept))
-                                    :concept (s/* any?))
-                             (s/keys :opt-un [::concept])
-                             no-attribute-collisions?
-                             (s/conformer (fn [{:keys [concept extends]}]
-                                            (merge-concepts concept extends)))))
-(s/def ::concepts (s/and (hs/keys*) (s/map-of keyword? ::concept)))
+(defn merge-ecosystems
+  [& ecosystems]
+  (->> ecosystems
+       (map :paradigm)
+       (apply merge)
+       paradigm->ecosystem))
 
-(s/def ::paradigm-desc (s/and (s/cat :extends (s/? (hs/vec-of ::paradigm))
-                                     :paradigm (s/* any?))
-                              (s/keys :req-un [::paradigm])
-                              (s/conformer (fn [{:keys [paradigm extends]}]
-                                             (merge-paradigms paradigm extends)))))
-(s/def ::paradigm ::concepts)
-
-(s/def ::ecosystem-desc
-       (s/and ::paradigm-desc (s/conformer ecosystem-desc->ecosystem)))
+; Macros:
 
 (defmacro defconcept
   [name & concept-desc]
@@ -107,3 +98,28 @@
        (throw (Exception. (str "Invalid ecosystem definition.\n"
                                (s/explain-str ::ecosystem-desc ecosystem#))))
        (def ~name conformed#))))
+
+; Specs:
+
+(s/def ::concept (hs/keys* :opt-un [::attributes ::spec ::preprocess ::postprocess]))
+(s/def ::attributes (s/every-kv keyword? any?))
+(s/def ::postprocess fn?)
+(s/def ::preprocess (s/every-kv keyword? fn?))
+(s/def ::concept-desc (s/and (s/cat :extends (s/? (hs/vec-of ::concept))
+                                    :concept (s/* any?))
+                             (s/keys :opt-un [::concept])
+                             no-attribute-collisions?
+                             (s/conformer (fn [{:keys [concept extends]}]
+                                            (merge-concepts concept extends)))))
+(s/def ::concepts (s/and (hs/keys*) (s/map-of keyword? ::concept)))
+
+(s/def ::paradigm-desc (s/and (s/cat :extends (s/? (hs/vec-of ::paradigm))
+                                     :paradigm (s/* any?))
+                              (s/keys :opt-un [::paradigm])
+                              (s/conformer (fn [{:keys [paradigm extends]
+                                                 :or {paradigm {}}}]
+                                             (merge-paradigms paradigm extends)))))
+(s/def ::paradigm ::concepts)
+
+(s/def ::ecosystem-desc
+       (s/and ::paradigm-desc (s/conformer paradigm->ecosystem)))

@@ -86,12 +86,12 @@
     <dependency>
       <groupId>datascript</groupId>
       <artifactId>datascript</artifactId>
-      <version>0.17.1</version>
+      <version>0.18.2</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.namespace</artifactId>
-      <version>0.2.11</version>
+      <version>0.3.0-alpha4</version>
       <scope>test</scope>
     </dependency>
     <dependency>

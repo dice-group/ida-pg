@@ -18,7 +18,7 @@
                            :selector [:children (tag :dd)
                                       [:children
                                        :select (and (tag :p) (not (class :rubric)))]]}
-             :parameter-info {:selector [:children (and (tag :span) (class :classifier))]}}
+             :io-value-info {:selector [:children (and (tag :span) (class :classifier))]}}
 
   :hooks [; namespaces:
           {:trigger :namespaced
@@ -64,26 +64,38 @@
                       :descendants (tag :dt)]
            :ref-from-trigger :callable/parameter}
           {:trigger :parameter
-           :attribute :parameter/name
-           :selector [:children (tag :strong)]}
-          {:trigger :parameter
-           :attribute :parameter/position
-           :value :trigger-index}
-          {:trigger :parameter
-           :attribute [:description-summary :description]
-           :selector [[:following-siblings :select (tag :dd) :limit 1]
-                      :children (tag :p)]}
-          {:trigger :parameter
            :attribute :parameter/optional
-           :pattern :parameter-info
+           :pattern :io-value-info
            :transform #(or (clojure.string/includes? % "optional")
                            (clojure.string/includes? % "default"))}
 
+          ; results:
+          {:trigger :callable
+           :concept :result
+           :selector [[:descendants
+                       :select (and (tag :th) (find-in-text #"Returns"))
+                       :limit 1]
+                      [:ancestors :select (tag :tr) :limit 1]
+                      :descendants (tag :dt)]
+           :ref-from-trigger :callable/result}
+
+          ; io-values (parameters & results):
+          {:trigger :io-value
+           :attribute :io-value/name
+           :selector [:children (tag :strong)]}
+          {:trigger :io-value
+           :attribute :io-value/position
+           :value :trigger-index}
+          {:trigger :io-value
+           :attribute [:description-summary :description]
+           :selector [[:following-siblings :select (tag :dd) :limit 1]
+                      :children (tag :p)]}
+
           ; datatypes:
-          {:trigger :parameter
+          {:trigger :io-value
            :concept :datatype
-           :ref-from-trigger :parameter/datatype
-           :pattern :parameter-info}
+           :ref-from-trigger :io-value/datatype
+           :pattern :io-value-info}
           {:trigger :datatype
            :attribute :datatype/name
            :transform #"^[A-Za-z]+"}])
