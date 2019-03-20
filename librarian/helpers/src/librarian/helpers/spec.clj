@@ -1,6 +1,6 @@
 (ns librarian.helpers.spec
   (:require [clojure.spec.alpha :as s])
-  (:refer-clojure :exclude [and]))
+  (:refer-clojure :exclude [and instance?]))
 
 (defn filterwalk
   [f form]
@@ -51,3 +51,10 @@
 (defn vec-of
   [pred-form]
   (s/and vector? (s/coll-of pred-form)))
+
+(defn instance?
+  [concept]
+  (let [parent (if (keyword? concept) concept (:ident concept))]
+    (fn [entity]
+      (some #(isa? % parent)
+            (:type entity)))))

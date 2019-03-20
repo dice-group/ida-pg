@@ -3,7 +3,8 @@
             [clojure.spec.alpha :as s]
             [librarian.helpers.spec :as hs]
             [librarian.helpers.transaction :as tx]
-            [librarian.helpers.transients :refer [into!]]))
+            [librarian.helpers.transients :refer [into!]]
+            [clojure.tools.logging :as log]))
 
 (defn retract-tempids
   [db ids]
@@ -21,7 +22,13 @@
                           specs (keep specs type)]
                       (if (and (seq specs) (s/valid? (apply hs/and specs) e))
                         (if allow-incomplete :completed :valid)
-                        (if allow-incomplete :incomplete :invalid))))
+                        (do
+                          (log/debug (str "Retract entity " id ".")
+                                     type
+                                     (if (seq specs)
+                                       (s/explain-str (apply hs/and specs) e)
+                                       "No specs found."))
+                          (if allow-incomplete :incomplete :invalid)))))
                   ids)
         tx (complete-ids completed)]
     (if (empty? invalid)

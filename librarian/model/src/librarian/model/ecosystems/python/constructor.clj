@@ -14,3 +14,4 @@
   :spec ::constructor)
 
 (s/def ::constructor (hs/entity-keys :req [::class]))
+(s/def ::class (hs/instance? :librarian.model.ecosystems.python.class/class))

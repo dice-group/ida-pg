@@ -2,21 +2,22 @@
   (:require [clojure.spec.alpha :as s]
             [librarian.helpers.spec :as hs]
             [librarian.model.syntax :refer [defconcept]]
-            [librarian.model.concepts.namespaced :refer [namespaced]])
+            [librarian.model.concepts.namespaced :as namespaced :refer [namespaced]]
+            [librarian.model.concepts.datatype :as datatype :refer [datatype]])
   (:refer-clojure :exclude [class]))
 
-(defconcept class [namespaced]
+(defconcept class [namespaced datatype]
   :attributes {::constructor {:db/valueType :db.type/ref
                               :db/cardinality :db.cardinality/many
                               :db/isComponent true
                               :db/doc "Constructor of the class."}
-               ::extends {:db/valueType :db.type/ref
-                          :db/cardinality :db.cardinality/many
-                          :db/doc "Superclass of the class."}
                ::method {:db/valueType :db.type/ref
                          :db/cardinality :db.cardinality/many
                          :db/isComponent true
                          :db/doc "Method of the class."}}
   :spec ::class)
 
-(s/def ::class (hs/entity-keys :req [::constructor]))
+(s/def ::class (hs/entity-keys :req [::constructor]
+                               :opt [::method]))
+(s/def ::constructor (s/coll-of (hs/instance? :librarian.model.paradigms.oo.constructor/constructor)))
+(s/def ::method (s/coll-of (hs/instance? :librarian.model.paradigms.oo.method/method)))

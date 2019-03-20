@@ -81,9 +81,9 @@
                             :loc loc :index index})}))
 
 (defn trigger-hooks
-  [extends hooks stack ecosystem]
+  [hooks stack ecosystem]
   (let [[{:keys [triggers loc]}] stack
-        triggered (mapcat hooks (extends triggers))]
+        triggered (mapcat hooks (conj (ancestors triggers) triggers))]
     (mapcat (fn [{:keys [selector limit] :as hook}]
               (let [selection (lzip/select-locs selector loc)]
                 (keep-indexed (partial trigger-hook hook stack ecosystem)
@@ -96,7 +96,6 @@
         itx (transient [])
         ; non-index transactions:
         tx (transient [[:db/add :db/current-tx :tx/source url]])
-        extends (assoc (:extends ecosystem) :document #{:document})
         [itx tx ids] (loop [merged-itx itx
                             merged-tx tx
                             merged-ids (transient (ordered-set))
@@ -105,7 +104,7 @@
                        (if (empty? queue)
                          [merged-itx merged-tx merged-ids]
                          (let [stack (peek queue)
-                               effects (trigger-hooks extends hooks stack ecosystem)
+                               effects (trigger-hooks hooks stack ecosystem)
                                itx (mapcat :itx effects)
                                tx (mapcat :tx effects)
                                ids (keep (comp :id :entry) effects)
@@ -171,10 +170,3 @@
                   (resolve-hook-aliases ecosystem))]
     {:traverser (partial traverse! conn hooks ecosystem)
      :finalize (partial finalize conn)}))
-
-(-> (d/empty-db {:x {:db/unique :db.unique/identity
-                     :db/valueType :db.type/ref}})
-    (d/with [[:db/add -1 :y "foo"]
-             [:db/add -2 :y "bar"]
-             [:db/add -1 :x -2]])
-    :db-after)

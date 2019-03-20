@@ -93,9 +93,9 @@
 
           ; datatypes:
           {:trigger :io-value
-           :concept :datatype
+           :concept :basetype
            :ref-from-trigger :io-value/datatype
            :pattern :io-value-info}
-          {:trigger :datatype
-           :attribute :datatype/name
+          {:trigger :basetype
+           :attribute :basetype/name
            :transform #"^[A-Za-z]+"}])

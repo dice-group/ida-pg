@@ -27,5 +27,8 @@
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.3.0-alpha4"]
                                   [proto-repl "0.3.1"]
                                   [proto-repl-charts "0.3.1"]
-                                  [proto-repl-sayid "0.1.3"]]
-                   :eastwood {:exclude-linters []}}})
+                                  [proto-repl-sayid "0.1.3"]
+                                  [com.gfredericks/debug-repl "0.0.10"]]
+                   :eastwood {:exclude-linters []}
+                   :repl-options {:nrepl-middleware
+                                  [com.gfredericks.debug-repl/wrap-debug-repl]}}})

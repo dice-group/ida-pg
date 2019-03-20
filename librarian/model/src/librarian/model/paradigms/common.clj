@@ -6,6 +6,7 @@
             [librarian.model.concepts.parameter :refer [parameter]]
             [librarian.model.concepts.result :refer [result]]
             [librarian.model.concepts.datatype :refer [datatype]]
+            [librarian.model.concepts.basetype :refer [basetype]]
             [librarian.model.concepts.namespace :refer [namespace]]
             [librarian.model.concepts.namespaced :refer [namespaced]])
   (:refer-clojure :exclude [namespace]))
@@ -17,5 +18,6 @@
   :parameter parameter
   :result result
   :datatype datatype
+  :basetype basetype
   :namespace namespace
   :namespaced namespaced)

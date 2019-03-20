@@ -2,14 +2,15 @@
 
 (defn merge-by-key
   [mergers default & maps]
-  (let [[mergers default maps] (cond
-                                 (fn? mergers)
-                                 [{} mergers (cons default maps)]
-                                 (map? default)
-                                 [mergers
-                                  (fn [& args] (last args))
-                                  (cons default maps)]
-                                 :else [mergers default maps])]
+  (let [[mergers default maps]
+        (cond
+          (fn? mergers)
+          [{} mergers (cons default maps)]
+          (map? default)
+          [mergers
+           (fn [& args] (last args))
+           (cons default maps)]
+          :else [mergers default maps])]
     (into {} (for [key (set (mapcat keys maps))]
                [key (->> maps
                          (keep key)

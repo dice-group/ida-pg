@@ -96,7 +96,7 @@ public class DataDumpProvider {
 				+ "[(get-else $ ?param :parameter/optional false) ?optional] "
 				+ "[(get-else $ ?param :parameter/position -1) ?position]"
 				+ "[(get-else $ ?param :parameter/datatype -1) ?type] "
-				+ "[(get-else $ ?type :datatype/name \"\") ?tname]";
+				+ "[(get-else $ ?type :basetype/name \"\") ?tname]";
 		
 		@SuppressWarnings("unchecked")
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(pid));

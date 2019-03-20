@@ -1,9 +1,13 @@
 (ns librarian.model.concepts.datatype
-  (:require [librarian.helpers.transaction :refer [add-attr]]
-            [librarian.model.syntax :refer [defconcept]]
-            [librarian.model.concepts.named :as named :refer [named]]))
+  (:require [clojure.spec.alpha :as s]
+            [librarian.helpers.spec :as hs]
+            [librarian.model.syntax :refer [defconcept]]))
 
-(defconcept datatype [named]
-  :attributes {::id {:db/unique :db.unique/identity
-                     :db/doc "Unique name of the datatype."}}
-  :preprocess {::named/name (add-attr ::id)})
+(defconcept datatype
+  :attributes {::extends {:db/valueType :db.type/ref
+                          :db/cardinality :db.cardinality/many
+                          :db/doc "Supertype of the type."}}
+  :spec ::datatype)
+
+(s/def ::datatype (hs/entity-keys :opt [::extends]))
+(s/def ::extends (s/coll-of (hs/instance? ::datatype)))

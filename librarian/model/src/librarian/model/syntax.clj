@@ -1,6 +1,5 @@
 (ns librarian.model.syntax
   (:require [clojure.spec.alpha :as s]
-            [clojure.set :as set]
             [librarian.helpers.spec :as hs]
             [librarian.helpers.map :as map]
             [librarian.helpers.transaction :as tx]
@@ -14,12 +13,13 @@
                       {:attributes merge
                        :spec hs/and
                        :preprocess (partial map/merge-by-key tx/merge-direct)
-                       :postprocess tx/merge
-                       :extends set/union}
-                      (conj extends concept))]
-    (if (contains? merged :spec)
-      merged
-      (assoc merged :spec any?))))
+                       :postprocess tx/merge}
+                      (conj extends concept))
+        merged (if (contains? merged :spec)
+                 merged
+                 (assoc merged :spec any?))
+        merged (assoc merged :extends (map :ident extends))]
+    merged))
 
 (defn- merge-paradigms
   [paradigm extends]
@@ -48,7 +48,6 @@
                                                  (name c))]
                                   attribute (keys attributes)]
                               [(keyword cns (name attribute)) attribute]))
-   :extends (map/map-kv (comp (juxt :ident :extends) second) paradigm)
    :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
                             (into a attributes))
                           common/attributes paradigm)
@@ -78,7 +77,10 @@
                      (keyword (str *ns*) (str name#)))
              concept# (-> conformed#
                           (assoc :ident name#)
-                          (update :extends set/union #{name#}))]
+                          (dissoc :extends))]
+         (doseq [parent# (:extends conformed#)
+                 :when (not (isa? name# parent#))]
+           (derive name# parent#))
          (def ~name concept#)))))
 
 (defmacro defparadigm
