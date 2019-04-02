@@ -1,0 +1,13 @@
+(ns librarian.model.concepts.call-result
+  (:require [clojure.spec.alpha :as s]
+            [librarian.helpers.spec :as hs]
+            [librarian.model.syntax :refer [defconcept]]
+            [librarian.model.concepts.typed :as typed :refer [typed]]))
+
+(defconcept call-result [typed]
+  :attributes {::result {:db/valueType :db.type/ref
+                         :db/doc "A callable's result."}}
+  :spec ::call-result)
+
+(s/def ::call-result (hs/entity-keys :req [::result]))
+(s/def ::result (hs/instance? :librarian.model.concepts.result/result))

@@ -15,6 +15,7 @@
 	
 	<modules>
 		<module>ida-ws</module>
-		<module>librarian</module>
+		<module>librarian/modules/helpers</module>
+		<module>librarian/modules/model</module>
 	</modules>
 </project>

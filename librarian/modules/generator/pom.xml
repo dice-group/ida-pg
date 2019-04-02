@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>librarian</groupId>
-  <artifactId>librarian</artifactId>
+  <artifactId>generator</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0-SNAPSHOT</version>
-  <name>librarian</name>
-  <description>A set of tools to programmatically work with software libraries.</description>
-  <url>https://github.com/dice-group/ida</url>
+  <name>generator</name>
+  <description>Writes code to fulfill given requirements using library scrapes.</description>
   <scm/>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -80,14 +79,19 @@
       <version>1.10.0</version>
     </dependency>
     <dependency>
-      <groupId>cli-matic</groupId>
-      <artifactId>cli-matic</artifactId>
-      <version>0.3.6</version>
+      <groupId>org.clojure</groupId>
+      <artifactId>tools.logging</artifactId>
+      <version>0.4.1</version>
     </dependency>
     <dependency>
-      <groupId>say-cheez</groupId>
-      <artifactId>say-cheez</artifactId>
-      <version>0.1.1</version>
+      <groupId>datascript</groupId>
+      <artifactId>datascript</artifactId>
+      <version>0.18.2</version>
+    </dependency>
+    <dependency>
+      <groupId>clucie</groupId>
+      <artifactId>clucie</artifactId>
+      <version>0.4.2</version>
     </dependency>
     <dependency>
       <groupId>librarian</groupId>
@@ -97,16 +101,6 @@
     <dependency>
       <groupId>librarian</groupId>
       <artifactId>model</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>librarian</groupId>
-      <artifactId>scraper</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>librarian</groupId>
-      <artifactId>generator</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>

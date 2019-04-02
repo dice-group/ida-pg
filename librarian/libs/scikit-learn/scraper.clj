@@ -18,7 +18,7 @@
                            :selector [:children (tag :dd)
                                       [:children
                                        :select (and (tag :p) (not (class :rubric)))]]}
-             :io-value-info {:selector [:children (and (tag :span) (class :classifier))]}}
+             :io-container-info {:selector [:children (and (tag :span) (class :classifier))]}}
 
   :hooks [; namespaces:
           {:trigger :namespaced
@@ -65,7 +65,7 @@
            :ref-from-trigger :callable/parameter}
           {:trigger :parameter
            :attribute :parameter/optional
-           :pattern :io-value-info
+           :pattern :io-container-info
            :transform #(or (clojure.string/includes? % "optional")
                            (clojure.string/includes? % "default"))}
 
@@ -79,23 +79,23 @@
                       :descendants (tag :dt)]
            :ref-from-trigger :callable/result}
 
-          ; io-values (parameters & results):
-          {:trigger :io-value
-           :attribute :io-value/name
+          ; io-containers (parameters & results):
+          {:trigger :io-container
+           :attribute :io-container/name
            :selector [:children (tag :strong)]}
-          {:trigger :io-value
-           :attribute :io-value/position
+          {:trigger :io-container
+           :attribute :io-container/position
            :value :trigger-index}
-          {:trigger :io-value
+          {:trigger :io-container
            :attribute [:description-summary :description]
            :selector [[:following-siblings :select (tag :dd) :limit 1]
                       :children (tag :p)]}
 
           ; datatypes:
-          {:trigger :io-value
+          {:trigger :io-container
            :concept :basetype
-           :ref-from-trigger :io-value/datatype
-           :pattern :io-value-info}
+           :ref-from-trigger :io-container/datatype
+           :pattern :io-container-info}
           {:trigger :basetype
            :attribute :basetype/name
            :transform #"^[A-Za-z]+"}])

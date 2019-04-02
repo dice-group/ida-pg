@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>librarian</groupId>
-  <artifactId>librarian</artifactId>
+  <artifactId>scraper</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0-SNAPSHOT</version>
-  <name>librarian</name>
-  <description>A set of tools to programmatically work with software libraries.</description>
-  <url>https://github.com/dice-group/ida</url>
+  <name>scraper</name>
+  <description>Crawls through the documentation of software libraries and transforms them into a standardized format.</description>
   <scm/>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -69,6 +68,16 @@
         <enabled>true</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>oracleReleases</id>
+      <url>https://download.oracle.com/maven</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
   </repositories>
   <dependencyManagement>
     <dependencies/>
@@ -80,14 +89,34 @@
       <version>1.10.0</version>
     </dependency>
     <dependency>
-      <groupId>cli-matic</groupId>
-      <artifactId>cli-matic</artifactId>
-      <version>0.3.6</version>
+      <groupId>org.clojure</groupId>
+      <artifactId>tools.logging</artifactId>
+      <version>0.4.1</version>
     </dependency>
     <dependency>
-      <groupId>say-cheez</groupId>
-      <artifactId>say-cheez</artifactId>
-      <version>0.1.1</version>
+      <groupId>edu.uci.ics</groupId>
+      <artifactId>crawler4j</artifactId>
+      <version>4.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.flatland</groupId>
+      <artifactId>ordered</artifactId>
+      <version>1.5.7</version>
+    </dependency>
+    <dependency>
+      <groupId>hickory</groupId>
+      <artifactId>hickory</artifactId>
+      <version>0.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>datascript</groupId>
+      <artifactId>datascript</artifactId>
+      <version>0.18.2</version>
+    </dependency>
+    <dependency>
+      <groupId>clj-commons</groupId>
+      <artifactId>fs</artifactId>
+      <version>1.5.0</version>
     </dependency>
     <dependency>
       <groupId>librarian</groupId>
@@ -97,16 +126,6 @@
     <dependency>
       <groupId>librarian</groupId>
       <artifactId>model</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>librarian</groupId>
-      <artifactId>scraper</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>librarian</groupId>
-      <artifactId>generator</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
