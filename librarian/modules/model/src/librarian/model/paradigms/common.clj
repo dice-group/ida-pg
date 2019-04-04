@@ -19,22 +19,23 @@
   (:refer-clojure :exclude [namespace]))
 
 (defparadigm common
-  :named named
-  :namespace namespace
-  :namespaced namespaced
+  :concepts
+  {:named named
+   :namespace namespace
+   :namespaced namespaced
 
-  :datatype datatype
-  :basetype basetype
-  :semantic-type semantic-type
-  :goal-type goal-type
-  :typed typed
+   :datatype datatype
+   :basetype basetype
+   :semantic-type semantic-type
+   :goal-type goal-type
+   :typed typed
 
-  :callable callable
-  :io-container io-container
-  :parameter parameter
-  :result result
+   :callable callable
+   :io-container io-container
+   :parameter parameter
+   :result result
 
-  :call call
-  :call-parameter call-parameter
-  :call-result call-result
-  :call-value call-value)
+   :call call
+   :call-parameter call-parameter
+   :call-result call-result
+   :call-value call-value})

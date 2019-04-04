@@ -7,5 +7,8 @@
   (:refer-clojure :exclude [class]))
 
 (defecosystem python [oo functional]
-  :class class
-  :constructor constructor)
+  :concepts
+  {:class class
+   :constructor constructor})
+
+python

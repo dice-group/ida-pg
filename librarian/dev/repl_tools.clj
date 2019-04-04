@@ -76,7 +76,8 @@
                                   {:from from
                                    :to to
                                    :label "flow"})))
-        edges (concat [{:from -1 :to -2}] receive-edges)]
+        edges (concat receive-edges)
+        edges (if (empty? edges) [{:from -1 :to -2}] edges)]
     (prg/graph "Control Flow State"
                {:nodes nodes
                 :edges edges}

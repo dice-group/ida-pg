@@ -22,8 +22,14 @@
     merged))
 
 (defn- merge-paradigms
-  [paradigm extends]
-  (apply merge (conj extends paradigm)))
+  ([paradigm extends]
+   (merge-paradigms (conj extends
+                          (update paradigm :builtins #(when % (vector %))))))
+  ([paradigms]
+   (apply map/merge-by-key
+          {:concepts merge
+           :builtins concat}
+          paradigms)))
 
 (defn- no-attribute-collisions?
   [{:keys [concept extends]}]
@@ -38,11 +44,12 @@
         (zipmap $ $)))
 
 (defn paradigm->ecosystem
-  [paradigm]
-  {:paradigm paradigm
-   :concept-aliases (map/map-v :ident paradigm)
+  [{:keys [concepts builtins]}]
+  {:concepts concepts
+   :builtins builtins
+   :concept-aliases (map/map-v :ident concepts)
    :attribute-aliases (into common-attribute-aliases
-                            (for [[c {:keys [attributes]}] paradigm
+                            (for [[c {:keys [attributes]}] concepts
                                   :let [cns (namespace c)
                                         cns (str (when cns (str cns "."))
                                                  (name c))]
@@ -50,16 +57,16 @@
                               [(keyword cns (name attribute)) attribute]))
    :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
                             (into a attributes))
-                          common/attributes paradigm)
-   :specs (map/map-kv (comp (juxt :ident :spec) second) paradigm)
-   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) paradigm)
-   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) paradigm)})
+                          common/attributes concepts)
+   :specs (map/map-kv (comp (juxt :ident :spec) second) concepts)
+   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) concepts)
+   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) concepts)})
 
 (defn merge-ecosystems
   [& ecosystems]
   (->> ecosystems
-       (map :paradigm)
-       (apply merge)
+       (map #(select-keys % [:concepts :builtins]))
+       (apply merge-paradigms)
        paradigm->ecosystem))
 
 ; Macros:
@@ -113,7 +120,7 @@
                              no-attribute-collisions?
                              (s/conformer (fn [{:keys [concept extends]}]
                                             (merge-concepts concept extends)))))
-(s/def ::concepts (s/and (hs/keys*) (s/map-of keyword? ::concept)))
+(s/def ::concepts (s/map-of keyword? ::concept))
 
 (s/def ::paradigm-desc (s/and (s/cat :extends (s/? (hs/vec-of ::paradigm))
                                      :paradigm (s/* any?))
@@ -121,7 +128,8 @@
                               (s/conformer (fn [{:keys [paradigm extends]
                                                  :or {paradigm {}}}]
                                              (merge-paradigms paradigm extends)))))
-(s/def ::paradigm ::concepts)
+(s/def ::paradigm (s/and (hs/keys* :opt-un [::concepts ::builtins])))
+(s/def ::builtins coll?)
 
-(s/def ::ecosystem-desc
-       (s/and ::paradigm-desc (s/conformer paradigm->ecosystem)))
+(s/def ::ecosystem-desc (s/and ::paradigm-desc
+                               (s/conformer paradigm->ecosystem)))

@@ -4,4 +4,5 @@
             [librarian.model.paradigms.functional.function :refer [function]]))
 
 (defparadigm functional [common]
-  :function function)
+  :concepts
+  {:function function})

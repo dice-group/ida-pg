@@ -7,6 +7,7 @@
   (:refer-clojure :exclude [class]))
 
 (defparadigm oo [common]
-  :class class
-  :constructor constructor
-  :method method)
+  :concepts
+  {:class class
+   :constructor constructor
+   :method method})
