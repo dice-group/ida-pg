@@ -21,14 +21,15 @@
 
   (log/info "REPL started.")
   (letfn [(lines [& args] (string/join "\n" args))]
-    (println (lines "Scraper commands:"
+    (println (lines "CLI command: (main* & args)"
+                    ""
+                    "Scraper commands:"
                     "* (create-scrape config-file)"
                     "* (show-scrape config-file)"
                     "* (query-scrape scrape query & args)"
                     "* (query-file scrape-file query & args)"
                     "* (pull-scrape scrape selector eid)"
                     "* (pull-file scrape-file selector eid)"
-                    "* (main* & args)"
                     ""
                     "Generator commands:"
                     "[WIP]"))))

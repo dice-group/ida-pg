@@ -6,7 +6,7 @@
 
 (defconcept goal-type [datatype]
   :attributes {::id {:db/unique :db.unique/identity
-                     :db/doc ""}}
+                     :db/doc "Identifier of the goal-type."}}
   :spec ::goal-type)
 
 (s/def ::goal-type (hs/entity-keys :req [::id]))

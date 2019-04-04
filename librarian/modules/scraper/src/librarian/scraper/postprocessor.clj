@@ -23,11 +23,10 @@
                       (if (and (seq specs) (s/valid? (apply hs/and specs) e))
                         (if allow-incomplete :completed :valid)
                         (do
-                          (log/debug (str "Retract entity " id ".")
-                                     type
-                                     (if (seq specs)
-                                       (s/explain-str (apply hs/and specs) e)
-                                       "No specs found."))
+                          (when (seq specs)
+                            (log/debug (str "Retract entity " id "!")
+                                       type
+                                       (s/explain-str (apply hs/and specs) e)))
                           (if allow-incomplete :incomplete :invalid)))))
                   ids)
         tx (complete-ids completed)]
