@@ -80,4 +80,7 @@
     (prg/graph "Control Flow State"
                {:nodes nodes
                 :edges edges}
-               {:edges {:arrows "to"}})))
+               {:edges {:arrows "to"}
+                :layout {:hierarchical {:enabled true
+                                        :direction "UD"
+                                        :sortMethod "directed"}}})))
