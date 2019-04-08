@@ -143,17 +143,29 @@
        (group-by :trigger)))
 
 (defn resolve-hook-aliases
-  [hooks {:keys [concept-aliases attribute-aliases]}]
-  (map/map-kv (fn [[k v]]
-                [(concept-aliases k k)
-                 (mapv #(-> %
-                            (map/update-keys [:concept] concept-aliases)
-                            (map/update-keys [:attribute
-                                              :ref-from-trigger
-                                              :ref-to-trigger]
-                                             attribute-aliases))
-                       v)])
-              hooks))
+  [hooks {:keys [attributes concept-aliases attribute-aliases]}]
+  (let [concept-keys [:concept]
+        attr-keys [:attribute :ref-from-trigger :ref-to-trigger]
+        concept-lookup (partial map/get-or-fail concept-aliases)
+        attr-lookup (fn [attr]
+                      (if (seqable? attr)
+                        (map (partial map/get-or-fail attribute-aliases) attr)
+                        (map/get-or-fail attribute-aliases attr)))]
+    (map/map-kv (fn [[k v]]
+                  [(map/get-or-fail (merge concept-aliases
+                                           attribute-aliases
+                                           {:document :document})
+                                    k)
+                   (mapv (fn [hook]
+                           (let [hook (-> hook
+                                          (map/update-keys concept-keys concept-lookup)
+                                          (map/update-keys attr-keys attr-lookup))]
+                             (if (not-any? #(-> (get hook %) attributes :librarian/computed) attr-keys)
+                               hook
+                               (throw (Error. (str "Invalid hook " hook
+                                                   ". Computed attributes cannot be scraped."))))))
+                         v)])
+                hooks)))
 
 (def db-spec {:tempid {:db/cardinality :db.cardinality/many
                        :db/unique :db.unique/identity

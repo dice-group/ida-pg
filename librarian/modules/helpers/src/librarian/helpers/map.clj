@@ -39,3 +39,11 @@
 (defn keep-v
   [f m]
   (into {} (for [[k v] m :let [w (f v)] :when w] [k w])))
+
+(defn get-or-fail
+  ([map key]
+   (get-or-fail map key (str "Could not get " key ".")))
+  ([map key error-msg]
+   (if (contains? map key)
+     (get map key)
+     (throw (Error. error-msg)))))
