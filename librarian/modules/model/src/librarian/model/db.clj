@@ -25,7 +25,13 @@
   ([ecosystem db tx-data]
    (with ecosystem db tx-data nil))
   ([ecosystem db tx-data tx-meta]
-   #_(println (fix ecosystem tx-data))
-   (d/with db
-           (fix ecosystem tx-data)
-           tx-meta)))
+   (d/with db (fix ecosystem tx-data) tx-meta)))
+
+(defn add-builtins
+  "Adds the ecosystem builtin concepts to a given database."
+  [db ecosystem]
+  (reduce (fn [db tx]
+            (when tx
+              (-> db (d/with tx) :db-after)
+              db))
+          db (:builtins ecosystem)))

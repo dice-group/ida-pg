@@ -53,7 +53,7 @@
             attribute-aliases (merge attribute-aliases
                                      (zipmap scraper-attrs-keys scraper-attrs-keys))
             attributes (merge attributes sattrs/attributes)]
-        (pp/print-table ["attribute" "description" "unique?" "ref?" "many?"]
+        (pp/print-table ["attribute" "description" "uniq?" "ref?" "many?" "computed?"]
                         (->> attribute-aliases
                              (sort-by (comp #(str (namespace %) "/" (name %)) first))
                              (keep (fn [[alias ident]]
@@ -61,13 +61,14 @@
                                        (when-not (:librarian/internal attr)
                                          {"attribute" alias
                                           "description" (:db/doc attr)
-                                          "unique?" (when (tx/unique-attr? attr) "✔")
+                                          "uniq?" (when (tx/unique-attr? attr) "✔")
                                           "ref?" (when (tx/ref-attr? attr) "✔")
                                           "many?" (when (= (:db/cardinality attr)
                                                            :db.cardinality/many)
-                                                    "✔")})))))))
+                                                    "✔")
+                                          "computed?" (when (:librarian/computed attr) "✔")})))))))
       (println "\nConcept types (possible values of the :type attribute):")
-      (pp/pprint (keys concept-aliases)))
+      (pp/pprint (sort (keys concept-aliases))))
     (throw (Exception. (str "Unknown ecosystem '" ecosystem "'. "
                             "Supported ecosystems: " ecosystems-string)))))
 

@@ -42,6 +42,10 @@
   [attr]
   (-> attr :db/valueType (= :db.type/ref)))
 
+(defn many-attr?
+  [attr]
+  (-> attr :db/cardinality (= :db.cardinality/many)))
+
 (defn indexing-tx?
   [attrs [_ _ attr _]]
   (unique-attr? (attrs attr)))
@@ -50,19 +54,24 @@
   [attrs [_ _ attr _]]
   (ref-attr? (attrs attr)))
 
+(declare replace-ids)
+
+(defn replace-ids-in-tx
+  [m tx]
+  (cond
+    (sequential? tx)
+    (let [[op e a v] tx]
+      (case op
+        :db/add [op (get m e e) a v]
+        :db.fn/call (into [op (replace-ids m e)]
+                          (nnext tx))
+        tx))
+    (and (map? tx) (contains? m (:db/id tx)))
+    (update tx :db/id m)
+    :else tx))
+
 (defn replace-ids
   [m f]
   (fn [& args]
-    (map (fn [tx]
-           (cond
-             (sequential? tx)
-             (let [[op e a v] tx]
-               (case op
-                 :db/add [op (get m e e) a v]
-                 :db.fn/call (into [op (replace-ids m e)]
-                                   (nnext tx))
-                 tx))
-             (and (map? tx) (contains? m (:db/id tx)))
-             (update tx :db/id m)
-             :else tx))
+    (map (partial replace-ids-in-tx m)
          (apply f args))))

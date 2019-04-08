@@ -8,6 +8,7 @@
 
 (defconcept basetype [named datatype]
   :attributes {::id {:db/unique :db.unique/identity
+                     :librarian/computed true
                      :db/doc "Unique name of the basetype."}}
   :spec ::basetype
   :preprocess {::named/name (add-attr ::id)})

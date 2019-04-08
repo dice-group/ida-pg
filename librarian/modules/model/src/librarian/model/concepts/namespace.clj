@@ -8,6 +8,7 @@
 
 (defconcept namespace [named]
   :attributes {::id {:db/unique :db.unique/identity
+                     :librarian/computed true
                      :db/doc "Unique name of the namespace."}
                ::member {:db/valueType :db.type/ref
                          :db/cardinality :db.cardinality/many

@@ -9,6 +9,7 @@
   :attributes {::class {:db/unique :db.unique/identity
                         :db/valueType :db.type/ref
                         :librarian/internal true
+                        :librarian/computed true
                         :db/doc (str "A reference to the constructor's class. "
                                      "In python this uniquely identifies a constructor.")}}
   :spec ::constructor)

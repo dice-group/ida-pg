@@ -10,10 +10,11 @@
   "Computes the fully qualified name of a given concept."
   [e]
   (when-let [pname (some-> e ::namespace/_member ::named/name)]
-    (str pname "." (::named/name e))))
+    [pname (::named/name e)]))
 
 (defconcept namespaced [named]
   :attributes {::id {:db/unique :db.unique/identity
+                     :librarian/computed true
                      :db/doc "Fully qualified name of the concept."}}
   :spec ::namespaced
   :postprocess (add-attr ::id fqn))
