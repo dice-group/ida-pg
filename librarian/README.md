@@ -39,10 +39,14 @@ If you want to work on Librarian you will need [Leiningen 2.8](https://leiningen
 Librarian is structured as a [multimodule](https://github.com/jcrossley3/lein-modules) project.
 To set up your environment, run:
 ```shell
-lein modules install # Installs all modules to your local repo.
-lein modules :checkouts # Creates Leiningen checkouts for all modules.
+lein prepare-repl
+# This is a shorthand alias for the following:
+# - Installs all modules to your local repo. (lein modules install)
+# - Deletes target-dirs from modules. (lein modules clean)
+# - Creates Leiningen checkouts. (lein modules :checkouts)
 ```
 Using [checkouts](https://github.com/technomancy/leiningen/blob/stable/doc/TUTORIAL.md#checkout-dependencies) you can test changes across multiple modules without having to reinstall them to your local repo after each change.
+The cleaning step is required for hot-code reloading via [clojure.tools.namespace](https://github.com/clojure/tools.namespace) in the REPL.
 To get a REPL, just run `lein repl`.
 Module specific details are described in the READMEs of the individual modules (linked above).
 

@@ -37,7 +37,11 @@
                     "* (pull-file scrape-file selector eid)"
                     ""
                     "Generator commands:"
-                    "[WIP]"))))
+                    "[WIP]"
+                    ""
+                    "REPL commands:"
+                    " * (refresh)"
+                    " * (refresh-all)"))))
 
 (defn refresh
   []

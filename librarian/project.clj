@@ -38,6 +38,11 @@
 
   :main librarian.cli
 
+  :aliases {"prepare-repl" ["do" ["modules" "clean"]
+                                 ["modules" "install"]
+                                 ["modules" "clean"]
+                                 ["modules" ":checkouts"]]}
+
   :profiles {:dev {:source-paths ["dev" "src" "test"]
                    :dependencies [[org.clojure/tools.namespace "0.3.0-alpha4"]
                                   [proto-repl "0.3.1"]
