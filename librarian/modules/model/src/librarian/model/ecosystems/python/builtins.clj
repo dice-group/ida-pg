@@ -4,8 +4,9 @@
             [librarian.model.concepts.namespace :as namespace]
             [librarian.model.paradigms.functional.function :as function]))
 
-(def basetypes (into {} (map (fn [type] [type (instanciate basetype/basetype
-                                                :name (name type))])
+(def basetypes (into {} (map (fn [type]
+                               [type (instanciate basetype/basetype
+                                       :name (name type))])
                              [:int :float :complex :str])))
 
 (def global-ns (instanciate namespace/namespace

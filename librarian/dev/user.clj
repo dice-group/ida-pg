@@ -6,6 +6,11 @@
             [clojure.string :as string]
             [proto-repl.saved-values]))
 
+(defn disable-reload!
+  [ns-sym]
+  (require [ns-sym])
+  (ctnr/disable-reload! (find-ns ns-sym)))
+
 (defn start
   []
   (ctnr/set-refresh-dirs "dev" "src" "test"

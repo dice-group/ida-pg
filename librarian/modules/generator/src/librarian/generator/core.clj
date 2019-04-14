@@ -5,6 +5,7 @@
             [clucie.document :as cdoc]
             [clucie.analysis :as canalysis]
             [librarian.model.io.scrape :as scrape]
+            [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-result :as call-result]
@@ -63,21 +64,21 @@
 
 (defn initial-state
   [scrape goals]
-  {:predecessor nil
-   :cost 0
-   :db (-> (:db scrape)
-           (d/with (concat (mapv (fn [goal]
-                                   {:type ::call-parameter/call-parameter
-                                    ::typed/datatype
-                                    {:type ::goal-type/goal-type
-                                     ::goal-type/id goal}})
-                                 goals)
-                           [{:type ::call-value/call-value
-                             ::call-value/value "Hello World!"
-                             ::typed/datatype
-                             {:type ::goal-type/goal-type
-                              ::goal-type/id :labels}}]))
-           :db-after)})
+  (let [concepts (concat (mapv (fn [goal]
+                                 (instanciate call-parameter/call-parameter
+                                   :datatype (instanciate goal-type/goal-type
+                                               :id goal)))
+                               goals)
+                         [(instanciate call-value/call-value
+                            :value "Hello World!"
+                            :datatype (instanciate goal-type/goal-type
+                                        :id :labels))])]
+    (println (instances->tx concepts))
+    {:predecessor nil
+     :cost 0
+     :db (-> (:db scrape)
+             (d/with (instances->tx concepts))
+             :db-after)}))
 
 (defn next-flaw
   [state]
@@ -120,7 +121,10 @@
     (map (partial apply-action state)
          actions)))
 
-(let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
-      state (initial-state scrape [:labels])
-      succ (successors state)]
-  (rt/show-state (first succ)))
+(try
+  (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
+        state (initial-state scrape [:labels])
+        succ (successors state)]
+    (rt/show-state (first succ)))
+  (catch Exception e
+    (.println *err* e)))

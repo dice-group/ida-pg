@@ -1,6 +1,7 @@
 (ns librarian.model.db
   (:require [datascript.core :as d]
-            [clojure.walk :as walk]))
+            [clojure.walk :as walk]
+            [librarian.model.syntax :refer [instances->tx]]))
 
 (defn fix
   [{:keys [concept-aliases attribute-aliases]} form]
@@ -30,8 +31,14 @@
 (defn add-builtins
   "Adds the ecosystem builtin concepts to a given database."
   [db ecosystem]
-  (reduce (fn [db tx]
-            (when tx
-              (-> db (d/with tx) :db-after)
+  (reduce (fn [db instances]
+            (when instances
+              (-> db (d/with (instances->tx instances)) :db-after)
               db))
           db (:builtins ecosystem)))
+
+(defn transact-builtins!
+  "Transacts the ecosystem builtin concepts to a given database connection."
+  [conn ecosystem]
+  (doseq [instances (:builtins ecosystem)]
+    (d/transact! conn (instances->tx instances))))

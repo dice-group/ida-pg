@@ -78,13 +78,15 @@
      (-> v2 semver/parse :major)))
 
 (defn- patch-db
-  [{:keys [schema datoms]} new-schema]
-  (let [[schema-keys new-schema-keys] (map (comp set keys) [schema new-schema])
+  [{:keys [schema datoms]} ecosystem]
+  (let [new-schema (:attributes ecosystem)
+        [schema-keys new-schema-keys] (map (comp set keys) [schema new-schema])
         key-diff (filter (comp not :librarian/temporary schema)
                          (set/difference schema-keys new-schema-keys))]
     (if (empty? key-diff)
-      (db/db-from-reader {:schema new-schema
-                          :datoms datoms})
+      (-> {:schema new-schema, :datoms datoms}
+          (db/db-from-reader)
+          (mdb/add-builtins (:builtins ecosystem)))
       (throw (Exception. (str "Scrape schema is incompatible with current ecosystem model.\n"
                               "Scrape schema attributes: " schema-keys "\n"
                               "Model schema attributes: " new-schema-keys "\n"
@@ -98,8 +100,7 @@
                                ::meta])
               #(semver-compat (get-in % [:ecosystem :version])
                               (:ecosystem/version %))
-              (s/conformer #(update % :db patch-db
-                                    (get-in % [:ecosystem :attributes])))))
+              (s/conformer #(update % :db patch-db (:ecosystem %)))))
 
 (s/def ::db (s/keys :req-un [::schema ::datoms]))
 (s/def ::name #(or (string? %) (symbol? %)))

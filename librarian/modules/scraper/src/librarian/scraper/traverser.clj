@@ -7,6 +7,7 @@
             [librarian.helpers.zip :as lzip]
             [librarian.helpers.map :as map]
             [librarian.helpers.transaction :as tx]
+            [librarian.model.db :as mdb]
             [librarian.scraper.postprocessor :as pp])
   (:import (java.util.regex Pattern)))
 
@@ -181,5 +182,6 @@
         hooks (-> hooks
                   (index-hooks patterns)
                   (resolve-hook-aliases ecosystem))]
+    (mdb/transact-builtins! conn ecosystem)
     {:traverser (partial traverse! conn hooks ecosystem)
      :finalize (partial finalize conn)}))
