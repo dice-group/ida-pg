@@ -2,9 +2,9 @@
                              proto-repl.saved-values
                              hickory.select
                              repl-tools
+                             librarian.cli
                              librarian.model.io.scrape
                              librarian.scraper.io.scrape
-                             librarian.cli
                              librarian.scraper.crawler.factory
                              librarian.generator.core]
  :known-macros [say-cheez.core/capture-build-env-to

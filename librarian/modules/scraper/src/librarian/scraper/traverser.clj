@@ -8,6 +8,7 @@
             [librarian.helpers.map :as map]
             [librarian.helpers.transaction :as tx]
             [librarian.model.db :as mdb]
+            [librarian.scraper.attributes :as sattrs]
             [librarian.scraper.postprocessor :as pp])
   (:import (java.util.regex Pattern)))
 
@@ -168,17 +169,9 @@
                          v)])
                 hooks)))
 
-(def db-spec {:tempid {:db/cardinality :db.cardinality/many
-                       :db/unique :db.unique/identity
-                       :librarian/temporary true
-                       :db/doc "Temporary bookkeeping property used by the scraper."}
-              :allow-incomplete {:db/index true
-                                 :librarian/temporary true
-                                 :db/doc "Temporary bookkeeping property used by the scraper."}})
-
 (defn traverser
   [{:keys [hooks patterns ecosystem]}]
-  (let [conn (d/create-conn (merge db-spec (:attributes ecosystem)))
+  (let [conn (d/create-conn (merge sattrs/attributes (:attributes ecosystem)))
         hooks (-> hooks
                   (index-hooks patterns)
                   (resolve-hook-aliases ecosystem))]
