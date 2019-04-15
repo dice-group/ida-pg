@@ -86,10 +86,11 @@
                                                       (:db/id instance))))
                                        (:preprocess concept))))
                            instances)
-        tx (concat raw-tx preproc-tx)
         schema (->> instances
                     (keep (comp :attributes :concept meta))
                     (apply merge common/attributes))
+        tx (sort-by #(not (and (vector? %) (tx/indexing-tx? schema %)))
+                    (concat raw-tx preproc-tx))
         {db :db-after, tempid->id :tempids} (d/with (d/empty-db schema) tx)
         id->tempid (set/map-invert tempid->id)
         postproc-tx (mapcat (fn [instance]

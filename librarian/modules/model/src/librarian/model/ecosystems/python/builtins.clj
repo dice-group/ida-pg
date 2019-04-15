@@ -2,25 +2,38 @@
   (:require [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.basetype :as basetype]
             [librarian.model.concepts.namespace :as namespace]
-            [librarian.model.paradigms.functional.function :as function]))
+            [librarian.model.paradigms.functional.function :as function]
+            [librarian.model.concepts.parameter :as parameter]
+            [librarian.model.concepts.result :as result]))
 
-(def basetypes (into {} (map (fn [type]
-                               [type (instanciate basetype/basetype
-                                       :name (name type))])
-                             [:int :float :complex :str])))
+(def object-type (instanciate basetype/basetype :name "object"))
 
-(def global-ns (instanciate namespace/namespace
-                 :name ""))
+(def basetypes (into {:object object-type}
+                     (map (fn [type]
+                            [type (instanciate basetype/basetype
+                                    :name (name type)
+                                    :extends object-type)])
+                          [:int :float :complex :str])))
+
+(def global-ns (instanciate namespace/namespace :name ""))
 
 (defn- instanciate-typecaster
   [name from to]
   (instanciate function/function
     :name name
     ::namespace/_member global-ns
-    :parameter []))
+    :parameter (instanciate parameter/parameter
+                 :position 0
+                 :name "x"
+                 :datatype (basetypes from))
+    :result (instanciate result/result
+              :position 0
+              :name "y"
+              :datatype (basetypes to))))
 
-(def typecasters [(instanciate-typecaster "int" :str :int)
-                  (instanciate-typecaster "float" :str :float)])
+(def typecasters [(instanciate-typecaster "str" :object :str)
+                  (instanciate-typecaster "int" :object :int)
+                  (instanciate-typecaster "float" :object :float)])
 
 (def builtins (concat (vals basetypes)
                       typecasters))
