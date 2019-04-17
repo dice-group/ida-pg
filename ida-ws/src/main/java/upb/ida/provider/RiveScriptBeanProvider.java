@@ -49,6 +49,11 @@ public class RiveScriptBeanProvider {
 	private UploadDataset uploadDataset;
 	@Autowired
 	private ShowDataset showDataset;
+  @Autowired
+	private VennDiagramHandler VennDiagramHandler;
+	@Autowired
+	private GeoDiagramHandler GeoDiagramHandler;
+
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
 	 * @return - RiveScript Instance
@@ -78,6 +83,8 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("LoadDsMetadata", dsmdLoader);
 		bot.setSubroutine("UploadDataset", uploadDataset);
 		bot.setSubroutine("ShowDataset", showDataset);
+		bot.setSubroutine("VennDiagramHandler", VennDiagramHandler);
+		bot.setSubroutine("GeoDiagramHandler", GeoDiagramHandler);
 		return bot;
 	}
 
