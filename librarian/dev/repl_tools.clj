@@ -36,9 +36,10 @@
                       (str
                         (case type
                           ::call/call
-                          (get-in (d/entity db node)
-                                  [::call/callable ::namespaced/id]
-                                  "?")
+                          (clojure.string/join "/" (get-in (d/entity db node)
+                                                           [::call/callable
+                                                            ::namespaced/id]
+                                                           ["?" "?"]))
                           ::call-value/call-value
                           (::call-value/value (d/entity db node))
                           ::call-parameter/call-parameter
@@ -51,7 +52,7 @@
                                   [::call-result/result ::named/name]
                                   "?")
                           "?")
-                        "\n["
+                        "\n<"
                         (->> (::typed/datatype (d/entity db node))
                              (map (fn [datatype]
                                     (case (first (:type datatype))
@@ -63,7 +64,7 @@
                                       (str "semantic: " (name (::semantic-type/key datatype)))
                                       "?")))
                              (clojure.string/join ", "))
-                        "]")})
+                        ">")})
                    nodes)
         receive-edges (->> nodes
                            (filter #(= (:group %) ::call-parameter/call-parameter))
@@ -72,16 +73,34 @@
                                             :in $ ?param
                                             :where [?param ::call-parameter/receives ?source]]
                                           db id)))
-                           (map (fn [[from to]]
-                                  {:from from
-                                   :to to
-                                   :label "flow"})))
-        edges (concat receive-edges)
+                           (map (fn [[from to]] {:from from, :to to, :label "flow"})))
+        parameter-edges (->> nodes
+                           (filter #(= (:group %) ::call-parameter/call-parameter))
+                           (mapcat (fn [{:keys [id]}]
+                                     (d/q '[:find ?param ?call
+                                            :in $ ?param
+                                            :where [?call ::call/parameter ?param]]
+                                          db id)))
+                           (map (fn [[from to]] {:from from, :to to, :label "param"})))
+        result-edges (->> nodes
+                        (filter #(= (:group %) ::call-result/call-result))
+                        (mapcat (fn [{:keys [id]}]
+                                  (d/q '[:find ?call ?result
+                                         :in $ ?result
+                                         :where [?call ::call/result ?result]]
+                                       db id)))
+                        (map (fn [[from to]] {:from from, :to to, :label "result"})))
+        edges (concat receive-edges
+                      parameter-edges
+                      result-edges)
         edges (if (empty? edges) [{:from -1 :to -2}] edges)]
     (prg/graph "Control Flow State"
                {:nodes nodes
                 :edges edges}
                {:edges {:arrows "to"}
+                :physics {:hierarchicalRepulsion {:nodeDistance 20
+                                                  :springLength 50}}
                 :layout {:hierarchical {:enabled true
                                         :direction "UD"
-                                        :sortMethod "directed"}}})))
+                                        :sortMethod "directed"
+                                        :levelSeparation 100}}})))
