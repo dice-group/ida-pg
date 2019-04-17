@@ -72,16 +72,20 @@
                                    :datatype [#_(instanciate goal-type/goal-type
                                                   :id goal)
                                               (instanciate basetype/basetype
-                                                :name "int")]))
+                                                :name "int")
+                                              (instanciate semantic-type/semantic-type
+                                                :key "description"
+                                                :value "number of clusters")]))
                                goals)
                          [(instanciate call-value/call-value
                             :value "123"
-                            :datatype [(instanciate goal-type/goal-type
-                                         :id :labels)
+                            :datatype [(instanciate semantic-type/semantic-type
+                                         :key "description"
+                                         :value "number of clusters")
                                        (instanciate basetype/basetype
                                          :name "str")])])]
     {:predecessor nil
-     :cost 0
+     :cost 1
      :db (-> (:db scrape)
              (d/with (instances->tx concepts))
              :db-after)}))
@@ -101,7 +105,8 @@
                :in $ % ?flaw
                :where (or (type ?solution ::call-result/call-result)
                           (type ?solution ::call-value/call-value))
-                      (typed-compatible ?solution ?flaw)]
+                      (typed-compatible ?solution ?flaw)
+                      (not (depends-on ?solution ?flaw))]
              (:db state) gq/rules flaw)]
     (map (fn [solution]
            {:cost 1
@@ -154,10 +159,12 @@
 (defn successors
   [state]
   (let [flaw (next-flaw state)
-        actions (when flaw (concat (receive-actions state flaw)
-                                   (call-actions state flaw)))]
-    (map (partial apply-action state)
-         actions)))
+        actions (when flaw
+                  (sort-by :cost (concat (receive-actions state flaw)
+                                         (call-actions state flaw))))]
+    (println "succs:")
+    (run! println actions)
+    (map (partial apply-action state) actions)))
 
 (try
   (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")

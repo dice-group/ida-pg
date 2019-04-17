@@ -59,9 +59,10 @@
                                       ::basetype/basetype
                                       (::basetype/id datatype)
                                       ::goal-type/goal-type
-                                      (str "goal: " (name (::goal-type/id datatype)))
+                                      (str "goal:" (name (::goal-type/id datatype)))
                                       ::semantic-type/semantic-type
-                                      (str "semantic: " (name (::semantic-type/key datatype)))
+                                      (str "s:" (name (::semantic-type/key datatype)) ":"
+                                           (name (::semantic-type/value datatype)))
                                       "?")))
                              (clojure.string/join ", "))
                         ">")})

@@ -6,10 +6,9 @@
 
 (defconcept semantic-type [datatype]
   :attributes {::key {:db/doc "Context string of the semantic type."}
-               ::value {:db/cardinality :db.cardinality/many
-                        :db/doc "Description of the semantics of this type."}}
+               ::value {:db/doc "Description of the semantics of this type."}}
   :spec ::semantic-type)
 
 (s/def ::semantic-type (hs/entity-keys :req [::value] :opt [::key]))
-(s/def ::value string?)
 (s/def ::key string?)
+(s/def ::value string?)
