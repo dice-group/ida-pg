@@ -84,9 +84,7 @@
         key-diff (filter (comp not :librarian/temporary schema)
                          (set/difference schema-keys new-schema-keys))]
     (if (empty? key-diff)
-      (-> {:schema new-schema, :datoms datoms}
-          (db/db-from-reader)
-          (mdb/add-builtins (:builtins ecosystem)))
+      (db/db-from-reader {:schema new-schema, :datoms datoms})
       (throw (Exception. (str "Scrape schema is incompatible with current ecosystem model.\n"
                               "Scrape schema attributes: " schema-keys "\n"
                               "Model schema attributes: " new-schema-keys "\n"

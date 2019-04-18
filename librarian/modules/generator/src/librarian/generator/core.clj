@@ -75,7 +75,7 @@
                                                 :name "int")
                                               (instanciate semantic-type/semantic-type
                                                 :key "description"
-                                                :value "number of clusters")]))
+                                                :value "iteration count")]))
                                goals)
                          [(instanciate call-value/call-value
                             :value "123"
@@ -83,16 +83,23 @@
                                          :key "description"
                                          :value "number of clusters")
                                        (instanciate basetype/basetype
-                                         :name "str")])])]
+                                         :name "str")])
+                          (instanciate call-value/call-value
+                             :value "456"
+                             :datatype [(instanciate semantic-type/semantic-type
+                                          :key "description"
+                                          :value "iteration count")
+                                        (instanciate basetype/basetype
+                                          :name "str")])])]
     {:predecessor nil
      :cost 1
      :db (-> (:db scrape)
              (d/with (instances->tx concepts))
              :db-after)}))
 
-(defn next-flaw
+(defn flaws
   [state]
-  (d/q '[:find ?flaw .
+  (d/q '[:find [?flaw ...]
          :in $ %
          :where (type ?flaw ::call-parameter/call-parameter)
                 (not [?flaw ::call-parameter/receives ?value])]
@@ -100,37 +107,62 @@
 
 (defn receive-actions
   [state flaw]
-  (let [solutions
+  (let [db (:db state)
+        solutions
         (d/q '[:find [?solution ...]
-               :in $ % ?flaw
+               :in $ % ?flaw ?dependents
                :where (or (type ?solution ::call-result/call-result)
                           (type ?solution ::call-value/call-value))
                       (typed-compatible ?solution ?flaw)
                       (not (depends-on ?solution ?flaw))]
-             (:db state) gq/rules flaw)]
-    (map (fn [solution]
-           {:cost 1
-            :tx [[:db/add flaw ::call-parameter/receives solution]]})
-         solutions)))
+             db gq/rules flaw)]
+    (when (seq solutions)
+      (let [semantic-receivers
+            (d/q '[:find (distinct ?receiver) .
+                   :in $ % ?flaw
+                   :where (receives-semantic ?receiver ?flaw)]
+                 db gq/rules flaw)
+            receivers
+            (d/q '[:find (distinct ?receiver) .
+                   :in $ % ?flaw [?receiver ...]
+                   :where (receives ?receiver ?flaw)]
+                 db gq/rules flaw semantic-receivers)
+            semantic-receivers (conj semantic-receivers flaw)
+            receivers (conj receivers flaw)]
+        (map (fn [solution]
+               (let [types (d/q '[:find ?type ?semantic
+                                  :in $ % ?solution
+                                  :where [?solution ::typed/datatype ?type]
+                                         [?type :type ?tt]
+                                         [(clojure.core/isa? ?tt ::semantic-type/semantic-type)
+                                          ?semantic]]
+                                db gq/rules solution)
+                     tx (mapcat (fn [[type semantic]]
+                                  (map (fn [r] [:db/add r ::typed/datatype type])
+                                       (if semantic semantic-receivers receivers)))
+                                types)
+                     tx (conj tx [:db/add flaw ::call-parameter/receives solution])]
+                 {:cost 1, :tx tx}))
+             solutions)))))
 
 (defn call-actions
   [state flaw]
   (let [db (:db state)
         callables
-        (d/q '[:find (pull ?callable
-                           [:db/id
-                            ::typed/datatype
-                            ::callable/parameter
-                            ::callable/result])
-               ?result
+        (d/q '[:find (distinct ?callable) .
                :in $ % ?flaw
                :where (type ?callable ::callable/callable)
                       [?callable ::callable/result ?result]
                       [?result ::typed/datatype ?rt]
                       [?flaw ::typed/datatype ?ft]
                       (typed-compatible ?result ?flaw)]
-             db gq/rules flaw)]
-    (map (fn [[callable solution]]
+             db gq/rules flaw)
+        callables (map (partial d/pull db [:db/id
+                                           ::typed/datatype
+                                           ::callable/parameter
+                                           ::callable/result])
+                       callables)]
+    (map (fn [callable]
            {:cost 2
             :tx [{:type ::call/call
                   ::call/callable (:db/id callable)
@@ -142,12 +174,10 @@
                        (::callable/parameter callable))
                   ::call/result
                   (map (fn [result]
-                         {:db/id (when (= (:db/id result) solution) -1)
-                          :type ::call-result/call-result
+                         {:type ::call-result/call-result
                           ::call-result/result (:db/id result)
                           ::typed/datatype (map :db/id (::typed/datatype result))})
-                       (::callable/result callable))}
-                 [:db/add flaw ::call-parameter/receives -1]]})
+                       (::callable/result callable))}]})
          callables)))
 
 (defn apply-action
@@ -158,18 +188,19 @@
 
 (defn successors
   [state]
-  (let [flaw (next-flaw state)
-        actions (when flaw
-                  (sort-by :cost (concat (receive-actions state flaw)
-                                         (call-actions state flaw))))]
-    (println "succs:")
-    (run! println actions)
-    (map (partial apply-action state) actions)))
+  (let [state-flaws (flaws state)
+        actions (mapcat #(concat (receive-actions state %)
+                                 (call-actions state %))
+                        state-flaws)
+        actions (sort-by :cost actions)]
+    (println "succs" state-flaws)
+    (pmap (partial apply-action state) actions)))
 
 (try
   (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
         state (initial-state scrape [:labels])
         succs (iterate (comp first successors) state)]
-    (rt/show-state (nth succs 2)))
+    (println "pull" (d/pull (:db scrape ) '[*] [:librarian.model.concepts.namespaced/id ["" "int"]]))
+    (rt/show-state (nth succs 3)))
   (catch Exception e
     (.println *err* e)))

@@ -4,15 +4,18 @@
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.call-result :as call-result]))
+            [librarian.model.concepts.call-result :as call-result]
+            [librarian.model.concepts.result :as result]))
 
 (def rules [; is ?c a concept of type ?type:
             '[(type ?c ?type)
+              [?c :type ?type]]
+            '[(type ?c ?type)
               [?c :type ?t]
-              (subtype ?type ?t)]
+              (subtype ?t ?type)]
 
             ; is ?parent a superconcept of ?child:
-            '[(subtype ?parent ?child)
+            '[(subtype ?child ?parent)
               [(clojure.core/isa? ?child ?parent)]]
 
             ; does the datatype concept ?child extend the datatype concept ?parent:
@@ -33,14 +36,52 @@
             '[(depends-on ?a ?b)
               [(= ?a ?b)]]
             '[(depends-on ?a ?b)
-              (type ?a ::call/call)
               [?a ::call/parameter ?param]
               (depends-on ?param ?b)]
             '[(depends-on ?a ?b)
-              (type ?a ::call-parameter/call-parameter)
-              [?a ::call-parameter/receives ?val]
-              (depends-on ?val ?b)]
+              [?a ::call-parameter/receives ?x]
+              (depends-on ?x ?b)]
             '[(depends-on ?a ?b)
-              (type ?a ::call-result/call-result)
               [?call ::call/result ?a]
-              (depends-on ?call ?b)]])
+              (depends-on ?call ?b)]
+
+            ; does ?a receive the value of ?b:
+            '[(receives ?a ?b)
+              [?x ::call-parameter/receives ?b]
+              (receives ?a ?x)]
+            '[(receives ?a ?b)
+              [?a ::call-parameter/receives ?b]]
+            '[(receives ?a ?b)
+              [?b ::call-parameter/parameter ?param]
+              [?result ::result/receives ?param]
+              [?a ::call-result/result ?result]]
+            '[(receives ?a ?b)
+              [?b ::call-parameter/parameter ?param]
+              [?result ::result/receives ?param]
+              [?x ::call-result/result ?result]
+              (receives ?a ?x)]
+
+            ; does ?a receive the semantic types of ?b:
+            '[(receives-semantic ?a ?b)
+              [?x ::call-parameter/receives ?b]
+              (receives-semantic ?a ?x)]
+            '[(receives-semantic ?a ?b)
+              [?a ::call-parameter/receives ?b]]
+            '[(receives-semantic ?a ?b)
+              [?b ::call-parameter/parameter ?param]
+              [?result ::result/receives ?param]
+              [?a ::call-result/result ?result]]
+            '[(receives-semantic ?a ?b)
+              [?b ::call-parameter/parameter ?param]
+              [?result ::result/receives ?param]
+              [?x ::call-result/result ?result]
+              (receives-semantic ?a ?x)]
+            '[(receives-semantic ?a ?b)
+              [?b ::call-parameter/parameter ?param]
+              [?result ::result/receives-semantic ?param]
+              [?a ::call-result/result ?result]]
+            '[(receives-semantic ?a ?b)
+              [?b ::call-parameter/parameter ?param]
+              [?result ::result/receives-semantic ?param]
+              [?x ::call-result/result ?result]
+              (receives-semantic ?a ?x)]])

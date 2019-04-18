@@ -19,17 +19,19 @@
 
 (defn- instanciate-typecaster
   [name from to]
-  (instanciate function/function
-    :name name
-    ::namespace/_member global-ns
-    :parameter (instanciate parameter/parameter
-                 :position 0
-                 :name "x"
-                 :datatype (basetypes from))
-    :result (instanciate result/result
-              :position 0
-              :name "y"
-              :datatype (basetypes to))))
+  (let [param (instanciate parameter/parameter
+               :position 0
+               :name "x"
+               :datatype (basetypes from))]
+    (instanciate function/function
+      :name name
+      ::namespace/_member global-ns
+      :parameter param
+      :result (instanciate result/result
+                :position 0
+                :name "y"
+                :datatype (basetypes to)
+                :receives-semantic param))))
 
 (def typecasters [(instanciate-typecaster "str" :object :str)
                   (instanciate-typecaster "int" :object :int)

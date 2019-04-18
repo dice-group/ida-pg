@@ -32,7 +32,7 @@
   "Adds the ecosystem builtin concepts to a given database."
   [db ecosystem]
   (reduce (fn [db instances]
-            (when instances
+            (if instances
               (-> db (d/with (instances->tx instances)) :db-after)
               db))
           db (:builtins ecosystem)))
@@ -40,5 +40,6 @@
 (defn transact-builtins!
   "Transacts the ecosystem builtin concepts to a given database connection."
   [conn ecosystem]
-  (doseq [instances (:builtins ecosystem)]
+  (doseq [instances (:builtins ecosystem)
+          :when (some? instances)]
     (d/transact! conn (instances->tx instances))))

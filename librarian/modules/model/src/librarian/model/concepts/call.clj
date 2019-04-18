@@ -10,10 +10,12 @@
                ::parameter {:db/valueType :db.type/ref
                             :db/cardinality :db.cardinality/many
                             :db/isComponent true
+                            :db/index true
                             :db/doc "A parameter of this call."}
                ::result {:db/valueType :db.type/ref
                          :db/cardinality :db.cardinality/many
                          :db/isComponent true
+                         :db/index true
                          :db/doc "A result of this call."}}
   :spec ::call)
 

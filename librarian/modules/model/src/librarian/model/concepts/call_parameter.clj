@@ -9,6 +9,7 @@
   :attributes {::parameter {:db/valueType :db.type/ref
                             :db/doc "A callable's parameter."}
                ::receives {:db/valueType :db.type/ref
+                           :db/index true
                            :db/doc "A call-result that flows into this call parameter."}}
   :spec ::call-parameter)
 

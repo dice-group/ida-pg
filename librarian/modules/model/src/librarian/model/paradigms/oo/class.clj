@@ -10,10 +10,12 @@
   :attributes {::constructor {:db/valueType :db.type/ref
                               :db/cardinality :db.cardinality/many
                               :db/isComponent true
+                              :db/index true
                               :db/doc "Constructor of the class."}
                ::method {:db/valueType :db.type/ref
                          :db/cardinality :db.cardinality/many
                          :db/isComponent true
+                         :db/index true
                          :db/doc "Method of the class."}}
   :spec ::class)
 

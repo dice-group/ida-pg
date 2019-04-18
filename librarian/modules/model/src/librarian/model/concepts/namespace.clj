@@ -13,6 +13,7 @@
                ::member {:db/valueType :db.type/ref
                          :db/cardinality :db.cardinality/many
                          :db/isComponent true
+                         :db/index true
                          :db/doc "Concept is member of the namespace."}}
   :preprocess {::named/name (add-attr ::id)})
 

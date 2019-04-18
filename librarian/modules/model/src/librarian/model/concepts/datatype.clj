@@ -6,6 +6,7 @@
 (defconcept datatype
   :attributes {::extends {:db/valueType :db.type/ref
                           :db/cardinality :db.cardinality/many
+                          :db/index true
                           :db/doc "Supertype of the type."}}
   :spec ::datatype)
 

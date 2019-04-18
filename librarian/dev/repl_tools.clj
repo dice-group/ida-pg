@@ -99,9 +99,11 @@
                {:nodes nodes
                 :edges edges}
                {:edges {:arrows "to"}
-                :physics {:hierarchicalRepulsion {:nodeDistance 20
-                                                  :springLength 50}}
+                :nodes {:shape "box"
+                        :labelHighlightBold false}
+                :physics {:hierarchicalRepulsion {:nodeDistance 60
+                                                  :springLength 80}}
                 :layout {:hierarchical {:enabled true
                                         :direction "UD"
                                         :sortMethod "directed"
-                                        :levelSeparation 100}}})))
+                                        :levelSeparation 80}}})))
