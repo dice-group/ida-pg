@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>upb</groupId>
 		<artifactId>ida</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 
 	<properties>
@@ -62,9 +62,9 @@
 		
 		<!-- IDA modules: -->
 		<dependency>
-			<groupId>upb</groupId>
-			<artifactId>lib-scraper</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>librarian</groupId>
+			<artifactId>model</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		
 		<!-- jsr303 validation -->

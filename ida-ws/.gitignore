@@ -1,11 +1,6 @@
 /target/
 /bin/
 
-# IntelliJ
-/.idea/
-/out/
-*.iws
-
 # Spring Tools
 .sts4-cache
 
