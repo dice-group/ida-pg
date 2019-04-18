@@ -3,3 +3,9 @@
 .project
 .settings/
 .attach_pid*
+
+# IntelliJ
+.idea/
+out/
+*.iws
+
