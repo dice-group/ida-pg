@@ -86,16 +86,25 @@
               [?x ::call-result/result ?result]
               (receives-semantic ?a ?x)]])
 
+(defn transitive-closure
+  [db attr start]
+  (persistent! (loop [open (vec start)
+                      closure (transient #{})]
+                 (let [e (peek open)]
+                   (if (or (nil? e) (contains? closure e))
+                     closure
+                     (recur (into (pop open) (map :v)
+                                  (d/datoms db :eavt e attr))
+                            (conj! closure e)))))))
+
 (defn typed-compatible
   [db from to]
-  (let [from-types (d/q '[:find (distinct ?st) .
-                          :in $ % ?from
-                          :where [?from ::typed/datatype ?type]
-                                 (extends ?type ?st)]
-                        db rules from)
-        to-types (d/q '[:find [?type ...]
-                        :in $ % ?to
-                        :where [?to ::typed/datatype ?type]
-                               (not (type ?type ::semantic-type/semantic-type))]
-                      db rules to)]
+  (let [from-types (transitive-closure db ::datatype/extends
+                                       (mapv :v (d/datoms db :eavt from ::typed/datatype)))
+        to-types (keep (fn [to-type]
+                         (let [v (:v to-type)]
+                           (when-not (some #(isa? (:v %) ::semantic-type/semantic-type)
+                                           (d/datoms db :eavt v :type))
+                             v)))
+                       (d/datoms db :eavt to ::typed/datatype))]
     (every? #(contains? from-types %) to-types)))

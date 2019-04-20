@@ -150,14 +150,19 @@
 (defn call-actions
   [state flaw]
   (let [db (:db state)
-        callables
-        (d/q '[:find (distinct ?callable) .
+        candidates
+        (d/q '[:find ?callable ?result
                :in $ % ?flaw
                :where [?flaw ::typed/datatype ?ft]
-                      [?result ::typed/datatype ?rt]
-                      [?callable ::callable/result ?result]
-                      (typed-compatible ?result ?flaw)]
+                      [?result ::typed/datatype ?ft]
+                      [?callable ::callable/result ?result]]
              db gq/rules flaw)
+        callables (reduce (fn [callables [callable result]]
+                            (if (and (not (contains? callables callable))
+                                     (gq/typed-compatible db result flaw))
+                              (conj callables callable)
+                              callables))
+                          #{} candidates)
         callables (map (partial d/pull db [:db/id
                                            ::typed/datatype
                                            ::callable/parameter
@@ -190,13 +195,11 @@
 (defn successors
   [state]
   (let [state-flaws (flaws state)
-        _ (log/info "succs" state-flaws)
         actions (mapcat #(receive-actions state %) state-flaws)
         actions (if (empty? actions)
                   (mapcat #(call-actions state %) state-flaws)
                   actions)
-        actions (sort-by :cost actions)
-        _ (log/info "aend" (count actions))]
+        actions (sort-by :cost actions)]
     (map (partial apply-action state) actions)))
 
 (try
