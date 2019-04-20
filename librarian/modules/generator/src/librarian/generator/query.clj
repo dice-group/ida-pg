@@ -1,5 +1,6 @@
 (ns librarian.generator.query
-  (:require [librarian.model.concepts.datatype :as datatype]
+  (:require [datascript.core :as d]
+            [librarian.model.concepts.datatype :as datatype]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.call :as call]
@@ -19,22 +20,21 @@
               [(clojure.core/isa? ?child ?parent)]]
 
             ; does the datatype concept ?child extend the datatype concept ?parent:
-            '[(subdatatype ?parent ?child)
-              [(= ?parent ?child)]]
-            '[(subdatatype ?parent ?child)
+            '[(extends ?child ?parent)
+              [(ground ?child) ?parent]]
+            '[(extends ?child ?parent)
+              [?child ::datatype/extends ?parent]]
+            '[(extends ?child ?parent)
               [?child ::datatype/extends ?p]
-              (subdatatype ?parent ?p)]
+              (extends ?p ?parent)]
 
             ; can values of typed concept ?from be used as values of typed concept ?to:
-            '[(typed-compatible ?from ?to)
-              (not [?to ::typed/datatype ?to-type]
-                   (not (type ?to-type ::semantic-type/semantic-type))
-                   (not [?from ::typed/datatype ?from-type]
-                        (subdatatype ?to-type ?from-type)))]
+            ['(typed-compatible ?from ?to)
+             `[(typed-compatible ~'$ ~'?from ~'?to)]]
 
             ; does ?a depend on ?b:
             '[(depends-on ?a ?b)
-              [(= ?a ?b)]]
+              [(ground ?a) ?b]]
             '[(depends-on ?a ?b)
               [?a ::call/parameter ?param]
               (depends-on ?param ?b)]
@@ -85,3 +85,17 @@
               [?result ::result/receives-semantic ?param]
               [?x ::call-result/result ?result]
               (receives-semantic ?a ?x)]])
+
+(defn typed-compatible
+  [db from to]
+  (let [from-types (d/q '[:find (distinct ?st) .
+                          :in $ % ?from
+                          :where [?from ::typed/datatype ?type]
+                                 (extends ?type ?st)]
+                        db rules from)
+        to-types (d/q '[:find [?type ...]
+                        :in $ % ?to
+                        :where [?to ::typed/datatype ?type]
+                               (not (type ?type ::semantic-type/semantic-type))]
+                      db rules to)]
+    (every? #(contains? from-types %) to-types)))

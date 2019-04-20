@@ -6,6 +6,7 @@
 (defconcept typed
   :attributes {::datatype {:db/valueType :db.type/ref
                            :db/cardinality :db.cardinality/many
+                           :db/index true
                            :db/doc "Datatype of this concept."}}
   :spec ::typed)
 

@@ -7,6 +7,7 @@
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
+            [librarian.model.concepts.result :as result]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-value :as call-value]
@@ -17,6 +18,7 @@
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.typed :as typed]
             [librarian.generator.query :as gq]
+            [clojure.tools.logging :as log]
             [repl-tools :as rt])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
 
@@ -151,10 +153,9 @@
         callables
         (d/q '[:find (distinct ?callable) .
                :in $ % ?flaw
-               :where (type ?callable ::callable/callable)
-                      [?callable ::callable/result ?result]
+               :where [?flaw ::typed/datatype ?ft]
                       [?result ::typed/datatype ?rt]
-                      [?flaw ::typed/datatype ?ft]
+                      [?callable ::callable/result ?result]
                       (typed-compatible ?result ?flaw)]
              db gq/rules flaw)
         callables (map (partial d/pull db [:db/id
@@ -163,7 +164,7 @@
                                            ::callable/result])
                        callables)]
     (map (fn [callable]
-           {:cost 2
+           {:cost (-> callable ::callable/parameter count inc)
             :tx [{:type ::call/call
                   ::call/callable (:db/id callable)
                   ::call/parameter
@@ -189,18 +190,19 @@
 (defn successors
   [state]
   (let [state-flaws (flaws state)
-        actions (mapcat #(concat (receive-actions state %)
-                                 (call-actions state %))
-                        state-flaws)
-        actions (sort-by :cost actions)]
-    (println "succs" state-flaws)
-    (pmap (partial apply-action state) actions)))
+        _ (log/info "succs" state-flaws)
+        actions (mapcat #(receive-actions state %) state-flaws)
+        actions (if (empty? actions)
+                  (mapcat #(call-actions state %) state-flaws)
+                  actions)
+        actions (sort-by :cost actions)
+        _ (log/info "aend" (count actions))]
+    (map (partial apply-action state) actions)))
 
 (try
-  (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
+  (let [scrape (scrape/read-scrape "libs/scikit-learn")
         state (initial-state scrape [:labels])
         succs (iterate (comp first successors) state)]
-    (println "pull" (d/pull (:db scrape ) '[*] [:librarian.model.concepts.namespaced/id ["" "int"]]))
-    (rt/show-state (nth succs 3)))
+    (time (rt/show-state (nth succs 3))))
   (catch Exception e
     (.println *err* e)))
