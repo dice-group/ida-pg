@@ -11,7 +11,7 @@ declare function renderSsb(a, b);
   styleUrls: ['./ssb-view.component.css']
 })
 export class SsbViewComponent implements OnInit, AfterViewInit {
-  @Input('data') public demDt;
+  @Input('data') public inputData;
   public ssbIdMap = {};
   public intervalId: any;
 
@@ -30,7 +30,7 @@ export class SsbViewComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.demDt = this.demDt;
+    this.inputData = this.inputData;
   }
 
   ngAfterViewInit() {
@@ -41,11 +41,10 @@ export class SsbViewComponent implements OnInit, AfterViewInit {
   }
 
   renderGraph() {
-    console.log(this.demDt);
     const svg = d3.select('#' + this.ssbIdMap['chartSsbId']).node();
     if (svg) {
       clearInterval(this.intervalId);
-      renderSsb(this.ssbIdMap, this.demDt);
+      renderSsb(this.ssbIdMap, this.inputData);
     }
   }
 
