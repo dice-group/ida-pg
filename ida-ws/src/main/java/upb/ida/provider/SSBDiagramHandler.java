@@ -25,7 +25,7 @@ import java.util.*;
 @Component
 public class SSBDiagramHandler implements Subroutine {
 	@Autowired
-	private FileUtil DemoMain;
+	private FileUtil fileUtil;
 	@Autowired
 	private ResponseBean responseBean;
     private Map<Integer, TreeSet<Integer>> rangMap = new HashMap<>();
@@ -44,15 +44,15 @@ public class SSBDiagramHandler implements Subroutine {
 		String actvDs = (String) responseBean.getPayload().get("actvDs");
 
 		Map<String, Object> dataMap = responseBean.getPayload();
-		String path = DemoMain.getDTFilePath(actvDs, actvTbl);
-		File csvFile = new File(DemoMain.fetchSysFilePath(path));
+		String path = fileUtil.getDTFilePath(actvDs, actvTbl);
+		File csvFile = new File(fileUtil.fetchSysFilePath(path));
 
 		ArrayList<ArrayList<String>> response = new ArrayList<>();
 
         try {
-            List<Map<String, String>> data = DemoMain.convertToMap(csvFile);
+            List<Map<String, String>> data = fileUtil.convertToMap(csvFile);
 //            ArrayList<HashMap<String, ArrayList<Double>>> response = new ArrayList<>();
-            generateSsbFile(csvFile, DemoMain.getColumnId(data.get(0), args[0]), DemoMain.getColumnId(data.get(0), args[1]));
+            generateSsbFile(csvFile, fileUtil.getColumnId(data.get(0), args[0]), fileUtil.getColumnId(data.get(0), args[1]));
             dataMap.put("label", "sequence sun burst diagram data");
             responseBean.setActnCode(IDALiteral.UIA_SSBDIAGRAM);
 
@@ -63,7 +63,6 @@ public class SSBDiagramHandler implements Subroutine {
                 response.add(row);
             }
 
-
             dataMap.put("ssbDiagramData", response);
             responseBean.setPayload(dataMap);
         } catch (IOException e) {
@@ -72,7 +71,7 @@ public class SSBDiagramHandler implements Subroutine {
 		return "pass";
 	}
 
-    private void extractRangData(File inputFile, int col1, int col2) throws IOException {
+    private void extractRangeData(File inputFile, int col1, int col2) throws IOException {
         // create csvreaderbuilder for dnstTbl
         CSVReaderBuilder rBuilder = new CSVReaderBuilder(new FileReader(inputFile));
         // build the reader
@@ -80,15 +79,15 @@ public class SSBDiagramHandler implements Subroutine {
         try {
             // read first line
             csvReader.readNext();
-            int fhrIdIndx = col1;
-            int rangIndx = col2;
+            int col1Index = col1;
+            int rangeIndex = col2;
             for (String[] line; (line = csvReader.readNext()) != null;) {
-                int fhrId = Integer.parseInt(line[fhrIdIndx]);
-                int rang = Integer.parseInt(line[rangIndx]);
-                TreeSet<Integer> rangSet = rangMap.get(fhrId);
+                int col1ID = Integer.parseInt(line[col1Index]);
+                int rang = Integer.parseInt(line[rangeIndex]);
+                TreeSet<Integer> rangSet = rangMap.get(col1ID);
                 if (rangSet == null) {
                     rangSet = new TreeSet<>(Comparator.reverseOrder());
-                    rangMap.put(fhrId, rangSet);
+                    rangMap.put(col1ID, rangSet);
                 }
                 rangSet.add(rang);
             }
@@ -99,8 +98,8 @@ public class SSBDiagramHandler implements Subroutine {
     }
 
     private void generateSeqCountMap() {
-        for (Integer fhrId : rangMap.keySet()) {
-            Collection<Integer> coll = rangMap.get(fhrId);
+        for (Integer id : rangMap.keySet()) {
+            Collection<Integer> coll = rangMap.get(id);
             String seq = convertCollToSeq(coll);
             Integer count = seqCountMap.get(seq);
             if (count == null) {
@@ -122,7 +121,7 @@ public class SSBDiagramHandler implements Subroutine {
     }
 
     public void generateSsbFile(File inputFile, int col1, int col2) throws IOException {
-        extractRangData(inputFile, col1, col2);
+        extractRangeData(inputFile, col1, col2);
         generateSeqCountMap();
     }
 }
