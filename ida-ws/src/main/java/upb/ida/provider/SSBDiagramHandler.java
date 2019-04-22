@@ -28,7 +28,7 @@ public class SSBDiagramHandler implements Subroutine {
 	private FileUtil fileUtil;
 	@Autowired
 	private ResponseBean responseBean;
-    private Map<Integer, TreeSet<Integer>> rangMap = new HashMap<>();
+    private Map<Integer, TreeSet<Integer>> rangeMap = new HashMap<>();
     private Map<String, Integer> seqCountMap = new TreeMap<>(new StringLengthComparator().reversed());
 	
 	/**
@@ -83,13 +83,13 @@ public class SSBDiagramHandler implements Subroutine {
             int rangeIndex = col2;
             for (String[] line; (line = csvReader.readNext()) != null;) {
                 int col1ID = Integer.parseInt(line[col1Index]);
-                int rang = Integer.parseInt(line[rangeIndex]);
-                TreeSet<Integer> rangSet = rangMap.get(col1ID);
-                if (rangSet == null) {
-                    rangSet = new TreeSet<>(Comparator.reverseOrder());
-                    rangMap.put(col1ID, rangSet);
+                int range = Integer.parseInt(line[rangeIndex]);
+                TreeSet<Integer> rangeSet = rangeMap.get(col1ID);
+                if (rangeSet == null) {
+                    rangeSet = new TreeSet<>(Comparator.reverseOrder());
+                    rangeMap.put(col1ID, rangeSet);
                 }
-                rangSet.add(rang);
+                rangeSet.add(range);
             }
         } finally {
             csvReader.close();
@@ -98,8 +98,8 @@ public class SSBDiagramHandler implements Subroutine {
     }
 
     private void generateSeqCountMap() {
-        for (Integer id : rangMap.keySet()) {
-            Collection<Integer> coll = rangMap.get(id);
+        for (Integer id : rangeMap.keySet()) {
+            Collection<Integer> coll = rangeMap.get(id);
             String seq = convertCollToSeq(coll);
             Integer count = seqCountMap.get(seq);
             if (count == null) {
