@@ -52,6 +52,7 @@
                                   [::call-result/result ::named/name]
                                   "?")
                           "?")
+                        " (" node ")"
                         "\n<"
                         (->> (::typed/datatype (d/entity db node))
                              (map (fn [datatype]

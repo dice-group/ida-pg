@@ -30,7 +30,7 @@
 
             ; can values of typed concept ?from be used as values of typed concept ?to:
             ['(typed-compatible ?from ?to)
-             `[(typed-compatible ~'$ ~'?from ~'?to)]]
+             `[(typed-compatible? ~'$ ~'?from ~'?to)]]
 
             ; does ?a depend on ?b:
             '[(depends-on ?a ?b)
@@ -47,10 +47,12 @@
 
             ; does ?a receive the value of ?b:
             '[(receives ?a ?b)
-              [?x ::call-parameter/receives ?b]
-              (receives ?a ?x)]
+              [(ground ?b) ?a]]
             '[(receives ?a ?b)
               [?a ::call-parameter/receives ?b]]
+            '[(receives ?a ?b)
+              [?x ::call-parameter/receives ?b]
+              (receives ?a ?x)]
             '[(receives ?a ?b)
               [?b ::call-parameter/parameter ?param]
               [?result ::result/receives ?param]
@@ -63,10 +65,12 @@
 
             ; does ?a receive the semantic types of ?b:
             '[(receives-semantic ?a ?b)
-              [?x ::call-parameter/receives ?b]
-              (receives-semantic ?a ?x)]
+              [(ground ?b) ?a]]
             '[(receives-semantic ?a ?b)
               [?a ::call-parameter/receives ?b]]
+            '[(receives-semantic ?a ?b)
+              [?x ::call-parameter/receives ?b]
+              (receives-semantic ?a ?x)]
             '[(receives-semantic ?a ?b)
               [?b ::call-parameter/parameter ?param]
               [?result ::result/receives ?param]
@@ -97,7 +101,7 @@
                                   (d/datoms db :eavt e attr))
                             (conj! closure e)))))))
 
-(defn typed-compatible
+(defn typed-compatible?
   [db from to]
   (let [from-types (transitive-closure db ::datatype/extends
                                        (mapv :v (d/datoms db :eavt from ::typed/datatype)))
@@ -108,3 +112,20 @@
                              v)))
                        (d/datoms db :eavt to ::typed/datatype))]
     (every? #(contains? from-types %) to-types)))
+
+(defn types
+  [db e]
+  (->> (d/entity db e)
+       ::typed/datatype
+       (map (fn [t] {:db/id (:db/id t)
+                     :semantic (some #(isa? % ::semantic-type/semantic-type)
+                                     (:type t))}))))
+
+(defn semantic-types
+  [db e]
+  (keep #(when (:semantic %) (:db/id %)) (types db e)))
+
+(defn type-semantics
+  [db semantic-type]
+  {:key (:v (first (d/datoms db :eavt semantic-type ::semantic-type/key)))
+   :value (:v (first (d/datoms db :eavt semantic-type ::semantic-type/value)))})

@@ -4,6 +4,8 @@
             [clucie.store :as cstore]
             [clucie.document :as cdoc]
             [clucie.analysis :as canalysis]
+            [clojure.tools.logging :as log]
+            [clojure.data.priority-map :refer [priority-map]]
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
@@ -18,7 +20,6 @@
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.typed :as typed]
             [librarian.generator.query :as gq]
-            [clojure.tools.logging :as log]
             [repl-tools :as rt])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
 
@@ -77,7 +78,7 @@
                                                 :name "int")
                                               (instanciate semantic-type/semantic-type
                                                 :key "description"
-                                                :value "iteration count")]))
+                                                :value "number of clusters")]))
                                goals)
                          [(instanciate call-value/call-value
                             :value "123"
@@ -94,7 +95,7 @@
                                         (instanciate basetype/basetype
                                           :name "str")])])]
     {:predecessor nil
-     :cost 1
+     :cost 0
      :db (-> (:db scrape)
              (d/with (instances->tx concepts))
              :db-after)}))
@@ -107,17 +108,47 @@
                 (not [?flaw ::call-parameter/receives ?value])]
        (:db state) gq/rules))
 
+(defn nlog-distance
+  "The negative logarithm of the semantic compatibility of 'from to 'to.
+   Only a mock implementation for now."
+  [to-value from-value]
+  (if (= from-value to-value)
+    0
+    Double/POSITIVE_INFINITY))
+
+(defn min-nlog-distance
+  [to-value from-values]
+  (apply min Double/POSITIVE_INFINITY
+         (map (partial nlog-distance to-value) from-values)))
+
+(defn semantic-cost-evaluator
+  [db to-types]
+  (let [to-types (map (partial gq/type-semantics db) to-types)]
+    (fn [from-types]
+      (let [from-types (group-by :key (map (partial gq/type-semantics db) from-types))
+            general-values (map :value (from-types nil))
+            costs
+            (reduce (fn [costs {:keys [key value]}]
+                      (let [key-values (map :value (from-types key))
+                            current-cost (costs key Double/POSITIVE_INFINITY)
+                            general-cost (inc (min-nlog-distance value (when key general-values)))
+                            key-cost (min-nlog-distance value key-values)]
+                        (assoc costs key (min current-cost general-cost key-cost))))
+                    {} to-types)]
+        (apply + (vals costs))))))
+
 (defn receive-actions
   [state flaw]
   (let [db (:db state)
         solutions
         (d/q '[:find [?solution ...]
-               :in $ % ?flaw ?dependents
+               :in $ % ?flaw
                :where (or (type ?solution ::call-result/call-result)
                           (type ?solution ::call-value/call-value))
                       (typed-compatible ?solution ?flaw)
                       (not (depends-on ?solution ?flaw))]
-             db gq/rules flaw)]
+             db gq/rules flaw)
+        cost-evaluator (semantic-cost-evaluator db (gq/semantic-types db flaw))]
     (when (seq solutions)
       (let [semantic-receivers
             (d/q '[:find (distinct ?receiver) .
@@ -128,24 +159,20 @@
             (d/q '[:find (distinct ?receiver) .
                    :in $ % ?flaw [?receiver ...]
                    :where (receives ?receiver ?flaw)]
-                 db gq/rules flaw semantic-receivers)
-            semantic-receivers (conj semantic-receivers flaw)
-            receivers (conj receivers flaw)]
-        (map (fn [solution]
-               (let [types (d/q '[:find ?type ?semantic
-                                  :in $ % ?solution
-                                  :where [?solution ::typed/datatype ?type]
-                                         [?type :type ?tt]
-                                         [(clojure.core/isa? ?tt ::semantic-type/semantic-type)
-                                          ?semantic]]
-                                db gq/rules solution)
-                     tx (mapcat (fn [[type semantic]]
-                                  (map (fn [r] [:db/add r ::typed/datatype type])
-                                       (if semantic semantic-receivers receivers)))
-                                types)
-                     tx (conj tx [:db/add flaw ::call-parameter/receives solution])]
-                 {:cost 1, :tx tx}))
-             solutions)))))
+                 db gq/rules flaw semantic-receivers)]
+        (keep (fn [solution]
+                (let [types (gq/types db solution)
+                      semantic-types (keep (fn [{:keys [db/id semantic]}] (when semantic id)) types)
+                      semantic-cost (cost-evaluator semantic-types)
+                      tx (mapcat (fn [{:keys [db/id semantic]}]
+                                   (map (fn [r] [:db/add r ::typed/datatype id])
+                                        (if semantic semantic-receivers receivers)))
+                                 types)
+                      tx (conj tx [:db/add flaw ::call-parameter/receives solution])]
+                  (println solution flaw semantic-cost)
+                  (when (< semantic-cost Double/POSITIVE_INFINITY)
+                    {:cost semantic-cost, :tx tx})))
+              solutions)))))
 
 (defn call-actions
   [state flaw]
@@ -159,7 +186,7 @@
              db gq/rules flaw)
         callables (reduce (fn [callables [callable result]]
                             (if (and (not (contains? callables callable))
-                                     (gq/typed-compatible db result flaw))
+                                     (gq/typed-compatible? db result flaw))
                               (conj callables callable)
                               callables))
                           #{} candidates)
@@ -194,18 +221,41 @@
 
 (defn successors
   [state]
-  (let [state-flaws (flaws state)
-        actions (mapcat #(receive-actions state %) state-flaws)
-        actions (if (empty? actions)
-                  (mapcat #(call-actions state %) state-flaws)
-                  actions)
-        actions (sort-by :cost actions)]
-    (map (partial apply-action state) actions)))
+  (println "succ")
+  (let [state-flaws (flaws state)]
+    (if (empty? state-flaws)
+      :done
+      (let [actions (mapcat #(receive-actions state %) state-flaws)
+            actions (if (empty? actions)
+                      (mapcat #(call-actions state %) state-flaws)
+                      actions)
+            actions (sort-by :cost actions)]
+        (map (partial apply-action state) actions)))))
+
+(defn search-state
+  [state]
+  {:queue (priority-map state (:cost state))})
+
+(def initial-search-state (comp search-state initial-state))
+
+(defn continue-search
+  [{:keys [queue done failed] :as search-state}]
+  (if (or done failed)
+    search-state
+    (if (empty? queue)
+      {:failed true}
+      (let [[state] (peek queue)
+            state-successors (successors state)]
+        (if (= state-successors :done)
+          {:done true, :goal state}
+          {:queue (into (pop queue)
+                        (map (fn [succ] [succ (:cost succ)]))
+                        state-successors)})))))
 
 (try
-  (let [scrape (scrape/read-scrape "libs/scikit-learn")
-        state (initial-state scrape [:labels])
-        succs (iterate (comp first successors) state)]
-    (time (rt/show-state (nth succs 3))))
+  (let [scrape (scrape/read-scrape "libs/scikit-learn-cluster")
+        search-state (initial-search-state scrape [:labels])
+        succs (iterate continue-search search-state)]
+    (time (rt/show-state (some :goal (take 100 succs)))))
   (catch Exception e
     (.println *err* e)))
