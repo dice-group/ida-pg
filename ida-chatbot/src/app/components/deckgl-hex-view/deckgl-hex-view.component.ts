@@ -42,9 +42,9 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
       mapStyle: 'https://maps.tilehosting.com/styles/positron/style.json?key=2SSrAclSqe0xz6m7VpSU',
       longitude: this.demDt.lon,
       latitude: this.demDt.lat,
-      zoom: 9,
+      zoom: 5,
       bearing: 0,
-      pitch: 40,
+      pitch: 100,
       minZoom: 5,
       maxZoom: 12,
       layers: [
@@ -53,11 +53,11 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
           data: this.demDt.gsDiagramData,
           pickable: true,
           extruded: true,
-          radius: 300,
-          elevationScale: 4,
+          radius: 10000,
+          elevationScale: 200,
           getPosition: d => d.COORDINATES,
           // onHover: ({object}) => setTooltip(`${object.centroid.join(', ')}\nCount: ${object.points.length}`)
-          onHover: info => this.setTooltip(info)
+          onHover: this.updateTooltip
         }),
         new IconLayer({
           id: 'icon-layer',
@@ -74,7 +74,7 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
               mask: true
             }
           },
-          sizeScale: 100,
+          sizeScale: 0,
           getPosition: d => d.COORDINATES,
           getIcon: d => 'marker',
           getColor: d => [Math.sqrt(d.exits), 140, 0],
@@ -82,6 +82,19 @@ export class DeckglHexViewComponent implements OnInit, AfterViewInit {
         })
       ]
     });
+  }
+
+  updateTooltip({x, y, object}) {
+    const tooltip = document.getElementById('gstt');
+    y = y - 15;
+    x = x - 10
+    if (object) {
+      tooltip.style.top = `${y}px`;
+      tooltip.style.left = `${x}px`;
+      tooltip.innerHTML = object.points.length + ' Entry(s) <br>';
+    } else {
+      tooltip.innerHTML = '';
+    }
   }
 
   setTooltip(object) {
