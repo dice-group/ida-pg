@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
 
 declare var d3;
@@ -11,12 +11,7 @@ declare function renderSsb(a, b);
   styleUrls: ['./ssb-view.component.css']
 })
 export class SsbViewComponent implements OnInit, AfterViewInit {
-  public demDt = [['12-11-10-9-end', '6000'],
-    ['12-11-end', '15000'],
-    ['12-end', '25000'],
-    ['8-7-6-5-end', '3311'],
-    ['5-4-3-end', '1000'],
-    ['5-4-end', '2000']];
+  @Input('data') public inputData;
   public ssbIdMap = {};
   public intervalId: any;
 
@@ -35,7 +30,7 @@ export class SsbViewComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
+    this.inputData = this.inputData;
   }
 
   ngAfterViewInit() {
@@ -49,7 +44,7 @@ export class SsbViewComponent implements OnInit, AfterViewInit {
     const svg = d3.select('#' + this.ssbIdMap['chartSsbId']).node();
     if (svg) {
       clearInterval(this.intervalId);
-      renderSsb(this.ssbIdMap, this.demDt);
+      renderSsb(this.ssbIdMap, this.inputData);
     }
   }
 

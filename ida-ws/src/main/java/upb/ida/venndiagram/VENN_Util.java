@@ -37,7 +37,7 @@ public class VENN_Util {
         HashMap<String, Object> response = new HashMap<>();
 
         response.put("data", vennItems);
-        response.put("label", args[0]);
+        response.put("label", args[2]);
         return response;
     }
 }
