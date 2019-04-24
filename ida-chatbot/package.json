@@ -4,8 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-container": "ng serve --configuration=container",
     "build": "ng build",
     "prod": "ng build --prod",
+    "prod-container": "ng build --prod --configuration=container-production",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

@@ -9,6 +9,7 @@ services:
       - ida-net
   ida-ws:
     image: $REGISTRY/ida/ida-ws:$VERSION
+
     networks:
       - ida-net
 
