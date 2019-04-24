@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start-container": "ng serve --configuration=container",
+    "start-container": "ng serve --configuration=container --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
     "prod": "ng build --prod",
     "prod-container": "ng build --prod --configuration=container-production",

@@ -16,9 +16,10 @@ function build_container() {
     fi
 }
 
-build_container nginx .. -f nginx/Dockerfile
-build_container ida-ws .. -f ida-ws/Dockerfile
+build_container nginx-dev .. -f nginx/Dockerfile.nginx-dev
+build_container frontend-dev .. -f nginx/Dockerfile.frontend-dev
+build_container ida-ws-dev .. -f ida-ws/Dockerfile.dev
 
 export REGISTRY=$registry
 export VERSION=$version
-docker stack deploy --compose-file docker-compose.yml ida-stack
+docker stack deploy --compose-file docker-compose-dev.yml ida-stack-dev
