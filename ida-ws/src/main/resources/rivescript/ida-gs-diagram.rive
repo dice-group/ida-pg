@@ -1,0 +1,16 @@
++ show me the geo spatial diagram
+- alright! tell me which columns should i use as latitude and longitude?
+^ <br> (HINT: you can tell as <br> e.g. use column1 as latitude and column2 as longitude)
++ use * as latitude and * as longitude
+* <call> GeoDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading geo Spatial diagram in a moment!
+
+
++ i want geospatial diagram for this table
+@ show me the geo spatial diagram
++ i want geo-spatial diagram for this table
+@ show me the geo spatial diagram
++ i want geospatial visualization for this table
+@ show me the geo spatial diagram
++ i want a geospatial diagram
+@ show me the geo spatial diagram
+

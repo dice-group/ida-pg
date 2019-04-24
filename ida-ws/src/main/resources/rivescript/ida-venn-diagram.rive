@@ -1,0 +1,19 @@
++ show me a venn diagram
+- alright! tell me with which sets?
+^ <br> (HINT: you can select columns from table <br> e.g. count of column_1_name w.r.t top Limit|10 column_2_name ..)
++ count of * wrt top * *
+* <call> VennDiagramHandler "<star3>" "<star2>" "<star1>"</call> == pass => All good, loading Venn diagram in a moment!
+
++ i want venn diagram for this table
+@ show me a venn diagram
++ i would like a venn diagram for this table
+@ show me a venn diagram
++ please load a venn diagram for this dataset
+@ show me a venn diagram
++ venn diagram
+@ show me a venn diagram
+
++ i would like the count of * with respect to top * *
+@ count of <star1> wrt top <star2> <star3>
+
+
