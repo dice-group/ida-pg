@@ -28,13 +28,32 @@
             "scripts": []
           },
           "configurations": {
+            "container": {
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.container.dev.ts"
+              }]
+            },
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.prod.ts"
+              }],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
+            },
+            "container-production": {
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.container.prod.ts"
+              }],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -53,8 +72,14 @@
             "browserTarget": "ida-chatbot:build"
           },
           "configurations": {
+            "container": {
+              "browserTarget": "ida-chatbot:build:container"
+            },
             "production": {
               "browserTarget": "ida-chatbot:build:production"
+            },
+            "container-production": {
+              "browserTarget": "ida-chatbot:build:container-production"
             }
           }
         },

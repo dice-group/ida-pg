@@ -23,12 +23,13 @@ IDA currently consists of three main components:
 *   `ida-chatbot`: The Angular webclient for IDA.
 *   `librarian`: A general purpose toolkit to programmatically work with software libraries.
 
-To get everything up and running you will need at least the following tools:
-*   Java JDK >= 1.8
-*   Maven >= 3.6
-*   Node.js >= 10
+You will need at least the following tools:
 *   git
+*   Docker >= 18.09
 
-**IMPORTANT:** You have to install all modules to your local maven repo via `mvn install` before you can use IDA.
-
-To then start the individual components, please have a look at their respective READMEs.
+To get everything up and running follow these steps:
+1. Setting up Docker:
+	1. Start a local registry: `docker run -d -p 5000:5000 --name registry registry:2`
+	2. Create a local single-node Docker swarm: `docker swarm init --advertise-addr 127.0.0.1`
+2. Starting the IDA stack: `./services/deploy.sh`
+3. The IDA web interface should now be available at `http://127.0.0.1/`.

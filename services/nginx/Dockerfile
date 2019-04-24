@@ -9,11 +9,13 @@ COPY ida-chatbot/src src
 COPY ida-chatbot/angular.json angular.json
 COPY ida-chatbot/tsconfig.json tsconfig.json
 COPY ida-chatbot/tslint.json tslint.json
-RUN npm run prod
+RUN npm run prod-container
 
 FROM nginx:1.15.8
 
-COPY nginx/mime.types /etc/nginx/mime.types
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+
+COPY services/nginx/mime.types /etc/nginx/mime.types
+COPY services/nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=builder /app/dist/ida-chatbot /app

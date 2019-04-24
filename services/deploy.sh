@@ -1,12 +1,13 @@
 #!/bin/bash
 
+cd "${BASH_SOURCE%/*}" || exit
+
 version=$(cat VERSION)
 registry=${1:-localhost:5000}
 
 function build_container() {
-    echo "Building $1:"
     tag=$registry/ida/$1:$version
-    echo "Building $tag..."
+    echo "Building $1: $tag..."
     if docker build ${@:2} -t $tag; then
         echo "Successfully built $tag."
         if docker push $tag; then
@@ -15,8 +16,8 @@ function build_container() {
     fi
 }
 
-build_container nginx . -f Dockerfile-nginx
-build_container ida-ws ida-ws
+build_container nginx .. -f nginx/Dockerfile
+build_container ida-ws .. -f ida-ws/Dockerfile
 
 export REGISTRY=$registry
 export VERSION=$version
