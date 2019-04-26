@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  nginx:
+    image: $REGISTRY/ida/nginx-dev:$VERSION
+    ports:
+      - 3080:80
+    networks:
+      - ida-net
+  ida-frontend:
+    image: $REGISTRY/ida/frontend-dev:$VERSION
+    volumes:
+      - "../ida-chatbot/src:/app/src"
+    networks:
+      - ida-net
+  ida-ws:
+    image: $REGISTRY/ida/ida-ws-dev:$VERSION
+    volumes:
+      - "../ida-ws/src:/app/ida-ws/src"
+      - "../ida-ws/target:/app/ida-ws/target"
+    networks:
+      - ida-net
+
+networks:
+  ida-net:

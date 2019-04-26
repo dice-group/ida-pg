@@ -1,0 +1,9 @@
+/target/
+/bin/
+
+# Spring Tools
+.sts4-cache
+
+#Log files
+*.log
+*.log.*

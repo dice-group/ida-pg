@@ -23,12 +23,40 @@ IDA currently consists of three main components:
 *   `ida-chatbot`: The Angular webclient for IDA.
 *   `librarian`: A general purpose toolkit to programmatically work with software libraries.
 
-To get everything up and running you will need at least the following tools:
+You will need at least the following tools:
+*   bash
+*   git
+*   Docker >= 18.09
 *   Java JDK >= 1.8
 *   Maven >= 3.6
 *   Node.js >= 10
+
+Docker is not directly supported by Windows 10 Home and Windows <= 8.1.
+Use [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) if you are using an unsupported OS.
+
+IDA is set up via bash-scripts. If you are using Windows you will have to install bash, e.g. by installing [cmder](https://cmder.net/), by installing [Cygwin](https://www.cygwin.com/) or via [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
+To get everything up and running follow these steps:
+1. Setting up Docker:
+	1. Start a local registry: `docker run -d -p 5000:5000 --name registry registry:2`
+	2. Create a local single-node Docker swarm: `docker swarm init --advertise-addr 127.0.0.1`
+2. Starting the IDA stack: `./services/deploy-dev.sh`.
+3. The IDA web interface should now be available at `http://127.0.0.1:3080/`.
+4. The development stack uses `ng serve` and `spring-boot-devtools` internally. Updates to the sources (`.class`-files in case of Spring) should be reflected automatically.
+5. To stop and remove the running development stack run `docker stack rm ida-stack-dev`.
+
+## Production setup
+
+IDA does not yet support distributed environments and is therefore not ready for big production use-cases.
+To run IDA in a single-node production environment you need:
+*   bash
 *   git
+*   Docker >= 18.09
 
-**IMPORTANT:** You have to install all modules to your local maven repo via `mvn install` before you can use IDA.
-
-To then start the individual components, please have a look at their respective READMEs.
+To start the production stack:
+1. Setting up Docker:
+	1. Start a local registry: `docker run -d -p 5000:5000 --name registry registry:2`
+	2. Create a single-node Docker swarm: `docker swarm init --advertise-addr [SERVER_IP]` where `[SERVER_IP]` is the IP on which IDA should be accessible.
+2. Starting the IDA stack: `./services/deploy.sh`
+3. The IDA web interface should now be available at `http://[SERVER_IP]/`.
+4. To stop and remove the running production stack run `docker stack rm ida-stack`.
