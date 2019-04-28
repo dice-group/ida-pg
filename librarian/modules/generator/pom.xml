@@ -89,6 +89,11 @@
       <version>0.18.2</version>
     </dependency>
     <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>data.priority-map</artifactId>
+      <version>0.0.10</version>
+    </dependency>
+    <dependency>
       <groupId>clucie</groupId>
       <artifactId>clucie</artifactId>
       <version>0.4.2</version>
