@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  */
 public class KernelHttpRequest {
 
-	public static final String ip_address = "http://127.0.0.1:8889/cluster/";
+	public static final String ip_address = "http://131.234.28.84:8889/cluster/";
 
 	/**
 	 * Method to connect with jupyter kernel gatway server and create a GET request

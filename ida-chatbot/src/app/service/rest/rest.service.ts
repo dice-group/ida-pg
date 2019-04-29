@@ -1,12 +1,13 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestService implements HttpInterceptor {
-  private hosturl = 'http://131.234.28.84:8080/ida-ws/';
+  private hosturl = environment.apiBase;
   public requestEvnt: EventEmitter<boolean> = new EventEmitter();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
