@@ -1,0 +1,10 @@
+<http://dbpedia.org/resource/Peter_Ceffons> <http://xmlns.com/foaf/0.1/name> "Peter Ceffons"@en .
+<http://dbpedia.org/resource/Witold_Gerutto> <http://xmlns.com/foaf/0.1/name> "Witold Gerutto"@en .
+<http://dbpedia.org/resource/Nikolaos_Ventouras> <http://xmlns.com/foaf/0.1/name> "Nikolaos Ventouras"@en .
+<http://dbpedia.org/resource/Siniša_Žugić> <http://xmlns.com/foaf/0.1/name> "Siniša Žugic"@en .
+<http://dbpedia.org/resource/Megan_Lawrence> <http://xmlns.com/foaf/0.1/name> "Megan Lawrence"@en .
+<http://dbpedia.org/resource/Lorine_Livington_Pruette> <http://xmlns.com/foaf/0.1/name> "Lorine Livington Pruette"@en .
+<http://dbpedia.org/resource/Danilo_Tognon> <http://xmlns.com/foaf/0.1/name> "Danilo Tognon"@en .
+<http://dbpedia.org/resource/Andreas_Ekberg> <http://xmlns.com/foaf/0.1/name> "Andreas Ekberg"@en .
+<http://dbpedia.org/resource/William_Bagot,_2nd_Baron_Bagot> <http://xmlns.com/foaf/0.1/name> "William Bagot, 2nd Baron Bagot"@en .
+<http://dbpedia.org/resource/Sani_ol_molk> <http://xmlns.com/foaf/0.1/name> "Mirza Abolhassan Khan Ghaffari"@en .
