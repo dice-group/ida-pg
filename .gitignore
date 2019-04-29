@@ -1,0 +1,11 @@
+# Eclipse
+.classpath
+.project
+.settings/
+.attach_pid*
+
+# IntelliJ
+.idea/
+out/
+*.iws
+
