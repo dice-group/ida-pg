@@ -1,0 +1,13 @@
+{:ignored-unused-namespaces [clojure.stacktrace
+                             proto-repl.saved-values
+                             hickory.select
+                             repl-tools
+                             librarian.model.io.scrape
+                             librarian.scraper.io.scrape
+                             librarian.scraper.cli
+                             librarian.scraper.crawler.factory]
+ :known-macros [say-cheez.core/capture-build-env-to
+                librarian.helpers.spec/entity-keys
+                librarian.model.syntax/defconcept
+                librarian.model.syntax/defparadigm
+                librarian.model.syntax/defecosystem]}

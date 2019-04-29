@@ -5,12 +5,16 @@
 	<groupId>upb</groupId>
 	<artifactId>ida</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>ida Parent Project</name>
 	<url>http://maven.apache.org</url>
+	<version>${revision}</version>
+	
+	<properties>
+		<revision>0.0.1-SNAPSHOT</revision>
+	</properties>
 	
 	<modules>
 		<module>ida-ws</module>
-		<module>lib-scraper</module>
+		<module>librarian</module>
 	</modules>
 </project>
