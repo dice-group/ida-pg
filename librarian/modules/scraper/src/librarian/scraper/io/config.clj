@@ -5,24 +5,83 @@
             [me.raynes.fs :as fs]
             [hickory.select]
             [librarian.model.io.scrape :as mscrape]
+            [librarian.model.syntax :as msyntax]
             [librarian.helpers.zip :as hzip]
             [librarian.helpers.predicate :as predicate]
-            [librarian.scraper.match :as match])
+            [librarian.scraper.match :as match]
+            [librarian.helpers.map :as map])
   (:import (java.util.regex Pattern)))
 
 (def default-name "scraper.clj")
 
-(defn defscraper*
-  [name config]
+(defn index-hooks
+  [hooks patterns]
+  (->> hooks
+       (map (fn [hook]
+              (if-let [pattern (patterns (:pattern hook))]
+                (merge pattern hook)
+                hook)))
+       (mapcat (fn [hook]
+                 (if (seqable? (:trigger hook))
+                   (map (partial assoc hook :trigger) (:trigger hook))
+                   [hook])))
+       (group-by :trigger)))
+
+(defn resolve-hook-aliases
+  [hooks {:keys [attributes concept-aliases attribute-aliases]}]
+  (let [concept-keys [:concept]
+        attr-keys [:attribute :ref-from-trigger :ref-to-trigger]
+        concept-lookup (partial map/get-or-fail concept-aliases)
+        attr-lookup (fn [attr]
+                      (if (seqable? attr)
+                        (map (partial map/get-or-fail attribute-aliases) attr)
+                        (map/get-or-fail attribute-aliases attr)))]
+    (map/map-kv (fn [[k v]]
+                  [(map/get-or-fail (merge concept-aliases
+                                           attribute-aliases
+                                           {:document :document})
+                                    k)
+                   (mapv (fn [hook]
+                           (let [hook (-> hook
+                                          (map/update-keys concept-keys concept-lookup)
+                                          (map/update-keys attr-keys attr-lookup))]
+                             (if (not-any? #(-> (get hook %) attributes :librarian/computed) attr-keys)
+                               hook
+                               (throw (Error. (str "Invalid hook " hook
+                                                   ". Computed attributes cannot be scraped."))))))
+                         v)])
+                hooks)))
+
+(defn- instanciate-snippet-part
+  [snippet-part concepts]
+  (msyntax/instanciate* #(instanciate-snippet-part % concepts)
+                        (map/get-or-fail concepts (:type snippet-part))
+                        (dissoc snippet-part :type)))
+
+(defn snippet->tx
+  [snippet {:keys [concepts]}]
+  (msyntax/instances->tx (map #(instanciate-snippet-part % concepts) snippet)
+                         false))
+
+(defn parse-config
+  [config]
   (let [conformed (s/conform ::config config)]
     (if (s/invalid? conformed)
       (throw (Exception. (str "Invalid scraper configuration.\n"
                               (s/explain-str ::config config))))
-      (assoc conformed :name (str name)))))
+      (let [ecosystem (:ecosystem conformed)
+            hooks (-> (:hooks conformed)
+                      (index-hooks (:patterns conformed))
+                      (resolve-hook-aliases ecosystem))
+            snippets (map #(snippet->tx % ecosystem)
+                          (:snippets conformed))]
+        (assoc conformed
+               :hooks hooks
+               :snippets snippets)))))
 
 (defmacro defscraper
-  [name & config]
-  `(def ~name ~(defscraper* name config)))
+  [name & {:as config}]
+  `(def ~name ~(parse-config (assoc config :name name))))
 
 (defn read-config
   [path]
@@ -36,7 +95,7 @@
           config (read-string (slurp file))
           {:keys [name config]} (s/conform ::config-outer config)]
       (fs/with-cwd (fs/parent file)
-        (defscraper* name config)))))
+        (parse-config (assoc config :name name))))))
 
 (defn- parse-should-visit
   [expr]
@@ -51,7 +110,7 @@
 
 (s/def ::config-outer (s/cat :defscraper #(= % 'defscraper)
                              :name ::name
-                             :config (s/* any?)))
+                             :config (s/keys*)))
 
 (s/def ::name ::mscrape/name)
 (s/def ::ecosystem ::mscrape/ecosystem)
@@ -93,9 +152,7 @@
 (s/def ::limit int?)
 (s/def ::drop int?)
 
-(s/def ::select (s/and seq?
-                       (s/conformer (fn [form]
-                                      (eval (w/postwalk-replace select-kws form))))))
+(s/def ::select (s/and seq? (s/conformer #(eval (w/postwalk-replace select-kws %)))))
 (s/def ::while ::select)
 
 (s/def ::spread
@@ -125,26 +182,33 @@
                                 :pattern ::pattern-fn)
                           (s/conformer second)))
 
+(s/def ::snippets (s/coll-of ::snippet))
+(s/def ::snippet (s/coll-of ::snippet-instance))
+(s/def ::snippet-instance (s/keys :req-un [::type]))
+(s/def ::type keyword?)
+
 (s/def ::config
        (s/and (s/or :extension
-                    (s/and (s/keys* :req-un [::extends]
-                                    :opt-un [::ecosystem
-                                             ::seed
-                                             ::should-visit
-                                             ::hooks
-                                             ::meta
-                                             ::patterns
-                                             ::max-pages
-                                             ::max-depth])
+                    (s/and (s/keys :req-un [::extends]
+                                   :opt-un [::ecosystem
+                                            ::seed
+                                            ::should-visit
+                                            ::hooks
+                                            ::meta
+                                            ::patterns
+                                            ::max-pages
+                                            ::max-depth
+                                            ::snippets])
                            (s/conformer #(merge (read-config (:extends %)) %)))
                     :root
-                    (s/keys* :req-un [::ecosystem
-                                      ::seed
-                                      ::should-visit
-                                      ::hooks]
-                             :opt-un [::meta
-                                      ::patterns
-                                      ::max-pages
-                                      ::max-depth]))
+                    (s/keys :req-un [::ecosystem
+                                     ::seed
+                                     ::should-visit
+                                     ::hooks]
+                            :opt-un [::meta
+                                     ::patterns
+                                     ::max-pages
+                                     ::max-depth
+                                     ::snippets]))
               (s/conformer second)
               (s/every-kv keyword? any?)))

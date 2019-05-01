@@ -15,7 +15,8 @@
             [librarian.model.concepts.call :refer [call]]
             [librarian.model.concepts.call-parameter :refer [call-parameter]]
             [librarian.model.concepts.call-result :refer [call-result]]
-            [librarian.model.concepts.call-value :refer [call-value]])
+            [librarian.model.concepts.call-value :refer [call-value]]
+            [librarian.model.concepts.snippet :refer [snippet]])
   (:refer-clojure :exclude [namespace]))
 
 (defparadigm common
@@ -38,4 +39,5 @@
    :call call
    :call-parameter call-parameter
    :call-result call-result
-   :call-value call-value})
+   :call-value call-value
+   :snippet snippet})

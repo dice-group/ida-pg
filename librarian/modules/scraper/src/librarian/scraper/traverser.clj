@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [clojure.string :as string]
             [librarian.helpers.zip :as lzip]
-            [librarian.helpers.map :as map]
             [librarian.helpers.transaction :as tx]
             [librarian.model.db :as mdb]
             [librarian.scraper.attributes :as sattrs]
@@ -128,53 +127,12 @@
   "Remove entities that were not completed by the end of the scrape."
   [conn]
   (let [db @conn
-        res (d/q '[:find ?id :where [?id :allow-incomplete true]])]
+        res (d/q '[:find ?id :where [?id :allow-incomplete true]] db)]
     (d/db-with db (mapv (comp #(vector :db.fn/retractEntity %) first) res))))
 
-(defn index-hooks
-  [hooks patterns]
-  (->> hooks
-       (map (fn [hook]
-              (if-let [pattern (patterns (:pattern hook))]
-                (merge pattern hook)
-                hook)))
-       (mapcat (fn [hook]
-                 (if (seqable? (:trigger hook))
-                   (map (partial assoc hook :trigger) (:trigger hook))
-                   [hook])))
-       (group-by :trigger)))
-
-(defn resolve-hook-aliases
-  [hooks {:keys [attributes concept-aliases attribute-aliases]}]
-  (let [concept-keys [:concept]
-        attr-keys [:attribute :ref-from-trigger :ref-to-trigger]
-        concept-lookup (partial map/get-or-fail concept-aliases)
-        attr-lookup (fn [attr]
-                      (if (seqable? attr)
-                        (map (partial map/get-or-fail attribute-aliases) attr)
-                        (map/get-or-fail attribute-aliases attr)))]
-    (map/map-kv (fn [[k v]]
-                  [(map/get-or-fail (merge concept-aliases
-                                           attribute-aliases
-                                           {:document :document})
-                                    k)
-                   (mapv (fn [hook]
-                           (let [hook (-> hook
-                                          (map/update-keys concept-keys concept-lookup)
-                                          (map/update-keys attr-keys attr-lookup))]
-                             (if (not-any? #(-> (get hook %) attributes :librarian/computed) attr-keys)
-                               hook
-                               (throw (Error. (str "Invalid hook " hook
-                                                   ". Computed attributes cannot be scraped."))))))
-                         v)])
-                hooks)))
-
 (defn traverser
-  [{:keys [hooks patterns ecosystem]}]
-  (let [conn (d/create-conn (merge sattrs/attributes (:attributes ecosystem)))
-        hooks (-> hooks
-                  (index-hooks patterns)
-                  (resolve-hook-aliases ecosystem))]
+  [{:keys [ecosystem hooks]}]
+  (let [conn (d/create-conn (merge sattrs/attributes (:attributes ecosystem)))]
     (mdb/transact-builtins! conn ecosystem)
     {:traverser (partial traverse! conn hooks ecosystem)
-     :finalize (partial finalize conn)}))
+     :finalize #(finalize conn)}))

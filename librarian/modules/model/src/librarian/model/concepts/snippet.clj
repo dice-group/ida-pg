@@ -4,11 +4,11 @@
             [librarian.model.syntax :refer [defconcept]]))
 
 (defconcept snippet
-  :attributes {::entry-call {:db/valueType :db.type/ref
-                             :db/cardinality :db.cardinality/many
-                             :db/isComponent true
-                             :db/doc "An entry call of this snippet."}}
+  :attributes {::contains {:db/valueType :db.type/ref
+                           :db/cardinality :db.cardinality/many
+                           :db/isComponent true
+                           :db/index true
+                           :db/doc "A control-flow concept that is part of this snippet."}}
   :spec ::snippet)
 
-(s/def ::snippet (hs/entity-keys :opt [::entry-call]))
-(s/def ::entry-call (hs/instance? :librarian.model.concepts.call/call))
+(s/def ::snippet (hs/entity-keys :opt [::contains]))

@@ -98,4 +98,9 @@
            :pattern :io-container-info}
           {:trigger :basetype
            :attribute :basetype/name
-           :transform #"^[A-Za-z]+"}])
+           :transform #"^[A-Za-z]+"}]
+
+  :snippets [[{:type :call
+               :result {:type :call-result
+                        :datatype {:type :goal-type
+                                   :id :labels}}}]])
