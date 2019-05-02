@@ -94,8 +94,7 @@
                                           :value "iteration count")
                                         (instanciate basetype/basetype
                                           :name "str")])])]
-    {:predecessor nil
-     :cost 0
+    {:cost 0
      :db (d/db-with (:db scrape) (instances->tx concepts))}))
 
 (defn flaws

@@ -13,6 +13,7 @@
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
+            [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.scraper.match :as match])
   (:import (java.util.regex Pattern)))
 
@@ -67,7 +68,8 @@
                           concept
                           (if (or (isa? concept-ident (:ident call/call))
                                   (isa? concept-ident (:ident call-parameter/call-parameter))
-                                  (isa? concept-ident (:ident call-result/call-result)))
+                                  (isa? concept-ident (:ident call-result/call-result))
+                                  (isa? concept-ident (:ident semantic-type/semantic-type)))
                             (assoc snippet-part ::snippet/_contains snippet-instance)
                             snippet-part))))
 
@@ -78,11 +80,29 @@
                                 snippet)
                            false)))
 
+(defn cache-id
+  [config conformed]
+  (let [hashable-config (w/postwalk (fn [form]
+                                      (cond
+                                        (instance? Pattern form) (str form)
+                                        (and (symbol? form)
+                                             (= (last (name form)) \#)
+                                             (clojure.string/includes? (name form) "__"))
+                                        '_
+                                        :else form))
+                                    (select-keys config [:seed :max-pages :max-depth
+                                                         :should-visit :hooks :ecosystem]))]
+    (hash-combine (-> conformed :meta (:librarian/cache-id 0))
+                  (assoc hashable-config :ecosystem/version
+                         (-> conformed :ecosystem :version)))))
+
 (defn parse-config
   [config]
   (let [conformed (binding [*full-config-parse* false]
                     ; don't perform full hook and snippet parsing on extended configs:
-                    (s/conform ::config config))]
+                    (s/conform ::config config))
+        conformed (assoc-in conformed [:meta :librarian/cache-id]
+                            (cache-id config conformed))]
     (if (s/invalid? conformed)
       (throw (Exception. (str "Invalid scraper configuration.\n"
                               (s/explain-str ::config config))))

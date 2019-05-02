@@ -24,8 +24,9 @@
     (throw (Error. (str "Unknown mode " mode ".")))))
 
 (defn scrape
-  [{:keys [config out]}]
-  (sscrape/create-scrape config out))
+  [{:keys [config out cache]}]
+  (sscrape/create-scrape config out
+                         {:cache (= cache "on")}))
 
 (defn print-scrape
   [{:keys [scrape mode]}]
@@ -91,7 +92,10 @@
                        :as (str "Optional scrape output path. "
                                 "If not given, the scrape will be written into the config directory. "
                                 "If a directory path is given, the scrape will be named 'scrape.db'.")
-                       :type :string}]}
+                       :type :string}
+                      {:option "cache"
+                       :as "A flag (on/off) indicating whether the scrape cache should be used."
+                       :type :string, :default "on"}]}
               {:command "print-scrape" :short "ps"
                :runs print-scrape
                :description "Prints a scrape to stdout."

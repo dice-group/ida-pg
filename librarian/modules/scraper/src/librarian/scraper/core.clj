@@ -1,8 +1,11 @@
 (ns librarian.scraper.core
   (:require [hickory.core :as h]
             [clojure.tools.logging :as log]
+            [datascript.core :as d]
             [librarian.scraper.crawler.core :as crawler]
             [librarian.helpers.predicate :refer [p-and p-or p-expire parse]]
+            [librarian.model.db :as mdb]
+            [librarian.model.concepts.snippet :as snippet]
             [librarian.scraper.match :as match]
             [librarian.scraper.traverser :refer [traverser]])
   (:import (edu.uci.ics.crawler4j.crawler Page)
@@ -41,3 +44,15 @@
     (let [result (finalize)]
       (log/info (str "Successfully scraped " name "."))
       result)))
+
+(defn update-cached-scrape
+  [{:keys [name snippets]} db]
+  (log/info (str "Updating cached scrape " name "..."))
+  (let [snippet-datoms (d/datoms db :avet :type ::snippet/snippet)
+        db (d/db-with db (mapv #(vector :db/retractEntity (:e %))
+                               snippet-datoms))
+        db (mdb/with-seq db snippets)]
+    (log/info (str "Successfully updated cached scrape " name
+                   ". Removed snippets: " (count snippet-datoms)
+                   ", added snippets: " (count snippets) "."))
+    db))

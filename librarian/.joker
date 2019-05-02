@@ -1,4 +1,5 @@
-{:ignored-unused-namespaces [clojure.stacktrace
+{:if-without-else true
+ :ignored-unused-namespaces [clojure.stacktrace
                              proto-repl.saved-values
                              hickory.select
                              repl-tools
