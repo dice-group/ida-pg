@@ -96,9 +96,7 @@
                                           :name "str")])])]
     {:predecessor nil
      :cost 0
-     :db (-> (:db scrape)
-             (d/with (instances->tx concepts))
-             :db-after)}))
+     :db (d/db-with (:db scrape) (instances->tx concepts))}))
 
 (defn flaws
   [state]
@@ -217,7 +215,7 @@
   [state action]
   {:predecessor state
    :cost (+ (:cost state) (:cost action))
-   :db (-> (:db state) (d/with (:tx action)) :db-after)})
+   :db (d/db-with (:db state) (:tx action))})
 
 (defn successors
   [state]

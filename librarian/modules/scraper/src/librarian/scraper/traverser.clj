@@ -125,14 +125,16 @@
 
 (defn finalize
   "Remove entities that were not completed by the end of the scrape."
-  [conn]
+  [conn snippets]
   (let [db @conn
-        res (d/q '[:find ?id :where [?id :allow-incomplete true]] db)]
-    (d/db-with db (mapv (comp #(vector :db.fn/retractEntity %) first) res))))
+        res (d/q '[:find [?id ...] :where [?id :allow-incomplete true]] db)]
+    (-> db
+        (d/db-with (mapv #(vector :db.fn/retractEntity %) res))
+        (mdb/with-seq snippets))))
 
 (defn traverser
-  [{:keys [ecosystem hooks]}]
+  [{:keys [ecosystem hooks snippets]}]
   (let [conn (d/create-conn (merge sattrs/attributes (:attributes ecosystem)))]
-    (mdb/transact-builtins! conn ecosystem)
+    (mdb/transact-seq! conn (:builtins ecosystem))
     {:traverser (partial traverse! conn hooks ecosystem)
-     :finalize #(finalize conn)}))
+     :finalize #(finalize conn snippets)}))

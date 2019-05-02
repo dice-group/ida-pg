@@ -9,67 +9,6 @@
 
 ; Fns:
 
-(defn- merge-concepts
-  [concept extends]
-  (let [merged (apply map/merge-by-key
-                      {:attributes merge
-                       :spec hs/and
-                       :preprocess (partial map/merge-by-key tx/merge-direct)
-                       :postprocess tx/merge}
-                      (conj extends concept))
-        merged (if (contains? merged :spec)
-                 merged
-                 (assoc merged :spec any?))
-        merged (assoc merged :extends (map :ident extends))]
-    merged))
-
-(defn- merge-paradigms
-  ([paradigm extends]
-   (merge-paradigms (conj extends (update paradigm :builtins #(when % (vector %))))))
-  ([paradigms]
-   (apply map/merge-by-key
-          {:concepts merge
-           :builtins (comp vec concat)}
-          paradigms)))
-
-(defn- no-attribute-collisions?
-  [{:keys [concept extends]}]
-  (let [attr-names (->> (conj extends concept)
-                        (mapcat (comp keys :attributes))
-                        (map name))]
-    (or (empty? attr-names)
-        (apply distinct? attr-names))))
-
-(def ^:private common-attribute-aliases
-  (as-> (keys common/attributes) $
-        (zipmap $ $)))
-
-(defn paradigm->ecosystem
-  [{:keys [concepts builtins]}]
-  {:concepts concepts
-   :builtins builtins
-   :concept-aliases (map/map-v :ident concepts)
-   :attribute-aliases (into common-attribute-aliases
-                            (for [[c {:keys [attributes]}] concepts
-                                  :let [cns (namespace c)
-                                        cns (str (when cns (str cns "."))
-                                                 (name c))]
-                                  attribute (keys attributes)]
-                              [(keyword cns (name attribute)) attribute]))
-   :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
-                            (into a attributes))
-                          common/attributes concepts)
-   :specs (map/map-kv (comp (juxt :ident :spec) second) concepts)
-   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) concepts)
-   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) concepts)})
-
-(defn merge-ecosystems
-  [& ecosystems]
-  (->> ecosystems
-       (map #(select-keys % [:concepts :builtins]))
-       (apply merge-paradigms)
-       paradigm->ecosystem))
-
 (defn- instance->tx
   [instance]
   (-> instance meta (:tx [instance]) vec))
@@ -155,6 +94,68 @@
 (defn instanciate
   [concept & {:as vals}]
   (instanciate* concept vals))
+
+(defn- merge-concepts
+  [concept extends]
+  (let [merged (apply map/merge-by-key
+                      {:attributes merge
+                       :spec hs/and
+                       :preprocess (partial map/merge-by-key tx/merge-direct)
+                       :postprocess tx/merge}
+                      (conj extends concept))
+        merged (if (contains? merged :spec)
+                 merged
+                 (assoc merged :spec any?))
+        merged (assoc merged :extends (map :ident extends))]
+    merged))
+
+(defn- merge-paradigms
+  ([paradigm extends]
+   (merge-paradigms (conj extends (update paradigm :builtins
+                                          #(when % [(instances->tx %)])))))
+  ([paradigms]
+   (apply map/merge-by-key
+          {:concepts merge
+           :builtins (comp vec concat)}
+          paradigms)))
+
+(defn- no-attribute-collisions?
+  [{:keys [concept extends]}]
+  (let [attr-names (->> (conj extends concept)
+                        (mapcat (comp keys :attributes))
+                        (map name))]
+    (or (empty? attr-names)
+        (apply distinct? attr-names))))
+
+(def ^:private common-attribute-aliases
+  (as-> (keys common/attributes) $
+        (zipmap $ $)))
+
+(defn paradigm->ecosystem
+  [{:keys [concepts builtins]}]
+  {:concepts concepts
+   :builtins builtins
+   :concept-aliases (map/map-v :ident concepts)
+   :attribute-aliases (into common-attribute-aliases
+                            (for [[c {:keys [attributes]}] concepts
+                                  :let [cns (namespace c)
+                                        cns (str (when cns (str cns "."))
+                                                 (name c))]
+                                  attribute (keys attributes)]
+                              [(keyword cns (name attribute)) attribute]))
+   :attributes (reduce-kv (fn [a _ {:keys [attributes]}]
+                            (into a attributes))
+                          common/attributes concepts)
+   :specs (map/map-kv (comp (juxt :ident :spec) second) concepts)
+   :preprocessors  (map/keep-kv (comp (juxt :ident :preprocess) second) concepts)
+   :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) concepts)})
+
+(defn merge-ecosystems
+  [& ecosystems]
+  (->> ecosystems
+       (map #(select-keys % [:concepts :builtins]))
+       (apply merge-paradigms)
+       paradigm->ecosystem))
 
 ; Macros:
 

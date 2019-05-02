@@ -4,15 +4,21 @@
             [clojure.walk :as w]
             [me.raynes.fs :as fs]
             [hickory.select]
-            [librarian.model.io.scrape :as mscrape]
-            [librarian.model.syntax :as msyntax]
             [librarian.helpers.zip :as hzip]
             [librarian.helpers.predicate :as predicate]
-            [librarian.scraper.match :as match]
-            [librarian.helpers.map :as map])
+            [librarian.helpers.map :as map]
+            [librarian.model.syntax :as msyntax]
+            [librarian.model.io.scrape :as mscrape]
+            [librarian.model.concepts.snippet :as snippet]
+            [librarian.model.concepts.call :as call]
+            [librarian.model.concepts.call-parameter :as call-parameter]
+            [librarian.model.concepts.call-result :as call-result]
+            [librarian.scraper.match :as match])
   (:import (java.util.regex Pattern)))
 
 (def default-name "scraper.clj")
+
+(def ^:private ^:dynamic *full-config-parse* true)
 
 (defn index-hooks
   [hooks patterns]
@@ -53,31 +59,44 @@
                 hooks)))
 
 (defn- instanciate-snippet-part
-  [snippet-part concepts]
-  (msyntax/instanciate* #(instanciate-snippet-part % concepts)
-                        (map/get-or-fail concepts (:type snippet-part))
-                        (dissoc snippet-part :type)))
+  [snippet-part concepts snippet-instance]
+  (let [concept (map/get-or-fail concepts (:type snippet-part))
+        concept-ident (:ident concept)
+        snippet-part (dissoc snippet-part :type)]
+    (msyntax/instanciate* #(instanciate-snippet-part % concepts snippet-instance)
+                          concept
+                          (if (or (isa? concept-ident (:ident call/call))
+                                  (isa? concept-ident (:ident call-parameter/call-parameter))
+                                  (isa? concept-ident (:ident call-result/call-result)))
+                            (assoc snippet-part ::snippet/_contains snippet-instance)
+                            snippet-part))))
 
 (defn snippet->tx
   [snippet {:keys [concepts]}]
-  (msyntax/instances->tx (map #(instanciate-snippet-part % concepts) snippet)
-                         false))
+  (let [snippet-instance (msyntax/instanciate snippet/snippet)]
+    (msyntax/instances->tx (map #(instanciate-snippet-part % concepts snippet-instance)
+                                snippet)
+                           false)))
 
 (defn parse-config
   [config]
-  (let [conformed (s/conform ::config config)]
+  (let [conformed (binding [*full-config-parse* false]
+                    ; don't perform full hook and snippet parsing on extended configs:
+                    (s/conform ::config config))]
     (if (s/invalid? conformed)
       (throw (Exception. (str "Invalid scraper configuration.\n"
                               (s/explain-str ::config config))))
-      (let [ecosystem (:ecosystem conformed)
-            hooks (-> (:hooks conformed)
-                      (index-hooks (:patterns conformed))
-                      (resolve-hook-aliases ecosystem))
-            snippets (map #(snippet->tx % ecosystem)
-                          (:snippets conformed))]
-        (assoc conformed
-               :hooks hooks
-               :snippets snippets)))))
+      (if *full-config-parse*
+        (let [ecosystem (:ecosystem conformed)
+              hooks (-> (:hooks conformed)
+                        (index-hooks (:patterns conformed))
+                        (resolve-hook-aliases ecosystem))
+              snippets (map #(snippet->tx % ecosystem)
+                            (:snippets conformed))]
+          (assoc conformed
+                 :hooks hooks
+                 :snippets snippets))
+        conformed))))
 
 (defmacro defscraper
   [name & {:as config}]
