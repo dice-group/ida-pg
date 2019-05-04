@@ -2,9 +2,10 @@
   (:require [clojure.spec.alpha :as s]
             [librarian.helpers.spec :as hs]
             [librarian.model.syntax :refer [defconcept]]
+            [librarian.model.concepts.positionable :refer [positionable]]
             [librarian.model.concepts.datatype :as datatype :refer [datatype]]))
 
-(defconcept semantic-type [datatype]
+(defconcept semantic-type [positionable datatype]
   :attributes {::key {:db/doc "Context string of the semantic type."}
                ::value {:db/doc "Description of the semantics of this type."}}
   :spec ::semantic-type)
