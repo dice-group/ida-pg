@@ -14,42 +14,41 @@
   (-> instance meta (:tx [instance]) vec))
 
 (defn instances->tx
-  ([root-instances]
-   (instances->tx root-instances true))
-  ([root-instances check-instances]
-   (let [raw-tx (mapcat instance->tx root-instances)
-         instances (filter map? raw-tx)
-         preproc-tx (mapcat (fn [instance]
+  [root-instances & {:keys [^boolean check-specs]
+                     :or {check-specs true}}]
+  (let [raw-tx (mapcat instance->tx root-instances)
+        instances (filter map? raw-tx)
+        preproc-tx (mapcat (fn [instance]
+                             (let [{:keys [concept]} (meta instance)]
+                               (mapcat (fn [[attr processor]]
+                                         (when (contains? instance attr)
+                                           (processor (get instance attr)
+                                                      (:db/id instance))))
+                                       (:preprocess concept))))
+                           instances)
+        schema (->> instances
+                    (keep (comp :attributes :concept meta))
+                    (apply merge common/attributes))
+        tx (sort-by #(not (and (vector? %) (tx/indexing-tx? schema %)))
+                    (concat raw-tx preproc-tx))
+        {db :db-after, tempid->id :tempids} (d/with (d/empty-db schema) tx)
+        id->tempid (set/map-invert tempid->id)
+        postproc-tx (mapcat (fn [instance]
                               (let [{:keys [concept]} (meta instance)]
-                                (mapcat (fn [[attr processor]]
-                                          (when (contains? instance attr)
-                                            (processor (get instance attr)
-                                                       (:db/id instance))))
-                                        (:preprocess concept))))
+                                (when-let [processor (:postprocess concept)]
+                                  (processor db (-> instance :db/id tempid->id)))))
                             instances)
-         schema (->> instances
-                     (keep (comp :attributes :concept meta))
-                     (apply merge common/attributes))
-         tx (sort-by #(not (and (vector? %) (tx/indexing-tx? schema %)))
-                     (concat raw-tx preproc-tx))
-         {db :db-after, tempid->id :tempids} (d/with (d/empty-db schema) tx)
-         id->tempid (set/map-invert tempid->id)
-         postproc-tx (mapcat (fn [instance]
-                               (let [{:keys [concept]} (meta instance)]
-                                 (when-let [processor (:postprocess concept)]
-                                   (processor db (-> instance :db/id tempid->id)))))
-                             instances)
-         {db :db-after} (d/with db postproc-tx)]
-     (when check-instances
-       (doseq [instance instances
-               :let [spec (-> instance meta :concept :spec)
-                     e (d/entity db (-> instance :db/id tempid->id))]
-               :when (some? spec)]
-         (when-not (s/valid? spec e)
-           (throw (Error. (str "Invalid instance: " instance "\n"
-                               (s/explain-str spec e)))))))
-     (concat tx (map (partial tx/replace-ids-in-tx id->tempid)
-                     postproc-tx)))))
+        {db :db-after} (d/with db postproc-tx)]
+    (when check-specs
+      (doseq [instance instances
+              :let [spec (-> instance meta :concept :spec)
+                    e (d/entity db (-> instance :db/id tempid->id))]
+              :when (and (not (:placeholder e)) (some? spec))]
+        (when-not (s/valid? spec e)
+          (throw (Error. (str "Invalid instance: " instance "\n"
+                              (s/explain-str spec e)))))))
+    (concat tx (map (partial tx/replace-ids-in-tx id->tempid)
+                    postproc-tx))))
 
 (defn instanciate*
   ([concept vals]

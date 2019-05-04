@@ -21,5 +21,5 @@
 
 (s/def ::call (hs/entity-keys :opt [::callable ::parameter ::result]))
 (s/def ::callable (hs/instance? :librarian.model.concepts.callable/callable))
-(s/def ::parameter (hs/instance? :librarian.model.concepts.call-parameter/call-parameter))
-(s/def ::result (hs/instance? :librarian.model.concepts.call-result/call-result))
+(s/def ::parameter (s/coll-of (hs/instance? :librarian.model.concepts.call-parameter/call-parameter)))
+(s/def ::result (s/coll-of (hs/instance? :librarian.model.concepts.call-result/call-result)))

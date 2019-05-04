@@ -77,8 +77,7 @@
   [snippet {:keys [concepts]}]
   (let [snippet-instance (msyntax/instanciate snippet/snippet)]
     (msyntax/instances->tx (map #(instanciate-snippet-part % concepts snippet-instance)
-                                snippet)
-                           false)))
+                                snippet))))
 
 (defn cache-id
   [config conformed]

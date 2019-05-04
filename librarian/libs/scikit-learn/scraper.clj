@@ -101,6 +101,11 @@
            :transform #"^[A-Za-z]+"}]
 
   :snippets [[{:type :call
+               :callable {:type :function
+                          :placeholder true}
                :result {:type :call-result
                         :datatype {:type :goal-type
-                                   :id :labels}}}]])
+                                   :id :labels}
+                        :result {:type :result
+                                 :placeholder true
+                                 :name "labels"}}}]])
