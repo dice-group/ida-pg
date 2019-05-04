@@ -88,12 +88,12 @@
                                        (instanciate basetype/basetype
                                          :name "str")])
                           (instanciate call-value/call-value
-                             :value "456"
-                             :datatype [(instanciate semantic-type/semantic-type
-                                          :key "description"
-                                          :value "iteration count")
-                                        (instanciate basetype/basetype
-                                          :name "str")])])]
+                            :value "456"
+                            :datatype [(instanciate semantic-type/semantic-type
+                                         :key "description"
+                                         :value "iteration count")
+                                       (instanciate basetype/basetype
+                                         :name "str")])])]
     {:cost 0
      :db (d/db-with (:db scrape) (instances->tx concepts))}))
 
@@ -253,6 +253,7 @@
   (let [scrape (scrape/read-scrape "libs/scikit-learn-cluster")
         search-state (initial-search-state scrape [:labels])
         succs (iterate continue-search search-state)]
-    (time (rt/show-state (some :goal (take 100 succs)))))
+    (time (rt/show-state (some :goal (take 100 succs))
+                         :show-patterns true)))
   (catch Exception e
     (.println *err* e)))

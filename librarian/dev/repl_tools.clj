@@ -13,22 +13,28 @@
             [librarian.model.concepts.basetype :as basetype]
             [librarian.model.concepts.goal-type :as goal-type]
             [librarian.model.concepts.semantic-type :as semantic-type]
+            [librarian.model.concepts.snippet :as snippet]
             [librarian.generator.query :as gq]))
 
 (def show-scrape (comp :db read-scrape create-scrape))
 
 (defn show-state
-  [state]
+  [state & {:keys [show-patterns]
+            :or {show-patterns false}}]
   (let [db (:db state)
         nodes (d/q '[:find ?node ?type
-                     :in $ %
+                     :in $ % ?show-patterns
                      :where [(ground [::call/call
                                       ::call-value/call-value
                                       ::call-parameter/call-parameter
                                       ::call-result/call-result])
                              [?type ...]]
-                            (type ?node ?type)]
-                   db gq/rules)
+                            (type ?node ?type)
+                            (or (and [(true? ?show-patterns)] [?node])
+                                (and [(false? ?show-patterns)]
+                                     (not-join [?node]
+                                       [_ ::snippet/contains ?node])))]
+                   db gq/rules show-patterns)
         nodes (map (fn [[node type]]
                      {:id node
                       :group type
