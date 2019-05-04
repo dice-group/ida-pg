@@ -1,20 +1,13 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import {
-  HttpClient,
-  HttpEvent,
-  HttpHandler,
-  HttpHeaders,
-  HttpInterceptor,
-  HttpParams,
-  HttpRequest
-} from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestService implements HttpInterceptor {
-  private hosturl = 'http://131.234.28.84:8080/ida-ws/';
+  private hosturl = environment.apiBase;
   public requestEvnt: EventEmitter<boolean> = new EventEmitter();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -52,34 +45,4 @@ export class RestService implements HttpInterceptor {
     const reqObs = this.http.get(this.getFullUrl(path), {params: params});
     return reqObs;
   }
-
-  public postRequest(path: string, body: object,  prmobj: object): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': path === 'auth/login-action' ? 'application/x-www-form-urlencoded' : 'application/json'
-    });
-    const options = {headers: headers};
-    const reqObs = this.http.post(this.getFullUrl(path), path === 'auth/login-action' ? this.getFormUrlEncoded(body) : body, options);
-    return reqObs;
-  }
-
-  public deleteRequest(path: string): Observable<any> {
-    this.requestEvnt.emit(true);
-    // const headers = new HttpHeaders({
-    //   'Content-Type': 'application/json',
-    // });
-    const options = {};
-    const reqObs = this.http.delete(this.getFullUrl(path), options);
-    return reqObs;
-  }
-
-  public getFormUrlEncoded(toConvert) {
-    const formBody = [];
-    for(const property in toConvert) {
-      const encodedKey = encodeURIComponent(property);
-      const encodedValue = encodeURIComponent(toConvert[property]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    return formBody.join('&');
-  }
-
 }
