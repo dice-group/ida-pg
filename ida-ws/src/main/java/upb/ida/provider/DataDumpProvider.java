@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import clojure.lang.PersistentVector;
 import librarian.model.Scrape;
 import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
@@ -52,9 +54,11 @@ public class DataDumpProvider {
 		Scrape scrape = Scrape.load(scrapeFile);
 				
 		Map<String, ClusterAlgoDesc> res = new HashMap<>();
-		
-		res.put("KMeans", queryAlgoDesc(scrape, "sklearn.cluster.KMeans"));
-		res.put("AffinityPropagation", queryAlgoDesc(scrape, "sklearn.cluster.AffinityPropagation"));
+
+		res.put("KMeans", queryAlgoDesc(scrape,
+				PersistentVector.create("sklearn.cluster", "KMeans")));
+		res.put("AffinityPropagation", queryAlgoDesc(scrape,
+				PersistentVector.create("sklearn.cluster", "AffinityPropagation")));
 		
 		return res;
 	}
@@ -66,8 +70,8 @@ public class DataDumpProvider {
 	 * @return A basic description of the queried class.
 	 */
 	@SuppressWarnings("unchecked")
-	private ClusterAlgoDesc queryAlgoDesc(Scrape scrape, String fqn) {
-		String q = ":find ?class ?name ?summary (distinct ?desc) (distinct ?param)"
+	private ClusterAlgoDesc queryAlgoDesc(Scrape scrape, PersistentVector fqn) {
+		String q = ":find ?class ?name ?summary (distinct ?desc) (distinct ?param) "
 				+ ":in $ ?id :where "
 				+ "[?class :class/id ?id] [?class :class/name ?name] "
 				+ "[?class :description-summary ?summary] [?class :description ?desc] "
