@@ -8,7 +8,10 @@
   ([config-file]
    (create-scrape config-file nil nil))
   ([config-file scrape-file]
-   (create-scrape config-file scrape-file nil))
+   ; allow omitting scrape-file and providing config map:
+   (if (map? scrape-file)
+     (create-scrape config-file nil scrape-file)
+     (create-scrape config-file scrape-file nil)))
   ([config-file scrape-file
     {:keys [^boolean cache]
      :or {cache true}}]
