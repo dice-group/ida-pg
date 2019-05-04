@@ -28,6 +28,10 @@
   [f m]
   (into {} (for [e m] (f e))))
 
+(defn map-k
+  [f m]
+  (into {} (for [[k v] m] [(f k) v])))
+
 (defn map-v
   [f m]
   (into {} (for [[k v] m] [k (f v)])))

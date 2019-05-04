@@ -15,8 +15,9 @@
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.basetype :as basetype]
-            [librarian.model.concepts.goal-type :as goal-type]
+            [librarian.model.concepts.role-type :as role-type]
             [librarian.model.concepts.semantic-type :as semantic-type]
+            [librarian.model.concepts.snippet :as snippet]
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.typed :as typed]
             [librarian.generator.query :as gq]
@@ -72,7 +73,7 @@
   [scrape goals]
   (let [concepts (concat (mapv (fn [goal]
                                  (instanciate call-parameter/call-parameter
-                                   :datatype [#_(instanciate goal-type/goal-type
+                                   :datatype [#_(instanciate role-type/role-type
                                                   :id goal)
                                               (instanciate basetype/basetype
                                                 :name "int")
@@ -102,7 +103,8 @@
   (d/q '[:find [?flaw ...]
          :in $ %
          :where (type ?flaw ::call-parameter/call-parameter)
-                (not [?flaw ::call-parameter/receives ?value])]
+                (not [?flaw ::call-parameter/receives ?value])
+                (not [?snippet ::snippet/contains ?flaw])]
        (:db state) gq/rules))
 
 (defn nlog-distance
@@ -166,7 +168,6 @@
                                         (if semantic semantic-receivers receivers)))
                                  types)
                       tx (conj tx [:db/add flaw ::call-parameter/receives solution])]
-                  (println solution flaw semantic-cost)
                   (when (< semantic-cost Double/POSITIVE_INFINITY)
                     {:cost semantic-cost, :tx tx})))
               solutions)))))
@@ -218,7 +219,6 @@
 
 (defn successors
   [state]
-  (println "succ")
   (let [state-flaws (flaws state)]
     (if (empty? state-flaws)
       :done
@@ -250,10 +250,12 @@
                         state-successors)})))))
 
 (try
-  (let [scrape (scrape/read-scrape "libs/scikit-learn-cluster")
+  (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
         search-state (initial-search-state scrape [:labels])
-        succs (iterate continue-search search-state)]
-    (time (rt/show-state (some :goal (take 100 succs))
-                         :show-patterns true)))
+        succs (iterate continue-search search-state)
+        succs (take 10 succs)]
+    (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
+                                    (last succs))
+                                :show-patterns true)))
   (catch Exception e
     (.println *err* e)))

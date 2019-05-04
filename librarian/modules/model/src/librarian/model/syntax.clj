@@ -60,11 +60,15 @@
          tempid (:db/id vals (d/tempid nil))
          [vals tx] (reduce (fn [[vals tx] [k v]]
                              (if (= (get (name k) 0) \_)
-                               [vals (cond-> tx
-                                       true (conj [:db/add (:db/id v v)
-                                                   (keyword (namespace k) (subs (name k) 1))
-                                                   tempid])
-                                       (map? v) (into (instance->tx v)))]
+                               [vals
+                                (let [v (if (and (map? v) (not (-> v meta :tx)))
+                                          (ref-map-handler v)
+                                          v)]
+                                  (cond-> tx
+                                    true (conj [:db/add (:db/id v v)
+                                                (keyword (namespace k) (subs (name k) 1))
+                                                tempid])
+                                    (map? v) (into (instance->tx v))))]
                                (let [attr (attr-map k k)
                                      attr-desc (get-in concept [:attributes attr])
                                      ref (tx/ref-attr? attr-desc)

@@ -7,11 +7,12 @@
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
+            [librarian.model.concepts.namespace :as namespace]
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.namespaced :as namespaced]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.basetype :as basetype]
-            [librarian.model.concepts.goal-type :as goal-type]
+            [librarian.model.concepts.role-type :as role-type]
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.snippet :as snippet]
             [librarian.generator.query :as gq]))
@@ -42,10 +43,11 @@
                       (str
                         (case type
                           ::call/call
-                          (clojure.string/join "/" (get-in (d/entity db node)
-                                                           [::call/callable
-                                                            ::namespaced/id]
-                                                           ["?" "?"]))
+                          (let [e (::call/callable (d/entity db node))
+                                n (or (::namespaced/id e)
+                                      [(get-in e [::namespace/_member ::named/name] "?")
+                                       (::named/name e "?")])]
+                            (clojure.string/join "/" n))
                           ::call-value/call-value
                           (::call-value/value (d/entity db node))
                           ::call-parameter/call-parameter
@@ -65,8 +67,8 @@
                                     (case (first (:type datatype))
                                       ::basetype/basetype
                                       (::basetype/id datatype)
-                                      ::goal-type/goal-type
-                                      (str "goal:" (name (::goal-type/id datatype)))
+                                      ::role-type/role-type
+                                      (str "role:" (name (::role-type/id datatype)))
                                       ::semantic-type/semantic-type
                                       (str "s:" (name (::semantic-type/key datatype)) ":"
                                            (name (::semantic-type/value datatype)))
@@ -114,3 +116,10 @@
                                         :direction "UD"
                                         :sortMethod "directed"
                                         :levelSeparation 80}}})))
+
+(defn show-search-state
+  [search-state & opts]
+  (apply show-state (if (:done search-state)
+                      (:goal search-state)
+                      (-> search-state :queue peek first))
+         opts))

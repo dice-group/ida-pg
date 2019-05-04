@@ -102,9 +102,17 @@
 
   :snippets [[{:type :call
                :callable {:type :function
-                          :placeholder true}
+                          :placeholder true
+                          :namespace/_member {:type :namespace
+                                              :name "sklearn.cluster"}}
+               :parameter {:type :call-parameter
+                           :datatype {:type :role-type
+                                      :id :dataset}
+                           :parameter {:type :parameter
+                                       :placeholder true
+                                       :name "X"}}
                :result {:type :call-result
-                        :datatype {:type :goal-type
+                        :datatype {:type :role-type
                                    :id :labels}
                         :result {:type :result
                                  :placeholder true

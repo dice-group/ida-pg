@@ -9,8 +9,10 @@
 (defn fqn
   "Computes the fully qualified name of a given concept."
   [e]
-  (when-let [pname (some-> e ::namespace/_member ::named/name)]
-    [pname (::named/name e)]))
+  (let [pname (some-> e ::namespace/_member ::named/name)
+        ename (::named/name e)]
+    (when (and pname ename)
+      [pname ename])))
 
 (defconcept namespaced [named]
   :attributes {::id {:db/unique :db.unique/identity

@@ -16,6 +16,7 @@
 
   (require '[librarian.scraper.io.scrape :refer [create-scrape]]
            '[librarian.model.io.scrape :refer :all]
+           '[librarian.scraper.io.config :refer [read-config]]
            '[librarian.cli :refer [main*]]
            '[repl-tools :refer :all])
 

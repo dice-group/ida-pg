@@ -6,7 +6,7 @@
             [librarian.model.concepts.datatype :refer [datatype]]
             [librarian.model.concepts.basetype :refer [basetype]]
             [librarian.model.concepts.semantic-type :refer [semantic-type]]
-            [librarian.model.concepts.goal-type :refer [goal-type]]
+            [librarian.model.concepts.role-type :refer [role-type]]
             [librarian.model.concepts.typed :refer [typed]]
             [librarian.model.concepts.callable :refer [callable]]
             [librarian.model.concepts.io-container :refer [io-container]]
@@ -28,7 +28,7 @@
    :datatype datatype
    :basetype basetype
    :semantic-type semantic-type
-   :goal-type goal-type
+   :role-type role-type
    :typed typed
 
    :callable callable
