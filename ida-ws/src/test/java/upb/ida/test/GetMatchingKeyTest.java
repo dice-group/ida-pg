@@ -27,7 +27,7 @@ public class GetMatchingKeyTest {
 	@Autowired
 	FileUtil fileutil;
 	@Autowired
-	BarGraphUtil barUtil;
+	private BarGraphUtil barUtil;
 
 
 	@Test
