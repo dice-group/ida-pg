@@ -25,9 +25,9 @@ import upb.ida.util.FileUtil;
 @ContextConfiguration(classes = { Application.class })
 public class GetMatchingKeyTest {
 	@Autowired
-	FileUtil fileutil;
+	private FileUtil fileutil;
 	@Autowired
-	BarGraphUtil barUtil;
+	private BarGraphUtil barUtil;
 
 
 	@Test

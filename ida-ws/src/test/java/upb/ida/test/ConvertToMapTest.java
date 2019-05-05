@@ -30,7 +30,7 @@ import upb.ida.util.FileUtil;
 
 public class ConvertToMapTest {
 	@Autowired
-	FileUtil fileutil;
+	private FileUtil fileutil;
 
 	@Test
 	public void convertMaptest() throws JsonProcessingException, IOException {
