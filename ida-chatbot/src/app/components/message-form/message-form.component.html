@@ -5,6 +5,7 @@
 <form (keydown.enter)="sendMessage()" (keydown.arrowup)="iterateMsgs('up')" (keydown.arrowdown)="iterateMsgs('down')" style="margin-top: 10px" fxLayout="column" fxLayoutGap="0">
   <mat-form-field fxFlex>
     <textarea #chatmsg matInput placeholder="Message"></textarea>
+    <app-speech-input (msgText)="getVoiceToMsg($event)"></app-speech-input>
     <mat-hint *ngIf="msgs_history.length">You can use up, down arrow to cycle through your previous messages</mat-hint>
   </mat-form-field>
   <div fxFlex>
