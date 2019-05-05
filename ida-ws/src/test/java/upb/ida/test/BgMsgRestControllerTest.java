@@ -29,7 +29,7 @@ public class BgMsgRestControllerTest {
 	@Autowired
 	private MessageRestController msgRstCntrl;
 	@Autowired
-	BarGraphUtil barGraph;
+	private BarGraphUtil barGraph;
 
 	@Test
 	public void sendmessagetestPos() throws Exception {

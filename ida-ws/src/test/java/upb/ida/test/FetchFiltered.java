@@ -27,9 +27,9 @@ import upb.ida.util.FileUtil;
 public class FetchFiltered {
 
 	@Autowired
-	FileUtil fileutil;
+	private FileUtil fileutil;
 	@Autowired
-	BarGraphUtil barutil;
+	private BarGraphUtil barutil;
 	@Autowired
 	private ListMapsForFilteringCheck filterMaps;
 
