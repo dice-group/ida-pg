@@ -6,23 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.validation.constraints.Null;
-
-import org.json.JSONArray;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import net.minidev.json.JSONObject;
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
 import upb.ida.rest.MessageRestController;
@@ -35,9 +27,9 @@ import upb.ida.util.BarGraphUtil;
 public class BgMsgRestControllerTest {
 
 	@Autowired
-	MessageRestController msgRstCntrl;
+	private MessageRestController msgRstCntrl;
 	@Autowired
-	BarGraphUtil barGraph;
+	private BarGraphUtil barGraph;
 
 	@Test
 	public void sendmessagetestPos() throws Exception {

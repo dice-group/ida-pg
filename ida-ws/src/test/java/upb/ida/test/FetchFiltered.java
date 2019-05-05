@@ -1,6 +1,5 @@
 package upb.ida.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -28,11 +27,11 @@ import upb.ida.util.FileUtil;
 public class FetchFiltered {
 
 	@Autowired
-	FileUtil fileutil;
+	private FileUtil fileutil;
 	@Autowired
-	BarGraphUtil barutil;
+	private BarGraphUtil barutil;
 	@Autowired
-	ListMapsForFilteringCheck filterMaps;
+	private ListMapsForFilteringCheck filterMaps;
 
 	@Test
 	public void checkFilters() throws JsonProcessingException, IOException, NumberFormatException, ParseException {
