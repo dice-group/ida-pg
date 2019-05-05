@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import upb.ida.constant.IDALiteral;
 import upb.ida.util.FileUtil;
 
+import java.io.File;
+
 @Component
 public class LoggerProvider {
 
@@ -31,6 +33,7 @@ public class LoggerProvider {
 	public void setLogProps() {
 		String log4jConfigFile = fileUtil.fetchSysFilePath(IDALiteral.ASPECTLOGGER_PROP_FILEPATH);
 		PropertyConfigurator.configure(log4jConfigFile);
+		new File("app-logs").mkdirs();
 	}
 
 	/**
