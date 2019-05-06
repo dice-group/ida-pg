@@ -190,6 +190,7 @@ public class FileUtilTest {
 	public void getDTFilePathPosTest() throws JsonProcessingException, IOException
 	{
 		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
+		//String filePath= "dataset/city/citydistancetest.csv";
 		File file = new File(dem.fetchSysFilePath(path));
 		List<Map<String, String>> dataMapList = dem.convertToMap(file);
 		//System.out.println(dataMapList);
@@ -256,29 +257,35 @@ public class FileUtilTest {
 	public void getDTFilePathNegTest() throws JsonProcessingException, IOException
 	{
 		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
-		File file = new File(dem.fetchSysFilePath(path));
-		List<Map<String, String>> dataMapList = dem.convertToMap(file);
-		//System.out.println(dataMapList);
-		Map<String, String> expect0 = new HashMap<String, String>();
-		expect0.put("city1","lin");
-		expect0.put("city2","Buenos Aires");
-		expect0.put("distance","7402");
-		//System.out.println(expect0);
-		Map<String, String> expect1 = new HashMap<String, String>();
-		expect1.put("city1","Berlin");
-		expect1.put("city2","Cairo");
-		expect1.put("distance","1795");
-		//System.out.println(expect1);
-		
-		//System.out.println(expect2);
-		List<Object> exp = new ArrayList<Object>();
-		exp.add(expect0);
-		exp.add(expect1);
-		
-		//System.out.println(exp);
-		assertNotEquals(dataMapList.size(),exp.size());
-		assertNotEquals(dataMapList,exp);
-	       
+
+		if(path != null)
+		{
+			File file = new File(dem.fetchSysFilePath(path));
+			if(file != null)
+			{
+				List<Map<String, String>> dataMapList = dem.convertToMap(file);
+				//System.out.println(dataMapList);
+				Map<String, String> expect0 = new HashMap<String, String>();
+				expect0.put("city1","lin");
+				expect0.put("city2","Buenos Aires");
+				expect0.put("distance","7402");
+				//System.out.println(expect0);
+				Map<String, String> expect1 = new HashMap<String, String>();
+				expect1.put("city1","Berlin");
+				expect1.put("city2","Cairo");
+				expect1.put("distance","1795");
+				//System.out.println(expect1);
+
+				//System.out.println(expect2);
+				List<Object> exp = new ArrayList<Object>();
+				exp.add(expect0);
+				exp.add(expect1);
+
+				//System.out.println(exp);
+				assertNotEquals(dataMapList.size(),exp.size());
+				assertNotEquals(dataMapList,exp);
+			}
+		}
 	    
 		
 	}
