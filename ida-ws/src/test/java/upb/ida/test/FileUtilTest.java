@@ -189,7 +189,7 @@ public class FileUtilTest {
 	@Test
 	public void getDTFilePathPosTest() throws JsonProcessingException, IOException
 	{
-		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
+		String path = DemoMain.getDTFilePath("dataset/city","citydistancetest.csv" );
 		//String filePath= "dataset/city/citydistancetest.csv";
 		File file = new File(dem.fetchSysFilePath(path));
 		List<Map<String, String>> dataMapList = dem.convertToMap(file);
@@ -224,7 +224,7 @@ public class FileUtilTest {
 	@Test
 	public void getDTFilePathExtTest() throws JsonProcessingException, IOException
 	{
-		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
+		String path = DemoMain.getDTFilePath("dataset/city","citydistancetest.csv" );
 		File file = new File(dem.fetchSysFilePath(path));
 		List<Map<String, String>> dataMapList = dem.convertToMap(file);
 		//System.out.println(dataMapList);
@@ -256,7 +256,7 @@ public class FileUtilTest {
 	@Test
 	public void getDTFilePathNegTest() throws JsonProcessingException, IOException
 	{
-		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
+		String path = DemoMain.getDTFilePath("dataset/city","citydistancetest.csv" );
 
 		if(path != null)
 		{
