@@ -187,7 +187,6 @@ public class FileUtilTest {
 	}
 	
 	@Test
-	
 	public void getDTFilePathPosTest() throws JsonProcessingException, IOException
 	{
 		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
@@ -216,13 +215,12 @@ public class FileUtilTest {
 		//System.out.println(exp);
 		assertEquals(dataMapList,exp);
 	       
-	    
-		
+
+
 	}
-	
-    
+
+
 	@Test
-	
 	public void getDTFilePathExtTest() throws JsonProcessingException, IOException
 	{
 		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
@@ -251,14 +249,10 @@ public class FileUtilTest {
 		//System.out.println(exp);
 		assertEquals(dataMapList.size(),exp.size());
 		assertNotEquals(dataMapList,exp);
-	       
-	    
-		
 	}
 	
 	
-@Test
-	
+	@Test
 	public void getDTFilePathNegTest() throws JsonProcessingException, IOException
 	{
 		String path = DemoMain.getDTFilePath("city","citydistancetest.csv" );
