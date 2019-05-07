@@ -20,6 +20,18 @@ services:
       - "../ida-ws/target:/app/ida-ws/target"
     networks:
       - ida-net
+  fuseki:
+    image: stain/jena-fuseki
+    ports:
+      - 3030:3030
+    environment:
+      - ADMIN_PASSWORD=pw123
+    volumes:
+      - storage:/fuseki
+    networks:
+      - ida-net
 
+volumes:
+  storage:
 networks:
   ida-net:
