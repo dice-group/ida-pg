@@ -32,6 +32,7 @@ public class DataDumpTest {
 		resList.add("AffinityPropagation");
 		resList.add("AffinityPropagation_TEST");
 		resList.add("KMeans_TEST");
+		System.out.println("algonames ======== "+algonames);
 		assertEquals(algonames, resList);
 		assertNotEquals(algonames.size(),4);
 		
