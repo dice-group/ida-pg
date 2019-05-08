@@ -52,28 +52,32 @@ public class GetCorrectParamTypesTest {
 		String algoName = "KMeans_TEST";
 
 		List<ClusterParam> resList = DataDumpUtil.getClusterAlgoParams("KMeans_TEST");
-
+		List<String> type =  new List<String>();
+		type.add("Int");
+		ClusterParam cp = new ClusterParam("KMeans_TEST",type,false);
 		HashMap<String, Object> mMap = new HashMap<String, Object>();
 
 		GetCorrectParamTypes paramsMap = new GetCorrectParamTypes();
 
 		System.out.println("resList 0====== "+resList);
-		if(resList != null )
+		if(resList == null )
 		{
-			mMap = paramsMap.correctTypeValues(paramMap, algoName, resList);
-			//System.out.println(mMap);
+			resList.add(cp);
+		}
+		
+		mMap = paramsMap.correctTypeValues(paramMap, algoName, resList);
+		//System.out.println(mMap);
 
-			HashMap<String, Object> expected = new HashMap<String, Object>();
-			expected.put("n_init", 10);
-			expected.put("n_clusters", 5);
-			expected.put("init", "random");
-			expected.put("n_jobs", 8);
-			assertEquals(mMap.size(),expected.size());
-			for(Map.Entry<String, Object> m:mMap.entrySet()){
-				for(Map.Entry<String, Object> m1:expected.entrySet()){
-					if(m.getKey().equals(m1.getKey()) && m.getValue().equals(m1.getValue()) )
-						System.out.println("true");
-				}
+		HashMap<String, Object> expected = new HashMap<String, Object>();
+		expected.put("n_init", 10);
+		expected.put("n_clusters", 5);
+		expected.put("init", "random");
+		expected.put("n_jobs", 8);
+		assertEquals(mMap.size(),expected.size());
+		for(Map.Entry<String, Object> m:mMap.entrySet()){
+			for(Map.Entry<String, Object> m1:expected.entrySet()){
+				if(m.getKey().equals(m1.getKey()) && m.getValue().equals(m1.getValue()) )
+					System.out.println("true");
 			}
 		}
 }
