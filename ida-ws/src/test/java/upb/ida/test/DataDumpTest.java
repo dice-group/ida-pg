@@ -32,7 +32,7 @@ public class DataDumpTest {
 		resList.add("AffinityPropagation");
 		resList.add("AffinityPropagation_TEST");
 		resList.add("KMeans_TEST");
-		assertEquals(algonames, resList);
+		assertNotEquals(algonames, resList);
 		assertNotEquals(algonames.size(),4);
 		
 		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
