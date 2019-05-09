@@ -54,18 +54,15 @@ public class GetCorrectParamTypesTest {
 		List<ClusterParam> resList = DataDumpUtil.getClusterAlgoParams("KMeans_TEST");
 		List<String> type = new ArrayList<String>();
 		type.add("Int");
-		ClusterParam cp = new ClusterParam("KMeans_TEST",type,false);
-		HashMap<String, Object> mMap = new HashMap<String, Object>();
+
 
 		GetCorrectParamTypes paramsMap = new GetCorrectParamTypes();
 
 		System.out.println("resList 0====== "+resList);
 		if(resList != null )
 		{
-			//resList.add(cp);
-			mMap = paramsMap.correctTypeValues(paramMap, algoName, resList);
-			//System.out.println(mMap);
 
+			mMap = paramsMap.correctTypeValues(paramMap, algoName, resList);
 			HashMap<String, Object> expected = new HashMap<String, Object>();
 			expected.put("n_init", 10);
 			expected.put("n_clusters", 5);
