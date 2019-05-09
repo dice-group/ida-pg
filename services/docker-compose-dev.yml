@@ -25,13 +25,14 @@ services:
     ports:
       - 3030:3030
     environment:
-      - ADMIN_PASSWORD=pw123
+      - ADMIN_PASSWORD=$FUSEKI_PW
     volumes:
-      - storage:/fuseki
+      - fuseki-storage:/fuseki
     networks:
       - ida-net
 
 volumes:
-  storage:
+  fuseki-storage:
+
 networks:
   ida-net:
