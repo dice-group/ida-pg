@@ -1,12 +1,12 @@
 package upb.ida.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +30,13 @@ public class DataDumpTest {
 		List<String> resList = new ArrayList<>();
 		resList.add("KMeans");
 		resList.add("AffinityPropagation");
-		//resList.add("AffinityPropagation_TEST");
-		//resList.add("KMeans_TEST");
+
+
 
 		assertEquals(algonames, resList);
 		assertEquals(algonames.size(),2);
 		
-		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
+
 	}
 
 	@Test
@@ -50,8 +50,7 @@ public class DataDumpTest {
 		assertEquals(algonames, resList);
 		assertEquals(algonames.size(),2);
 		
-		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
-	}
+
 
 	@Test
 	public void  getClusteringAlgoNamesExtTest() {
@@ -59,12 +58,11 @@ public class DataDumpTest {
 		List<String> resList = new ArrayList<>();
 		resList.add("KMeans");
 		resList.add("AffinityPropagation");
-		//resList.add("AffinityPropagation_TEST");
-		//resList.add("KMeans_TEST");
+
 		assertEquals(algonames, resList);
 		assertEquals(algonames.size(),2);
 		
-		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
+
 	}
 
 	
