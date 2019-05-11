@@ -46,9 +46,10 @@ public class DataDumpTest {
 
 		resList.add("KMeans");
 		resList.add("AffinityPropagation");
-		//resList.add("AffinityPropagation_TEST");
+
 		assertEquals(algonames, resList);
-		assertEquals(algonames.size(),2);
+		assertEquals(algonames.size(), 2);
+	}
 		
 
 
