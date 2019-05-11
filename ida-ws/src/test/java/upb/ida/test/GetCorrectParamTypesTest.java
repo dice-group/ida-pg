@@ -59,8 +59,7 @@ public class GetCorrectParamTypesTest {
 		GetCorrectParamTypes paramsMap = new GetCorrectParamTypes();
 
 		System.out.println("resList 0====== "+resList);
-		//if(resList != null )
-		//{
+		
 
 			mMap = paramsMap.correctTypeValues(paramMap, algoName, resList);
 			HashMap<String, Object> expected = new HashMap<String, Object>();
@@ -75,7 +74,7 @@ public class GetCorrectParamTypesTest {
 						System.out.println("true");
 				}
 			}
-		//}
+
 
 
 }
