@@ -24,17 +24,17 @@ public class DataDumpTest {
 	DataDumpUtil dataDumpUtil;
 	
 	
-	@Ignore
+	@Test
 	public void  getClusteringAlgoNamesPosTest() {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
 		resList.add("KMeans");
 		resList.add("AffinityPropagation");
-		resList.add("AffinityPropagation_TEST");
-		resList.add("KMeans_TEST");
+		//resList.add("AffinityPropagation_TEST");
+		//resList.add("KMeans_TEST");
 
 		assertEquals(algonames, resList);
-		assertNotEquals(algonames.size(),4);
+		assertEquals(algonames.size(),2);
 		
 		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
 	}
@@ -45,10 +45,10 @@ public class DataDumpTest {
 		List<String> resList = new ArrayList<>();
 		
 		resList.add("AffinityPropagation");
-		resList.add("AffinityPropagation_TEST");
-		resList.add("KMeans_TEST");
-		assertNotEquals(algonames, resList);
-		assertNotEquals(algonames.size(),3);
+		//resList.add("AffinityPropagation_TEST");
+		//resList.add("KMeans_TEST");
+		assertEquals(algonames, resList);
+		assertEquals(algonames.size(),1);
 		
 		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
 	}
@@ -57,21 +57,16 @@ public class DataDumpTest {
 	public void  getClusteringAlgoNamesExtTest() {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
-		resList.add("Keans");
+		resList.add("KMeans");
 		resList.add("AffinityPropagation");
-		resList.add("AffinityPropagation_TEST");
-		resList.add("KMeans_TEST");
-		assertNotEquals(algonames, resList);
-		assertNotEquals(algonames.size(),4);
+		//resList.add("AffinityPropagation_TEST");
+		//resList.add("KMeans_TEST");
+		assertEquals(algonames, resList);
+		assertEquals(algonames.size(),2);
 		
 		//System.out.println(dataDumpUtil.getClusteringAlgoNames());
 	}
-	
 
-	@Test
-	public void Âlgoparams() {
-		//System.out.println(dataDumpUtil.getClusterAlgoParams("KMeans_TEST"));
-	}
 	
 	
 }
