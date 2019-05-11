@@ -43,10 +43,10 @@ public class DataDumpTest {
 	public void  getClusteringAlgoNamesNegTest() {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
-		
+
+		resList.add("KMeans");
 		resList.add("AffinityPropagation");
 		//resList.add("AffinityPropagation_TEST");
-		resList.add("KMeans");
 		assertEquals(algonames, resList);
 		assertEquals(algonames.size(),2);
 		
