@@ -92,8 +92,11 @@ public class MessageRestControllerClusterTest {
 				innerMap.put(columnsForResponse.get(x),Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
 			    }
 			}
-			innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
-			responseList.add(innerMap);
+			if(i < clusterResult.size())
+			{
+				innerMap.put("clusterLabel", Integer.parseInt(clusterResult.get(i)));
+				responseList.add(innerMap);
+			}
 		}
 		
 		
@@ -174,8 +177,12 @@ public class MessageRestControllerClusterTest {
 				innerMap.put(columnsForResponse.get(x),Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
 			    }
 			}
-			innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
-			responseList.add(innerMap);
+
+			if(i<clusterResult.size())
+			{
+				innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
+				responseList.add(innerMap);
+			}
 		}
 		
 		
