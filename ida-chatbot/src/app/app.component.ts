@@ -11,6 +11,8 @@ import {TabElement} from './models/tab-element';
 import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
 import {TabType} from './enums/tab-type.enum';
 import {IdaEventService} from './service/event/ida-event.service';
+import { ChatAdapter } from 'ng-chat';
+import { ChatBoxAdapter } from './components/chatbox/chatbox-adapter';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +22,8 @@ import {IdaEventService} from './service/event/ida-event.service';
 export class AppComponent {
   idCount = 1;
   title = 'app';
+  public adapter: ChatAdapter = new ChatBoxAdapter();
+  public userId = 'loggedInUser';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];

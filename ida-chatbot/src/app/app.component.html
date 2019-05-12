@@ -10,5 +10,6 @@
     </ng-container>
   </div>
   <app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
+  <ng-chat [adapter]="adapter" [userId]="userId"></ng-chat>
   <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
 </div>

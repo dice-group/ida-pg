@@ -6,6 +6,7 @@ import { MessageListComponent } from './components/message-list/message-list.com
 import { MessageItemComponent } from './components/message-item/message-item.component';
 import { MessageFormComponent } from './components/message-form/message-form.component';
 import { ChatboxComponent } from './components/chatbox/chatbox.component';
+import { NgChatModule } from 'ng-chat';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
@@ -119,7 +120,8 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgChatModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
