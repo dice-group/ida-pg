@@ -1,40 +1,40 @@
 import { ChatAdapter, IChatGroupAdapter, Group, Message} from 'ng-chat';
 import {ChatParticipantStatus, ParticipantResponse, ChatParticipantType, IChatParticipant } from 'ng-chat';
 import { Observable, of } from 'rxjs';
-import { delay } from "rxjs/operators";
+import { delay } from 'rxjs/operators';
 
-export class DemoAdapter extends ChatAdapter implements IChatGroupAdapter {
+export class ChatBoxAdapter extends ChatAdapter implements IChatGroupAdapter {
   public static mockedParticipants: IChatParticipant[] = [
     {
       participantType: ChatParticipantType.User,
       id: 1,
-      displayName: "Arya Stark",
-      avatar: "https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj",
+      displayName: 'Arya Stark',
+      avatar: 'https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj',
       status: ChatParticipantStatus.Online
     },
     {
       participantType: ChatParticipantType.User,
       id: 2,
-      displayName: "Cersei Lannister",
+      displayName: 'Cersei Lannister',
       avatar: null,
       status: ChatParticipantStatus.Online
     },
     {
       participantType: ChatParticipantType.User,
       id: 7,
-      displayName: "John Snow",
-      avatar: "https://pbs.twimg.com/profile_images/3456602315/aad436e6fab77ef4098c7a5b86cac8e3.jpeg",
+      displayName: 'John Snow',
+      avatar: 'https://pbs.twimg.com/profile_images/3456602315/aad436e6fab77ef4098c7a5b86cac8e3.jpeg',
       status: ChatParticipantStatus.Busy
     }];
 
   listFriends(): Observable<ParticipantResponse[]> {
-    return of(DemoAdapter.mockedParticipants.map(user => {
-      let participantResponse = new ParticipantResponse();
+    return of(ChatBoxAdapter.mockedParticipants.map(user => {
+      const participantResponse = new ParticipantResponse();
 
       participantResponse.participant = user;
       participantResponse.metadata = {
         totalUnreadMessages: Math.floor(Math.random() * 10)
-      }
+      };
 
       return participantResponse;
     }));
@@ -47,7 +47,7 @@ export class DemoAdapter extends ChatAdapter implements IChatGroupAdapter {
       {
         fromId: 1,
         toId: 999,
-        message: "Hi there, just type any message bellow to test this Angular module.",
+        message: 'Hi there, just type any message bellow to test this Angular module.',
         dateSent: new Date()
       }
     ];
@@ -57,27 +57,26 @@ export class DemoAdapter extends ChatAdapter implements IChatGroupAdapter {
 
   sendMessage(message: Message): void {
     setTimeout(() => {
-      let replyMessage = new Message();
+      const replyMessage = new Message();
 
-      replyMessage.message = "You have typed '" + message.message + "'";
+      replyMessage.message = 'You have typed \'' + message.message + '\'';
       replyMessage.dateSent = new Date();
 
       if (isNaN(message.toId)) {
-        let group = DemoAdapter.mockedParticipants.find(x => x.id == message.toId) as Group;
+        const group = ChatBoxAdapter.mockedParticipants.find(x => x.id === message.toId) as Group;
 
         // Message to a group. Pick up any participant for this
-        let randomParticipantIndex = Math.floor(Math.random() * group.chattingTo.length);
+        const randomParticipantIndex = Math.floor(Math.random() * group.chattingTo.length);
         replyMessage.fromId = group.chattingTo[randomParticipantIndex].id;
 
         replyMessage.toId = message.toId;
 
         this.onMessageReceived(group, replyMessage);
-      }
-      else {
+      } else {
         replyMessage.fromId = message.toId;
         replyMessage.toId = message.fromId;
 
-        let user = DemoAdapter.mockedParticipants.find(x => x.id == replyMessage.fromId);
+        const user = ChatBoxAdapter.mockedParticipants.find(x => x.id === replyMessage.fromId);
 
         this.onMessageReceived(user, replyMessage);
       }
@@ -85,9 +84,9 @@ export class DemoAdapter extends ChatAdapter implements IChatGroupAdapter {
   }
 
   groupCreated(group: Group): void {
-    DemoAdapter.mockedParticipants.push(group);
+    ChatBoxAdapter.mockedParticipants.push(group);
 
-    DemoAdapter.mockedParticipants = DemoAdapter.mockedParticipants.sort((first, second) =>
+    ChatBoxAdapter.mockedParticipants = ChatBoxAdapter.mockedParticipants.sort((first, second) =>
       second.displayName > first.displayName ? -1 : 1
     );
 
