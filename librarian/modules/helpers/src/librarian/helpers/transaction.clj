@@ -1,5 +1,6 @@
 (ns librarian.helpers.transaction
-  (:require [datascript.core :as d])
+  (:require [datascript.core :as d]
+            [datascript.db :as db])
   (:refer-clojure :exclude [merge]))
 
 (defn add-attr
@@ -75,3 +76,15 @@
   (fn [& args]
     (map (partial replace-ids-in-tx m)
          (apply f args))))
+
+(defn clone-entities
+  ([db ids]
+   (let [schema (db/-schema db)
+         new-ids (into {} (map (fn [id] [id (d/tempid nil)])) ids)]
+     (into []
+           (comp (mapcat #(d/datoms db :eavt %))
+                 (map (fn [[e a v]]
+                        [:db/add (new-ids e) a
+                         (if (ref-attr? (schema a))
+                           (new-ids v v) v)])))
+           ids))))

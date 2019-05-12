@@ -6,6 +6,7 @@
             [clucie.analysis :as canalysis]
             [clojure.tools.logging :as log]
             [clojure.data.priority-map :refer [priority-map]]
+            [librarian.helpers.transaction :as tx]
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
@@ -73,39 +74,21 @@
   [scrape goals]
   (let [concepts (concat (mapv (fn [goal]
                                  (instanciate call-parameter/call-parameter
-                                   :datatype [#_(instanciate role-type/role-type
-                                                  :id goal)
-                                              (instanciate basetype/basetype
-                                                :name "int")
-                                              (instanciate semantic-type/semantic-type
-                                                :key "description"
-                                                :value "number of clusters")]))
+                                   :datatype [(instanciate role-type/role-type
+                                                :id goal)]))
                                goals)
-                         [(instanciate call-value/call-value
-                            :value "123"
-                            :datatype [(instanciate semantic-type/semantic-type
-                                         :key "description"
-                                         :value "number of clusters")
-                                       (instanciate basetype/basetype
-                                         :name "str")])
-                          (instanciate call-value/call-value
-                            :value "456"
-                            :datatype [(instanciate semantic-type/semantic-type
-                                         :key "description"
-                                         :value "iteration count")
-                                       (instanciate basetype/basetype
-                                         :name "str")])])]
+                         [])]
     {:cost 0
      :db (d/db-with (:db scrape) (instances->tx concepts))}))
 
 (defn flaws
-  [state]
+  [db]
   (d/q '[:find [?flaw ...]
          :in $ %
          :where (type ?flaw ::call-parameter/call-parameter)
                 (not [?flaw ::call-parameter/receives ?value])
-                (not [?snippet ::snippet/contains ?flaw])]
-       (:db state) gq/rules))
+                (not [_ ::snippet/contains ?flaw])]
+       db gq/rules))
 
 (defn nlog-distance
   "The negative logarithm of the semantic compatibility of 'from to 'to.
@@ -137,16 +120,8 @@
         (apply + (vals costs))))))
 
 (defn receive-actions
-  [state flaw]
-  (let [db (:db state)
-        solutions
-        (d/q '[:find [?solution ...]
-               :in $ % ?flaw
-               :where (or (type ?solution ::call-result/call-result)
-                          (type ?solution ::call-value/call-value))
-                      (typed-compatible ?solution ?flaw)
-                      (not (depends-on ?solution ?flaw))]
-             db gq/rules flaw)
+  [db flaw]
+  (let [solutions (gq/compatibly-typed-sources db flaw)
         cost-evaluator (semantic-cost-evaluator db (gq/semantic-types db flaw))]
     (when (seq solutions)
       (let [semantic-receivers
@@ -173,9 +148,8 @@
               solutions)))))
 
 (defn call-actions
-  [state flaw]
-  (let [db (:db state)
-        candidates
+  [db flaw]
+  (let [candidates
         (d/q '[:find ?callable ?result
                :in $ % ?flaw
                :where [?flaw ::typed/datatype ?ft]
@@ -211,6 +185,19 @@
                        (::callable/result callable))}]})
          callables)))
 
+(defn snippet->action
+  [db snippet]
+  (let [tx (tx/clone-entities db (map :v (d/datoms db :eavt snippet ::snippet/contains)))]
+    {:cost 1
+     :tx tx}))
+
+(defn snippet-actions
+  [db flaw]
+  (sequence (comp (map :e)
+                  (remove #(empty? (gq/compatibly-typed-sources db flaw %)))
+                  (map #(snippet->action db %)))
+            (d/datoms db :avet :type ::snippet/snippet)))
+
 (defn apply-action
   [state action]
   {:predecessor state
@@ -219,12 +206,15 @@
 
 (defn successors
   [state]
-  (let [state-flaws (flaws state)]
+  (let [db (:db state)
+        state-flaws (flaws db)]
     (if (empty? state-flaws)
       :done
-      (let [actions (mapcat #(receive-actions state %) state-flaws)
+      (let [actions (mapcat #(receive-actions db %) state-flaws)
             actions (if (empty? actions)
-                      (mapcat #(call-actions state %) state-flaws)
+                      (mapcat #(concat (call-actions db %)
+                                       (snippet-actions db %))
+                              state-flaws)
                       actions)
             actions (sort-by :cost actions)]
         (map (partial apply-action state) actions)))))
@@ -253,9 +243,9 @@
   (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
         search-state (initial-search-state scrape [:labels])
         succs (iterate continue-search search-state)
-        succs (take 10 succs)]
+        succs (take 3 succs)]
     (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
                                     (last succs))
-                                :show-patterns true)))
+                                :show-patterns false)))
   (catch Exception e
     (.println *err* e)))

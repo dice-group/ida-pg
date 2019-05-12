@@ -4,9 +4,11 @@
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.call :as call]
+            [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
-            [librarian.model.concepts.result :as result]))
+            [librarian.model.concepts.result :as result]
+            [librarian.model.concepts.snippet :as snippet]))
 
 (def rules [; is ?c a concept of type ?type:
             '[(type ?c ?type)
@@ -129,3 +131,21 @@
   [db semantic-type]
   {:key (:v (first (d/datoms db :eavt semantic-type ::semantic-type/key)))
    :value (:v (first (d/datoms db :eavt semantic-type ::semantic-type/value)))})
+
+(defn compatibly-typed-sources
+  ([db flaw]
+   (compatibly-typed-sources db flaw nil))
+  ([db flaw snippet]
+   (let [type-filter '(or (type ?solution ::call-result/call-result)
+                          (type ?solution ::call-value/call-value))
+         datatype-filter '(typed-compatible ?solution ?flaw)
+         deps-filter '(not (depends-on ?solution ?flaw))]
+     (d/q {:find '[[?solution ...]]
+           :in '[$ % ?flaw ?snippet]
+           :where (if snippet
+                    ['[?snippet ::snippet/contains ?solution]
+                     type-filter datatype-filter deps-filter]
+                    [type-filter
+                     '(not [_ ::snippet/contains ?solution])
+                     datatype-filter deps-filter])}
+          db rules flaw snippet))))
