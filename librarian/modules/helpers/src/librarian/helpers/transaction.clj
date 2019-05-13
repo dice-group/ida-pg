@@ -79,12 +79,17 @@
 
 (defn clone-entities
   ([db ids]
+   (clone-entities db ids []))
+  ([db ids reverse-lookup-attrs]
    (let [schema (db/-schema db)
          new-ids (into {} (map (fn [id] [id (d/tempid nil)])) ids)]
      (into []
-           (comp (mapcat #(d/datoms db :eavt %))
+           (comp (mapcat #(concat (d/datoms db :eavt %)
+                                  (mapcat (fn [a] (d/datoms db :avet a %))
+                                          reverse-lookup-attrs)))
+                 (distinct)
                  (map (fn [[e a v]]
-                        [:db/add (new-ids e) a
+                        [:db/add (new-ids e e) a
                          (if (ref-attr? (schema a))
                            (new-ids v v) v)])))
            ids))))

@@ -9,5 +9,5 @@
                          :db/doc "A callable's result."}}
   :spec ::call-result)
 
-(s/def ::call-result (hs/entity-keys :req [::result]))
+(s/def ::call-result (hs/entity-keys :opt [::result]))
 (s/def ::result (hs/instance? :librarian.model.concepts.result/result))

@@ -10,6 +10,7 @@
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
+            [librarian.model.concepts.positionable :as positionable]
             [librarian.model.concepts.result :as result]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
@@ -20,6 +21,7 @@
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.snippet :as snippet]
             [librarian.model.concepts.named :as named]
+            [librarian.model.concepts.namespace :as namespace]
             [librarian.model.concepts.typed :as typed]
             [librarian.generator.query :as gq]
             [repl-tools :as rt])
@@ -71,22 +73,37 @@
        (into {})))
 
 (defn initial-state
-  [scrape goals]
+  [scrape inputs goals]
   (let [concepts (concat (mapv (fn [goal]
                                  (instanciate call-parameter/call-parameter
                                    :datatype [(instanciate role-type/role-type
                                                 :id goal)]))
                                goals)
-                         [])]
+                         (mapv (fn [input]
+                                 (instanciate call-result/call-result
+                                   :datatype [(instanciate role-type/role-type
+                                                :id input)]))
+                               inputs))]
     {:cost 0
      :db (d/db-with (:db scrape) (instances->tx concepts))}))
 
-(defn flaws
+(defn parameter-flaws
   [db]
   (d/q '[:find [?flaw ...]
          :in $ %
          :where (type ?flaw ::call-parameter/call-parameter)
-                (not [?flaw ::call-parameter/receives ?value])
+                (not [?flaw ::call-parameter/receives _])
+                (not [_ ::snippet/contains ?flaw])]
+       db gq/rules))
+
+(defn call-flaws
+  [db]
+  (d/q '[:find [?flaw ...]
+         :in $ %
+         :where (type ?flaw ::call/call)
+                (not [?flaw ::call/callable ?callable]
+                     [(get-else $ ?callable :placeholder false) ?p]
+                     [(= ?p false)])
                 (not [_ ::snippet/contains ?flaw])]
        db gq/rules))
 
@@ -187,7 +204,8 @@
 
 (defn snippet->action
   [db snippet]
-  (let [tx (tx/clone-entities db (map :v (d/datoms db :eavt snippet ::snippet/contains)))]
+  (let [tx (tx/clone-entities db (map :v (d/datoms db :eavt snippet ::snippet/contains))
+                              [::namespace/member])]
     {:cost 1
      :tx tx}))
 
@@ -198,6 +216,18 @@
                   (map #(snippet->action db %)))
             (d/datoms db :avet :type ::snippet/snippet)))
 
+(defn call-completion-actions
+  [db flaw]
+  (let [call (d/pull db '[::call/callable ::call/parameter ::call/result
+                          {::call/callable [::namespace/_member ::named/name]
+                           ::call/parameter [::typed/datatype ::named/name
+                                             ::positionable/position]
+                           ::call/result [::typed/datatype ::named/name
+                                          ::positionable/position]}]
+                     flaw)]
+    (println call)
+    []))
+
 (defn apply-action
   [state action]
   {:predecessor state
@@ -207,16 +237,19 @@
 (defn successors
   [state]
   (let [db (:db state)
-        state-flaws (flaws db)]
-    (if (empty? state-flaws)
+        p-flaws (parameter-flaws db)
+        c-flaws (call-flaws db)]
+    (println p-flaws c-flaws)
+    (if (and (empty? p-flaws) (empty? c-flaws))
       :done
-      (let [actions (mapcat #(receive-actions db %) state-flaws)
-            actions (if (empty? actions)
-                      (mapcat #(concat (call-actions db %)
-                                       (snippet-actions db %))
-                              state-flaws)
-                      actions)
-            actions (sort-by :cost actions)]
+      (let [p-actions (mapcat #(receive-actions db %) p-flaws)
+            p-actions (if (empty? p-actions)
+                        (mapcat #(concat (call-actions db %)
+                                         (snippet-actions db %))
+                                p-flaws)
+                        p-actions)
+            c-actions (mapcat #(call-completion-actions db %) c-flaws)
+            actions (sort-by :cost (concat p-actions c-actions))]
         (map (partial apply-action state) actions)))))
 
 (defn search-state
@@ -241,7 +274,7 @@
 
 (try
   (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
-        search-state (initial-search-state scrape [:labels])
+        search-state (initial-search-state scrape [:dataset] [:labels])
         succs (iterate continue-search search-state)
         succs (take 3 succs)]
     (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
