@@ -218,12 +218,9 @@
 
 (defn call-completion-actions
   [db flaw]
-  (let [call (d/pull db '[::call/callable ::call/parameter ::call/result
-                          {::call/callable [::namespace/_member ::named/name]
-                           ::call/parameter [::typed/datatype ::named/name
-                                             ::positionable/position]
-                           ::call/result [::typed/datatype ::named/name
-                                          ::positionable/position]}]
+  (let [call (d/pull db '[::call/callable
+                          {::call/callable [::namespace/_member ::named/name
+                                            ::callable/parameter ::callable/result]}]
                      flaw)]
     (println call)
     []))
@@ -273,7 +270,7 @@
                         state-successors)})))))
 
 (try
-  (let [scrape (scrape/read-scrape "libs/scikit-learn-class-test")
+  (let [scrape (scrape/read-scrape "libs/scikit-learn")
         search-state (initial-search-state scrape [:dataset] [:labels])
         succs (iterate continue-search search-state)
         succs (take 3 succs)]

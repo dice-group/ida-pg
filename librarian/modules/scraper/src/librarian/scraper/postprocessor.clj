@@ -40,7 +40,7 @@
           (persistent!)))))
 
 (defn ecosystem-postprocessing
-  [db {:keys [postprocessors]} ids id->tid]
+  [db {:keys [attributes postprocessors]} ids id->tid]
   (keep (fn [id]
           (let [types (:type (d/pull db [:type] id))
                 procs (->> types
@@ -48,7 +48,7 @@
                            (map #(fn [_] (% db id))))]
             (when (seq procs)
               ; Use calls instead of mapcatting all results for lazy evaluation:
-              [:db.fn/call (tx/replace-ids id->tid (apply tx/merge procs))])))
+              [:db.fn/call (tx/replace-ids attributes id->tid (apply tx/merge procs))])))
         ids))
 
 (defn postprocess-transactions

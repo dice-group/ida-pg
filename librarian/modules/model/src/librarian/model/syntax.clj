@@ -47,7 +47,7 @@
         (when-not (s/valid? spec e)
           (throw (Error. (str "Invalid instance: " instance "\n"
                               (s/explain-str spec e)))))))
-    (concat tx (map (partial tx/replace-ids-in-tx id->tempid)
+    (concat tx (map (partial tx/replace-ids-in-tx schema id->tempid)
                     postproc-tx))))
 
 (defn instanciate*

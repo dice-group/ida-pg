@@ -58,13 +58,14 @@
 (declare replace-ids)
 
 (defn replace-ids-in-tx
-  [m tx]
+  [attrs m tx]
   (cond
     (sequential? tx)
     (let [[op e a v] tx]
       (case op
-        :db/add [op (get m e e) a v]
-        :db.fn/call (into [op (replace-ids m e)]
+        :db/add [op (get m e e) a
+                 (if (ref-attr? (attrs a)) (get m v v) v)]
+        :db.fn/call (into [op (replace-ids attrs m e)]
                           (nnext tx))
         tx))
     (and (map? tx) (contains? m (:db/id tx)))
@@ -72,9 +73,9 @@
     :else tx))
 
 (defn replace-ids
-  [m f]
+  [attrs m f]
   (fn [& args]
-    (map (partial replace-ids-in-tx m)
+    (map (partial replace-ids-in-tx attrs m)
          (apply f args))))
 
 (defn clone-entities
