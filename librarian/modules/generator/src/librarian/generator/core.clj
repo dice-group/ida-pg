@@ -10,21 +10,15 @@
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
-            [librarian.model.concepts.positionable :as positionable]
-            [librarian.model.concepts.result :as result]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-result :as call-result]
-            [librarian.model.concepts.basetype :as basetype]
             [librarian.model.concepts.role-type :as role-type]
-            [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.snippet :as snippet]
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.namespace :as namespace]
             [librarian.model.concepts.typed :as typed]
-            [librarian.generator.query :as gq]
-            [repl-tools :as rt])
+            [librarian.generator.query :as gq])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
 
 (defn scrape->docs
@@ -87,25 +81,20 @@
     {:cost 0
      :db (d/db-with (:db scrape) (instances->tx concepts))}))
 
-(defn parameter-flaws
+(defn flaws
   [db]
-  (d/q '[:find [?flaw ...]
-         :in $ %
-         :where (type ?flaw ::call-parameter/call-parameter)
-                (not [?flaw ::call-parameter/receives _])
-                (not [_ ::snippet/contains ?flaw])]
-       db gq/rules))
-
-(defn call-flaws
-  [db]
-  (d/q '[:find [?flaw ...]
-         :in $ %
-         :where (type ?flaw ::call/call)
-                (not [?flaw ::call/callable ?callable]
-                     [(get-else $ ?callable :placeholder false) ?p]
-                     [(= ?p false)])
-                (not [_ ::snippet/contains ?flaw])]
-       db gq/rules))
+  (let [global-type-finder (comp (gq/map-to-type-instances db)
+                                 (remove #(d/datoms db :avet ::snippet/contains %)))]
+    {:parameter (into []
+                      (comp global-type-finder
+                            (remove #(d/datoms db :eavt % ::call-parameter/receives)))
+                      [::call-parameter/call-parameter])
+     :call (into []
+                 (comp global-type-finder
+                       (remove (fn [id]
+                                 (if-let [[{callable :v}] (d/datoms db :eavt id ::call/callable)]
+                                   (not (:v (first (d/datoms db :eavt callable :placeholder))))))))
+                 [::call/call])}))
 
 (defn nlog-distance
   "The negative logarithm of the semantic compatibility of 'from to 'to.
@@ -218,12 +207,12 @@
 
 (defn call-completion-actions
   [db flaw]
-  (let [call (d/pull db '[::call/callable
-                          {::call/callable [::namespace/_member ::named/name
-                                            ::callable/parameter ::callable/result]}]
-                     flaw)]
-    (println call)
-    []))
+  (let [callable (:v (first (d/datoms db :eavt flaw ::call/callable)))
+        completions (gq/placeholder-matches db callable)]
+    (map (fn [completion]
+           {:cost 0
+            :tx [[:db/add flaw ::call/callable completion]]})
+         completions)))
 
 (defn apply-action
   [state action]
@@ -234,9 +223,8 @@
 (defn successors
   [state]
   (let [db (:db state)
-        p-flaws (parameter-flaws db)
-        c-flaws (call-flaws db)]
-    (println p-flaws c-flaws)
+        {p-flaws :parameter, c-flaws :call} (flaws db)]
+    (println "flaws:" p-flaws c-flaws)
     (if (and (empty? p-flaws) (empty? c-flaws))
       :done
       (let [p-actions (mapcat #(receive-actions db %) p-flaws)
@@ -268,14 +256,3 @@
           {:queue (into (pop queue)
                         (map (fn [succ] [succ (:cost succ)]))
                         state-successors)})))))
-
-(try
-  (let [scrape (scrape/read-scrape "libs/scikit-learn")
-        search-state (initial-search-state scrape [:dataset] [:labels])
-        succs (iterate continue-search search-state)
-        succs (take 3 succs)]
-    (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
-                                    (last succs))
-                                :show-patterns false)))
-  (catch Exception e
-    (.println *err* e)))

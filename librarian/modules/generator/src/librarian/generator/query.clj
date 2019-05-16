@@ -7,8 +7,13 @@
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
+            [librarian.model.concepts.callable :as callable]
             [librarian.model.concepts.result :as result]
-            [librarian.model.concepts.snippet :as snippet]))
+            [librarian.model.concepts.snippet :as snippet]
+            [librarian.model.concepts.named :as named]
+            [librarian.model.concepts.namespace :as namespace]
+            [librarian.model.concepts.namespaced :as namespaced]
+            [librarian.model.concepts.positionable :as positionable]))
 
 (def rules [; is ?c a concept of type ?type:
             '[(type ?c ?type)
@@ -149,3 +154,53 @@
                      '(not [_ ::snippet/contains ?solution])
                      datatype-filter deps-filter])}
           db rules flaw snippet))))
+
+(defn map-to-type-instances
+  ([db]
+   (comp (mapcat #(conj (descendants %) %))
+         (distinct)
+         (mapcat #(d/datoms db :avet :type %))
+         (map :e)
+         (distinct)))
+  ([db types]
+   (into [] (map-to-type-instances db) types)))
+
+(defn placeholder-matches
+  [db placeholder]
+  (let [e (d/entity db placeholder)]
+    (if (:placeholder e)
+      (let [types (:type e)
+            supertypes (into #{} (mapcat #(conj (ancestors %) %)) types)
+            base-attrs (cond-> []
+                         (supertypes ::named/named) (conj ::named/name)
+                         (supertypes ::positionable/positionable) (conj ::positionable/position))
+            ref-attrs (cond-> []
+                        (supertypes ::callable/callable) (into [::callable/parameter
+                                                                ::callable/result]))
+            revref-attrs (cond-> []
+                           (supertypes ::namespaced/namespaced) (conj ::namespace/member))
+            base (mapcat #(d/datoms db :eavt placeholder %) base-attrs)
+            refs (into []
+                       (comp (mapcat #(d/datoms db :eavt placeholder %))
+                             (map (fn [datom] [(:a datom) (placeholder-matches db (:v datom))])))
+                       ref-attrs)
+            revrefs (into []
+                          (comp (mapcat #(d/datoms db :avet % placeholder))
+                                (map (fn [datom] [(:a datom) (placeholder-matches db (:e datom))])))
+                          revref-attrs)
+            cands (into []
+                        (comp (map-to-type-instances db)
+                              (remove #(:v (first (d/datoms db :aevt :placeholder %))))
+                              (filter #(every? (fn [datom] (d/datoms db :eavt % (:a datom) (:v datom)))
+                                               base))
+                              (filter (fn [cand]
+                                        (every? (fn [[attr cand-refs]]
+                                                  (some #(d/datoms db :eavt cand attr %) cand-refs))
+                                                refs)))
+                              (filter (fn [cand]
+                                        (every? (fn [[attr cand-refs]]
+                                                  (some #(d/datoms db :avet attr cand %) cand-refs))
+                                                revrefs))))
+                        types)]
+        cands)
+      [placeholder])))

@@ -116,4 +116,4 @@
                                    :id :labels}
                         :result {:type :result
                                  :placeholder true
-                                 :name "labels"}}}]])
+                                 :name "label"}}}]])

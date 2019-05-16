@@ -6,6 +6,7 @@
                              librarian.cli
                              librarian.model.io.scrape
                              librarian.scraper.io.scrape
+                             librarian.scraper.io.config
                              librarian.scraper.crawler.factory
                              librarian.generator.core]
  :known-macros [say-cheez.core/capture-build-env-to

@@ -14,11 +14,12 @@
                          "modules/scraper/src"
                          "modules/generator/src")
 
-  (require '[librarian.scraper.io.scrape :refer [create-scrape]]
-           '[librarian.model.io.scrape :refer :all]
+  (require '[librarian.model.io.scrape :as scrape :refer :all]
+           '[librarian.scraper.io.scrape :refer [create-scrape]]
            '[librarian.scraper.io.config :refer [read-config]]
+           '[librarian.generator.core :as gen]
            '[librarian.cli :refer [main*]]
-           '[repl-tools :refer :all])
+           '[repl-tools :as rt :refer :all])
 
   (log/info "REPL started.")
   (letfn [(lines [& args] (string/join "\n" args))]
@@ -46,3 +47,14 @@
 (defn refresh-all
   []
   (ctnr/refresh-all :after 'user/start))
+
+(defn gen-test
+  ([] (gen-test "libs/scikit-learn-cluster"))
+  ([ds]
+   (let [scrape (scrape/read-scrape ds)
+         search-state (gen/initial-search-state scrape [:dataset] [:labels])
+         succs (iterate gen/continue-search search-state)
+         succs (take 10 succs)]
+     (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
+                                     (last succs)
+                                  :show-patterns false))))))
