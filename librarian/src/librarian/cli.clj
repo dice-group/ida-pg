@@ -25,8 +25,9 @@
 
 (defn scrape
   [{:keys [config out cache]}]
-  (sscrape/create-scrape config out
-                         {:cache (= cache "on")}))
+  (sscrape/create-scrape config
+                         :out out
+                         :cache (= cache "on")))
 
 (defn print-scrape
   [{:keys [scrape mode]}]
