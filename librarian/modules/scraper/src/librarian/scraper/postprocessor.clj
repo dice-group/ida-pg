@@ -33,7 +33,7 @@
     (if (empty? invalid)
       tx
       (-> (transient tx)
-          (into! (map #(vector :db.fn/retractEntity %) invalid))
+          (into! (map #(vector :db.fn/retractEntity %)) invalid)
           ; revalidate remaining concepts after concept removal
           ; to check whether they are still valid:
           (conj! [:db.fn/call validate-transaction ecosystem (concat valid completed)])
