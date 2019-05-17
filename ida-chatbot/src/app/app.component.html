@@ -9,7 +9,18 @@
     <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
     </ng-container>
   </div>
-  <app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
-  <ng-chat [adapter]="adapter" [userId]="userId"></ng-chat>
+  <div>
+  <div class="ng-chat-title">
+    <strong title="Assisstant"></strong>
+  </div>
+  <app-chatbox class="notification" *ngIf="showNotification" fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)">
+  </app-chatbox>
+  </div>
+  <div>
+    <div>
+      <div class="close" (click)="onCloseClick()">x</div>
+    </div>
+  </div>
+  <ng-chat #ngChatInstance [adapter]="adapter" [userId]="userId" [hideFriendsList]="hideFriendsList" ></ng-chat>
   <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
 </div>
