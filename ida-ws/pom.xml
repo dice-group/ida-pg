@@ -238,7 +238,21 @@
             <version>3.4.9</version>
             <scope>runtime</scope>
         </dependency>
+        
         <dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-core</artifactId>
+			<version>3.9.0-1</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.jsunsoft.http</groupId>
+		  <artifactId>http-request</artifactId>
+		  <version>1.0.2</version>
+		</dependency>
+		
+		
+       <!-- <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-ogm-embedded-driver</artifactId>
             <version>${neo4j-ogm.version}</version>
@@ -258,6 +272,7 @@
 			<artifactId>neo4j-ogm-http-driver</artifactId>
 			<version>${neo4j-ogm.version}</version>
 		</dependency>
+		-->
 		
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
@@ -303,6 +318,12 @@
 				    <useDefaultDelimiters>false</useDefaultDelimiters>
 				</configuration>
             </plugin>
+            
+            <plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>     
+            
             
             <plugin>
 				<groupId>org.jacoco</groupId>
