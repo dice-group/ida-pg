@@ -1,4 +1,4 @@
-import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, QueryList, ViewChild, ViewChildren, AfterViewInit} from '@angular/core';
 import {Message} from './models/message';
 import {ResponseBean} from './models/response-bean';
 import {SidebarComponent} from './components/sidebar/sidebar.component';
@@ -11,7 +11,7 @@ import {TabElement} from './models/tab-element';
 import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
 import {TabType} from './enums/tab-type.enum';
 import {IdaEventService} from './service/event/ida-event.service';
-import { ChatAdapter } from 'ng-chat';
+import {ChatAdapter, IChatController} from 'ng-chat';
 import { ChatBoxAdapter } from './components/chatbox/chatbox-adapter';
 
 @Component({
@@ -19,15 +19,20 @@ import { ChatBoxAdapter } from './components/chatbox/chatbox-adapter';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
+  public showNotification: boolean;
   idCount = 1;
   title = 'app';
   public adapter: ChatAdapter = new ChatBoxAdapter();
   public userId = 'loggedInUser';
+  public hideFriendsList = true;
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
+
+  @ViewChild('ngChatInstance')
+  protected ngChatInstance: IChatController;
   @ViewChild(ChatboxComponent)
   private chatboxComp: ChatboxComponent;
   @ViewChildren(DataViewContainerComponent)
@@ -39,9 +44,21 @@ export class AppComponent {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
+    this.showNotification = true;
+    setInterval(() => {
+      this.showNotification = true;
+    }, 8000);
+  }
+
+  public onCloseClick(): void {
+    this.showNotification = false;
   }
 
   AppComponent() {
+  }
+
+  ngAfterViewInit() {
+    this.ngChatInstance.triggerOpenChatWindow(ChatBoxAdapter.mockedParticipants[0]);
   }
 
   public actionHandler(resp: ResponseBean) {
