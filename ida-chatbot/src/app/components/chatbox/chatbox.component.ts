@@ -2,8 +2,6 @@ import {AfterViewChecked, Component, ElementRef, EventEmitter, OnInit, Output, V
 import {Message} from '../../models/message';
 import {RestService} from '../../service/rest/rest.service';
 import {ResponseBean} from '../../models/response-bean';
-import {ChatBoxAdapter} from './chatbox-adapter';
-import {IChatController} from 'ng-chat';
 import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
 
 @Component({
