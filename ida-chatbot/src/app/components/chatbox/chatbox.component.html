@@ -1,11 +1,27 @@
-<!-- In future put nogrow into fxflex of message form and let the list flex on its on-->
-<mat-card fxLayout="column" style="height: 100vh;">
-  <div fxFlex="grow" style="overflow: auto;margin-left: -30px;margin-right: -15px" #scrollMe>
-    <app-message-list [messages]="this.getMessages()"></app-message-list>
+<div (click)="chatBoxHandler()" class="ng-chat-title" 
+  style="width: 500%; background-color: #673ab7;">
+  <div class="card-header">
+      <strong _ngcontent-c4="" title="Assistant" style="color: white"> Assistant </strong>
   </div>
+</div>
 
-  <app-message-form fxFlex style="min-height: 100px" (msgemitter)="addNewUserMessage($event)" ></app-message-form>
+<div class="chat-popup" id="myForm" [ngStyle]="{'display': myClass}" style="width:29%">
+  <div (click)="chatBoxHandler()" class="ng-chat-title"
+    style="position: fixed; width: 27.5%; background-color:#673ab7;">
+      <div class="card-header">
+        <strong _ngcontent-c4="" title="Assistant" style="color: white"> Assistant </strong>
+      </div>
+  </div>
+  <!-- In future put nogrow into fxflex of message form and let the list flex on its on-->
+  <mat-card fxLayout="column" style="height: 80vh;">
+    <div fxFlex="grow" style="overflow: auto;margin-left: -30px;margin-right: -15px" #scrollMe>
+      <app-message-list [messages]="this.getMessages()"></app-message-list>
+    </div>
 
-</mat-card>
+    <app-message-form fxFlex style="min-height: 100px" (msgemitter)="addNewUserMessage($event)"></app-message-form>
 
-<!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
+  </mat-card>
+
+  <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
+
+</div>

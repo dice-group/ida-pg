@@ -6,7 +6,6 @@ import { MessageListComponent } from './components/message-list/message-list.com
 import { MessageItemComponent } from './components/message-item/message-item.component';
 import { MessageFormComponent } from './components/message-form/message-form.component';
 import { ChatboxComponent } from './components/chatbox/chatbox.component';
-import { NgChatModule } from 'ng-chat';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
@@ -61,6 +60,8 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -121,7 +122,7 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
     MatToolbarModule,
     MatTooltipModule,
     FlexLayoutModule,
-    NgChatModule
+    NgbModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
