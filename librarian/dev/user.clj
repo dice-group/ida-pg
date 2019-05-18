@@ -3,6 +3,7 @@
   (:require [clojure.tools.namespace.repl :as ctnr]
             [clojure.tools.logging :as log]
             [clojure.stacktrace :refer :all]
+            [clojure.repl :refer :all :exclude [root-cause]]
             [clojure.string :as string]
             [proto-repl.saved-values]))
 
@@ -38,7 +39,8 @@
                     ""
                     "REPL commands:"
                     " * (refresh)"
-                    " * (refresh-all)"))))
+                    " * (refresh-all)"
+                    " * all of clojure.repl: doc, source, apropos, pst, dir, ..."))))
 
 (defn refresh
   []

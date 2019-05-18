@@ -1,5 +1,6 @@
 {:if-without-else true
  :ignored-unused-namespaces [clojure.stacktrace
+                             clojure.repl
                              proto-repl.saved-values
                              hickory.select
                              librarian.cli
