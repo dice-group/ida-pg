@@ -1,4 +1,4 @@
-import {Component, ElementRef, QueryList, ViewChild, ViewChildren, AfterViewInit} from '@angular/core';
+import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Message} from './models/message';
 import {ResponseBean} from './models/response-bean';
 import {SidebarComponent} from './components/sidebar/sidebar.component';
@@ -19,20 +19,14 @@ import { ChatBoxAdapter } from './components/chatbox/chatbox-adapter';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
-  public showNotification: boolean;
+export class AppComponent {
   idCount = 1;
   title = 'app';
-  public adapter: ChatAdapter = new ChatBoxAdapter();
-  public userId = 'loggedInUser';
-  public hideFriendsList = true;
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
 
-  @ViewChild('ngChatInstance')
-  protected ngChatInstance: IChatController;
   @ViewChild(ChatboxComponent)
   private chatboxComp: ChatboxComponent;
   @ViewChildren(DataViewContainerComponent)
@@ -44,21 +38,9 @@ export class AppComponent implements AfterViewInit {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
-    this.showNotification = true;
-    setInterval(() => {
-      this.showNotification = true;
-    }, 8000);
-  }
-
-  public onCloseClick(): void {
-    this.showNotification = false;
   }
 
   AppComponent() {
-  }
-
-  ngAfterViewInit() {
-    this.ngChatInstance.triggerOpenChatWindow(ChatBoxAdapter.mockedParticipants[0]);
   }
 
   public actionHandler(resp: ResponseBean) {

@@ -4,6 +4,7 @@ import {RestService} from '../../service/rest/rest.service';
 import {ResponseBean} from '../../models/response-bean';
 import {ChatBoxAdapter} from './chatbox-adapter';
 import {IChatController} from 'ng-chat';
+import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-chatbox',
@@ -21,6 +22,7 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
   msg5: Message = new Message('City dataset is loaded.', 'Assistant', 'chatbot', this.curDate);
   msg6: Message = new Message('Thank you!', 'User', 'user', this.curDate);*/
   messages: Message[] = [this.msg1];
+  myClass = 'none';
 
   constructor() {
   }
@@ -52,6 +54,11 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     } catch (err) {
     }
+  }
+
+  chatBoxHandler() {
+    console.log("clicked ");
+    this.myClass = this.myClass == 'none' ? 'block'  :'none'
   }
 
 }

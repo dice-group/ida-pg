@@ -7,21 +7,8 @@
   background: lightseagreen;
 }
 
-.ng-chat .ng-chat-window {
-  height: 450px;
-  width: 350px;
-}
-
-.ng-chat-title, .ng-chat-title:hover {
-  position: relative;
-  z-index: 2;
-  height: 30px;
-  line-height: 30px;
-  font-size: .9em;
-  padding: 0 10px;
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  font-weight: 400;
-  cursor: pointer;
+#chatBox {
+  position: absolute ;
+  z-index: 100;
+  left: 70%;
 }
