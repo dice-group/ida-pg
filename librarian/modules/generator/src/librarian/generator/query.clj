@@ -1,5 +1,6 @@
 (ns librarian.generator.query
   (:require [datascript.core :as d]
+            [librarian.helpers.map :as hm]
             [librarian.model.concepts.datatype :as datatype]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.semantic-type :as semantic-type]
@@ -155,7 +156,7 @@
                      datatype-filter deps-filter])}
           db rules flaw snippet))))
 
-(defn map-to-type-instances
+(defn types->instances
   ([db]
    (comp (mapcat #(conj (descendants %) %))
          (distinct)
@@ -163,7 +164,7 @@
          (map :e)
          (distinct)))
   ([db types]
-   (into [] (map-to-type-instances db) types)))
+   (into [] (types->instances db) types)))
 
 (defn placeholder-matches
   [db placeholder]
@@ -189,18 +190,27 @@
                                 (map (fn [datom] [(:a datom) (placeholder-matches db (:e datom))])))
                           revref-attrs)
             cands (into []
-                        (comp (map-to-type-instances db)
+                        (comp (types->instances db)
                               (remove #(:v (first (d/datoms db :aevt :placeholder %))))
                               (filter #(every? (fn [datom] (d/datoms db :eavt % (:a datom) (:v datom)))
                                                base))
-                              (filter (fn [cand]
-                                        (every? (fn [[attr cand-refs]]
-                                                  (some #(d/datoms db :eavt cand attr %) cand-refs))
-                                                refs)))
-                              (filter (fn [cand]
-                                        (every? (fn [[attr cand-refs]]
-                                                  (some #(d/datoms db :avet attr cand %) cand-refs))
-                                                revrefs))))
+                              (map (fn [cand] {:placeholder placeholder, :match cand}))
+                              (keep (fn [{:keys [match] :as cand}]
+                                      (hm/all-into cand
+                                                   (map (fn [[attr cand-refs]]
+                                                          (let [cr (filterv #(d/datoms db :eavt match attr
+                                                                                       (:match %))
+                                                                           cand-refs)]
+                                                            (when (seq cr) [attr cr]))))
+                                                   refs)))
+                              (keep (fn [{:keys [match] :as cand}]
+                                      (hm/all-into cand
+                                                   (map (fn [[attr cand-refs]]
+                                                          (let [cr (filterv #(d/datoms db :avet attr match
+                                                                                       (:match %))
+                                                                           cand-refs)]
+                                                            (when (seq cr) [attr cr]))))
+                                                   revrefs))))
                         types)]
         cands)
-      [placeholder])))
+      [{:placeholder placeholder, :match placeholder}])))

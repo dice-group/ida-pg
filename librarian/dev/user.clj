@@ -4,6 +4,7 @@
             [clojure.tools.logging :as log]
             [clojure.stacktrace :refer :all]
             [clojure.repl :refer :all :exclude [root-cause]]
+            [clojure.pprint :refer :all]
             [clojure.string :as string]
             [proto-repl.saved-values]))
 

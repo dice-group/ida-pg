@@ -83,7 +83,7 @@
 
 (defn flaws
   [db]
-  (let [global-type-finder (comp (gq/map-to-type-instances db)
+  (let [global-type-finder (comp (gq/types->instances db)
                                  (remove #(d/datoms db :avet ::snippet/contains %)))]
     {:parameter (into []
                       (comp global-type-finder
@@ -209,9 +209,10 @@
   [db flaw]
   (let [callable (:v (first (d/datoms db :eavt flaw ::call/callable)))
         completions (gq/placeholder-matches db callable)]
+    (println completions)
     (map (fn [completion]
            {:cost 0
-            :tx [[:db/add flaw ::call/callable completion]]})
+            :tx [[:db/add flaw ::call/callable (:match completion)]]})
          completions)))
 
 (defn apply-action

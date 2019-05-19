@@ -51,3 +51,30 @@
    (if (contains? map key)
      (get map key)
      (throw (Error. error-msg)))))
+
+(defn all
+  "Like take-while but reduces to nil if a non-matching item is found."
+  ([] (all some?))
+  ([pred]
+   (fn [f]
+     (fn
+       ([] (f))
+       ([res] (f res))
+       ([res x] (if (pred x)
+                  (f res x)
+                  (reduced nil))))))
+  ([pred coll]
+   (when (every? pred coll) coll)))
+
+(defn all-into
+  "Like into but shortcircuits to return value nil if a nil element is inserted."
+  ([to from]
+   (all-into to identity some? from))
+  ([to xform from]
+   (all-into to xform some? from))
+  ([to xform pred from]
+   (let [xform (if (= xform identity) (all pred) (comp xform (all pred)))]
+     (if (instance? clojure.lang.IEditableCollection to)
+       (let [res (transduce xform conj! (transient to) from)]
+         (when res (with-meta (persistent! res) (meta to))))
+       (transduce xform conj to from)))))
