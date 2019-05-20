@@ -1,0 +1,17 @@
+/* The popup chat - hidden by default */
+.chat-popup {
+  position: fixed;
+  bottom: 0;
+  z-index: 9;
+  width: 25%;
+}
+
+.ng-chat-title {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: #673ab7;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 5px 10px;
+}

@@ -1,7 +1,5 @@
 import {AfterViewChecked, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {Message} from '../../models/message';
-import {RestService} from '../../service/rest/rest.service';
-import {ResponseBean} from '../../models/response-bean';
 
 @Component({
   selector: 'app-chatbox',
@@ -19,6 +17,7 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
   msg5: Message = new Message('City dataset is loaded.', 'Assistant', 'chatbot', this.curDate);
   msg6: Message = new Message('Thank you!', 'User', 'user', this.curDate);*/
   messages: Message[] = [this.msg1];
+  visibility = 'none';
 
   constructor() {
   }
@@ -41,7 +40,6 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
 
   addNewMessage(message: Message) {
     this.messages.push(message);
-    //this.scrollToBottom();
     setTimeout(() => this.scrollToBottom(), 50);
   }
 
@@ -50,6 +48,10 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     } catch (err) {
     }
+  }
+
+  chatBoxHandler() {
+    this.visibility = this.visibility === 'none' ? 'block' : 'none'
   }
 
 }
