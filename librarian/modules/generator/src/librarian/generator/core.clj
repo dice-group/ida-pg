@@ -210,9 +210,11 @@
   (let [callable (:v (first (d/datoms db :eavt flaw ::call/callable)))
         completions (gq/placeholder-matches db callable)]
     (println completions)
-    (map (fn [completion]
+    (map (fn [{match :match
+               params ::callable/parameter
+               results ::callable/result}]
            {:cost 0
-            :tx [[:db/add flaw ::call/callable (:match completion)]]})
+            :tx [[:db/add flaw ::call/callable match]]})
          completions)))
 
 (defn apply-action

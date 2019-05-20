@@ -194,23 +194,21 @@
                               (remove #(:v (first (d/datoms db :aevt :placeholder %))))
                               (filter #(every? (fn [datom] (d/datoms db :eavt % (:a datom) (:v datom)))
                                                base))
-                              (map (fn [cand] {:placeholder placeholder, :match cand}))
-                              (keep (fn [{:keys [match] :as cand}]
-                                      (hm/all-into cand
-                                                   (map (fn [[attr cand-refs]]
-                                                          (let [cr (filterv #(d/datoms db :eavt match attr
-                                                                                       (:match %))
-                                                                           cand-refs)]
-                                                            (when (seq cr) [attr cr]))))
-                                                   refs)))
-                              (keep (fn [{:keys [match] :as cand}]
-                                      (hm/all-into cand
-                                                   (map (fn [[attr cand-refs]]
-                                                          (let [cr (filterv #(d/datoms db :avet attr match
-                                                                                       (:match %))
-                                                                           cand-refs)]
-                                                            (when (seq cr) [attr cr]))))
-                                                   revrefs))))
+                              (filter (fn [cand]
+                                        (every? (fn [[attr cand-refs]]
+                                                  (some #(d/datoms db :avet attr cand (:match %)) cand-refs))
+                                                revrefs)))
+                              (keep (fn [cand]
+                                      (hm/update-into {:placeholder placeholder, :match cand}
+                                                      (comp (map (fn [[attr cand-refs]]
+                                                                   (let [cr (filterv #(d/datoms db :eavt
+                                                                                                cand attr
+                                                                                                (:match %))
+                                                                                    cand-refs)]
+                                                                     (when (seq cr) [attr cr]))))
+                                                            (hm/all))
+                                                      (fnil conj [])
+                                                      refs))))
                         types)]
         cands)
       [{:placeholder placeholder, :match placeholder}])))
