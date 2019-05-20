@@ -20,7 +20,7 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
   msg5: Message = new Message('City dataset is loaded.', 'Assistant', 'chatbot', this.curDate);
   msg6: Message = new Message('Thank you!', 'User', 'user', this.curDate);*/
   messages: Message[] = [this.msg1];
-  myClass = 'none';
+  visibility = 'none';
 
   constructor() {
   }
@@ -43,7 +43,6 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
 
   addNewMessage(message: Message) {
     this.messages.push(message);
-    //this.scrollToBottom();
     setTimeout(() => this.scrollToBottom(), 50);
   }
 
@@ -55,8 +54,7 @@ export class ChatboxComponent implements OnInit, AfterViewChecked {
   }
 
   chatBoxHandler() {
-    console.log("clicked ");
-    this.myClass = this.myClass == 'none' ? 'block'  :'none'
+    this.visibility = this.visibility === 'none' ? 'block' : 'none'
   }
 
 }
