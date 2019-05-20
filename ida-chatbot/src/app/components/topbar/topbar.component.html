@@ -1,9 +1,14 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row class="layout-row layout-align-end-start">
-    <p>Welcome {{this.user.firstname}}</p>
+    <mat-card fxFlex="500px" fxFlex.xs="100%">
+      <mat-card-header>
+        <mat-card-title>Intelligent Data Assistant</mat-card-title>
+        <mat-card-subtitle>Chatbot</mat-card-subtitle>
+        <img mat-card-avatar src="/assets/chatbot.PNG">
+      </mat-card-header>
+    </mat-card>
     <span class="spacer"></span>
-    <a routerLink="/user" *ngIf="this.showButton" mat-button >User Listing</a>
-    <a routerLink="" *ngIf="this.showButton" mat-button >Chatbot</a>
-    <a mat-button (click)="logout()">Logout</a>
+    <app-topmenu></app-topmenu>
+
   </mat-toolbar-row>
 </mat-toolbar>

@@ -1,46 +1,49 @@
 <div *ngIf="!this.isHidden">
   <app-topbar></app-topbar>
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <div class="table-container">
+    <h1 class="mat-display-1">User Listing</h1>
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search Users">
+  </mat-form-field>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Id. </th>
+      <td mat-cell *matCellDef="let user"> {{user.id}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> Id. </th>
-    <td mat-cell *matCellDef="let user"> {{user.id}} </td>
-  </ng-container>
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef> Username </th>
+      <td mat-cell *matCellDef="let user"> {{user.username}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef> Username </th>
-    <td mat-cell *matCellDef="let user"> {{user.username}} </td>
-  </ng-container>
+    <ng-container matColumnDef="firstname">
+      <th mat-header-cell *matHeaderCellDef> First Name </th>
+      <td mat-cell *matCellDef="let user"> {{user.firstname}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="firstname">
-    <th mat-header-cell *matHeaderCellDef> First Name </th>
-    <td mat-cell *matCellDef="let user"> {{user.firstname}} </td>
-  </ng-container>
+    <ng-container matColumnDef="lastname">
+      <th mat-header-cell *matHeaderCellDef> Last Name</th>
+      <td mat-cell *matCellDef="let user"> {{user.lastname}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="lastname">
-    <th mat-header-cell *matHeaderCellDef> Last Name</th>
-    <td mat-cell *matCellDef="let user"> {{user.lastname}} </td>
-  </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let row; let i=index;">
+        <button mat-icon-button [matMenuTriggerFor]="actionsmenu"><mat-icon>more_vert</mat-icon></button>
+        <mat-menu #actionsmenu="matMenu">
+          <button mat-icon-button color="primary" (click)="startEdit(i, row.id, row.username, row.firstname, row.lastname)">
+            <mat-icon aria-label="Edit">edit</mat-icon>Edit
+          </button><br>
+          <button mat-icon-button color="warn" (click)="deleteItem(i, row.id, row.username, row.firstname, row.lastname)">
+            <mat-icon aria-label="Delete">delete</mat-icon>Delete
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="password">
-    <th mat-header-cell *matHeaderCellDef> Password </th>
-    <td mat-cell *matCellDef="let user"> {{user.password}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef> Actions </th>
-    <td mat-cell *matCellDef="let row; let i=index;">
-      <button mat-icon-button color="primary" (click)="startEdit(i, row.id, row.username, row.firstname, row.lastname)">
-        <mat-icon aria-label="Edit">edit</mat-icon>
-      </button>
-      <button mat-icon-button color="warn" (click)="deleteItem(i, row.id, row.username, row.firstname, row.lastname)">
-        <mat-icon aria-label="Delete">delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-<mat-spinner style="margin:0 auto;" mode="indeterminate" [style.display]="this.showSpinner ? 'block' : 'none'"></mat-spinner>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  </div>
 </div>
+<mat-spinner style="margin:0 auto;" mode="indeterminate" [style.display]="this.showSpinner ? 'block' : 'none'"></mat-spinner>

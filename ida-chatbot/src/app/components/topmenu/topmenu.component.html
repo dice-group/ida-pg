@@ -1,0 +1,6 @@
+<button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>menu</mat-icon></button>
+<mat-menu #menu="matMenu">
+  <a routerLink="/user" *ngIf="this.showButton" mat-button >User Listing</a><br>
+  <a routerLink="" *ngIf="this.showButton" mat-button >Chatbot</a><br>
+  <a mat-button (click)="logout()">Logout</a>
+</mat-menu>

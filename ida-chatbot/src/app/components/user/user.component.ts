@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {UserService} from '../../service/user/user.service';
 import {Router} from '@angular/router';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import {MatDialog, MatSnackBar, MatTableDataSource} from '@angular/material';
 import {UpdateDialogComponent} from '../../dialogs/update/update.dialog.component';
 import {DeleteDialogComponent} from '../../dialogs/delete/delete.dialog.component';
 import {RestService} from '../../service/rest/rest.service';
@@ -18,7 +18,8 @@ export class UserComponent implements OnInit {
     isHidden = false;
 
     displayedColumns: string[] = ['id', 'username', 'firstname', 'lastname', 'actions'];
-    dataSource = [];
+    // dataSource = [];
+    dataSource = new MatTableDataSource();
     showSpinner = false;
 
   constructor(private restservice: RestService, private userservice: UserService, private router: Router, public dialog: MatDialog , public snackBar: MatSnackBar) {}
@@ -78,9 +79,13 @@ export class UserComponent implements OnInit {
             duration: 4000,
           });
         } else {
-          this.dataSource = returnResp.respData;
+          this.dataSource = new MatTableDataSource(returnResp.respData);
         }
       });
+    }
+
+    applyFilter(filterValue: string) {
+      this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
 }

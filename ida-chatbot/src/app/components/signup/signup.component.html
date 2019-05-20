@@ -1,7 +1,12 @@
 
 <section fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card fxFlex="500px" fxFlex.xs="100%">
-    <mat-card-title>Signup</mat-card-title>
+    <mat-card-header>
+      <mat-card-title>Intelligent Data Assistant</mat-card-title>
+      <mat-card-subtitle>Chatbot</mat-card-subtitle>
+      <img mat-card-avatar src="/assets/chatbot.PNG">
+    </mat-card-header>
+    <h1 align="center" class="mat-display-2">Signup</h1>
       <form [formGroup]="signupForm" autocomplete="off" novalidate (ngSubmit)="createUser(signupForm.value)" fxLayout="column wrap"
             fxLayoutAlign="center center" fxLayoutGap="10px">
         <mat-card-content>
@@ -34,7 +39,7 @@
           <button mat-raised-button color="primary" [disabled]="!signupForm.valid">Signup</button>
         </mat-card-actions>
       </form>
-    <p>Already have an account ? Login <a routerLink="/login">here</a></p>
+    <p align="right">Already have an account ? Login <a routerLink="/login">here</a></p>
     <mat-spinner style="margin:0 auto;" mode="indeterminate" [style.display]="this.showSpinner ? 'block' : 'none'"></mat-spinner>
   </mat-card>
 </section>
