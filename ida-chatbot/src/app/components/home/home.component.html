@@ -1,5 +1,5 @@
 <div *ngIf="!this.isHidden">
-  <app-topbar></app-topbar>
+  <app-topmenu></app-topmenu>
 <div fxLayout="row">
 <!--<div fxFlex="10%" style="background-color:#eaeaea; overflow: auto;">-->
 <app-sidebar fxFlex="nogrow" [items]="getSidebarItems()" (activeItmEmitter)="changeActiveItem($event)"

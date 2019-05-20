@@ -1,6 +1,6 @@
 <div class="container">
     <form [formGroup]="updateForm" class="mat-dialog-content" #formControl="ngForm">
-
+        <h3 align="center" class="mat-h2">Edit User Details</h3>
         <div class="form">
             <mat-form-field color="primary">
               <input matInput #input class="form-control" type="text" placeholder="Username"  formControlName="username" id="username">
@@ -25,7 +25,7 @@
             </mat-form-field>
         </div>
 
-        <div mat-dialog-actions>
+        <div mat-dialog-actions align="end">
             <button mat-button [type]="submit" [disabled]="!updateForm.valid" [mat-dialog-close]="1" (click)="submit(updateForm.value)">Save</button>
             <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
         </div>

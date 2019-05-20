@@ -68,6 +68,7 @@ import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import { HomeComponent } from './components/home/home.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
+import { TopmenuComponent } from './components/topmenu/topmenu.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -93,7 +94,8 @@ import { TopbarComponent } from './components/topbar/topbar.component';
     DeleteDialogComponent,
     UpdateDialogComponent,
     HomeComponent,
-    TopbarComponent
+    TopbarComponent,
+    TopmenuComponent
   ],
   imports: [
     BrowserModule,

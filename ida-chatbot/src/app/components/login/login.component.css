@@ -13,3 +13,21 @@ mat-spinner{
     top: 50%;
     left: 38%;
 }
+
+.mat-card-header .mat-card-title, .mat-card-subtitle{
+  font-size: 12px;
+}
+
+.mat-display-2{
+  margin: 0 0 20px;
+}
+
+mat-form-field, mat-card-content{
+  width: 100%;
+}
+
+mat-card-actions{
+  width: 100%;
+  text-align: right;
+  margin-bottom: 0;
+}

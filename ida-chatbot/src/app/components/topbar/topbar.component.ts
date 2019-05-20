@@ -9,32 +9,7 @@ import {UserService} from '../../service/user/user.service';
   styleUrls: ['./topbar.component.css']
 })
 export class TopbarComponent implements OnInit {
+  constructor() { }
 
-  showButton = false;
-  user;
-  constructor(private userservice: UserService, private restservice: RestService, private router: Router) { }
-
-  ngOnInit() {
-    this.isAdmin();
-    this.user = JSON.parse(localStorage.getItem('user'));
-  }
-
-  logout() {
-    this.restservice.postRequest('auth/logout', {}, {}).subscribe(resp => {
-      localStorage.removeItem('user');
-      this.router.navigate(['login']);
-    } );
-  }
-
-  isAdmin() {
-    this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
-      const returnResp = this.userservice.processUserResponse(resp);
-      if (returnResp.status === true && returnResp.respData['isAdmin'] === true) {
-        this.showButton = true;
-      } else {
-        this.router.navigate(['']);
-      }
-    });
-  }
-
+  ngOnInit() {}
 }
