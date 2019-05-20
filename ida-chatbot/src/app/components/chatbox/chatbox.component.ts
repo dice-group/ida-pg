@@ -1,8 +1,5 @@
 import {AfterViewChecked, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {Message} from '../../models/message';
-import {RestService} from '../../service/rest/rest.service';
-import {ResponseBean} from '../../models/response-bean';
-import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-chatbox',
