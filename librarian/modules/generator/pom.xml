@@ -94,6 +94,11 @@
       <version>0.0.10</version>
     </dependency>
     <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>math.combinatorics</artifactId>
+      <version>0.1.5</version>
+    </dependency>
+    <dependency>
       <groupId>clucie</groupId>
       <artifactId>clucie</artifactId>
       <version>0.4.2</version>

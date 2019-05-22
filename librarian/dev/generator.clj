@@ -9,7 +9,7 @@
    (let [scrape (scrape/read-scrape ds)
          search-state (gen/initial-search-state scrape [:dataset] [:labels])
          succs (iterate gen/continue-search search-state)
-         succs (take 10 succs)]
+         succs (take 4 succs)]
      (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
                                      (last succs)
                                   :show-patterns false))))))

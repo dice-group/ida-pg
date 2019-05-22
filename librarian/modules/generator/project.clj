@@ -8,6 +8,7 @@
                  [org.clojure/tools.logging]
                  [datascript]
                  [org.clojure/data.priority-map "0.0.10"]
+                 [org.clojure/math.combinatorics "0.1.5"]
                  [clucie "0.4.2"]
                  [librarian/helpers]
                  [librarian/model]]
