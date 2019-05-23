@@ -282,15 +282,16 @@
     (println "flaws:" p-flaws c-flaws)
     (if (and (empty? p-flaws) (empty? c-flaws))
       :done
-      (let [p-actions (mapcat #(receive-actions db %) p-flaws)
-            p-actions (if (empty? p-actions)
-                        (mapcat #(concat (call-actions db %)
-                                         (snippet-actions db %))
-                                p-flaws)
-                        p-actions)
-            c-actions (mapcat #(call-completion-actions db %) c-flaws)
-            actions (concat p-actions c-actions)]
-        (map (partial apply-action state) actions)))))
+      (let [actions (transient [])
+            actions (into! actions (mapcat #(receive-actions db %)) p-flaws)
+            actions (if (zero? (count actions))
+                      (into! actions
+                             (mapcat #(concat (call-actions db %)
+                                              (snippet-actions db %)))
+                             p-flaws)
+                      actions)
+            actions (into! actions (mapcat #(call-completion-actions db %)) c-flaws)]
+        (map (partial apply-action state) (persistent! actions))))))
 
 (defn search-state
   [state]

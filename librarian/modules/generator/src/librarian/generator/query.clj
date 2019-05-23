@@ -1,6 +1,7 @@
 (ns librarian.generator.query
   (:require [datascript.core :as d]
             [librarian.helpers.map :as hm]
+            [librarian.helpers.transients :refer [into!]]
             [librarian.model.concepts.datatype :as datatype]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.semantic-type :as semantic-type]
@@ -99,27 +100,74 @@
               (receives-semantic ?a ?x)]])
 
 (defn transitive-closure
-  [db attr start]
-  (persistent! (loop [open (vec start)
-                      closure (transient #{})]
-                 (let [e (peek open)]
-                   (if (or (nil? e) (contains? closure e))
-                     closure
-                     (recur (into (pop open) (map :v)
-                                  (d/datoms db :eavt e attr))
-                            (conj! closure e)))))))
+  [db attrs reverse-attrs start]
+  (loop [open (transient (vec start))
+         closure (transient #{})]
+    (let [open-size (count open)]
+      (if-some [e (when (not= open-size 0) (nth open (dec open-size)))]
+        (recur (-> open
+                   (pop!)
+                   (into! (comp (mapcat #(d/datoms db :eavt e %))
+                                (map :v)
+                                (remove closure))
+                          attrs)
+                   (into! (comp (mapcat #(d/datoms db :avet % e))
+                                (map :e)
+                                (remove closure))
+                          reverse-attrs))
+               (conj! closure e))
+        (persistent! closure)))))
+
+(defn transitive-closure-contains?
+  [db attrs reverse-attrs start end]
+  (let [end (set end)
+        end-finder (hm/replace-if-some #(contains? end %))]
+    (loop [open (transient (vec start))
+           closure (transient #{})]
+      (if-some [e (peek open)]
+        (let [open (into! (pop! open)
+                          (comp (mapcat #(d/datoms db :eavt e %))
+                                (map :v)
+                                (remove closure)
+                                end-finder)
+                          attrs)]
+          (if (= open true)
+            true
+            (let [open (into! open
+                              (comp (mapcat #(d/datoms db :avet % e))
+                                    (map :e)
+                                    (remove closure)
+                                    end-finder)
+                              reverse-attrs)]
+              (if (= open true)
+                true
+                (recur open (conj! closure e))))))
+        false))))
 
 (defn typed-compatible?
-  [db from to]
-  (let [from-types (transitive-closure db ::datatype/extends
-                                       (mapv :v (d/datoms db :eavt from ::typed/datatype)))
-        to-types (keep (fn [to-type]
-                         (let [v (:v to-type)]
-                           (when-not (some #(isa? (:v %) ::semantic-type/semantic-type)
-                                           (d/datoms db :eavt v :type))
-                             v)))
-                       (d/datoms db :eavt to ::typed/datatype))]
-    (every? #(contains? from-types %) to-types)))
+  ([db from to]
+   ((typed-compatible? db to) from))
+  ([db to]
+   (let [to-types (keep (fn [to-type]
+                          (let [v (:v to-type)]
+                            (when-not (some #(isa? (:v %) ::semantic-type/semantic-type)
+                                            (d/datoms db :eavt v :type))
+                              v)))
+                        (d/datoms db :eavt to ::typed/datatype))]
+     (fn [from]
+       (let [from-types (transitive-closure db [::datatype/extends] nil
+                                           (mapv :v (d/datoms db :eavt from ::typed/datatype)))]
+         (every? #(contains? from-types %) to-types))))))
+
+(defn depends-on?
+  ([db a b]
+   ((depends-on? db b) a))
+  ([db b]
+   (let [dependents (transitive-closure db
+                                        [::call/result]
+                                        [::call/parameter ::call-parameter/receives]
+                                        [b])]
+     (fn [a] (contains? dependents a)))))
 
 (defn types
   [db e]
@@ -138,23 +186,12 @@
   {:key (:v (first (d/datoms db :eavt semantic-type ::semantic-type/key)))
    :value (:v (first (d/datoms db :eavt semantic-type ::semantic-type/value)))})
 
-(defn compatibly-typed-sources
-  ([db flaw]
-   (compatibly-typed-sources db flaw nil))
-  ([db flaw snippet]
-   (let [type-filter '(or (type ?solution ::call-result/call-result)
-                          (type ?solution ::call-value/call-value))
-         datatype-filter '(typed-compatible ?solution ?flaw)
-         deps-filter '(not (depends-on ?solution ?flaw))]
-     (d/q {:find '[[?solution ...]]
-           :in '[$ % ?flaw ?snippet]
-           :where (if snippet
-                    ['[?snippet ::snippet/contains ?solution]
-                     type-filter datatype-filter deps-filter]
-                    [type-filter
-                     '(not [_ ::snippet/contains ?solution])
-                     datatype-filter deps-filter])}
-          db rules flaw snippet))))
+(defn types->subtypes
+  ([]
+   (comp (mapcat #(conj (descendants %) %))
+         (distinct)))
+  ([types]
+   (into #{} (mapcat #(conj (descendants %) %)) types)))
 
 (defn types->instances
   ([db]
@@ -165,6 +202,26 @@
          (distinct)))
   ([db types]
    (into [] (types->instances db) types)))
+
+(defn compatibly-typed-sources
+  ([db flaw]
+   (compatibly-typed-sources db flaw nil))
+  ([db flaw snippet]
+   (let [datatype-filter (filter (typed-compatible? db flaw))
+         deps-filter (remove (depends-on? db flaw))]
+     (if snippet
+       (let [types (mapcat #(conj (descendants %) %))]
+         (into []
+               (comp (map :v)
+                     (filter (fn [s] (some #(types (:v %))
+                                           (d/datoms db :eavt s :type))))
+                     deps-filter datatype-filter)
+               (d/datoms db :eavt snippet ::snippet/contains)))
+       (into []
+             (comp (types->instances db)
+                   (remove #(d/datoms db :avet ::snippet/contains %))
+                   deps-filter datatype-filter)
+             [::call-result/call-result ::call-value/call-value])))))
 
 (defn placeholder-matches
   [db placeholder]

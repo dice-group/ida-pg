@@ -96,3 +96,16 @@
                         ([m] m)
                         ([m [k v]] (update m k f v)))
                 to from))))
+
+(defn replace-if-some
+  ([pred]
+   (fn [f]
+     (fn
+       ([] (f))
+       ([res] (f res))
+       ([res x]
+        (if-let [px (pred x)]
+          (reduced px)
+          (f res x))))))
+  ([pred coll]
+   (or (some pred coll) coll)))
