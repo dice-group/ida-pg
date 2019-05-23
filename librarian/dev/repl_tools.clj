@@ -4,6 +4,7 @@
             [librarian.scraper.io.scrape :refer [create-scrape]]
             [librarian.model.io.scrape :refer [read-scrape]]
             [librarian.model.concepts.call :as call]
+            [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
@@ -81,7 +82,7 @@
                            (mapcat (fn [{:keys [id]}]
                                      (d/q '[:find ?source ?param
                                             :in $ ?param
-                                            :where [?param ::call-parameter/receives ?source]]
+                                            :where [?param ::data-receiver/receives ?source]]
                                           db id)))
                            (map (fn [[from to]] {:from from, :to to, :label "flow"})))
         parameter-edges (->> nodes

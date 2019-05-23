@@ -13,6 +13,7 @@
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
             [librarian.model.concepts.call :as call]
+            [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.role-type :as role-type]
@@ -89,7 +90,7 @@
                                  (remove #(d/datoms db :avet ::snippet/contains %)))]
     {:parameter (into []
                       (comp global-type-finder
-                            (remove #(d/datoms db :eavt % ::call-parameter/receives)))
+                            (remove #(d/datoms db :eavt % ::data-receiver/receives)))
                       [::call-parameter/call-parameter])
      :call (into []
                  (comp global-type-finder
@@ -132,16 +133,7 @@
   (let [solutions (gq/compatibly-typed-sources db flaw)
         cost-evaluator (semantic-cost-evaluator db (gq/semantic-types db flaw))]
     (when (seq solutions)
-      (let [semantic-receivers
-            (d/q '[:find (distinct ?receiver) .
-                   :in $ % ?flaw
-                   :where (receives-semantic ?receiver ?flaw)]
-                 db gq/rules flaw)
-            receivers
-            (d/q '[:find (distinct ?receiver) .
-                   :in $ % ?flaw [?receiver ...]
-                   :where (receives ?receiver ?flaw)]
-                 db gq/rules flaw semantic-receivers)]
+      (let [{semantic-receivers :semantic, receivers :full} (gq/receivers db flaw)]
         (keep (fn [solution]
                 (let [types (gq/types db solution)
                       semantic-types (keep (fn [{:keys [db/id semantic]}] (when semantic id)) types)
@@ -150,7 +142,7 @@
                                    (map (fn [r] [:db/add r ::typed/datatype id])
                                         (if semantic semantic-receivers receivers)))
                                  types)
-                      tx (conj tx [:db/add flaw ::call-parameter/receives solution])]
+                      tx (conj tx [:db/add flaw ::data-receiver/receives solution])]
                   (when (< semantic-cost Double/POSITIVE_INFINITY)
                     {:cost semantic-cost, :tx tx})))
               solutions)))))

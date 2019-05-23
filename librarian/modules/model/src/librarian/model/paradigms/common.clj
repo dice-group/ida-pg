@@ -8,6 +8,7 @@
             [librarian.model.concepts.semantic-type :refer [semantic-type]]
             [librarian.model.concepts.role-type :refer [role-type]]
             [librarian.model.concepts.typed :refer [typed]]
+            [librarian.model.concepts.data-receiver :refer [data-receiver]]
             [librarian.model.concepts.callable :refer [callable]]
             [librarian.model.concepts.io-container :refer [io-container]]
             [librarian.model.concepts.parameter :refer [parameter]]
@@ -30,6 +31,7 @@
    :semantic-type semantic-type
    :role-type role-type
    :typed typed
+   :data-receiver data-receiver
 
    :callable callable
    :io-container io-container

@@ -6,6 +6,7 @@
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.call :as call]
+            [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
@@ -48,7 +49,7 @@
               [?a ::call/parameter ?param]
               (depends-on ?param ?b)]
             '[(depends-on ?a ?b)
-              [?a ::call-parameter/receives ?x]
+              [?a ::data-receiver/receives ?x]
               (depends-on ?x ?b)]
             '[(depends-on ?a ?b)
               [?call ::call/result ?a]
@@ -58,45 +59,23 @@
             '[(receives ?a ?b)
               [(ground ?b) ?a]]
             '[(receives ?a ?b)
-              [?a ::call-parameter/receives ?b]]
+              [?a ::data-receiver/receives ?b]]
             '[(receives ?a ?b)
-              [?x ::call-parameter/receives ?b]
-              (receives ?a ?x)]
-            '[(receives ?a ?b)
-              [?b ::call-parameter/parameter ?param]
-              [?result ::result/receives ?param]
-              [?a ::call-result/result ?result]]
-            '[(receives ?a ?b)
-              [?b ::call-parameter/parameter ?param]
-              [?result ::result/receives ?param]
-              [?x ::call-result/result ?result]
+              [?x ::data-receiver/receives ?b]
               (receives ?a ?x)]
 
             ; does ?a receive the semantic types of ?b:
             '[(receives-semantic ?a ?b)
               [(ground ?b) ?a]]
             '[(receives-semantic ?a ?b)
-              [?a ::call-parameter/receives ?b]]
+              [?a ::data-receiver/receives ?b]]
             '[(receives-semantic ?a ?b)
-              [?x ::call-parameter/receives ?b]
+              [?x ::data-receiver/receives ?b]
               (receives-semantic ?a ?x)]
             '[(receives-semantic ?a ?b)
-              [?b ::call-parameter/parameter ?param]
-              [?result ::result/receives ?param]
-              [?a ::call-result/result ?result]]
+              [?a ::data-receiver/receives-semantic ?b]]
             '[(receives-semantic ?a ?b)
-              [?b ::call-parameter/parameter ?param]
-              [?result ::result/receives ?param]
-              [?x ::call-result/result ?result]
-              (receives-semantic ?a ?x)]
-            '[(receives-semantic ?a ?b)
-              [?b ::call-parameter/parameter ?param]
-              [?result ::result/receives-semantic ?param]
-              [?a ::call-result/result ?result]]
-            '[(receives-semantic ?a ?b)
-              [?b ::call-parameter/parameter ?param]
-              [?result ::result/receives-semantic ?param]
-              [?x ::call-result/result ?result]
+              [?x ::data-receiver/receives-semantic ?b]
               (receives-semantic ?a ?x)]])
 
 (defn transitive-closure
@@ -118,32 +97,6 @@
                (conj! closure e))
         (persistent! closure)))))
 
-(defn transitive-closure-contains?
-  [db attrs reverse-attrs start end]
-  (let [end (set end)
-        end-finder (hm/replace-if-some #(contains? end %))]
-    (loop [open (transient (vec start))
-           closure (transient #{})]
-      (if-some [e (peek open)]
-        (let [open (into! (pop! open)
-                          (comp (mapcat #(d/datoms db :eavt e %))
-                                (map :v)
-                                (remove closure)
-                                end-finder)
-                          attrs)]
-          (if (= open true)
-            true
-            (let [open (into! open
-                              (comp (mapcat #(d/datoms db :avet % e))
-                                    (map :e)
-                                    (remove closure)
-                                    end-finder)
-                              reverse-attrs)]
-              (if (= open true)
-                true
-                (recur open (conj! closure e))))))
-        false))))
-
 (defn typed-compatible?
   ([db from to]
    ((typed-compatible? db to) from))
@@ -159,15 +112,46 @@
                                            (mapv :v (d/datoms db :eavt from ::typed/datatype)))]
          (every? #(contains? from-types %) to-types))))))
 
+(defn dependents
+  [db id]
+  (transitive-closure db
+                      [::call/result]
+                      [::call/parameter ::data-receiver/receives]
+                      [id]))
+
 (defn depends-on?
   ([db a b]
    ((depends-on? db b) a))
   ([db b]
-   (let [dependents (transitive-closure db
-                                        [::call/result]
-                                        [::call/parameter ::call-parameter/receives]
-                                        [b])]
-     (fn [a] (contains? dependents a)))))
+   (let [deps (dependents db b)]
+     (fn [a] (contains? deps a)))))
+
+(defn receivers
+  [db id]
+  (loop [open (transient [id])
+         semantic-closure (transient #{id})
+         full-closure (transient #{id})]
+    (let [open-size (count open)]
+      (if-some [e (when (not= open-size 0) (nth open (dec open-size)))]
+        (let [in-full-closure (contains? full-closure e)
+              semantic-recs (into [] (map :e) (d/datoms db :avet ::data-receiver/receives-semantic e))
+              full-recs (into [] (map :e) (d/datoms db :avet ::data-receiver/receives e))
+              semantic-closure-cleanup (remove semantic-closure)]
+          (recur (-> open
+                     (pop!)
+                     (into! semantic-closure-cleanup semantic-recs)
+                     (into! (if in-full-closure
+                              (remove full-closure)
+                              semantic-closure-cleanup)
+                            full-recs))
+                 (-> semantic-closure
+                     (into! semantic-recs)
+                     (into! full-recs))
+                 (if in-full-closure
+                   (into! full-closure full-recs)
+                   full-closure)))
+        {:semantic (persistent! semantic-closure)
+         :full (persistent! full-closure)}))))
 
 (defn types
   [db e]
