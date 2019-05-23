@@ -5,6 +5,7 @@
             [clucie.document :as cdoc]
             [clucie.analysis :as canalysis]
             [clojure.tools.logging :as log]
+            [clojure.core.memoize :as memo]
             [clojure.data.priority-map :refer [priority-map]]
             [clojure.math.combinatorics :as combo]
             [librarian.helpers.transients :refer [into!]]
@@ -82,10 +83,11 @@
                                                 :id input)]))
                                inputs))]
     {:cost 0
-     :db (d/db-with (:db scrape) (instances->tx concepts))}))
+     :db (d/db-with (:db scrape) (instances->tx concepts))
+     :placeholder-matches (memo/memo #'gq/placeholder-matches)}))
 
 (defn flaws
-  [db]
+  [{:keys [db]}]
   (let [global-type-finder (comp (gq/types->instances db)
                                  (remove #(d/datoms db :avet ::snippet/contains %)))]
     {:parameter (into []
@@ -129,7 +131,7 @@
         (apply + (vals costs))))))
 
 (defn receive-actions
-  [db flaw]
+  [{:keys [db]} flaw]
   (let [solutions (gq/compatibly-typed-sources db flaw)
         cost-evaluator (semantic-cost-evaluator db (gq/semantic-types db flaw))]
     (when (seq solutions)
@@ -148,7 +150,7 @@
               solutions)))))
 
 (defn call-actions
-  [db flaw]
+  [{:keys [db]} flaw]
   (let [candidates
         (d/q '[:find ?callable ?result
                :in $ % ?flaw
@@ -193,7 +195,7 @@
      :tx tx}))
 
 (defn snippet-actions
-  [db flaw]
+  [{:keys [db]} flaw]
   (sequence (comp (map :e)
                   (remove #(empty? (gq/compatibly-typed-sources db flaw %)))
                   (map #(snippet->action db %)))
@@ -225,15 +227,14 @@
                    [:db/add call call->call-io-attr call-io]]))))))
 
 (defn call-completion-actions
-  [db flaw]
+  [{:keys [db placeholder-matches]} flaw]
   (let [callable (:v (first (d/datoms db :eavt flaw ::call/callable)))
         e (d/entity db flaw)
         p->cp (into {} (map (fn [p] [(-> p ::call-parameter/parameter :db/id) (:db/id p)]))
                     (::call/parameter e))
         r->cr (into {} (map (fn [r] [(-> r ::call-result/result :db/id) (:db/id r)]))
                     (::call/result e))
-        completions (gq/placeholder-matches db callable)]
-    (println completions)
+        completions (placeholder-matches db callable)]
     (mapcat (fn [{match :match
                   matched-params ::callable/parameter
                   matched-results ::callable/result}]
@@ -265,24 +266,24 @@
   [state action]
   {:predecessor state
    :cost (+ (:cost state) (:cost action))
-   :db (d/db-with (:db state) (:tx action))})
+   :db (d/db-with (:db state) (:tx action))
+   :placeholder-matches (:placeholder-matches state)})
 
 (defn successors
   [state]
-  (let [db (:db state)
-        {p-flaws :parameter, c-flaws :call} (flaws db)]
+  (let [{p-flaws :parameter, c-flaws :call} (flaws state)]
     (println "flaws:" p-flaws c-flaws)
     (if (and (empty? p-flaws) (empty? c-flaws))
       :done
       (let [actions (transient [])
-            actions (into! actions (mapcat #(receive-actions db %)) p-flaws)
+            actions (into! actions (mapcat #(receive-actions state %)) p-flaws)
             actions (if (zero? (count actions))
                       (into! actions
-                             (mapcat #(concat (call-actions db %)
-                                              (snippet-actions db %)))
+                             (mapcat #(concat (call-actions state %)
+                                              (snippet-actions state %)))
                              p-flaws)
                       actions)
-            actions (into! actions (mapcat #(call-completion-actions db %)) c-flaws)]
+            actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)]
         (map (partial apply-action state) (persistent! actions))))))
 
 (defn search-state
@@ -293,7 +294,6 @@
 
 (defn continue-search
   [{:keys [queue done failed] :as search-state}]
-  (println "step")
   (if (or done failed)
     search-state
     (if (empty? queue)

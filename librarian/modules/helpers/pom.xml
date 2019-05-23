@@ -90,6 +90,11 @@
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
+      <artifactId>core.memoize</artifactId>
+      <version>0.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojure</groupId>
       <artifactId>tools.namespace</artifactId>
       <version>0.3.0-alpha4</version>
       <scope>test</scope>

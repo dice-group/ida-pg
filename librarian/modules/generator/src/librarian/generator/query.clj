@@ -1,5 +1,6 @@
 (ns librarian.generator.query
   (:require [datascript.core :as d]
+            [clojure.core.memoize :as memo]
             [librarian.helpers.map :as hm]
             [librarian.helpers.transients :refer [into!]]
             [librarian.model.concepts.datatype :as datatype]
@@ -207,7 +208,7 @@
                    deps-filter datatype-filter)
              [::call-result/call-result ::call-value/call-value])))))
 
-(defn placeholder-matches
+(defn ^{::memo/args-fn second} placeholder-matches
   [db placeholder]
   (let [e (d/entity db placeholder)]
     (if (:placeholder e)
