@@ -6,7 +6,8 @@
             [clojure.repl :refer :all :exclude [root-cause]]
             [clojure.pprint :refer :all]
             [clojure.string :as string]
-            [proto-repl.saved-values]))
+            [proto-repl.saved-values]
+            [datascript.core :as d]))
 
 (defn start
   []
@@ -36,7 +37,7 @@
                     "* (pull-file scrape-file selector eid)"
                     ""
                     "Generator commands:"
-                    " * (gen-test [scrape-file])"
+                    " * (gen-test :goal|:base)"
                     ""
                     "REPL commands:"
                     " * (refresh)"

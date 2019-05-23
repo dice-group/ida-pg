@@ -1,18 +1,6 @@
 {:if-without-else true
- :ignored-unused-namespaces [clojure.stacktrace
-                             clojure.repl
-                             clojure.pprint
-                             proto-repl.saved-values
-                             hickory.select
-                             librarian.cli
-                             librarian.model.io.scrape
-                             librarian.scraper.io.scrape
-                             librarian.scraper.io.config
-                             librarian.scraper.crawler.factory
-                             librarian.generator.core
-                             ; dev:
-                             repl-tools
-                             generator]
+ :ignored-unused-namespaces [hickory.select
+                             librarian.scraper.crawler.factory]
  :known-macros [say-cheez.core/capture-build-env-to
                 librarian.helpers.spec/entity-keys
                 librarian.model.syntax/defconcept

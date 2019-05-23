@@ -1,0 +1,13 @@
+{:ignored-unused-namespaces [clojure.stacktrace
+                             clojure.repl
+                             clojure.pprint
+                             proto-repl.saved-values
+                             datascript.core
+                             librarian.cli
+                             librarian.model.io.scrape
+                             librarian.scraper.io.scrape
+                             librarian.scraper.io.config
+                             librarian.generator.core
+                             ; dev:
+                             repl-tools
+                             generator]}

@@ -10,8 +10,6 @@
             [clojure.math.combinatorics :as combo]
             [librarian.helpers.transients :refer [into!]]
             [librarian.helpers.transaction :as tx]
-            [librarian.model.io.scrape :as scrape]
-            [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.callable :as callable]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.data-receiver :as data-receiver]
@@ -71,20 +69,10 @@
        (into {})))
 
 (defn initial-state
-  [scrape inputs goals]
-  (let [concepts (concat (mapv (fn [goal]
-                                 (instanciate call-parameter/call-parameter
-                                   :datatype [(instanciate role-type/role-type
-                                                :id goal)]))
-                               goals)
-                         (mapv (fn [input]
-                                 (instanciate call-result/call-result
-                                   :datatype [(instanciate role-type/role-type
-                                                :id input)]))
-                               inputs))]
-    {:cost 0
-     :db (d/db-with (:db scrape) (instances->tx concepts))
-     :placeholder-matches (memo/memo #'gq/placeholder-matches)}))
+  [scrape tx]
+  {:cost 0
+   :db (d/db-with (:db scrape) tx)
+   :placeholder-matches (memo/memo #'gq/placeholder-matches)})
 
 (defn flaws
   [{:keys [db]}]
@@ -165,26 +153,37 @@
                               callables))
                           #{} candidates)
         callables (map (partial d/pull db [:db/id
-                                           ::typed/datatype
+                                           ::named/name
                                            ::callable/parameter
                                            ::callable/result])
                        callables)]
     (map (fn [callable]
-           {:cost (-> callable ::callable/parameter count inc)
-            :tx [{:type ::call/call
-                  ::call/callable (:db/id callable)
-                  ::call/parameter
-                  (map (fn [param]
-                         {:type ::call-parameter/call-parameter
-                          ::call-parameter/parameter (:db/id param)
-                          ::typed/datatype (map :db/id (::typed/datatype param))})
-                       (::callable/parameter callable))
-                  ::call/result
-                  (map (fn [result]
-                         {:type ::call-result/call-result
-                          ::call-result/result (:db/id result)
-                          ::typed/datatype (map :db/id (::typed/datatype result))})
-                       (::callable/result callable))}]})
+           (let [param-map (into {}
+                                 (map-indexed (fn [i {:keys [db/id] :as param}]
+                                                [id {:db/id (- (inc i))
+                                                     :type ::call-parameter/call-parameter
+                                                     ::call-parameter/parameter id
+                                                     ::typed/datatype (map :db/id (::typed/datatype param))}]))
+                                 (::callable/parameter callable))]
+             {:cost (-> callable ::callable/parameter count inc)
+              :tx (conj (vec (vals param-map))
+                        {:type ::call/call
+                         ::call/callable (:db/id callable)
+                         ::call/parameter (map (comp - inc) (range (count param-map)))
+                         ::call/result
+                         (map (fn [result]
+                                (let [call-result
+                                      {:type ::call-result/call-result
+                                       ::call-result/result (:db/id result)
+                                       ::typed/datatype (map :db/id (::typed/datatype result))
+                                       ::data-receiver/receives-semantic
+                                       (keep (comp :db/id param-map :db/id)
+                                             (::data-receiver/receives-semantic result))}
+                                      rec-id (some-> result ::data-receiver/receives :db/id param-map :db/id)]
+                                  (if rec-id
+                                    (assoc call-result ::data-receiver/receives rec-id)
+                                    call-result)))
+                              (::callable/result callable))})}))
          callables)))
 
 (defn snippet->action
