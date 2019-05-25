@@ -9,6 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @NodeEntity
 public class User {
+	
+//	private String name;
+//	private String username,password,newpassword;
     
 	@Id
 	@GeneratedValue
@@ -19,7 +22,26 @@ public class User {
     private String lastname;
     private String userrole;
     
-    public User() {
+    private String newpassword;
+    
+   // User() {}
+    
+    public User(String username, String password, String firstname) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.firstname = firstname;
+	}
+
+	public String getNewpassword() {
+		return newpassword;
+	}
+
+	public void setNewpassword(String newpassword) {
+		this.newpassword = newpassword;
+	}
+
+	public User() {
 		this.userrole = "USER";
 	}
     

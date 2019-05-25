@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import  upb.ida.rest.UserController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +32,10 @@ public class UserService{
     }
     
 	@Transactional(readOnly = true)
-    public User getByUsername(String username) {
-        return userRepository.findUserByUsername(username);
+  //  public User getByUsername(String username) {
+	public User getByUsername(String username) {
+		return (User) UserController.select3(username);	
+      //  return userRepository.findUserByUsername(username);
     }
 
 	@Transactional(readOnly = false)

@@ -5,8 +5,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.update.UpdateFactory;
@@ -16,26 +19,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import upb.ida.domains.User;
+
 @RestController
 public class UserController {
 	private RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
 
 	@RequestMapping("/new")
-	public String insert(@RequestBody UserData record) throws NoSuchAlgorithmException {
+	public String insert(@RequestBody User record) throws NoSuchAlgorithmException {
 
-		String name = record.getName();
+		String firstname = record.getFirstname();
 		String userName = record.getUsername();
 		String password = record.getPassword();
 		String newHashPass = hashPassword(password);
 		password = newHashPass;
 		System.out.println("SHA-256 HASH:" + password);
-
+        
 		// In this variation, a connection is built each time.
 		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 
 			UpdateRequest request = UpdateFactory.create();
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "INSERT DATA{ab:" + userName + " dc:name \"" + name + "\"; dc:username \"" + userName
+					+ "INSERT DATA{ab:" + userName + " dc:name \"" + firstname + "\"; dc:username \"" + userName
 					+ "\" ; dc:password \"" + password + "\" .}");
 			conn.update(request);
 			System.out.println(request);
@@ -44,9 +49,9 @@ public class UserController {
 	}
 
 	@RequestMapping("/delete")
-	public String delete(@RequestBody UserData record) throws NoSuchAlgorithmException {
+	public String delete(@RequestBody User record) throws NoSuchAlgorithmException {
 
-		String name = record.getName();
+		String firstname = record.getFirstname();
 		String userName = record.getUsername();
 		String password = record.getPassword();
 		String newHashPass = hashPassword(password);
@@ -57,7 +62,7 @@ public class UserController {
 			UpdateRequest request = UpdateFactory.create();
 
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + " dc:name \"" + name + "\" ;\r\n"
+					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + " dc:name \"" + firstname + "\" ;\r\n"
 					+ "                  dc:password \"" + password + "\" ;\r\n" + "dc:username \"" + userName
 					+ "\".\r\n" + "}");
 
@@ -67,10 +72,10 @@ public class UserController {
 	}
 
 	@RequestMapping("/update")
-	public String update(@RequestBody UserData record) throws NoSuchAlgorithmException {
+	public String update(@RequestBody User record) throws NoSuchAlgorithmException {
 
 		String newPassword = record.getNewpassword();
-		String name = record.getName();
+		String firstname = record.getFirstname();
 		String userName = record.getUsername();
 		String password = record.getPassword();
 		String newHashPass = hashPassword(password);
@@ -87,10 +92,10 @@ public class UserController {
 			// So here we are just deleting the old recordrd and inserting new one
 
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + "    dc:name \"" + name + "\" ;\r\n"
+					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + "    dc:name \"" + firstname + "\" ;\r\n"
 					+ "                 dc:password \"" + password + "\" ;\r\n" + "}");
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "INSERT DATA{ab:" + userName + " dc:name \"" + name + "\" ; dc:password \"" + newPassword
+					+ "INSERT DATA{ab:" + userName + " dc:name \"" + firstname + "\" ; dc:password \"" + newPassword
 					+ "\" .}");
 			conn.update(request);
 		}
@@ -113,26 +118,83 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping("/selectb") // one by one
+//	@RequestMapping("/selectb") // one by one
+//	public String select2(@RequestBody User record) {
+//		String userName = record.getUsername();
+//		// In this variation, a connection is built each time.
+//
+//		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+//			QueryExecution qExec = conn.query("prefix ab:<http://userdata/#" + userName + "> \r\n"
+//					+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
+//					+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "");
+//
+//			ResultSet rs = qExec.execSelect();
+//			System.out.println("result is:" + rs);
+//
+//			// Converting results into JSON
+//			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//			ResultSetFormatter.outputAsJSON(outputStream, rs);
+//			String jsonOutput = new String(outputStream.toByteArray());
+//
+//			return jsonOutput;
+//		}
+//	}
+	
+	@RequestMapping("/selectbc") // one by one
 	public String select2(@RequestBody UserData record) {
-		String userName = record.getUsername();
-		// In this variation, a connection is built each time.
+	String userName = record.getUsername();
+	String serviceURI = "http://localhost:3030/user";
+	String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
+			+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
+			+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "";
+		
 
-		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-			QueryExecution qExec = conn.query("prefix ab:<http://userdata/#" + userName + "> \r\n"
-					+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
-					+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "");
+	QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1);
+	ResultSet results = q.execSelect();
 
-			ResultSet rs = qExec.execSelect();
-			System.out.println("result is:" + rs);
+	while (results.hasNext()) {
+		QuerySolution soln = results.nextSolution();
+		// assumes that you have an "?x" in your query
+		RDFNode x = soln.get("username");
+		RDFNode y = soln.get("name");
+		RDFNode z = soln.get("password");
+		System.out.println("username"+x);
+		System.out.println("name"+y);
+		System.out.println("password"+z);
+	}
+	return "success";
+}
+	
+	public static User select3(String clientUserName) {
+		String userName = clientUserName;
+		String serviceURI = "http://localhost:3030/user";
+		String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
+				+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
+				+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "";
+		String fetchedUserName = null;
+		String fetchedName = null;
+		String fetchedPassword = null;
+		User obj = null;
 
-			// Converting results into JSON
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			ResultSetFormatter.outputAsJSON(outputStream, rs);
-			String jsonOutput = new String(outputStream.toByteArray());
+		QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1);
+		ResultSet results = q.execSelect();
 
-			return jsonOutput;
+		while (results.hasNext()) {
+			QuerySolution soln = results.nextSolution();
+			// assumes that you have an "?x" in your query
+			RDFNode x = soln.get("username");
+			RDFNode y = soln.get("name");
+			RDFNode z = soln.get("password");
+			System.out.println("username"+x);
+			System.out.println("name"+y);
+			System.out.println("password"+z);
+			fetchedUserName = x.toString();
+			fetchedName = y.toString();
+			fetchedPassword = z.toString();
+			obj = new User(fetchedUserName,fetchedName,fetchedPassword);
 		}
+		
+		return obj;
 	}
 	// password hashing
 
