@@ -11,6 +11,7 @@
             [librarian.helpers.transients :refer [into!]]
             [librarian.helpers.transaction :as tx]
             [librarian.model.concepts.callable :as callable]
+            [librarian.model.concepts.parameter :as parameter]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-parameter :as call-parameter]
@@ -280,6 +281,12 @@
                      :tx tx}))))
          completions)))
 
+(defn param-remove-actions
+  [{:keys [db]} flaw]
+  (when (-> (d/entity db flaw) ::call-parameter/parameter ::parameter/optional)
+    [{:cost 1
+      :tx [[:db.fn/retractEntity flaw]]}]))
+
 (defn apply-action
   [state action]
   {:predecessor state
@@ -301,6 +308,7 @@
                                               (snippet-actions state %)))
                              p-flaws)
                       actions)
+            actions (into! actions (mapcat #(param-remove-actions state %)) p-flaws)
             actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)]
         (map (partial apply-action state) (persistent! actions))))))
 
