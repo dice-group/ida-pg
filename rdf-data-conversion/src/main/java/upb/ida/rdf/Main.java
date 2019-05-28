@@ -1,4 +1,4 @@
-package src;
+package upb.ida.rdf;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,17 +13,19 @@ public class Main {
 	private static final char DEFAULT_SEPARATOR = ',';
 	private static final char DEFAULT_QUOTE = '"';
 	private static final String CHARSET = "UTF-8";
-	private static final String resultFile = "/home/hardik/UPB/PG/ida-convertdata/result.ttl";
-	private static String thisLine;
+	private static final String resultFile = "E:\\UPB\\ida\\ida-convertdata\\files\\result.ttl";
+	private static final String baseUrl = "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/";
+	private static final String ontologyBaseUrl = baseUrl + "ontology/";
+	private static final String dataBaseUrl = baseUrl + "data/";
 
 	//    file paths
-	private static final String dienststellungFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_dienststellung.csv";
-	private static final String ordenFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_orden.csv";
-	private static final String ssfuehrerFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_ssfuehrer.csv";
-	private static final String ssrangFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_ssrang.csv";
-	private static final String soldierDecorationsFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_ssfuehrer_orden.csv";
-	private static final String soldierRegimentsFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_ssfuehrer_dienststellung.csv";
-	private static final String soldierRanksFile = "/home/hardik/UPB/PG/ida-convertdata/files/tbl_ssfuehrer_ssrang.csv";
+	private static final String dienststellungFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_dienststellung.csv";
+	private static final String ordenFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_orden.csv";
+	private static final String ssfuehrerFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer.csv";
+	private static final String ssrangFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssrang.csv";
+	private static final String soldierDecorationsFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer_orden.csv";
+	private static final String soldierRegimentsFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer_dienststellung.csv";
+	private static final String soldierRanksFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer_ssrang.csv";
 
 	//    prefixes
 	private static String prefixes =
@@ -33,17 +35,17 @@ public class Main {
 			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
 			"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
 			"@prefix dc: <http://purl.org/dc/terms/> .\n" +
-			"@prefix regiment: <https://www.uni-paderborn.de/ontology/regiment/> .\n" +
-			"@prefix ssrank: <https://www.uni-paderborn.de/ontology/ssrank/> .\n" +
-			"@prefix decoration: <https://www.uni-paderborn.de/ontology/decoration/> .\n" +
-			"@prefix soldier: <https://www.uni-paderborn.de/ontology/soldier/> .\n" +
-			"@prefix soldier_decoration: <https://www.uni-paderborn.de/ontology/soldier_decoration/> .\n" +
-			"@prefix soldier_regiment: <https://www.uni-paderborn.de/ontology/soldier_regiment/> .\n" +
-			"@prefix soldier_ssrank: <https://www.uni-paderborn.de/ontology/soldier_ssrank/> .\n" +
-			"@prefix : <https://www.uni-paderborn.de/ontology/> .\n" +
-			"@base <https://www.uni-paderborn.de/ontology/> .\n" +
+			"@prefix regiment: <" + dataBaseUrl + "regiment/> .\n" +
+			"@prefix ssrank: <" + dataBaseUrl + "ssrank/> .\n" +
+			"@prefix decoration: <" + dataBaseUrl + "decoration/> .\n" +
+			"@prefix soldier: <" + dataBaseUrl + "soldier/> .\n" +
+			"@prefix soldier_decoration: <" + dataBaseUrl + "soldier_decoration/> .\n" +
+			"@prefix soldier_regiment: <" + dataBaseUrl + "soldier_regiment/> .\n" +
+			"@prefix soldier_ssrank: <" + dataBaseUrl + "soldier_ssrank/> .\n" +
+			"@prefix : <" + ontologyBaseUrl + "> .\n" +
+			"@base <" + ontologyBaseUrl + "> .\n" +
 			"\n" +
-			"<https://www.uni-paderborn.de/ontology/> rdf:type owl:Ontology  ;\n" +
+			"<" + ontologyBaseUrl + "> rdf:type owl:Ontology  ;\n" +
 			"\t\t\t\t\t\t\tdc:title \"SS Vocabulary\"@en ; \n" +
 			"                            dc:description \"Vocabulary describing Concepts and Relationships of Schutzstaffel\"@en .\n\n";
 
@@ -53,49 +55,18 @@ public class Main {
 		StringBuilder stringBuilder = new StringBuilder("");
 
 		processRegiments(stringBuilder);
-		processDecorations(stringBuilder);
-		processSSRanks(stringBuilder);
-		processSoldiers(stringBuilder);
-		processSoldierDecorations(stringBuilder);
-		processSoldierRegiments(stringBuilder);
-		processSoldierRanks(stringBuilder);
-
-//        String[][] dienstellungArray = new FileInputStream(dienststellungFile);
-//        String[][] ordenArray = converto2dArray(new FileInputStream(ordenFile));
-//        String[][] ssfuehrerArray = converto2dArray(new FileInputStream(ssfuehrerFile));
-//        String[][] ssrangArray = converto2dArray(new FileInputStream(ssrangFile));
-
+//		processDecorations(stringBuilder);
+//		processSSRanks(stringBuilder);
+//		processSoldiers(stringBuilder);
+//		processSoldierDecorations(stringBuilder);
+//		processSoldierRegiments(stringBuilder);
+//		processSoldierRanks(stringBuilder);
 
 		BufferedWriter out = new BufferedWriter(new FileWriter(resultFile, true));
 		out.write(stringBuilder.toString());
 		out.close();
 	}
 
-
-//    public static String[][] converto2dArray(FileInputStream fileInputStream, int number) throws Exception{
-//            DataInputStream myInput = new DataInputStream(fileInputStream);
-//            List<String[]> lines = new ArrayList<String[]>();
-//
-//            while ((thisLine = myInput.readLine()) != null) {
-//                lines.add(thisLine.split(","));
-//            }
-////          convert our list to a String array.
-//            String[][] array = new String[lines.size()][0];
-//            lines.toArray();
-//            return array;
-//    }
-
-
-	public static void addPrefixes() throws Exception {
-		File file = new File(resultFile);
-		if (file.exists()) {
-			file.delete();
-		}
-		FileWriter fileWriter = new FileWriter(file);
-		fileWriter.write(prefixes);
-		fileWriter.flush();
-		fileWriter.close();
-	}
 
 	private static boolean isValidString(String in) {
 		return (in != null) && !in.isEmpty();
@@ -117,11 +88,21 @@ public class Main {
 			.append(last ? ".\n" : ";\n");
 	}
 
+	public static void addPrefixes() throws Exception {
+		File file = new File(resultFile);
+		if (file.exists()) {
+			file.delete();
+		}
+		FileWriter fileWriter = new FileWriter(file);
+		fileWriter.write(prefixes);
+		fileWriter.flush();
+		fileWriter.close();
+	}
+
 	private static void processRegiments(StringBuilder stringBuilder) {
 		stringBuilder.append("######### REGIMENTS #########################################################\n\n");
-
-		try (FileInputStream fis = new FileInputStream(dienststellungFile); DataInputStream myInput = new DataInputStream(fis)) {
-
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(dienststellungFile))))){
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
@@ -174,7 +155,8 @@ public class Main {
 	private static void processSoldiers(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIERS ########################################################\n\n");
 
-		try (FileInputStream fis = new FileInputStream(ssfuehrerFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(ssfuehrerFile))))) {
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
@@ -312,7 +294,8 @@ public class Main {
 	private static void processSSRanks(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SSRANKS ########################################################\n\n");
 
-		try (FileInputStream fis = new FileInputStream(ssrangFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(ssrangFile))))) {
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
@@ -362,9 +345,8 @@ public class Main {
 
 	private static void processDecorations(StringBuilder stringBuilder) {
 		stringBuilder.append("########## DECORATIONS ########################################################\n\n");
-
-		try (FileInputStream fis = new FileInputStream(ordenFile); DataInputStream myInput = new DataInputStream(fis)) {
-
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(ordenFile))))) {
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
@@ -436,7 +418,8 @@ public class Main {
 	private static void processSoldierRegiments(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER REGIMENTS ########################################################\n\n");
 
-		try (FileInputStream fis = new FileInputStream(soldierRegimentsFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(soldierRegimentsFile))))) {
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
@@ -487,7 +470,8 @@ public class Main {
 	private static void processSoldierDecorations(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER DECORATIONS ########################################################\n\n");
 
-		try (FileInputStream fis = new FileInputStream(soldierDecorationsFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(soldierDecorationsFile))))) {
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
@@ -538,7 +522,8 @@ public class Main {
 	private static void processSoldierRanks(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER RANKS ########################################################\n\n");
 
-		try (FileInputStream fis = new FileInputStream(soldierRanksFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(soldierRanksFile))))) {
+			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
 				lines.add(thisLine.split(","));
