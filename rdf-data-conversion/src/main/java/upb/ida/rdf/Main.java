@@ -13,19 +13,19 @@ public class Main {
 	private static final char DEFAULT_SEPARATOR = ',';
 	private static final char DEFAULT_QUOTE = '"';
 	private static final String CHARSET = "UTF-8";
-	private static final String resultFile = "E:\\UPB\\ida\\ida-convertdata\\files\\result.ttl";
+	private static final String resultFile = "files/result.ttl";
 	private static final String baseUrl = "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/";
 	private static final String ontologyBaseUrl = baseUrl + "ontology/";
 	private static final String dataBaseUrl = baseUrl + "data/";
 
 	//    file paths
-	private static final String dienststellungFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_dienststellung.csv";
-	private static final String ordenFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_orden.csv";
-	private static final String ssfuehrerFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer.csv";
-	private static final String ssrangFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssrang.csv";
-	private static final String soldierDecorationsFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer_orden.csv";
-	private static final String soldierRegimentsFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer_dienststellung.csv";
-	private static final String soldierRanksFile = "E:\\UPB\\ida\\ida-convertdata\\files\\tbl_ssfuehrer_ssrang.csv";
+	private static final String dienststellungFile = "files\\tbl_dienststellung.csv";
+	private static final String ordenFile = "files\\tbl_orden.csv";
+	private static final String ssfuehrerFile = "files\\tbl_ssfuehrer.csv";
+	private static final String ssrangFile = "files\\tbl_ssrang.csv";
+	private static final String soldierDecorationsFile = "files\\tbl_ssfuehrer_orden.csv";
+	private static final String soldierRegimentsFile = "files\\tbl_ssfuehrer_dienststellung.csv";
+	private static final String soldierRanksFile = "files\\tbl_ssfuehrer_ssrang.csv";
 
 	//    prefixes
 	private static String prefixes =
@@ -51,18 +51,19 @@ public class Main {
 
 
 	public static void main(String[] args) throws Exception {
-		addPrefixes();
+		Main o = new Main();
+		o.addPrefixes();
 		StringBuilder stringBuilder = new StringBuilder("");
 
-		processRegiments(stringBuilder);
-//		processDecorations(stringBuilder);
-//		processSSRanks(stringBuilder);
-//		processSoldiers(stringBuilder);
-//		processSoldierDecorations(stringBuilder);
-//		processSoldierRegiments(stringBuilder);
-//		processSoldierRanks(stringBuilder);
+		o.processRegiments(stringBuilder);
+		o.processDecorations(stringBuilder);
+		o.processSSRanks(stringBuilder);
+		o.processSoldiers(stringBuilder);
+		o.processSoldierDecorations(stringBuilder);
+		o.processSoldierRegiments(stringBuilder);
+		o.processSoldierRanks(stringBuilder);
 
-		BufferedWriter out = new BufferedWriter(new FileWriter(resultFile, true));
+		BufferedWriter out = new BufferedWriter(new FileWriter(Main.class.getClassLoader().getResource(resultFile).getFile(), true));
 		out.write(stringBuilder.toString());
 		out.close();
 	}
@@ -88,8 +89,8 @@ public class Main {
 			.append(last ? ".\n" : ";\n");
 	}
 
-	public static void addPrefixes() throws Exception {
-		File file = new File(resultFile);
+	public void addPrefixes() throws Exception {
+		File file = new File(Main.class.getClassLoader().getResource(resultFile).getFile());
 		if (file.exists()) {
 			file.delete();
 		}
@@ -99,9 +100,13 @@ public class Main {
 		fileWriter.close();
 	}
 
-	private static void processRegiments(StringBuilder stringBuilder) {
+	public InputStream getFileInputStream(String filename) {
+		return Main.class.getClassLoader().getResourceAsStream(filename);
+	}
+
+	private void processRegiments(StringBuilder stringBuilder) {
 		stringBuilder.append("######### REGIMENTS #########################################################\n\n");
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(dienststellungFile))))){
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(dienststellungFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -113,10 +118,7 @@ public class Main {
 
 			for (int i = 1; i < dienstellungArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("regiment:").append(dienstellungArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Regiment ;\n").
-					append("\t").append("rdfs:label \"").append(dienstellungArray[i][1]).append("\" .\n");
-				stringBuilder.append("\n");
-				stringBuilder.append("regiment:").append(dienstellungArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Regiment ;\n");
+				stringBuilder.append("regiment:").append(dienstellungArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Regiment ;\n");
 
 				for (int j = 0; j < dienstellungArray[i].length; j++) {
 					switch (j) {
@@ -141,8 +143,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(dienstellungArray[i][1]).append("\" ;\n");
-				stringBuilder.append("\t").append("owl:sameAs ").append("regiment:").append(dienstellungArray[i][0]).append(" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(dienstellungArray[i][1]).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -152,10 +153,10 @@ public class Main {
 	}
 
 
-	private static void processSoldiers(StringBuilder stringBuilder) {
+	private void processSoldiers(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIERS ########################################################\n\n");
 
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(ssfuehrerFile))))) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(ssfuehrerFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -167,13 +168,7 @@ public class Main {
 			for (int i = 1; i < ssfuehrerArray.length; i++) {
 				// Using membership ID instead of PK for Soldier
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier:").append(ssfuehrerArray[i][1]).append("\n\trdf:type owl:NamedIndividual, :Soldier ;\n").
-					append("\t").append("rdfs:label \"").append(ssfuehrerArray[i][7]).append(", ").append(ssfuehrerArray[i][8]).append("\" .\n");
-				stringBuilder.append("\n");
-				stringBuilder.append("soldier:")
-					.append(ssfuehrerArray[i][7].replaceAll("\\s+", "")).append("_").append(ssfuehrerArray[i][8].replaceAll("\\s+", ""))
-					.append("\n\trdf:type owl:NamedIndividual, :Soldier ;\n");
-
+				stringBuilder.append("soldier:").append(ssfuehrerArray[i][1]).append("\n\trdf:type owl:NamedIndividual, :Soldier ;\n");
 
 				for (int j = 0; j < ssfuehrerArray[i].length; j++) {
 					String currentColumnVal = ssfuehrerArray[i][j];
@@ -278,8 +273,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(ssfuehrerArray[i][7]).append(", ").append(ssfuehrerArray[i][8]).append("\" ;\n");
-				stringBuilder.append("\t").append("owl:sameAs ").append("soldier:").append(ssfuehrerArray[i][1]).append(" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(ssfuehrerArray[i][7]).append(", ").append(ssfuehrerArray[i][8]).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 
@@ -291,10 +285,10 @@ public class Main {
 	}
 
 
-	private static void processSSRanks(StringBuilder stringBuilder) {
+	private void processSSRanks(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SSRANKS ########################################################\n\n");
 
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(ssrangFile))))) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(ssrangFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -305,10 +299,7 @@ public class Main {
 
 			for (int i = 1; i < rankArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("ssrank:").append(rankArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SSRank ;\n").
-					append("\t").append("rdfs:label \"").append(rankArray[i][1]).append("\" .\n");
-				stringBuilder.append("\n");
-				stringBuilder.append("ssrank:").append(rankArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :SSRank ;\n");
+				stringBuilder.append("ssrank:").append(rankArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SSRank ;\n");
 
 				for (int j = 0; j < rankArray[i].length; j++) {
 					switch (j) {
@@ -331,8 +322,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(rankArray[i][1]).append("\" ;\n");
-				stringBuilder.append("\t").append("owl:sameAs ").append("ssrank:").append(rankArray[i][0]).append(" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(rankArray[i][1]).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 
@@ -343,9 +333,9 @@ public class Main {
 	}
 
 
-	private static void processDecorations(StringBuilder stringBuilder) {
+	private void processDecorations(StringBuilder stringBuilder) {
 		stringBuilder.append("########## DECORATIONS ########################################################\n\n");
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(ordenFile))))) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(ordenFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -356,10 +346,7 @@ public class Main {
 
 			for (int i = 1; i < ordenArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("decoration:").append(ordenArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Decoration ;\n").
-					append("\t").append("rdfs:label \"").append(ordenArray[i][1]).append("\" .\n");
-				stringBuilder.append("\n");
-				stringBuilder.append("decoration:").append(ordenArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Decoration ;\n");
+				stringBuilder.append("decoration:").append(ordenArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Decoration ;\n");
 
 				for (int j = 0; j < ordenArray[i].length; j++) {
 					switch (j) {
@@ -404,8 +391,7 @@ public class Main {
 
 				}
 
-				stringBuilder.append("\t").append("rdfs:label \"").append(ordenArray[i][1]).append("\" ;\n");
-				stringBuilder.append("\t").append("owl:sameAs ").append("decoration:").append(ordenArray[i][0]).append(" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(ordenArray[i][1]).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -415,10 +401,10 @@ public class Main {
 	}
 
 
-	private static void processSoldierRegiments(StringBuilder stringBuilder) {
+	private void processSoldierRegiments(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER REGIMENTS ########################################################\n\n");
 
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(soldierRegimentsFile))))) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierRegimentsFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -467,10 +453,10 @@ public class Main {
 
 	}
 
-	private static void processSoldierDecorations(StringBuilder stringBuilder) {
+	private void processSoldierDecorations(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER DECORATIONS ########################################################\n\n");
 
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(soldierDecorationsFile))))) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierDecorationsFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -519,10 +505,10 @@ public class Main {
 
 	}
 
-	private static void processSoldierRanks(StringBuilder stringBuilder) {
+	private void processSoldierRanks(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER RANKS ########################################################\n\n");
 
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(new FileInputStream(new File(soldierRanksFile))))) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierRanksFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
@@ -567,8 +553,6 @@ public class Main {
 			System.out.println("Soldier Ranks processing failed");
 			e.printStackTrace();
 		}
-
-
 	}
 
 
