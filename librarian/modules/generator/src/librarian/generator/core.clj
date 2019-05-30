@@ -1,9 +1,5 @@
 (ns librarian.generator.core
   (:require [datascript.core :as d]
-            [clucie.core :as clucie]
-            [clucie.store :as cstore]
-            [clucie.document :as cdoc]
-            [clucie.analysis :as canalysis]
             [clojure.core.memoize :as memo]
             [clojure.data.priority-map :refer [priority-map]]
             [librarian.helpers.transients :refer [into!]]
@@ -11,7 +7,6 @@
             [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.snippet :as snippet]
-            [librarian.model.concepts.named :as named]
             [librarian.generator.query :as gq]
             [librarian.generator.actions.call :refer [call-actions]]
             [librarian.generator.actions.receive :refer [receive-actions]]
@@ -19,51 +14,6 @@
             [librarian.generator.actions.param-remove :refer [param-remove-actions]]
             [librarian.generator.actions.call-completion :refer [call-completion-actions]])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
-
-(defn scrape->docs
-  [{:keys [db ecosystem]}]
-  (->> db
-       (d/q ecosystem
-            '[:find ?c (distinct ?t) (distinct ?d) ?n
-              :where [?c :type ?t]
-                     [?c :description ?d]
-                     [(get-else $ ?c ::named/name :unnamed) ?n]])
-       (map (fn [[id type description name]]
-              {:id id
-               :name name
-               ::clucie/raw-fields
-               (concat (->> type
-                            (mapcat ancestors)
-                            (distinct)
-                            (map #(cdoc/field :type (str %)
-                                              {:indexed? true})))
-                       (->> description
-                            (map #(cdoc/field :description %
-                                              {:indexed? true
-                                               :tokenized? true}))))}))))
-
-(defn add-scrape!
-  [index scrape]
-  (clucie/add! index (scrape->docs scrape) [:id]))
-
-(defn scrape->index
-  [scrape]
-  (let [index (cstore/memory-store)]
-    (add-scrape! index scrape)
-    index))
-
-(def analyzer (canalysis/analyzer-mapping (EnglishAnalyzer.)
-                                          {:type (canalysis/keyword-analyzer)}))
-
-(defn search
-  [index max type description]
-  (->> (clucie/search index
-                      [{:type (str type)}
-                       {:description description}]
-                      max analyzer)
-       (map (juxt #(Integer. (:id %))
-                  (comp :score meta)))
-       (into {})))
 
 (defn initial-state
   [scrape tx]
