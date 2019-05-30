@@ -1,13 +1,12 @@
 package upb.ida.service;
 
-import upb.ida.domains.User;
-//import upb.ida.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import upb.ida.domains.User;
+import upb.ida.rest.UserController;
 
 
 @Service
@@ -33,8 +32,8 @@ public class UserService{
     
 	//@Transactional(readOnly = true)
     public User getByUsername(String username) {
-        //return userRepository.findUserByUsername(username);
-        return null;
+		return (User) UserController.select3(username);	
+      //  return userRepository.findUserByUsername(username);
     }
 
 	//@Transactional(readOnly = false)
@@ -46,5 +45,5 @@ public class UserService{
 	//@Transactional(readOnly = false)
     public void delete(Long id) {
         //userRepository.deleteById(id);
-    }
+    }		
 }

@@ -1,114 +1,242 @@
 package upb.ida.rest;
 
-import upb.ida.bean.ResponseBean;
-import upb.ida.domains.User;
-import upb.ida.constant.IDALiteral;
-import upb.ida.service.UserService;
-//import upb.ida.smtp.EmailForSignup;
+import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdfconnection.RDFConnectionFuseki;
+import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import upb.ida.domains.User;
 
-@Controller
-@CrossOrigin(origins = "*", allowCredentials = "true")
-@RequestMapping("/user")
+@RestController
 public class UserController {
+	private RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
+
+	@RequestMapping("/new")
+	public String insert(@RequestBody User record) throws NoSuchAlgorithmException {
+
+		String firstname = record.getFirstname();
+		String userName = record.getUsername();
+		String password = record.getPassword();
+		String newHashPass = hashPassword(password);
+		password = newHashPass;
+		System.out.println("SHA-256 HASH:" + password);
+        
+		// In this variation, a connection is built each time.
+		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+
+			UpdateRequest request = UpdateFactory.create();
+			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
+					+ "INSERT DATA{ab:" + userName + " dc:name \"" + firstname + "\"; dc:username \"" + userName
+					+ "\" ; dc:password \"" + password + "\" .}");
+			conn.update(request);
+			System.out.println(request);
+		}
+		return "Record Inserted Successfully";
+	}
+
+	@RequestMapping("/delete")
+	public String delete(@RequestBody User record) throws NoSuchAlgorithmException {
+
+		String firstname = record.getFirstname();
+		String userName = record.getUsername();
+		String password = record.getPassword();
+		String newHashPass = hashPassword(password);
+		password = newHashPass;
+
+		// In this variation, a connection is built each time.
+		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+			UpdateRequest request = UpdateFactory.create();
+
+			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
+					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + " dc:name \"" + firstname + "\" ;\r\n"
+					+ "                  dc:password \"" + password + "\" ;\r\n" + "dc:username \"" + userName
+					+ "\".\r\n" + "}");
+
+			conn.update(request);
+		}
+		return "Record Deleted Successfully";
+	}
+
+	@RequestMapping("/update")
+	public String update(@RequestBody User record) throws NoSuchAlgorithmException {
+
+		String newPassword = record.getNewpassword();
+		String firstname = record.getFirstname();
+		String userName = record.getUsername();
+		String password = record.getPassword();
+		String newHashPass = hashPassword(password);
+		String newPasswordHash = hashPassword(newPassword);
+		password = newHashPass;
+		newPassword = newPasswordHash;
+
+		// In this variation, a connection is built each time.
+		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+
+			UpdateRequest request = UpdateFactory.create();
+
+			// The idea is SPARQL is not for relational data! Its for graph data
+			// So here we are just deleting the old recordrd and inserting new one
+
+			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
+					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + "    dc:name \"" + firstname + "\" ;\r\n"
+					+ "                 dc:password \"" + password + "\" ;\r\n" + "}");
+			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
+					+ "INSERT DATA{ab:" + userName + " dc:name \"" + firstname + "\" ; dc:password \"" + newPassword
+					+ "\" .}");
+			conn.update(request);
+		}
+		return "Record Updated Successfully";
+	}
+
+	@GetMapping("/selecta")
+	public String select() {
+		// In this variation, a connection is built each time.
+		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+			QueryExecution qExec = conn.query("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+					+ "prefix owl: <http://www.w3.org/2002/07/owl#> "
+					+ "SELECT ?subject ?predicate ?object WHERE {?subject ?predicate ?object }");
+			ResultSet rs = qExec.execSelect();
+
+			// Converting results into JSON
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			ResultSetFormatter.outputAsJSON(outputStream, rs);
+			return new String(outputStream.toByteArray());
+		}
+	}
+
+//	@RequestMapping("/selectb") // one by one
+//	public String select2(@RequestBody User record) {
+//		String userName = record.getUsername();
+//		// In this variation, a connection is built each time.
+//
+//		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+//			QueryExecution qExec = conn.query("prefix ab:<http://userdata/#" + userName + "> \r\n"
+//					+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
+//					+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "");
+//
+//			ResultSet rs = qExec.execSelect();
+//			System.out.println("result is:" + rs);
+//
+//			// Converting results into JSON
+//			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//			ResultSetFormatter.outputAsJSON(outputStream, rs);
+//			String jsonOutput = new String(outputStream.toByteArray());
+//
+//			return jsonOutput;
+//		}
+//	}
 	
-	@Autowired
-    private UserService userService;
+	@RequestMapping("/selectb") // one by one
+	public User select2(@RequestBody User record) {
+	String userName = record.getUsername();
+	String serviceURI = "http://localhost:3030/user";
+	String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
+			+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
+			+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "";
+		
+	String fetchedUserName = null;
+	String fetchedName = null;
+	String fetchedPassword = null;
+	User obj = null;
 	
-	@Autowired
-	private ResponseBean responseBean;
+	QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1);
+	ResultSet results = q.execSelect();
 
-    @RequestMapping(value="/list", method=RequestMethod.GET)
-    @ResponseBody
-    public ResponseBean listUsers(){
-    	List<User> users = userService.listAllUsers();
-    	if(users == null)
-    	{
-    		responseBean.setErrCode(IDALiteral.FAILURE_USERLIST);
-    	}
-    	else 
-    	{
-    		Map<String, Object> returnMap = new HashMap<String, Object>();
-    		returnMap.put("users", users);
-    		responseBean.setPayload(returnMap);
-    	}
-        return responseBean; 
-    }
+	while (results.hasNext()) {
+		QuerySolution soln = results.nextSolution();
+		// assumes that you have an "?x" in your query
+		RDFNode x = soln.get("username");
+		RDFNode y = soln.get("name");
+		RDFNode z = soln.get("password");
+		System.out.println("username"+x);
+		System.out.println("name"+y);
+		System.out.println("password"+z);
+		
+		fetchedUserName = x.toString();
+		fetchedName = y.toString();
+		fetchedPassword = z.toString();
+		obj = new User(fetchedUserName,fetchedName,fetchedPassword);
+	}
+	return obj;
+}
+	
+	public static User select3(String clientUserName) {
+		String userName = clientUserName;
+		String serviceURI = "http://localhost:3030/user";
+		String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
+				+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
+				+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "";
+		String fetchedUserName = null;
+		String fetchedName = null;
+		String fetchedPassword = null;
+		User obj = null;
 
-    @RequestMapping(value="/update", method=RequestMethod.POST)
-    @ResponseBody
-    public ResponseBean updateUser(@RequestBody final User user){
-    	User updatedUser = userService.saveOrUpdate(user);
-    	if(updatedUser == null)
-    	{
-    		responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
-    	}
-    	else 
-    	{
-    		Map<String, Object> returnMap = new HashMap<String, Object>();
-    		returnMap.put("updatedUser", updatedUser);
-    		responseBean.setPayload(returnMap);
-    	}
-        return responseBean; 
-    }
+		QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1);
+		ResultSet results = q.execSelect();
 
-    @RequestMapping(value="/new", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    public ResponseBean createNewUser(@RequestBody final User user) throws Exception {
-    	
-    	if(userService.getByUsername(user.getUsername()) != null)
-    	{
-    		responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
-    		return responseBean;
-    	}
-    	User newUser = userService.saveOrUpdate(user);
-    	if(newUser == null)
-    	{
-    		responseBean.setErrCode(IDALiteral.FAILURE_NEWUSER);
-    	}
-    	else 
-    	{
-    		Map<String, Object> returnMap = new HashMap<String, Object>();
-    		returnMap.put("newUser", newUser);
-    		responseBean.setPayload(returnMap);
-//    		TODO: This email functionality is commented just for now. (Tested and working)
-//    		try{
-//    			EmailForSignup.sendEmail(newUser.getUsername());
-//    		}catch(Exception ex)
-//    		{
-//    			responseBean.setErrCode(IDALiteral.FAILURE_EMAILSENT);
-//    			responseBean.setErrMsg(ex.getMessage());
-//    		}
-    	}
-        return responseBean; 
-    }
+		while (results.hasNext()) {
+			QuerySolution soln = results.nextSolution();
+			// assumes that you have an "?x" in your query
+			RDFNode x = soln.get("username");
+			RDFNode y = soln.get("name");
+			RDFNode z = soln.get("password");
+			System.out.println("username"+x);
+			System.out.println("name"+y);
+			System.out.println("password"+z);
+			fetchedUserName = x.toString();
+			fetchedName = y.toString();
+			fetchedPassword = z.toString();
+			obj = new User(fetchedUserName,fetchedName,fetchedPassword);
+		}
+		
+		return obj;
+	}
+	// password hashing
 
-    @RequestMapping(value="/delete/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseBean deleteUser(@PathVariable String id){
-    	if (userService.getById(Long.valueOf(id)) == null)
-    	{
-    		responseBean.setErrCode(IDALiteral.ALREADY_LOGGEDIN);
-    	}else
-    	{
-    		userService.delete(Long.valueOf(id));
-    		responseBean.setErrMsg("User Deleted");
-    	}
-    	return responseBean;
-    }
+	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
+
+		String data = Pass;
+
+		String algorithm = "SHA-256"; 
+		generateHash(data, algorithm);
+		// System.out.println("SHA-256 HASH:"+ generateHash(data, algorithm));
+		return generateHash(data, algorithm);
+
+	}
+
+	private static String generateHash(String data, String algorithm) throws NoSuchAlgorithmException {
+		MessageDigest digest = MessageDigest.getInstance(algorithm);
+		digest.reset();
+		byte[] hash = digest.digest(data.getBytes());
+		return bytesToStringHex(hash);
+
+	}
+
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+	private static String bytesToStringHex(byte[] bytes) {
+		char[] hexChars = new char[bytes.length * 2];
+		for (int j = 0; j < bytes.length; j++) {
+			int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+
+		return new String(hexChars);
+	}
+
 }
