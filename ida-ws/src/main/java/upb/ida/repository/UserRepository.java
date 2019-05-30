@@ -1,12 +1,12 @@
-package upb.ida.repository;
-
-import upb.ida.domains.User;
-import org.springframework.data.neo4j.annotation.Query;
-import org.springframework.data.neo4j.repository.Neo4jRepository;
-import org.springframework.data.repository.query.Param;
-
-public interface UserRepository extends Neo4jRepository<User, Long> {
-	
-    @Query("MATCH (n:User {username: {username}}) RETURN n")
-    User findUserByUsername(@Param("username") String username);
-}
+//package upb.ida.repository;
+//
+//import upb.ida.domains.User;
+//import org.springframework.data.neo4j.annotation.Query;
+//import org.springframework.data.neo4j.repository.Neo4jRepository;
+//import org.springframework.data.repository.query.Param;
+//
+//public interface UserRepository extends Neo4jRepository<User, Long> {
+//
+//    @Query("MATCH (n:User {username: {username}}) RETURN n")
+//    User findUserByUsername(@Param("username") String username);
+//}

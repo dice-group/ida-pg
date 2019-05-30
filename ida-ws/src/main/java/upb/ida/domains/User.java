@@ -1,17 +1,17 @@
 package upb.ida.domains;
 
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
+//import org.neo4j.ogm.annotation.GeneratedValue;
+//import org.neo4j.ogm.annotation.Id;
+//import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@NodeEntity
+//@NodeEntity
 public class User {
     
-	@Id
-	@GeneratedValue
+	//@Id
+	//@GeneratedValue
     private Long id;
     private String username;
     private String password;
