@@ -15,7 +15,7 @@
 
   :modules {:versions {org.clojure/clojure "1.10.0"
                        org.clojure/tools.logging "0.4.1"
-                       datascript "0.18.2"
+                       datascript "0.18.3"
                        clj-commons/fs "1.5.0"
 
                        librarian/helpers "1.0.0-SNAPSHOT"
