@@ -65,7 +65,7 @@
                         "\n<"
                         (->> (::typed/datatype (d/entity db node))
                              (map (fn [datatype]
-                                    (case (first (:type datatype))
+                                    (condp #(isa? %2 %1) (first (:type datatype))
                                       ::basetype/basetype
                                       (::basetype/id datatype)
                                       ::role-type/role-type

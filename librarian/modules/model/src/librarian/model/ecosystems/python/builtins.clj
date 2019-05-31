@@ -12,8 +12,8 @@
                      (map (fn [type]
                             [type (instanciate basetype/basetype
                                     :name (name type)
-                                    :extends object-type)])
-                          [:int :float :complex :str])))
+                                    :extends object-type)]))
+                     [:int :float :complex :string :boolean]))
 
 (def global-ns (instanciate namespace/namespace :name ""))
 
@@ -33,7 +33,7 @@
                 :datatype (basetypes to)
                 :receives-semantic param))))
 
-(def typecasters [(instanciate-typecaster "str" :object :str)
+(def typecasters [(instanciate-typecaster "str" :object :string)
                   (instanciate-typecaster "int" :object :int)
                   (instanciate-typecaster "float" :object :float)])
 
