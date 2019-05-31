@@ -1,6 +1,11 @@
 (ns librarian.generator.cost
   (:require [librarian.generator.query :as gq]))
 
+(defn nlog
+  "Negative logarithm."
+  [^double p]
+  (- (Math/log p)))
+
 (defn nlog-distance
   "The negative logarithm of the semantic compatibility of 'from to 'to.
    Only a mock implementation for now."
@@ -29,3 +34,9 @@
                         (assoc costs key (min current-cost general-cost key-cost))))
                     {} to-types)]
         (apply + (vals costs))))))
+
+(defn costify-actions
+  "Takes weighted actions, normalizes their weights and adds the normalized weight nlogs as costs."
+  [actions]
+  (let [weight-sum (Math/log (transduce (map :weight) + actions))]
+    (map #(assoc % :cost (- weight-sum (Math/log (:weight %))))) actions))

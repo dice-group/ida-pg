@@ -24,7 +24,7 @@
                                   :show-patterns false))))))
 
 (defn- goal-init-tx
-  [goals inputs]
+  [inputs goals]
   (instances->tx (concat (mapv (fn [input]
                                  (instanciate call-result/call-result
                                    :datatype [(instanciate role-type/role-type

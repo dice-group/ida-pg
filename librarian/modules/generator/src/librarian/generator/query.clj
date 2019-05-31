@@ -108,10 +108,12 @@
                                             (d/datoms db :eavt v :type))
                               v)))
                         (d/datoms db :eavt to ::typed/datatype))]
-     (fn [from]
-       (let [from-types (transitive-closure db [::datatype/extends] nil
-                                           (mapv :v (d/datoms db :eavt from ::typed/datatype)))]
-         (every? #(contains? from-types %) to-types))))))
+     (if (seq to-types)
+       (fn [from]
+         (let [from-types (transitive-closure db [::datatype/extends] nil
+                                             (mapv :v (d/datoms db :eavt from ::typed/datatype)))]
+           (every? #(contains? from-types %) to-types)))
+       (constantly false)))))
 
 (defn dependents
   [db id]
