@@ -84,6 +84,6 @@
                                (into! (result->tx flaw (comp r->cr results-combo))
                                       results)
                                (persistent!))]
-                    {:cost 0
+                    {:cost 1
                      :tx tx}))))
          completions)))

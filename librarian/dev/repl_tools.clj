@@ -8,6 +8,7 @@
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
+            [librarian.model.concepts.parameter :as parameter]
             [librarian.model.concepts.namespace :as namespace]
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.namespaced :as namespaced]
@@ -52,10 +53,10 @@
                           ::call-value/call-value
                           (::call-value/value (d/entity db node))
                           ::call-parameter/call-parameter
-                          (get-in (d/entity db node)
-                                  [::call-parameter/parameter
-                                   ::named/name]
-                                  "?")
+                          (let [e (d/entity db node)
+                                p (::call-parameter/parameter e)]
+                            (str (::named/name p "?")
+                                 (when (::parameter/optional p) "?")))
                           ::call-result/call-result
                           (get-in (d/entity db node)
                                   [::call-result/result ::named/name]

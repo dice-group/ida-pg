@@ -15,11 +15,7 @@
             [librarian.generator.actions.call-completion :refer [call-completion-actions]])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
 
-(defn initial-state
-  [scrape tx]
-  {:cost 0
-   :db (d/db-with (:db scrape) tx)
-   :placeholder-matches (memo/memo #'gq/placeholder-matches)})
+(def ^:dynamic *h-weight* 1.2)
 
 (defn flaws
   [{:keys [db]}]
@@ -36,17 +32,32 @@
                                    (not (:v (first (d/datoms db :eavt callable :placeholder))))))))
                  [::call/call])}))
 
+(defn cost-heuristic
+  [{:keys [flaws]}]
+  (transduce (map (comp count second)) + flaws))
+
 (defn apply-action
   [state action]
-  {:predecessor state
-   :cost (+ (:cost state) (:cost action))
-   :db (d/db-with (:db state) (:tx action))
-   :placeholder-matches (:placeholder-matches state)})
+  (as-> (transient {:predecessor state
+                    :cost (+ (:cost state) (:cost action))
+                    :db (d/db-with (:db state) (:tx action))
+                    :placeholder-matches (:placeholder-matches state)}) $
+        (assoc! $ :flaws (flaws $))
+        (assoc! $ :heuristic (+ (:cost $) (* *h-weight* (cost-heuristic $))))
+        (persistent! $)))
+
+(defn initial-state
+  [scrape tx]
+  (apply-action {:cost 0
+                 :db (:db scrape)
+                 :placeholder-matches (memo/memo #'gq/placeholder-matches)}
+                {:cost 0
+                 :tx tx}))
 
 (defn successors
   [state]
-  (let [{p-flaws :parameter, c-flaws :call} (flaws state)]
-    (println "flaws:" p-flaws c-flaws)
+  (let [{p-flaws :parameter, c-flaws :call} (:flaws state)]
+    (println "cost:" (:cost state) "flaws:" p-flaws c-flaws)
     (if (and (empty? p-flaws) (empty? c-flaws))
       :done
       (let [actions (transient [])
@@ -58,12 +69,13 @@
                              p-flaws)
                       actions)
             actions (into! actions (mapcat #(param-remove-actions state %)) p-flaws)
-            actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)]
-        (map (partial apply-action state) (persistent! actions))))))
+            actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)
+            actions (persistent! actions)]
+        (map (partial apply-action state) actions)))))
 
 (defn search-state
   [state]
-  {:queue (priority-map state (:cost state))})
+  {:queue (priority-map state (:heuristic state))})
 
 (def initial-search-state (comp search-state initial-state))
 
@@ -78,5 +90,5 @@
         (if (= state-successors :done)
           {:done true, :goal state}
           {:queue (into (pop queue)
-                        (map (fn [succ] [succ (:cost succ)]))
+                        (map (fn [succ] [succ (:heuristic succ)]))
                         state-successors)})))))
