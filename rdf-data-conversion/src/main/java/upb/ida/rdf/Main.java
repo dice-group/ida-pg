@@ -26,12 +26,15 @@ public class Main {
 	private static final String soldierDecorationsFile = "files\\tbl_ssfuehrer_orden.csv";
 	private static final String soldierRegimentsFile = "files\\tbl_ssfuehrer_dienststellung.csv";
 	private static final String soldierRanksFile = "files\\tbl_ssfuehrer_ssrang.csv";
+	private static final String literatureFile = "files\\tbl_literatur.csv";
+	private static final String soldierLiteratureFile = "files\\tbl_ssfuehrer_literatur.csv";
 
 	//    prefixes
 	private static String prefixes =
 		"@prefix owl: <http://www.w3.org/2002/07/owl#> .\n" +
 			"@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
 			"@prefix xml: <http://www.w3.org/XML/1998/namespace> .\n" +
+			"@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n" +
 			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
 			"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
 			"@prefix dc: <http://purl.org/dc/terms/> .\n" +
@@ -62,6 +65,8 @@ public class Main {
 		o.processSoldierDecorations(stringBuilder);
 		o.processSoldierRegiments(stringBuilder);
 		o.processSoldierRanks(stringBuilder);
+		o.processLiterature(stringBuilder);
+		o.processSoldierLiterature(stringBuilder);
 
 		BufferedWriter out = new BufferedWriter(new FileWriter(Main.class.getClassLoader().getResource(resultFile).getFile(), true));
 		out.write(stringBuilder.toString());
@@ -148,6 +153,131 @@ public class Main {
 			}
 		} catch (Exception e) {
 			System.out.println("Regiments processing failed");
+			e.printStackTrace();
+		}
+	}
+
+	private void processSoldierLiterature(StringBuilder stringBuilder) {
+		stringBuilder.append("########## SOLDIER LITERATURE ########################################################\n\n");
+
+		try (FileInputStream fis = new FileInputStream(soldierLiteratureFile); DataInputStream myInput = new DataInputStream(fis)) {
+			List<String[]> lines = new ArrayList<String[]>();
+			String thisLine;
+			while ((thisLine = myInput.readLine()) != null) {
+				lines.add(thisLine.split(","));
+			}
+			String[][] soldierLiteratureArray = new String[lines.size()][0];
+			lines.toArray(soldierLiteratureArray);
+
+			for (int i = 1; i < soldierLiteratureArray.length; i++) {
+				stringBuilder.append("##\n");
+				stringBuilder.append("soldier_literature:").append(soldierLiteratureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierLiteratureInfo ;\n");
+
+				for (int j = 0; j < soldierLiteratureArray[i].length; j++) {
+					String currentValue = soldierLiteratureArray[i][j];
+
+					switch (j) {
+
+						case 0:
+							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
+							break;
+						case 1:
+							stringBuilder.append("\t").append(":verkm ").append(currentValue).append(" ;\n");
+							break;
+						case 2:
+							appendResourceProperty(stringBuilder, "", "", ":literaturequInfo", "literature:", currentValue, false, true);
+							break;
+						case 3:
+							if (isValidString(currentValue)) {
+								String[] dateParts = currentValue.split("\\.");
+								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
+								appendDatetimeProperty(stringBuilder, ":From", start, false);
+							}
+							break;
+						case 4:
+							stringBuilder.append("\t").append(":information ").append(currentValue).append(" ;\n");
+							break;
+						default:
+							break;
+					}
+
+				}
+				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n\n");
+				appendResourceProperty(stringBuilder, "soldier:", soldierLiteratureArray[i][1], ":hasLiterature", "soldier_literature:", soldierLiteratureArray[i][0], true, false);
+				stringBuilder.append("##\n\n");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Soldier Literature processing failed");
+			e.printStackTrace();
+		}
+
+
+	}
+
+	private void processLiterature(StringBuilder stringBuilder){
+		stringBuilder.append("######### LITERATURE #########################################################\n\n");
+
+		try (FileInputStream fis = new FileInputStream(literatureFile); DataInputStream myInput = new DataInputStream(fis)) {
+			String thisLine;
+			List<String[]> lines = new ArrayList<String[]>();
+			while ((thisLine = myInput.readLine()) != null) {
+				lines.add(thisLine.split(","));
+			}
+
+			String[][] literatureArray = new String[lines.size()][0];
+			lines.toArray(literatureArray);
+
+			for (int i = 1; i < literatureArray.length; i++) {
+				stringBuilder.append("##\n");
+				stringBuilder.append("literature:").append(literatureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n").
+						append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
+				stringBuilder.append("\n");
+				stringBuilder.append("literature:").append(literatureArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n");
+
+				for (int j = 0; j < literatureArray[i].length; j++) {
+					switch (j) {
+						case 0:
+							stringBuilder.append("\t").append(":id ").append(literatureArray[i][j]).append(" ;\n");
+							break;
+						case 1:
+							appendStringProperty(stringBuilder, ":kurztit", literatureArray[i][j], false);
+							break;
+						case 2:
+							appendStringProperty(stringBuilder, ":author", literatureArray[i][j], false);
+							break;
+						case 3:
+							stringBuilder.append("\t").append(":year ").append(literatureArray[i][j]).append(" ;\n");
+							break;
+						case 4:
+							stringBuilder.append("\t").append(":citaviID ").append(literatureArray[i][j]).append(" ;\n");
+							break;
+						case 5:
+							appendStringProperty(stringBuilder, ":provenance", literatureArray[i][j], false);
+							break;
+						case 6:
+							appendStringProperty(stringBuilder, ":signature", literatureArray[i][j], false);
+							break;
+						case 7:
+							appendStringProperty(stringBuilder, ":information", literatureArray[i][j], false);
+							break;
+						case 8:
+							appendStringProperty(stringBuilder, ":processingStatus", literatureArray[i][j], false);
+							break;
+						case 9:
+							appendStringProperty(stringBuilder, ":comments", literatureArray[i][j], false);
+							break;
+						default:
+							break;
+					}
+
+				}
+				stringBuilder.append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" ;\n");
+				stringBuilder.append("\t").append("owl:sameAs ").append("literature:").append(literatureArray[i][0]).append(" .\n");
+				stringBuilder.append("##\n\n");
+			}
+		} catch (Exception e) {
+			System.out.println("Literature processing failed");
 			e.printStackTrace();
 		}
 	}
