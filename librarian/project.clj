@@ -17,6 +17,7 @@
                        org.clojure/tools.logging "0.4.1"
                        datascript "0.18.3"
                        clj-commons/fs "1.5.0"
+                       org.flatland/ordered "1.5.7"
 
                        librarian/helpers "1.0.0-SNAPSHOT"
                        librarian/model "1.0.0-SNAPSHOT"

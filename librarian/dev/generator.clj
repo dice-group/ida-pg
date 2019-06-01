@@ -45,7 +45,7 @@
          (instances->tx [(instanciate call-value/call-value
                            :value 123
                            :datatype [(instanciate basetype/basetype
-                                        :name "str")
+                                        :name "string")
                                       (instanciate semantic-type/semantic-type
                                         :key "foo"
                                         :value "bar")
@@ -60,5 +60,9 @@
   [_ & args]
   (apply gen-test*
          "libs/scikit-learn-cluster"
-         (goal-init-tx [:dataset] [:labels])
+         (concat (goal-init-tx [:dataset] [:labels])
+                 (instances->tx [(instanciate call-value/call-value
+                                   :value 123
+                                   :datatype [(instanciate basetype/basetype
+                                                :name "string")])]))
          args))

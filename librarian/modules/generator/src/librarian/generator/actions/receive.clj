@@ -23,5 +23,7 @@
                                    types)
                         tx (conj tx [:db/add flaw ::data-receiver/receives solution])]
                     (when (< semantic-cost Double/POSITIVE_INFINITY)
-                      {:cost semantic-cost, :tx tx})))
+                      {:type :receiver
+                       :cost semantic-cost
+                       :tx tx})))
                 solutions))))))

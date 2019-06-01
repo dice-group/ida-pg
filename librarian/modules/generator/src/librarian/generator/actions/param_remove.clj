@@ -6,5 +6,7 @@
 (defn param-remove-actions
   [{:keys [db]} flaw]
   (when (-> (d/entity db flaw) ::call-parameter/parameter ::parameter/optional)
-    [{:cost 1
-      :tx [[:db.fn/retractEntity flaw]]}]))
+    [{:type :param-remove
+      :cost 1
+      :tx [[:db.fn/retractEntity flaw]]
+      :remove [flaw]}]))

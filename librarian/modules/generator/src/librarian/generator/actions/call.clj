@@ -37,7 +37,8 @@
                                                      ::call-parameter/parameter id
                                                      ::typed/datatype (map :db/id (::typed/datatype param))}]))
                                  (::callable/parameter callable))]
-             {:cost (-> callable ::callable/parameter count inc)
+             {:type :call
+              :cost 1
               :tx (conj (vec (vals param-map))
                         {:type ::call/call
                          ::call/callable (:db/id callable)

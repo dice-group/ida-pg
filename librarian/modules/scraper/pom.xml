@@ -99,14 +99,14 @@
       <version>4.4.0</version>
     </dependency>
     <dependency>
-      <groupId>org.flatland</groupId>
-      <artifactId>ordered</artifactId>
-      <version>1.5.7</version>
-    </dependency>
-    <dependency>
       <groupId>hickory</groupId>
       <artifactId>hickory</artifactId>
       <version>0.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.flatland</groupId>
+      <artifactId>ordered</artifactId>
+      <version>1.5.7</version>
     </dependency>
     <dependency>
       <groupId>datascript</groupId>
