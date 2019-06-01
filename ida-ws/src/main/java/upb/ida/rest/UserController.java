@@ -25,10 +25,11 @@ import upb.ida.domains.User;
 public class UserController {
 	private RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
 
-	@RequestMapping("/new")
+	@RequestMapping("/user/new")
 	public String insert(@RequestBody User record) throws NoSuchAlgorithmException {
-
+		//getLastname
 		String firstname = record.getFirstname();
+		String lastname = record.getLastname();
 		String userName = record.getUsername();
 		String password = record.getPassword();
 		String newHashPass = hashPassword(password);
@@ -40,8 +41,8 @@ public class UserController {
 
 			UpdateRequest request = UpdateFactory.create();
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "INSERT DATA{ab:" + userName + " dc:name \"" + firstname + "\"; dc:username \"" + userName
-					+ "\" ; dc:password \"" + password + "\" .}");
+					+ "INSERT DATA{ab:" + userName + " dc:firstname \"" + firstname + "\"; dc:lastname \"" + lastname + "\";  dc:username \"" + userName
+					+ "\" ; dc:password \"" + password + "\";  .}");
 			conn.update(request);
 			System.out.println(request);
 		}
@@ -52,6 +53,7 @@ public class UserController {
 	public String delete(@RequestBody User record) throws NoSuchAlgorithmException {
 
 		String firstname = record.getFirstname();
+		String lastname = record.getLastname();
 		String userName = record.getUsername();
 		String password = record.getPassword();
 		String newHashPass = hashPassword(password);
@@ -62,8 +64,8 @@ public class UserController {
 			UpdateRequest request = UpdateFactory.create();
 
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + " dc:name \"" + firstname + "\" ;\r\n"
-					+ "                  dc:password \"" + password + "\" ;\r\n" + "dc:username \"" + userName
+					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + " dc:firstname \"" + firstname + "\" ;\r\n"
+					+ "dc:password \"" + password + "\" ;\r\n" + "dc:lastname\"" + lastname + "\"; \r\n" + "dc:username \"" + userName
 					+ "\".\r\n" + "}");
 
 			conn.update(request);
@@ -71,11 +73,12 @@ public class UserController {
 		return "Record Deleted Successfully";
 	}
 
-	@RequestMapping("/update")
+	@RequestMapping("/user/update")
 	public String update(@RequestBody User record) throws NoSuchAlgorithmException {
 
 		String newPassword = record.getNewpassword();
 		String firstname = record.getFirstname();
+		String lastname = record.getLastname();
 		String userName = record.getUsername();
 		String password = record.getPassword();
 		String newHashPass = hashPassword(password);
@@ -89,20 +92,20 @@ public class UserController {
 			UpdateRequest request = UpdateFactory.create();
 
 			// The idea is SPARQL is not for relational data! Its for graph data
-			// So here we are just deleting the old recordrd and inserting new one
+			// So here we are just deleting the old recorded and inserting new one
 
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + "    dc:name \"" + firstname + "\" ;\r\n"
-					+ "                 dc:password \"" + password + "\" ;\r\n" + "}");
+					+ "DELETE DATA\r\n" + "{\r\n" + "  ab:" + userName + "    dc:firstname \"" + firstname + "\" ;\r\n"
+					+ "dc:password \"" + password + "\" ;\r\n" + "dc:lastname\"" + lastname + "\"; \r\n" + "}");
 			request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "PREFIX ab:<http://userdata/#>\r\n"
-					+ "INSERT DATA{ab:" + userName + " dc:name \"" + firstname + "\" ; dc:password \"" + newPassword
+					+ "INSERT DATA{ab:" + userName + " dc:firstname \"" + firstname + "\" ; \r\n" + "dc:lastname\"" +lastname + "\"; dc:password \"" + newPassword
 					+ "\" .}");
 			conn.update(request);
 		}
 		return "Record Updated Successfully";
 	}
 
-	@GetMapping("/selecta")
+	@GetMapping("/user/list")
 	public String select() {
 		// In this variation, a connection is built each time.
 		try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
@@ -145,11 +148,12 @@ public class UserController {
 	String userName = record.getUsername();
 	String serviceURI = "http://localhost:3030/user";
 	String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
-			+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
-			+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "";
+			+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?firstname ?lastname ?username ?password \r\n"
+			+ "	where {ab: cd:firstname ?firstname ;cd:lastname ?lastname ; cd:password ?password ; cd:username ?username .}\r\n" + "";
 		
 	String fetchedUserName = null;
-	String fetchedName = null;
+	String fetchedFirstName = null;
+	String fetchedLastName = null;
 	String fetchedPassword = null;
 	User obj = null;
 	
@@ -160,31 +164,35 @@ public class UserController {
 		QuerySolution soln = results.nextSolution();
 		// assumes that you have an "?x" in your query
 		RDFNode x = soln.get("username");
-		RDFNode y = soln.get("name");
+		RDFNode y = soln.get("firstname");
+		RDFNode w = soln.get("lastname");
 		RDFNode z = soln.get("password");
 		System.out.println("username"+x);
-		System.out.println("name"+y);
+		System.out.println("firstname"+y);
+		System.out.println("lastname"+w);
 		System.out.println("password"+z);
 		
 		fetchedUserName = x.toString();
-		fetchedName = y.toString();
+		fetchedFirstName = y.toString();
+		fetchedLastName = w.toString();
 		fetchedPassword = z.toString();
-		obj = new User(fetchedUserName,fetchedName,fetchedPassword);
+		obj = new User(fetchedUserName,fetchedPassword, fetchedFirstName,fetchedLastName);
 	}
 	return obj;
 }
 	
-	public static User select3(String clientUserName) {
+	public static User list(String clientUserName) {
 		String userName = clientUserName;
 		String serviceURI = "http://localhost:3030/user";
 		String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
 				+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?name ?username ?password \r\n"
 				+ "	where {ab: cd:name ?name ; cd:password ?password ; cd:username ?username .}\r\n" + "";
 		String fetchedUserName = null;
-		String fetchedName = null;
+		String fetchedFirstName = null;
+		String fetchedLastName = null;
 		String fetchedPassword = null;
 		User obj = null;
-
+		
 		QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1);
 		ResultSet results = q.execSelect();
 
@@ -192,15 +200,20 @@ public class UserController {
 			QuerySolution soln = results.nextSolution();
 			// assumes that you have an "?x" in your query
 			RDFNode x = soln.get("username");
-			RDFNode y = soln.get("name");
+			RDFNode y = soln.get("firstname");
+			RDFNode w = soln.get("lastname");
 			RDFNode z = soln.get("password");
 			System.out.println("username"+x);
-			System.out.println("name"+y);
+			System.out.println("firstname"+y);
+			System.out.println("lastname"+w);
 			System.out.println("password"+z);
+			
 			fetchedUserName = x.toString();
-			fetchedName = y.toString();
+			fetchedFirstName = y.toString();
 			fetchedPassword = z.toString();
-			obj = new User(fetchedUserName,fetchedName,fetchedPassword);
+			fetchedLastName = w.toString();
+			
+			obj = new User(fetchedUserName,fetchedFirstName,fetchedLastName,fetchedPassword);
 		}
 		
 		return obj;

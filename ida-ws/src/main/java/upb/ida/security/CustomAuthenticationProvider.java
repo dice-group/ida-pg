@@ -26,10 +26,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private UserService userService;
 	
-	@Bean
-	public PasswordEncoder encoder() {
-	    return new BCryptPasswordEncoder();
-	}
+//	@Bean
+//	public PasswordEncoder encoder() {
+//	    return new BCryptPasswordEncoder();
+//	}
 	
     @Override
     public Authentication authenticate(Authentication authentication) 
