@@ -31,10 +31,10 @@ public class UserService{
     }
     
 	//@Transactional(readOnly = true)
-    public User getByUsername(String username) {
-		//return (User) UserController.list(username);	
+    public static User getByUsername(String username) {
+		return (User) UserController.list(username);	
       //  return userRepository.findUserByUsername(username);
-    	return null;
+    	//return null;
     }
 
 	//@Transactional(readOnly = false)
