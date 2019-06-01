@@ -146,7 +146,7 @@ public class UserController {
 	@RequestMapping("/selectb") // one by one
 	public User select2(@RequestBody User record) {
 	String userName = record.getUsername();
-	String serviceURI = "http://localhost:3030/user";
+	String serviceURI = "http://127.0.0.1:3030/user";
 	String query1	=	"prefix ab:<http://userdata/#" + userName + "> \r\n"
 			+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n" + "select ?firstname ?lastname ?username ?password \r\n"
 			+ "	where {ab: cd:firstname ?firstname ;cd:lastname ?lastname ; cd:password ?password ; cd:username ?username .}\r\n" + "";
