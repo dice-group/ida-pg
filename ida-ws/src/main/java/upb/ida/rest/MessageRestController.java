@@ -47,10 +47,14 @@ public class MessageRestController {
 			@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
+		//TODO: actvVz param should be set in front-end
+		String actvVz = "bar-graph";
+
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
+		dataMap.put("actvVz", actvVz);
 		response.setPayload(dataMap);
 		String reply = rsService.getRSResponse(msg);
 
@@ -62,10 +66,14 @@ public class MessageRestController {
 	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
+		//TODO: actvVz param should be set in front-end
+		String actvVz = "bar-graph";
+
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
+		dataMap.put("actvVz", actvVz);
 		response.setPayload(dataMap);
 		dataService.getDataTable(actvDs, actvTbl);
 		return response;

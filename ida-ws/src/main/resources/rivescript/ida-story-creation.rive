@@ -1,0 +1,22 @@
+! version = 2.0
+
+//User queries for Story Creation
+
++ i want to create story for current table and visualization
+* <call>ScHandler </call> == pass => Your story is created.
+
+
++ i want to create story for this table
+@ i want to create story for current table and visualization
+
++ i want to create story for this visualization
+@ i want to create story for current table and visualization
+
++ i want to create story
+@ i want to create story for current table and visualization
+
++ create a story for me
+@ i want to create story for current table and visualization
+
++ create story
+@ i want to create story for current table and visualization
