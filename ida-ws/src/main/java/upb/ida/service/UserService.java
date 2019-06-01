@@ -32,8 +32,9 @@ public class UserService{
     
 	//@Transactional(readOnly = true)
     public User getByUsername(String username) {
-		return (User) UserController.list(username);	
+		//return (User) UserController.list(username);	
       //  return userRepository.findUserByUsername(username);
+    	return null;
     }
 
 	//@Transactional(readOnly = false)
