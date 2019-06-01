@@ -1,5 +1,6 @@
 package upb.ida.util;
 
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
@@ -32,7 +33,7 @@ public class StoryCreationUtil {
 		//Create url for stroy
 		UUID uuid = UUID.randomUUID();
 		String uuidStr = uuid.toString();
-		String urlStory = "/getStory/" + uuidStr;
+		String urlStory = "localhost:8080/ida-ws" + "/getstory/" + "id?id=" + uuidStr;
 
 		Map<String, Object> dataMap = responseBean.getPayload();
 		dataMap.put("storyUrl", urlStory);
