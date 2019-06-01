@@ -75,7 +75,7 @@ public class ResponseBean {
 	public int getActnCode() {
 		return actnCode;
 	}
-	/**
+	/**sendmessage
 	 * Sets the {@link ResponseBean#actnCode}
 	 */
 	public void setActnCode(int actnCode) {

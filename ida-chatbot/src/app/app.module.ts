@@ -60,6 +60,7 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
+import { RdfOntologyViewComponent } from './components/rdf-ontology-view/rdf-ontology-view.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,7 +79,8 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
     DatatableDetailComponent,
     SsbViewComponent,
     VennViewComponent,
-    DeckglHexViewComponent
+    DeckglHexViewComponent,
+    RdfOntologyViewComponent
   ],
   imports: [
     BrowserModule,

@@ -105,8 +105,10 @@ export class AppComponent {
       actvTbl: actvTbl == null ? '' : actvTbl,
       actvDs: actvDs == null ? '' : actvDs
     };
+    
     // Send the message to server
     this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
+    
   }
 
   getDataTable(reqTbl: string) {

@@ -1,0 +1,904 @@
+{
+  "@context": {
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@graph": [
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/ChefDerDeutschenPolizei",
+      "@type": [
+        "https://www.uni-paderborn.de/ontology/Regiment",
+        "owl:NamedIndividual"
+      ],
+      "https://www.uni-paderborn.de/ontology/abbreviation": "Chef der deutschen Polizei",
+      "https://www.uni-paderborn.de/ontology/id": 2,
+      "https://www.uni-paderborn.de/ontology/name": "Chef der deutschen Polizei",
+      "label": {
+        "@language": "en",
+        "value": "Chef der deutschen Polizei"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/sortation",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSRank"
+      },
+      "label": {
+        "@language": "en",
+        "value": "sortation"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasDischargeInfo",
+      "@type": [
+        "owl:ObjectProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierDischargeInfo"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/enrolledOn",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "enrolledOn"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierDecorationInfo",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierDecorationInfo"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierDischargeInfo",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierDischargeInfo"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+	{
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierDischargeInfo123",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierDischargeInfoTest"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierDischargeInfo"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/dischargeReason",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": [
+        {
+          "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+        },
+        {
+          "@id": "https://www.uni-paderborn.de/ontology/_SoldierDischargeInfo"
+        }
+      ],
+      "label": {
+        "@language": "en",
+        "value": "dischargeReason"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/",
+      "@type": "owl:Ontology",
+      "dc:description": {
+        "@language": "en",
+        "value": "Vocabulary describing Concepts and Relationships of Schutzstaffel"
+      },
+      "dc:title": {
+        "@language": "en",
+        "value": "SS Vocabulary"
+      },
+      "dcterms:description": {
+        "@language": "en",
+        "value": "Vocabulary describing Concepts and Relationships of Schutzstaffel"
+      },
+      "dcterms:title": {
+        "@language": "en",
+        "value": "SS Vocabulary"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasGovernmentFunction",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "hasGovernmentFunction"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierGovernmentFunctionInfo"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/SSRankInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierSSRankInfo"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSRank"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/name",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "name"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/internalInformation",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "internalInformation"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/dischargedOn",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "dischargedOn"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/membershipType",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:comment": "XML has no occurence of this column.",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "membershipType"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/NSDAPFunctionInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierNSDAPFunctionInfo"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/NSDAPFunction"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/enrollmentReason",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "enrollmentReason"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/governmentFunctionInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierGovernmentFunctionInfo"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/GovernmentFunction"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasTitle",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "hasTitle"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/Regiment",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "Regiment"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/applicableFrom",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:comment": "Date on which a Soldier was given a Medal/Decoration. Related to Blank Nodes.",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "applicableFrom"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/decorationInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierDecorationInfo"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/Decoration"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/birthPlace",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:comment": "Range can be converted into actual resource of the place",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "birthPlace"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/lastName",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "lastName"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/abbreviation",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "abbreviation"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/membershipNumber",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "membershipNumber"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/SSClass",
+      "@type": "owl:Class",
+      "dc:description": {
+        "@language": "en",
+        "value": "Top level resource of SS Ontology"
+      },
+      "label": {
+        "@language": "en",
+        "value": "SSClass"
+      },
+      "subClassOf": {
+        "@id": "owl:Thing"
+      }
+    },
+    {
+      "@id": "dc:description",
+      "@type": "owl:AnnotationProperty"
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasNSDAPFunction",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "hasNSDAPFunction"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierNSDAPFunctionInfo"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierSSRankInfo",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierSSRankInfo"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasDecoration",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "hasDecoration"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierDecorationInfo"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/StabReichsf%C3%BChrer-SS",
+      "@type": [
+        "https://www.uni-paderborn.de/ontology/Regiment",
+        "owl:NamedIndividual"
+      ],
+      "https://www.uni-paderborn.de/ontology/abbreviation": {
+        "@language": "de",
+        "value": "Stab RFSS"
+      },
+      "https://www.uni-paderborn.de/ontology/id": 3,
+      "https://www.uni-paderborn.de/ontology/name": {
+        "@language": "de",
+        "value": "Stab Reichsführer-SS"
+      },
+      "label": {
+        "@language": "en",
+        "value": "Stab Reichsführer-SS"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/regimentInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierRegimentInfo"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/Regiment"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/description",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "description"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/durationStart",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:comment": "Related to blank node SoldierDecoration",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "durationStart"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "dcterms:description",
+      "@type": "owl:AnnotationProperty"
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/firstName",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "firstName"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierRegimentInfo",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierRegimentInfo"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/deathDate",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:comment": "Review: Date datatype not available",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "deathDate"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/id",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "id"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/NSDAPNumber",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "NSDAPNumber"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/SSRank",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "SSRank"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/Soldier",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "Soldier"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/durationEnd",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:comment": "Related to blank node SoldierDecoration",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "durationEnd"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      },
+	  "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/GovernmentFunction",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "GovernmentFunction"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "dcterms:title",
+      "@type": "owl:AnnotationProperty"
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierNSDAPFunctionInfo",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierNSDAPFunctionInfo"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/information",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      },
+      "label": {
+        "@language": "en",
+        "value": "information"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/NSDAPFunction",
+      "@type": "owl:Class",
+	  "label": {
+        "@language": "en",
+        "value": "NSDAPFunction"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/_SoldierGovernmentFunctionInfo",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "_SoldierGovernmentFunctionInfo"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/Reichsf%C3%BChrer-SS",
+      "@type": [
+        "owl:NamedIndividual",
+        "https://www.uni-paderborn.de/ontology/Regiment"
+      ],
+      "https://www.uni-paderborn.de/ontology/abbreviation": "RFSS",
+      "https://www.uni-paderborn.de/ontology/id": 1,
+      "https://www.uni-paderborn.de/ontology/name": "Reichsführer-SS",
+      "label": {
+        "@language": "en",
+        "value": "Reichsführer-SS"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/Decoration",
+      "@type": "owl:Class",
+      "label": {
+        "@language": "en",
+        "value": "Decoration"
+      },
+      "subClassOf": {
+        "@id": "https://www.uni-paderborn.de/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/birthDate",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:comment": "Review: Date datatype not available",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "birthDate"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasSSRank",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "hasSSRank"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierSSRankInfo"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/hasRegiment",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "hasRegiment"
+      },
+      "rdfs:range": {
+        "@id": "https://www.uni-paderborn.de/ontology/_SoldierRegimentInfo"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "dc:title",
+      "@type": "owl:AnnotationProperty"
+    },
+    {
+      "@id": "https://www.uni-paderborn.de/ontology/deathPlace",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:comment": "Range can be converted into actual resource of the place",
+      "rdfs:domain": {
+        "@id": "https://www.uni-paderborn.de/ontology/Soldier"
+      },
+      "label": {
+        "@language": "en",
+        "value": "deathPlace"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    }
+  ]
+}
