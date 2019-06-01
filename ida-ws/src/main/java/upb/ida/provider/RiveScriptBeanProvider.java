@@ -30,6 +30,8 @@ public class RiveScriptBeanProvider {
 	@Autowired
 	private BgdHandler bgdHandler;
 	@Autowired
+	private ScHandler scHandler;
+	@Autowired
 	private ClusterConHandler clusterConHandler;
 	@Autowired
 	private ParamsHandler paramsHandler;
@@ -82,6 +84,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("VennDiagramHandler", VennDiagramHandler);
 		bot.setSubroutine("GeoDiagramHandler", GeoDiagramHandler);
 		bot.setSubroutine("SSBDiagramHandler", SSBDiagramHandler);
+		bot.setSubroutine("ScHandler", scHandler);
 		return bot;
 	}
 
