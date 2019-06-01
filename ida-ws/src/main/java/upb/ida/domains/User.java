@@ -19,11 +19,12 @@ public class User {
     
    // User() {}
     
-    public User(String username, String password, String firstname) {
+    public User(String username, String password, String firstname, String lastname) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;
+		this.lastname = lastname;
 	}
 
 	public String getNewpassword() {
