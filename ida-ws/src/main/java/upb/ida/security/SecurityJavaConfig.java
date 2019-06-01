@@ -51,9 +51,15 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
           .authorizeRequests()
           .antMatchers("/user/new").permitAll()
           .antMatchers("/main/**").authenticated()
-          .antMatchers("/user/list").access("hasRole('ADMIN')")
-          .antMatchers("/user/update").access("hasRole('ADMIN')")
-          .antMatchers("/user/delete").access("hasRole('ADMIN')")
+//          .antMatchers("/user/list").access("hasRole('ADMIN')")
+//          .antMatchers("/user/update").access("hasRole('ADMIN')")
+//          .antMatchers("/user/delete").access("hasRole('ADMIN')")
+          
+          .antMatchers("/user/list").permitAll()
+          .antMatchers("/user/update").permitAll()
+          .antMatchers("/user/delete").permitAll()
+          
+          
           .and().formLogin()
 		  .loginProcessingUrl("/auth/login-action").usernameParameter("username").passwordParameter("password")
 		  .successHandler(mySuccessHandler)
