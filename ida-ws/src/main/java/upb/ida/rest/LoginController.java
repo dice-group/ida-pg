@@ -28,7 +28,7 @@ public class LoginController {
     
     @Autowired
 	private UserService userService;
-	
+		
 	@RequestMapping(value = "/response", method = {RequestMethod.GET,RequestMethod.POST})
     public ResponseBean login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
