@@ -52,13 +52,7 @@ public class MessageRestController {
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
-		String reply;
-		if (msg.contains("rdf ontology") && msg.contains("historian data")) {
-			reply = "RDF Ontology is displayed";
-		}
-		else{
-			reply = rsService.getRSResponse(msg);
-		}
+		String reply = rsService.getRSResponse(msg);
 
 		response.setChatmsg(reply);
 

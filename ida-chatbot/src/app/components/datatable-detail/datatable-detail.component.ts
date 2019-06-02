@@ -4,6 +4,7 @@ import {DatafileMetadata} from '../../models/datafile-metadata';
 import {IdaEventService} from '../../service/event/ida-event.service';
 import {MatAccordion} from '@angular/material';
 
+declare function createV3RDFOntologyView();
 
 @Component({
   selector: 'app-datatable-detail',
@@ -19,6 +20,7 @@ export class DatatableDetailComponent implements OnInit {
   public colAcc: MatAccordion;
   public displayedColumns: string[] = ['displayName', 'fileName', 'rowCount', 'colCount'];
   public expandedElement: DatafileMetadata;
+  public svgid: string ='svgid';
 
   constructor(private ies: IdaEventService) {
   }
@@ -26,6 +28,10 @@ export class DatatableDetailComponent implements OnInit {
   ngOnInit() {
   }
 
+  ngAfterViewInit() {
+    createV3RDFOntologyView();
+  }
+  
   requestDataTable(reqTbl: string) {
     this.ies.dtTblEvnt.emit(reqTbl);
   }

@@ -9,10 +9,16 @@ declare function createV3RDFOntologyView();
   styleUrls: ['./rdf-ontology-view.component.css']
 })
 export class RdfOntologyViewComponent implements OnInit, AfterViewInit {
+  //@Input('content')
+  public content: any;
+  public fdgid: string;
   public svgid: string;
-  
-  constructor() { 
-    this.svgid = "svgid";
+  public graph: any;
+  public intervalId: any;
+
+  constructor() {
+    
+    this.svgid = 'svgid';
   }
 
   ngOnInit() {

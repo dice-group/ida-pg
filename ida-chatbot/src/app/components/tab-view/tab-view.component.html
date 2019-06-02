@@ -1,5 +1,7 @@
 <ng-container [ngSwitch]="tabElement.tabType">
   <app-fdg-view *ngSwitchCase="tabType.FDG" [content]="tabElement.content"></app-fdg-view>
+  <!--<app-rdf-ontology-view *ngSwitchCase="tabType.RDFOntology" [content]="tabElement.content"></app-rdf-ontology-view>
+  -->
   <app-bargraph-view *ngSwitchCase="tabType.BG" [content]="tabElement.content"></app-bargraph-view>
   <div *ngSwitchCase="tabType.GEN">
     {{tabElement.content}}
@@ -9,4 +11,5 @@
   <app-venn-view *ngSwitchCase="tabType.VENND" [data]="tabElement.content"></app-venn-view>
   <app-deckgl-hex-view *ngSwitchCase="tabType.GSD" [data]="tabElement.content"></app-deckgl-hex-view>
   <app-ssb-view *ngSwitchCase="tabType.SSB" [data]="tabElement.content"></app-ssb-view>
+  
 </ng-container>

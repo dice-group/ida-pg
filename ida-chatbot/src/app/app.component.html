@@ -5,11 +5,17 @@
   <!-- </div>-->
   <div fxFlex="60%">
     <app-intro [ngClass]="{'hidden-cls': activeItem!==0 }"></app-intro>
+    <!--
     <app-rdf-ontology-view ></app-rdf-ontology-view> 
+    -->
     <ng-container *ngFor="let mvw of getMainviewItems()" >
-      <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
+      <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }">
+        
+      </app-data-view-container>
     </ng-container>
+    <div id="rvsTest" ></div> 
   </div>
   <app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
   <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-me ssage-list>-->
+    
 </div>

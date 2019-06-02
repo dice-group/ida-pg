@@ -105,10 +105,36 @@ export class AppComponent {
       actvTbl: actvTbl == null ? '' : actvTbl,
       actvDs: actvDs == null ? '' : actvDs
     };
-    
-    // Send the message to server
-    this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
-    
+    //console.log('message ====>'+message);
+    console.log('msgmessage.content ====>'+message.content);
+    const msgTemp = message.content.trim();
+    if(msgTemp.includes('rdfontology')){
+      console.log('inside if ====>');
+      const newTab = new TabElement(this.uis.getUniqueId(), 'RDF Ontology' , TabType.RDFOntology, 'None', true, true);
+      console.log('mainViewItems ====>'+this.mainViewItems);
+      const newId = this.idCount++;
+      // load the dataset
+      const sdbEle = new SidebarElement(newId, 'RDF Ontology', 'RDF Ontology 123');
+      this.sidebarItems.push(sdbEle);
+      const mvEle = new MainviewElement(newId, null, null);
+      this.mainViewItems.push(mvEle);
+      this.activeItem = newId;
+
+      for (const mvwItem of this.mainViewItems) {
+         // Add a tab to extra tabs
+         console.log('inside for ====>');
+          mvwItem.tabArr.push(newTab);
+          //this.getActiveMainView().focusLastTab();
+          console.log('inside for end====>');
+          break;
+      }
+      
+      console.log('end if ====>');
+    }
+    else{
+      // Send the message to server
+      this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
+    }
   }
 
   getDataTable(reqTbl: string) {

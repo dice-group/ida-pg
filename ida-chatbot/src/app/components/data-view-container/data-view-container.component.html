@@ -6,7 +6,9 @@
         <mat-icon *ngIf="ext.closable" appClickStopPropagation (click)="closeTab(ext)">close</mat-icon>
       </div>
     </ng-template>
-    <app-tab-view [tabElement]="ext"></app-tab-view>
+    <app-tab-view [tabElement]="ext"> 
+      
+    </app-tab-view>
   </mat-tab>
-
+   
 </mat-tab-group>
