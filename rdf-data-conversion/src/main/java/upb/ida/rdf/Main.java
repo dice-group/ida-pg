@@ -38,6 +38,7 @@ public class Main {
 			"@prefix xml: <http://www.w3.org/XML/1998/namespace> .\n" +
 			"@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n" +
 			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
+			"@prefix dbo: <http://dbpedia.org/ontology/> .\n" +
 			"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
 			"@prefix dc: <http://purl.org/dc/terms/> .\n" +
 			"@prefix regiment: <" + dataBaseUrl + "regiment/> .\n" +
@@ -179,64 +180,6 @@ public class Main {
 		}
 	}
 
-	private void processSoldierLiterature(StringBuilder stringBuilder) {
-		stringBuilder.append("########## SOLDIER LITERATURE ########################################################\n\n");
-
-		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierLiteratureFile)))) {
-			List<String[]> lines = new ArrayList<String[]>();
-			String thisLine;
-			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
-			}
-			String[][] soldierLiteratureArray = new String[lines.size()][0];
-			lines.toArray(soldierLiteratureArray);
-
-			for (int i = 1; i < soldierLiteratureArray.length; i++) {
-				stringBuilder.append("##\n");
-				stringBuilder.append("soldier_literature:").append(soldierLiteratureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierLiteratureInfo ;\n");
-
-				for (int j = 0; j < soldierLiteratureArray[i].length; j++) {
-					String currentValue = soldierLiteratureArray[i][j];
-
-					switch (j) {
-
-						case 0:
-							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
-							break;
-						case 1:
-							stringBuilder.append("\t").append(":verkm ").append(currentValue).append(" ;\n");
-							break;
-						case 2:
-							appendResourceProperty(stringBuilder, "", "", ":literaturequInfo", "literature:", currentValue, false, true);
-							break;
-						case 3:
-							if (isValidString(currentValue)) {
-								String[] dateParts = currentValue.split("\\.");
-								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":From", start, false);
-							}
-							break;
-						case 4:
-							stringBuilder.append("\t").append(":information ").append(currentValue).append(" ;\n");
-							break;
-						default:
-							break;
-					}
-
-				}
-				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n\n");
-				appendResourceProperty(stringBuilder, "soldier:", soldierLiteratureArray[i][1], ":hasLiterature", "soldier_literature:", soldierLiteratureArray[i][0], true, false);
-				stringBuilder.append("##\n\n");
-			}
-
-		} catch (Exception e) {
-			System.out.println("Soldier Literature processing failed");
-			e.printStackTrace();
-		}
-
-
-	}
-
 	private void processLiterature(StringBuilder stringBuilder) {
 		stringBuilder.append("######### LITERATURE #########################################################\n\n");
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(literatureFile)))) {
@@ -252,7 +195,7 @@ public class Main {
 			for (int i = 1; i < literatureArray.length; i++) {
 				stringBuilder.append("##\n");
 				stringBuilder.append("literature:").append(literatureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n").
-					append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
+						append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
 				stringBuilder.append("\n");
 				stringBuilder.append("literature:").append(literatureArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n");
 
@@ -598,6 +541,60 @@ public class Main {
 
 		} catch (Exception e) {
 			System.out.println("Soldier Regiments processing failed");
+			e.printStackTrace();
+		}
+
+
+	}
+
+	private void processSoldierLiterature(StringBuilder stringBuilder) {
+		stringBuilder.append("########## SOLDIER LITERATURE ########################################################\n\n");
+
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierLiteratureFile)))) {
+			List<String[]> lines = new ArrayList<String[]>();
+			String thisLine;
+			while ((thisLine = myInput.readLine()) != null) {
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
+			}
+			String[][] soldierLiteratureArray = new String[lines.size()][0];
+			lines.toArray(soldierLiteratureArray);
+
+			for (int i = 1; i < soldierLiteratureArray.length; i++) {
+				stringBuilder.append("##\n");
+				stringBuilder.append("soldier_literature:").append(soldierLiteratureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierLiteratureInfo ;\n");
+
+				for (int j = 0; j < soldierLiteratureArray[i].length; j++) {
+					String currentValue = soldierLiteratureArray[i][j];
+
+					switch (j) {
+
+						case 0:
+							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
+							break;
+						case 1:
+							stringBuilder.append("\t").append(":verkm ").append(currentValue).append(" ;\n");
+							break;
+						case 2:
+							appendResourceProperty(stringBuilder, "", "", ":literatureInfo", "literature:", currentValue, false, true);
+							break;
+						case 3:
+							stringBuilder.append("\t").append(":page ").append(currentValue).append(" ;\n");
+							break;
+						case 4:
+							stringBuilder.append("\t").append(":information ").append(currentValue).append(" ;\n");
+							break;
+						default:
+							break;
+					}
+
+				}
+				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n\n");
+				appendResourceProperty(stringBuilder, "soldier:", soldierLiteratureArray[i][1], ":hasLiterature", "soldier_literature:", soldierLiteratureArray[i][0], true, false);
+				stringBuilder.append("##\n\n");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Soldier Literature processing failed");
 			e.printStackTrace();
 		}
 
