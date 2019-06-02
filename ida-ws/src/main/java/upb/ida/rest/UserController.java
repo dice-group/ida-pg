@@ -209,7 +209,7 @@ public class UserController {
 
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
-		String serviceURI = "http://localhost:3030/user";
+		String serviceURI = "http://127.0.0.1:3030/user";
 		String query1 = "prefix ab:<http://userdata/#" + userName + "> \r\n"
 				+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
 				+ "select ?firstname ?lastname ?username ?password \r\n"
