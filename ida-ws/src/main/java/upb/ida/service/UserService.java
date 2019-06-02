@@ -16,20 +16,20 @@ public class UserService{
     //private UserRepository userRepository;
 
 	//@Transactional(readOnly = true)
-    public List<User> listAllUsers() {
-    	//List<User> users = new ArrayList<>();
-        //userRepository.findAll().forEach(users::add);
-        //users.forEach(user -> user.setPassword(""));
-        //return users;
-		return null;
-    }
+//    public List<User> listAllUsers() {
+//    	//List<User> users = new ArrayList<>();
+//        //userRepository.findAll().forEach(users::add);
+//        //users.forEach(user -> user.setPassword(""));
+//        //return users;
+//		return null;
+//    }
 
 	//@Transactional(readOnly = true)
-    public User getById(Long id) {
-        //return userRepository.findById(id).orElse(null);
-		return null;
-    }
-    
+//    public User getById(Long id) {
+//        //return userRepository.findById(id).orElse(null);
+//		return null;
+//    }
+//    
 	//@Transactional(readOnly = true)
     public static User getByUsername(String username) {
 		return (User) UserController.list(username);	
@@ -38,13 +38,13 @@ public class UserService{
     }
 
 	//@Transactional(readOnly = false)
-    public User saveOrUpdate(User user) {
-    	//return userRepository.save(user);
-		return null;
-    }
+//    public User saveOrUpdate(User user) {
+//    	//return userRepository.save(user);
+//		return null;
+//    }
 
 	//@Transactional(readOnly = false)
-    public void delete(Long id) {
-        //userRepository.deleteById(id);
-    }		
+//    public void delete(Long id) {
+//        //userRepository.deleteById(id);
+//    }		
 }

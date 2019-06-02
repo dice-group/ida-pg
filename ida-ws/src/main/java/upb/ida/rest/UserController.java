@@ -195,7 +195,7 @@ public class UserController {
 						+ "PREFIX ab:<http://userdata/#>\r\n" + "DELETE DATA\r\n" + "{\r\n" + "  ab:"
 						+ record.getUsername() + " dc:firstname \"" + record.getFirstname() + "\" ;\r\n"
 						+ "dc:password \"" + record.getPassword() + "\" ;\r\n" + "dc:lastname\"" + record.getLastname()
-						+ "\"; \r\n" + "dc:username \"" + record.getUsername() + "\".\r\n" + "}");
+						+ "\";\r\n" + "dc:userrole \"" + record.getUserRole()+ "\"; \r\n" + "dc:username \"" + record.getUsername() + "\".\r\n" + "}");
 
 				conn.update(request);
 				responseBean.setErrMsg("User Deleted");
@@ -212,8 +212,8 @@ public class UserController {
 		String serviceURI = "http://127.0.0.1:3030/user";
 		String query1 = "prefix ab:<http://userdata/#" + userName + "> \r\n"
 				+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-				+ "select ?firstname ?lastname ?username ?password \r\n"
-				+ "	where {ab: cd:firstname ?firstname ; cd:lastname ?lastname; cd:password ?password ; cd:username ?username .}\r\n"
+				+ "select ?firstname ?lastname ?username ?password  ?userrole \r\n"
+				+ "	where {ab: cd:firstname ?firstname ;cd:lastname ?lastname; cd:password ?password ; cd:userrole ?userrole; cd:username ?username .}\r\n"
 				+ "";
 
 		User obj = null;
@@ -225,17 +225,18 @@ public class UserController {
 			QuerySolution soln = results.nextSolution();
 			// assumes that you have an "?x" in your query.
 			RDFNode x = soln.get("username");
-
 			RDFNode y = soln.get("firstname");
 			RDFNode w = soln.get("lastname");
 			RDFNode z = soln.get("password");
+			RDFNode u = soln.get("userrole");
 
 			String fetchedUserName = x.toString();
 			String fetchedFirstName = y.toString();
 			String fetchedPassword = z.toString();
 			String fetchedLastName = w.toString();
+			String fetchedUserRole = u.toString();
 
-			obj = new User(fetchedUserName, fetchedPassword, fetchedFirstName, fetchedLastName);
+			obj = new User(fetchedUserName, fetchedPassword, fetchedFirstName, fetchedLastName,fetchedUserRole);
 		}
 
 		return obj;
