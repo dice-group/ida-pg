@@ -37,14 +37,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     	
     	//name is username here
         String name = authentication.getName();
-        String password = authentication.getCredentials().toString(); //12345
+        String password = authentication.getCredentials().toString();
      
        // User currentUser = userService.getByUsername(name);
-        User currentUser = userService.getByUsername(name); //12345hashcode
+        User currentUser = UserService.getByUsername(name); 
         try {
         	password = UserController.hashPassword(password);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
        
