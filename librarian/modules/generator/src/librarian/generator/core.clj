@@ -8,6 +8,7 @@
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.snippet :as snippet]
             [librarian.generator.query :as gq]
+            [librarian.generator.cost :as gc]
             [librarian.generator.actions.call :refer [call-actions]]
             [librarian.generator.actions.receive :refer [receive-actions]]
             [librarian.generator.actions.snippet :refer [snippet-actions]]
@@ -15,7 +16,6 @@
             [librarian.generator.actions.call-completion :refer [call-completion-actions]])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
 
-(def ^:dynamic *h-weight* 1.5)
 (def *sid (atom 0))
 
 (defn flaws
@@ -33,11 +33,6 @@
                                    (not (:v (first (d/datoms db :eavt callable :placeholder))))))))
                  [::call/call])}))
 
-(defn cost-heuristic
-  [{:keys [flaws]}]
-  (+ (-> flaws :parameter count)
-     (-> flaws :call count)))
-
 (defn add-removed!
   [{:keys [removed] :as state} remove]
   (if (some? remove)
@@ -51,37 +46,24 @@
           (assoc! :removed (vec remove))))
     (assoc! state :tie-breaker Double/POSITIVE_INFINITY)))
 
-(defn update-removed-cache!
-  [{:keys [removed removed-cache] :as state}]
-  (if removed
-    (if removed-cache
-      (let [[old] (swap-vals! removed-cache conj removed)]
-        (when-not (contains? old removed) state))
-      (assoc! state :removed-cache (atom #{removed})))
-    (dissoc! state :removed-cache)))
-
 (defn apply-action
   [state action]
-  (let [new-state (some-> (transient state)
-                          (add-removed! (:remove action))
-                          (update-removed-cache!))]
-    (when new-state
-      (as-> new-state $
-            (assoc! $ :id (swap! *sid inc))
-            (assoc! $ :predecessor state)
-            (update! $ :db d/db-with (:tx action))
-            (update! $ :cost + (:cost action))
-            (assoc! $ :flaws (flaws $))
-            (assoc! $ :heuristic (+ (:cost $) (* *h-weight* (cost-heuristic $))))
-            (persistent! $)))))
+  (when-let [new-state (add-removed! (transient state) (:remove action))]
+    (as-> new-state $
+          (assoc! $ :id (swap! *sid inc))
+          (assoc! $ :predecessor state)
+          (update! $ :db d/db-with (:tx action))
+          (update! $ :cost + (:cost action))
+          (assoc! $ :flaws (flaws $))
+          (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
+          (persistent! $))))
 
 (defn initial-state
   [scrape tx]
   (apply-action {:cost 0
                  :db (:db scrape)
                  :placeholder-matches (memo/memo #'gq/placeholder-matches)}
-                {:cost 0
-                 :tx tx}))
+                {:cost 0, :tx tx}))
 
 (defn successors
   [state]
@@ -101,7 +83,8 @@
             actions (into! actions (mapcat #(param-remove-actions state %)) p-flaws)
             actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)
             actions (persistent! actions)]
-        (keep (partial apply-action state) actions)))))
+        (keep (partial apply-action state)
+              (gc/costify-actions actions))))))
 
 (defn search-state
   [state]

@@ -7,12 +7,12 @@
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.semantic-type :as semantic-type]
             [librarian.model.concepts.call :as call]
+            [librarian.model.concepts.parameter :as parameter]
             [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-value :as call-value]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.callable :as callable]
-            [librarian.model.concepts.result :as result]
             [librarian.model.concepts.snippet :as snippet]
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.namespace :as namespace]
@@ -129,6 +129,10 @@
    (let [deps (dependents db b)]
      (fn [a] (contains? deps a)))))
 
+(defn optional-call-param?
+  [db call-param]
+  (-> (d/entity db call-param) ::call-parameter/parameter ::parameter/optional some?))
+
 (defn receivers
   [db id]
   (loop [open (transient [id])
@@ -180,13 +184,18 @@
   ([types]
    (into #{} (mapcat #(conj (descendants %) %)) types)))
 
-(defn types->instances
+(defn types->direct-instances
   ([db]
-   (comp (mapcat #(conj (descendants %) %))
-         (distinct)
-         (mapcat #(d/datoms db :avet :type %))
+   (comp (mapcat #(d/datoms db :avet :type %))
          (map :e)
          (distinct)))
+  ([db types]
+   (into [] (types->direct-instances db) types)))
+
+(defn types->instances
+  ([db]
+   (comp (types->subtypes)
+         (types->direct-instances db)))
   ([db types]
    (into [] (types->instances db) types)))
 
@@ -195,20 +204,20 @@
    (compatibly-typed-sources db flaw nil))
   ([db flaw snippet]
    (let [datatype-filter (filter (typed-compatible? db flaw))
-         deps-filter (remove (depends-on? db flaw))]
+         deps-filter (remove (depends-on? db flaw))
+         source-types (types->subtypes [::call-result/call-result ::call-value/call-value])]
      (if snippet
-       (let [types (mapcat #(conj (descendants %) %))]
-         (into []
-               (comp (map :v)
-                     (filter (fn [s] (some #(types (:v %))
-                                           (d/datoms db :eavt s :type))))
-                     deps-filter datatype-filter)
-               (d/datoms db :eavt snippet ::snippet/contains)))
        (into []
-             (comp (types->instances db)
+             (comp (map :v)
+                   (filter (fn [s] (some #(source-types (:v %))
+                                         (d/datoms db :eavt s :type))))
+                   deps-filter datatype-filter)
+             (d/datoms db :eavt snippet ::snippet/contains))
+       (into []
+             (comp (types->direct-instances db)
                    (remove #(d/datoms db :avet ::snippet/contains %))
                    deps-filter datatype-filter)
-             [::call-result/call-result ::call-value/call-value])))))
+             source-types)))))
 
 (defn ^{::memo/args-fn second} placeholder-matches
   [db placeholder]

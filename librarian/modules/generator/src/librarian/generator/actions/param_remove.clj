@@ -1,12 +1,10 @@
 (ns librarian.generator.actions.param-remove
-  (:require [datascript.core :as d]
-            [librarian.model.concepts.parameter :as parameter]
-            [librarian.model.concepts.call-parameter :as call-parameter]))
+  (:require [librarian.generator.query :as gq]))
 
 (defn param-remove-actions
   [{:keys [db]} flaw]
-  (when (-> (d/entity db flaw) ::call-parameter/parameter ::parameter/optional)
+  (when (gq/optional-call-param? db flaw)
     [{:type :param-remove
-      :cost 1
+      :weight 1
       :tx [[:db.fn/retractEntity flaw]]
       :remove [flaw]}]))

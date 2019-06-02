@@ -85,6 +85,7 @@
                                       results)
                                (persistent!))]
                     {:type :call-completion
-                     :cost 1
+                     :weight 1
+                     :add true
                      :tx tx}))))
          completions)))

@@ -38,5 +38,15 @@
 (defn costify-actions
   "Takes weighted actions, normalizes their weights and adds the normalized weight nlogs as costs."
   [actions]
-  (let [weight-sum (Math/log (transduce (map :weight) + actions))]
-    (map #(assoc % :cost (- weight-sum (Math/log (:weight %))))) actions))
+  (let [weight-sum (Math/log (inc (transduce (map :weight) + actions)))]
+    (map #(assoc % :cost (- weight-sum (Math/log (:weight %))))
+         actions)))
+
+(def h-normalize (Math/log 2))
+(def ^:dynamic *h-param-weight* 2)
+(def ^:dynamic *h-call-weight* 2)
+
+(defn cost-heuristic
+  [{:keys [flaws]}]
+  (+ (-> flaws :parameter count (* *h-param-weight* h-normalize))
+     (-> flaws :call count (* *h-call-weight* h-normalize))))
