@@ -13,21 +13,23 @@ public class Main {
 	private static final char DEFAULT_SEPARATOR = ',';
 	private static final char DEFAULT_QUOTE = '"';
 	private static final String CHARSET = "UTF-8";
+
+	private static final String resourceRoot = ""; // CHANGE THIS PATH BEFORE RUNNING THE PROGRAM
 	private static final String resultFile = "files/result.ttl";
 	private static final String baseUrl = "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/";
 	private static final String ontologyBaseUrl = baseUrl + "ontology/";
 	private static final String dataBaseUrl = baseUrl + "data/";
 
 	//    file paths
-	private static final String dienststellungFile = "files\\tbl_dienststellung.csv";
-	private static final String ordenFile = "files\\tbl_orden.csv";
-	private static final String ssfuehrerFile = "files\\tbl_ssfuehrer.csv";
-	private static final String ssrangFile = "files\\tbl_ssrang.csv";
-	private static final String soldierDecorationsFile = "files\\tbl_ssfuehrer_orden.csv";
-	private static final String soldierRegimentsFile = "files\\tbl_ssfuehrer_dienststellung.csv";
-	private static final String soldierRanksFile = "files\\tbl_ssfuehrer_ssrang.csv";
-	private static final String literatureFile = "files\\tbl_literatur.csv";
-	private static final String soldierLiteratureFile = "files\\tbl_ssfuehrer_literatur.csv";
+	private static final String dienststellungFile = "files/tbl_dienststellung.csv";
+	private static final String ordenFile = "files/tbl_orden.csv";
+	private static final String ssfuehrerFile = "files/tbl_ssfuehrer.csv";
+	private static final String ssrangFile = "files/tbl_ssrang.csv";
+	private static final String soldierDecorationsFile = "files/tbl_ssfuehrer_orden.csv";
+	private static final String soldierRegimentsFile = "files/tbl_ssfuehrer_dienststellung.csv";
+	private static final String soldierRanksFile = "files/tbl_ssfuehrer_ssrang.csv";
+	private static final String literatureFile = "files/tbl_literatur.csv";
+	private static final String soldierLiteratureFile = "files/tbl_ssfuehrer_literatur.csv";
 
 	//    prefixes
 	private static String prefixes =
@@ -41,10 +43,12 @@ public class Main {
 			"@prefix regiment: <" + dataBaseUrl + "regiment/> .\n" +
 			"@prefix ssrank: <" + dataBaseUrl + "ssrank/> .\n" +
 			"@prefix decoration: <" + dataBaseUrl + "decoration/> .\n" +
+			"@prefix literature: <" + dataBaseUrl + "literature/> .\n" +
 			"@prefix soldier: <" + dataBaseUrl + "soldier/> .\n" +
 			"@prefix soldier_decoration: <" + dataBaseUrl + "soldier_decoration/> .\n" +
 			"@prefix soldier_regiment: <" + dataBaseUrl + "soldier_regiment/> .\n" +
 			"@prefix soldier_ssrank: <" + dataBaseUrl + "soldier_ssrank/> .\n" +
+			"@prefix soldier_literature: <" + dataBaseUrl + "soldier_literature/> .\n" +
 			"@prefix : <" + ontologyBaseUrl + "> .\n" +
 			"@base <" + ontologyBaseUrl + "> .\n" +
 			"\n" +
@@ -68,7 +72,7 @@ public class Main {
 		o.processLiterature(stringBuilder);
 		o.processSoldierLiterature(stringBuilder);
 
-		BufferedWriter out = new BufferedWriter(new FileWriter(Main.class.getClassLoader().getResource(resultFile).getFile(), true));
+		BufferedWriter out = new BufferedWriter(new FileWriter(resourceRoot + resultFile, true));
 		out.write(stringBuilder.toString());
 		out.close();
 	}
@@ -79,7 +83,7 @@ public class Main {
 	}
 
 	private static StringBuilder appendStringProperty(StringBuilder builder, String name, String value, boolean last) {
-		return builder.append("\t").append(name).append(" \"").append(value).append("\"^^xsd:string ").append(last ? ".\n" : ";\n");
+		return builder.append("\t").append(name).append(" \"").append(clean(value)).append("\"^^xsd:string ").append(last ? ".\n" : ";\n");
 	}
 
 	private static StringBuilder appendDatetimeProperty(StringBuilder builder, String name, String value, boolean last) {
@@ -95,9 +99,13 @@ public class Main {
 	}
 
 	public void addPrefixes() throws Exception {
-		File file = new File(Main.class.getClassLoader().getResource(resultFile).getFile());
+		File file = new File(resourceRoot + resultFile);
 		if (file.exists()) {
 			file.delete();
+		}
+		else
+		{
+			file.createNewFile();
 		}
 		FileWriter fileWriter = new FileWriter(file);
 		fileWriter.write(prefixes);
@@ -109,13 +117,27 @@ public class Main {
 		return Main.class.getClassLoader().getResourceAsStream(filename);
 	}
 
+	private static String clean(String input) {
+		boolean leadingQuote = input.startsWith("\"");
+		boolean trailingQuote = input.endsWith("\"");
+		int begin = 0, end = input.length();
+
+		if (leadingQuote)
+			begin = begin + 1;
+
+		if (trailingQuote)
+			end = end - 1;
+
+		return input.substring(begin, end).replace("\"", "\\\"");
+	}
+
 	private void processRegiments(StringBuilder stringBuilder) {
 		stringBuilder.append("######### REGIMENTS #########################################################\n\n");
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(dienststellungFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 
 			String[][] dienstellungArray = new String[lines.size()][0];
@@ -148,7 +170,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(dienstellungArray[i][1]).append("\" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(clean(dienstellungArray[i][1])).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -160,11 +182,11 @@ public class Main {
 	private void processSoldierLiterature(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER LITERATURE ########################################################\n\n");
 
-		try (FileInputStream fis = new FileInputStream(soldierLiteratureFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierLiteratureFile)))) {
 			List<String[]> lines = new ArrayList<String[]>();
 			String thisLine;
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] soldierLiteratureArray = new String[lines.size()][0];
 			lines.toArray(soldierLiteratureArray);
@@ -215,14 +237,13 @@ public class Main {
 
 	}
 
-	private void processLiterature(StringBuilder stringBuilder){
+	private void processLiterature(StringBuilder stringBuilder) {
 		stringBuilder.append("######### LITERATURE #########################################################\n\n");
-
-		try (FileInputStream fis = new FileInputStream(literatureFile); DataInputStream myInput = new DataInputStream(fis)) {
+		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(literatureFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 
 			String[][] literatureArray = new String[lines.size()][0];
@@ -231,7 +252,7 @@ public class Main {
 			for (int i = 1; i < literatureArray.length; i++) {
 				stringBuilder.append("##\n");
 				stringBuilder.append("literature:").append(literatureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n").
-						append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
+					append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
 				stringBuilder.append("\n");
 				stringBuilder.append("literature:").append(literatureArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n");
 
@@ -272,7 +293,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" ;\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(clean(literatureArray[i][1])).append("\" ;\n");
 				stringBuilder.append("\t").append("owl:sameAs ").append("literature:").append(literatureArray[i][0]).append(" .\n");
 				stringBuilder.append("##\n\n");
 			}
@@ -290,7 +311,7 @@ public class Main {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] ssfuehrerArray = new String[lines.size()][0];
 			lines.toArray(ssfuehrerArray);
@@ -422,7 +443,7 @@ public class Main {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] rankArray = new String[lines.size()][0];
 			lines.toArray(rankArray);
@@ -452,7 +473,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(rankArray[i][1]).append("\" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(clean(rankArray[i][1])).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 
@@ -469,7 +490,7 @@ public class Main {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] ordenArray = new String[lines.size()][0];
 			lines.toArray(ordenArray);
@@ -521,7 +542,7 @@ public class Main {
 
 				}
 
-				stringBuilder.append("\t").append("rdfs:label \"").append(ordenArray[i][1]).append("\" .\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(clean(ordenArray[i][1])).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -538,7 +559,7 @@ public class Main {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] soldierRegimentsArray = new String[lines.size()][0];
 			lines.toArray(soldierRegimentsArray);
@@ -590,7 +611,7 @@ public class Main {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] soldierDecorationArray = new String[lines.size()][0];
 			lines.toArray(soldierDecorationArray);
@@ -642,7 +663,7 @@ public class Main {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
 			while ((thisLine = myInput.readLine()) != null) {
-				lines.add(thisLine.split(","));
+				lines.add(thisLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
 			}
 			String[][] soldierRanksArray = new String[lines.size()][0];
 			lines.toArray(soldierRanksArray);
