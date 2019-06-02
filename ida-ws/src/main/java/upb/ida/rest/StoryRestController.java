@@ -38,7 +38,7 @@ public class StoryRestController {
 		String id = storyId ;
 		//This data will be filled from backend
 		String actvScrId = "1";
-		String actvTbl = "movhub.csv";
+		String actvTbl = "movehubqualityoflife.csv";
 		String actvDs = "city";
 		String actvVz = "bar-graph";
 
