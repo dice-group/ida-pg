@@ -1,5 +1,6 @@
 package upb.ida.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
@@ -58,8 +60,15 @@ public class UserController {
 					+ "SELECT ?subject ?predicate ?object WHERE {?subject ?predicate ?object }");
 			ResultSet results = qExec.execSelect();
 
+
+//			// Converting results into JSON
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			ResultSetFormatter.outputAsJSON(outputStream, results);
+			String jsonOutput = new String(outputStream.toByteArray());
+
+			
 			Map<String, Object> returnMap = new HashMap<String, Object>();
-			returnMap.put("users", results);
+			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
 			conn.close();
 		}
@@ -141,7 +150,7 @@ public class UserController {
 						+ "PREFIX ab:<http://userdata/#>\r\n" + "INSERT DATA{ab:" + record.getUsername()
 						+ " dc:firstname \"" + record.getFirstname() + "\"; dc:lastname \"" + record.getLastname()
 						+ "\";  dc:username \"" + record.getUsername() + "\" ; dc:password \""
-						+ hashPassword(record.getPassword()) + "\";  .}");
+						+ hashPassword(record.getPassword()) + "\"; dc:userrole \"" + record.getUserRole() + "\" .}");
 				conn.update(request);
 				System.out.println(request);
 
