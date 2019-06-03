@@ -1,0 +1,24 @@
+{
+	"dsName": "City3",
+	"dsDesc": "This dataset contains the movehub ratings",
+	"filesMd": [
+	
+		{
+			"fileName": "movehubcostofliving.csv",
+			"fileDesc": "estimate on basic things",
+			"fileColMd": [
+				{
+					"colIndex": 1,
+					"colName": "City",
+					"colType": "string"
+				},
+				{
+					"colIndex": 2,
+					"colName": "Wine",
+					"colType": "number"
+				}
+				
+			]
+		}
+	]
+}
