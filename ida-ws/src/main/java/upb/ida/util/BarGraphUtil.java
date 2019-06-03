@@ -78,7 +78,7 @@ public class BarGraphUtil {
 	 * @param dataMap - map containing data from csv files
 	 * @return - String returning orignal key if matched
 	 */
-	private String getMatchingKey(String key, Map<String, String> dataMap) {
+	public String getMatchingKey(String key, Map<String, String> dataMap) {
 		Set<String> keySet = dataMap.keySet();
 		String res = null;
 		for (String entry : keySet) {

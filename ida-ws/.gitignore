@@ -1,5 +1,6 @@
 /target/
 /bin/
+/app-logs/
 
 # Spring Tools
 .sts4-cache
