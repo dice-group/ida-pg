@@ -1,12 +1,11 @@
 package upb.ida.domains;
+import java.security.NoSuchAlgorithmException;
+
+import upb.ida.rest.UserController;
 
 //@NodeEntity
-public class User {
-	
-//	private String name;
-//	private String username,password,newpassword;
-    
-//	@Id
+public class User {	
+
 //	@GeneratedValue
     private Long id;
     private String username;
@@ -16,9 +15,7 @@ public class User {
     private String userrole;
     
     private String newpassword;
-    
-   // User() {}
-    
+   
     public User(String username, String password, String firstname, String lastname, String userrole) {
 		super();
 		this.username = username;
@@ -58,6 +55,7 @@ public class User {
     }
 
     public void setUsername(String username) {
+    	System.out.println("i am fired"+username);
         this.username = username;
     }
 
@@ -69,6 +67,7 @@ public class User {
     	if (password.isEmpty())
     		this.password = null;
     	else
+    		System.out.println("i am fired password2 :  "+password);
     		this.password = password;
     }
 

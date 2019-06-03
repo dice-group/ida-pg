@@ -135,6 +135,14 @@ public class UserController {
 //			responseBean.setErrMsg("invalid inputs");
 //			return responseBean;
 //		}
+		
+		    StringBuilder str  = new StringBuilder(record.getUsername()); 
+
+		    // print string 
+		    System.out.println("String contains = " + new StringBuilder(record.getUsername().toString())); 
+		
+		
+		
 		if (UserService.getByUsername(record.getUsername()) != null) {
 			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 			return responseBean;
@@ -149,7 +157,7 @@ public class UserController {
 				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
 						+ "PREFIX ab:<http://userdata/#>\r\n" + "INSERT DATA{ab:" + record.getUsername()
 						+ " dc:firstname \"" + record.getFirstname() + "\"; dc:lastname \"" + record.getLastname()
-						+ "\";  dc:username \"" + record.getUsername() + "\" ; dc:password \""
+						+ "\";  dc:username \""  + record.getUsername() + "\" ; dc:password \""
 						+ hashPassword(record.getPassword()) + "\"; dc:userrole \"" + record.getUserRole() + "\" .}");
 				conn.update(request);
 				System.out.println(request);
