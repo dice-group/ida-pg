@@ -32,13 +32,21 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 //	}
 	
     @Override
-    public Authentication authenticate(Authentication authentication) 
-      throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     	
     	//name is username here
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
-     
+        
+        System.out.println("password from authentication before hashing"+password);
+        try {
+			password = UserController.hashPassword(password);
+		} catch (NoSuchAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        System.out.println("password from authentication after hashing"+password);
+        
        // User currentUser = userService.getByUsername(name);
         User currentUser = UserService.getByUsername(name); 
         try {
