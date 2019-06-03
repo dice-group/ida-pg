@@ -14,6 +14,7 @@ import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,9 @@ public class UserController {
 			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
 			conn.close();
+			
 		}
+		
 //    	}
 
 		return responseBean;
@@ -135,14 +138,7 @@ public class UserController {
 //			responseBean.setErrMsg("invalid inputs");
 //			return responseBean;
 //		}
-		
-		    StringBuilder str  = new StringBuilder(record.getUsername()); 
-
-		    // print string 
-		    System.out.println("String contains = " + new StringBuilder(record.getUsername().toString())); 
-		
-		
-		
+			
 		if (UserService.getByUsername(record.getUsername()) != null) {
 			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 			return responseBean;
@@ -153,12 +149,23 @@ public class UserController {
 			// In this variation, a connection is built each time.
 			try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 
-				UpdateRequest request = UpdateFactory.create();
-				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-						+ "PREFIX ab:<http://userdata/#>\r\n" + "INSERT DATA{ab:" + record.getUsername()
-						+ " dc:firstname \"" + record.getFirstname() + "\"; dc:lastname \"" + record.getLastname()
-						+ "\";  dc:username \""  + record.getUsername() + "\" ; dc:password \""
-						+ hashPassword(record.getPassword()) + "\"; dc:userrole \"" + record.getUserRole() + "\" .}");
+				UpdateRequest request = UpdateFactory.create();			
+				String insertString =
+						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
+						" PREFIX ab: <http://userdata/#" + record.getUsername() +"> "   +
+						" INSERT DATA "                                                 +
+						" { ab:			 				   "     +
+						"dc:username \"" + record.getUsername() + "\" ; "      +
+						"dc:firstname \""  + record.getFirstname() +  "\" ; "  +
+						"dc:lastname \""  + record.getLastname() +  "\" ; "  +						
+						"dc:userrole \""  + record.getUserRole() +  "\" ; "  +
+						"dc:password \""  + hashPassword(record.getPassword()) +  "\" . "+
+						" } ";
+						    
+					//	System.out.println("Execute insert action " + insertString);
+						
+				request.add(insertString);
+				
 				conn.update(request);
 				System.out.println(request);
 
@@ -166,19 +173,8 @@ public class UserController {
 				returnMap.put("newUser", record.getUsername());
 				responseBean.setPayload(returnMap);
 
-//    		TODO: This email functionality is commented just for now. (Tested and working)
-//    		try{
-//    			EmailForSignup.sendEmail(newUser.getUsername());
-//    		}catch(Exception ex)
-//    		{
-//    			responseBean.setErrCode(IDALiteral.FAILURE_EMAILSENT);
-//    			responseBean.setErrMsg(ex.getMessage());
-//    		}
-				conn.close();
-			} catch (NoSuchAlgorithmException e) {
 
-				// TODO Auto-generated catch bloc
-				e.printStackTrace();
+				conn.close();
 			}
 		}
 
