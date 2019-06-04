@@ -55,7 +55,7 @@ public class User {
     }
 
     public void setUsername(String username) {
-    	System.out.println("i am fired"+username);
+    	//System.out.println("i am fired"+username);
         this.username = username;
     }
 
@@ -67,7 +67,7 @@ public class User {
     	if (password.isEmpty())
     		this.password = null;
     	else
-    		System.out.println("i am fired password2 :  "+password);
+    		//System.out.println("i am fired password2 :  "+password);
     		this.password = password;
     }
 
