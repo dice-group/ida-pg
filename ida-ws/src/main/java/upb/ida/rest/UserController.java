@@ -67,12 +67,13 @@ public class UserController {
 			ResultSetFormatter.outputAsJSON(outputStream, results);
 			String jsonOutput = new String(outputStream.toByteArray());
 
-			
+			System.out.println("jsonoutput:"+jsonOutput);
+				
 			Map<String, Object> returnMap = new HashMap<String, Object>();
 			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
 			conn.close();
-			
+			System.out.println("responseBean:"+responseBean);
 		}
 		
 //    	}
@@ -139,7 +140,7 @@ public class UserController {
 //			responseBean.setErrMsg("invalid inputs");
 //			return responseBean;
 //		}
-		System.out.println("strt-02");
+		
 //		if (UserService.getByUsername(record.getUsername()) != null) {
 //			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 //			System.out.println("strt-02.01");
@@ -147,10 +148,10 @@ public class UserController {
 //		}
         if(1==-1) {}
 		else {
-			System.out.println("strt-02.02");
+			
 			// In this variation, a connection is built each time.
 			try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-				System.out.println("strt-03");
+			
 				UpdateRequest request = UpdateFactory.create();			
 				String insertString =
 						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
@@ -163,47 +164,37 @@ public class UserController {
 						"dc:userrole \""  + record.getUserRole() +  "\" ; "  +
 						"dc:password \""  + hashPassword(record.getPassword()) +  "\" . "+
 						" } ";
-						    
-					//	System.out.println("Execute insert action " + insertString);
-				System.out.println("strt-04");		
+	
 				request.add(insertString);
 				
 				conn.update(request);
-				System.out.println("Chk-01"+request);
-
+				
 				Map<String, Object> returnMap = new HashMap<String, Object>();
 				returnMap.put("newUser", record.getUsername());
 				responseBean.setPayload(returnMap);
-				System.out.println("Chk-02");
-
+				
 				conn.close();
 			}
-			System.out.println("Chk-03");
+		
 		}
 
 		return responseBean;
 	}
 
-	@RequestMapping(value = "/delete/{usernames}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/delete/{usernames:.+}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public ResponseBean deleteUser(@PathVariable String usernames) {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
 		User record = UserService.getByUsername(usernames);
-		if (record.getUsername() == null) {
-			responseBean.setErrMsg("user not found");
-			return responseBean;
-			// no record found with this username
-			// responseBean.setErrCode(IDALiteral.ALREADY_LOGGEDIN);
-		} else {// In this variation, a connection is built each time.
+//		if (record.getUsername() == null) {
+//			responseBean.setErrMsg("user not found");
+//			return responseBean;
+//			// no record found with this username
+//			// responseBean.setErrCode(IDALiteral.ALREADY_LOGGEDIN);
+//		} else {// In this variation, a connection is built each time.
 			try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 				UpdateRequest request = UpdateFactory.create();
-
-//				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-//						+ "PREFIX ab:<http://userdata/#>\r\n" + "DELETE DATA\r\n" + "{\r\n" + "  ab:"
-//						+ record.getUsername() + " dc:firstname \"" + record.getFirstname() + "\" ;\r\n"
-//						+ "dc:password \"" + record.getPassword() + "\" ;\r\n" + "dc:lastname\"" + record.getLastname()
-//						+ "\";\r\n" + "dc:userrole \"" + record.getUserRole()+ "\"; \r\n" + "dc:username \""+record.getUsername()+"\".\r\n" + "}");
-//				
+			
 				String insertString =
 						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
 						" PREFIX ab: <http://userdata/#" + record.getUsername() +"> "   +
@@ -222,7 +213,7 @@ public class UserController {
 				conn.close();
 			}
 
-		}
+	//	}
 
 		return responseBean;
 	}
@@ -230,15 +221,13 @@ public class UserController {
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
 		String serviceURI = "http://127.0.0.1:3030/user";
-		String query1 = "prefix ab:<http://userdata/#" + userName + "> \r\n"
-				+ "prefix cd: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-				+ "select ?firstname ?lastname ?username ?password  ?userrole \r\n"
-				+ "	where {ab: cd:firstname ?firstname ;cd:lastname ?lastname; cd:password ?password ; cd:userrole ?userrole; cd:username ?username .}\r\n"
-				+ "";
+		System.out.println("userName"+userName);
+		String query1 = " PREFIX ab: <http://userdata/#"+userName +"> "   +
+				 "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?firstname ?lastname ?username ?password  ?userrole where {ab: dc:firstname ?firstname ;dc:lastname ?lastname; dc:password ?password ; dc:userrole ?userrole; dc:username ?username .}";
 
 		User obj = null;
 
-		QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1);
+		QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI, query1.trim());
 		ResultSet results = q.execSelect();
 
 		while (results.hasNext()) {
