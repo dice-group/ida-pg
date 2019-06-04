@@ -133,22 +133,24 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public ResponseBean createNewUser(@RequestBody final User record) throws Exception {
+		
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
 //		if (record == null) {
 //			responseBean.setErrMsg("invalid inputs");
 //			return responseBean;
 //		}
-			
-		if (UserService.getByUsername(record.getUsername()) != null) {
-			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
-			return responseBean;
-		}
-
+		System.out.println("strt-02");
+//		if (UserService.getByUsername(record.getUsername()) != null) {
+//			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
+//			System.out.println("strt-02.01");
+//			return responseBean;
+//		}
+        if(1==-1) {}
 		else {
-
+			System.out.println("strt-02.02");
 			// In this variation, a connection is built each time.
 			try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-
+				System.out.println("strt-03");
 				UpdateRequest request = UpdateFactory.create();			
 				String insertString =
 						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
@@ -163,19 +165,20 @@ public class UserController {
 						" } ";
 						    
 					//	System.out.println("Execute insert action " + insertString);
-						
+				System.out.println("strt-04");		
 				request.add(insertString);
 				
 				conn.update(request);
-				System.out.println(request);
+				System.out.println("Chk-01"+request);
 
 				Map<String, Object> returnMap = new HashMap<String, Object>();
 				returnMap.put("newUser", record.getUsername());
 				responseBean.setPayload(returnMap);
-
+				System.out.println("Chk-02");
 
 				conn.close();
 			}
+			System.out.println("Chk-03");
 		}
 
 		return responseBean;
@@ -195,12 +198,25 @@ public class UserController {
 			try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 				UpdateRequest request = UpdateFactory.create();
 
-				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-						+ "PREFIX ab:<http://userdata/#>\r\n" + "DELETE DATA\r\n" + "{\r\n" + "  ab:"
-						+ record.getUsername() + " dc:firstname \"" + record.getFirstname() + "\" ;\r\n"
-						+ "dc:password \"" + record.getPassword() + "\" ;\r\n" + "dc:lastname\"" + record.getLastname()
-						+ "\";\r\n" + "dc:userrole \"" + record.getUserRole()+ "\"; \r\n" + "dc:username \"" + record.getUsername() + "\".\r\n" + "}");
-
+//				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
+//						+ "PREFIX ab:<http://userdata/#>\r\n" + "DELETE DATA\r\n" + "{\r\n" + "  ab:"
+//						+ record.getUsername() + " dc:firstname \"" + record.getFirstname() + "\" ;\r\n"
+//						+ "dc:password \"" + record.getPassword() + "\" ;\r\n" + "dc:lastname\"" + record.getLastname()
+//						+ "\";\r\n" + "dc:userrole \"" + record.getUserRole()+ "\"; \r\n" + "dc:username \""+record.getUsername()+"\".\r\n" + "}");
+//				
+				String insertString =
+						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
+						" PREFIX ab: <http://userdata/#" + record.getUsername() +"> "   +
+						" DELETE DATA "                                                 +
+						" { ab:			 				   "     +
+						"dc:username \"" + record.getUsername() + "\" ; "      +
+						"dc:firstname \""  + record.getFirstname() +  "\" ; "  +
+						"dc:lastname \""  + record.getLastname() +  "\" ; "  +						
+						"dc:userrole \""  + record.getUserRole() +  "\" ; "  +
+						"dc:password \""  + record.getPassword() +  "\" . "+
+						" } ";
+				request.add(insertString);			
+				
 				conn.update(request);
 				responseBean.setErrMsg("User Deleted");
 				conn.close();
