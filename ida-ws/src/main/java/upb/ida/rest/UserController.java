@@ -108,19 +108,36 @@ public class UserController {
 
 				// The idea is SPARQL is not for relational data! Its for graph data
 				// So here we are just deleting the old recorded
-
-				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-						+ "PREFIX ab:<http://userdata/#>\r\n" + "DELETE DATA\r\n" + "{\r\n" + "  ab:"
-						+ oldRecord.getUsername() + "    dc:firstname \"" + oldRecord.getFirstname() + "\" ;\r\n"
-						+ "dc:password \"" + oldRecord.getPassword() + "\" ;\r\n" + "dc:lastname\""
-						+ oldRecord.getLastname() + "\"; \r\n" + "}");
-				// inserting new record
-				request.add("PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#>\r\n"
-						+ "PREFIX ab:<http://userdata/#>\r\n" + "INSERT DATA{ab:" + oldRecord.getUsername()
-						+ " dc:firstname \"" + updatedrecord.getFirstname() + "\" ; \r\n" + "dc:lastname\""
-						+ updatedrecord.getLastname() + "\"; dc:password \"" + password + "\" .}");
+			
+				String insertString1 =
+						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
+						" PREFIX ab: <http://userdata/#" + oldRecord.getUsername() +"> "   +
+						" DELETE DATA "                                                 +
+						" { ab:			 				   "     +
+					//	"dc:username \"" + oldRecord.getUsername() + "\" ; "      +
+						"dc:firstname \""  + oldRecord.getFirstname() +  "\" ; "  +
+						"dc:lastname \""  + oldRecord.getLastname() +  "\" ; "  +						
+						"dc:userrole \""  + oldRecord.getUserRole() +  "\" ; "  +
+						"dc:password \""  + oldRecord.getPassword() +  "\" . "+
+						" } ";
+				request.add(insertString1);
 				conn.update(request);
-
+				
+				String insertString =
+						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
+						" PREFIX ab: <http://userdata/#" + oldRecord.getUsername() +"> "   +
+						" INSERT DATA "                                                 +
+						" { ab:			 				   "     +
+					//	"dc:username \"" + oldRecord.getUsername() + "\" ; "      +
+						"dc:firstname \""  + updatedrecord.getFirstname() +  "\" ; "  +
+						"dc:lastname \""  + updatedrecord.getLastname() +  "\" ; "  +						
+						"dc:userrole \""  + updatedrecord.getUserRole() +  "\" ; "  +
+						"dc:password \""  + password +  "\" . "+
+						" } ";
+	
+				request.add(insertString);
+				conn.update(request);
+				//doing mapping with resposeBean
 				Map<String, Object> returnMap = new HashMap<String, Object>();
 				returnMap.put("updatedUser", updatedrecord.getUsername());
 				responseBean.setPayload(returnMap);
