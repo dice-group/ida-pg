@@ -47,14 +47,20 @@
     (assoc! state :tie-breaker Double/POSITIVE_INFINITY)))
 
 (defn add-source-candidates!
-  [{:keys [db flaws] :as state} add]
-  (if add
-    (assoc! state :source-candidates
-            (into {}
-                  (comp (filter #(gq/fillable-call-param? db %))
-                        (map (fn [flaw] [flaw (gq/compatibly-typed-sources db flaw)])))
-                  (:parameter flaws)))
-    state))
+  [{:keys [db flaws] :as state} {add :add, remove-ids :remove}]
+  (let [cands (if add
+                (into {}
+                      (comp (filter #(gq/fillable-call-param? db %))
+                            (map (fn [flaw] [flaw (gq/compatibly-typed-sources db flaw)])))
+                      (:parameter flaws))
+                (if (seq remove-ids)
+                  (let [remove-ids (set remove-ids)]
+                    (into {}
+                          (keep (fn [[k :as kv]]
+                                  (when-not (contains? remove-ids k) kv)))
+                          (:source-candidates state)))
+                  (:source-candidates state)))]
+    (assoc! state :source-candidates cands)))
 
 (defn apply-action
   [state action]
@@ -65,7 +71,7 @@
           (update! $ :db d/db-with (:tx action))
           (update! $ :cost + (:cost action))
           (assoc! $ :flaws (flaws $))
-          (add-source-candidates! $ (:add action))
+          (add-source-candidates! $ action)
           (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
           (persistent! $))))
 
