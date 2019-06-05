@@ -20,10 +20,11 @@
             [librarian.generator.query :as gq]))
 
 (def show-scrape (comp :db read-scrape create-scrape))
+(def shown-state (atom nil))
 
 (defn show-state
-  [state & {:keys [show-patterns]
-            :or {show-patterns false}}]
+  [state & {:keys [show-patterns no-effects]
+            :or {show-patterns false, no-effects false}}]
   (let [db (:db state)
         nodes (d/q '[:find ?node ?type
                      :in $ % ?show-patterns
@@ -106,6 +107,7 @@
                       parameter-edges
                       result-edges)
         edges (if (empty? edges) [{:from -1 :to -2}] edges)]
+    (when-not no-effects (reset! shown-state state))
     (prg/graph "Control Flow State"
                {:nodes nodes
                 :edges edges}
@@ -125,3 +127,27 @@
                       (:goal search-state)
                       (-> search-state :queue peek first))
          opts))
+
+(defn state-past
+  [state predecessor-idx]
+  (nth (iterate :predecessor state)
+       predecessor-idx))
+
+(defn show-state-past
+  [state predecessor-idx & opts]
+  (apply show-state
+         (state-past state predecessor-idx)
+         opts))
+
+(defn last-state
+  ([]
+   @shown-state)
+  ([predecessor-idx]
+   (state-past @shown-state predecessor-idx)))
+
+(defn show-last-state
+  ([]
+   (show-last-state 0))
+  ([predecessor-idx]
+   (show-state-past @shown-state predecessor-idx
+                    :no-effects true)))
