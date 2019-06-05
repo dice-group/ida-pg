@@ -46,6 +46,16 @@
           (assoc! :removed (vec remove))))
     (assoc! state :tie-breaker Double/POSITIVE_INFINITY)))
 
+(defn add-source-candidates!
+  [{:keys [db flaws] :as state} add]
+  (if add
+    (assoc! state :source-candidates
+            (into {}
+                  (comp (filter #(gq/fillable-call-param? db %))
+                        (map (fn [flaw] [flaw (gq/compatibly-typed-sources db flaw)])))
+                  (:parameter flaws)))
+    state))
+
 (defn apply-action
   [state action]
   (when-let [new-state (add-removed! (transient state) (:remove action))]
@@ -55,6 +65,7 @@
           (update! $ :db d/db-with (:tx action))
           (update! $ :cost + (:cost action))
           (assoc! $ :flaws (flaws $))
+          (add-source-candidates! $ (:add action))
           (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
           (persistent! $))))
 
@@ -63,7 +74,7 @@
   (apply-action {:cost 0
                  :db (:db scrape)
                  :placeholder-matches (memo/memo #'gq/placeholder-matches)}
-                {:cost 0, :tx tx}))
+                {:cost 0, :tx tx, :add true}))
 
 (defn successors
   [state]

@@ -10,7 +10,7 @@
   (let [tx (tx/clone-entities db (map :v (d/datoms db :eavt snippet ::snippet/contains))
                               [::namespace/member])]
     {:type :snippet
-     :weight 1/10
+     :weight 1/2
      :add true
      :tx tx}))
 

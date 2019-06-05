@@ -199,6 +199,10 @@
   ([db types]
    (into [] (types->instances db) types)))
 
+(defn fillable-call-param?
+  [db call-param]
+  (-> (d/entity db call-param) ::call-parameter/parameter :placeholder not))
+
 (defn compatibly-typed-sources
   ([db flaw]
    (compatibly-typed-sources db flaw nil))

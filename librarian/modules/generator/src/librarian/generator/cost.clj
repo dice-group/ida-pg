@@ -38,15 +38,31 @@
 (defn costify-actions
   "Takes weighted actions, normalizes their weights and adds the normalized weight nlogs as costs."
   [actions]
-  (let [weight-sum (Math/log (inc (transduce (map :weight) + actions)))]
+  (let [weight-sum (Math/log (transduce (map :weight) + 1 actions))]
     (map #(assoc % :cost (- weight-sum (Math/log (:weight %))))
          actions)))
 
-(def h-normalize (Math/log 2))
+; minimal possible action cost (p=1/2):
+(def c-min (Math/log 2))
+; weight of param remove actions (max solution to 1/(2+x)^2 > x/(1+x)):
+(def param-remove-weight 0.24697960371746706105)
+; minimal possible action cost if param-removal is available but not chosen:
+(def c-min-with-param-remove-option (Math/log (+ 2 param-remove-weight)))
+
 (def ^:dynamic *h-param-weight* 2)
 (def ^:dynamic *h-call-weight* 2)
 
 (defn cost-heuristic
-  [{:keys [flaws]}]
-  (+ (-> flaws :parameter count (* *h-param-weight* h-normalize))
-     (-> flaws :call count (* *h-call-weight* h-normalize))))
+  [{:keys [db flaws source-candidates]}]
+  (let [parameter-flaw-cost
+        (transduce (map (fn [flaw]
+                          (let [candidates (source-candidates flaw)
+                                c-step (if (gq/optional-call-param? db flaw)
+                                         c-min-with-param-remove-option
+                                         c-min)]
+                            (+ (if (nil? candidates) c-min 0) ; placeholder completion cost
+                               (if (empty? candidates) c-step 0)
+                               c-step))))
+                   + 0 (:parameter flaws))]
+    (+ (* parameter-flaw-cost *h-param-weight*)
+       (-> flaws :call count (* *h-call-weight* c-min)))))
