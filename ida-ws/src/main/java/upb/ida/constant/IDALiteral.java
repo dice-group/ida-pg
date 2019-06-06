@@ -29,6 +29,7 @@ public interface IDALiteral {
 	public static final int FAILURE_USERNOTEXISTS = 22;
 	public static final int ALREADY_LOGGEDIN = 23;
 	
+	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
 	public static final String RS_USER = "user";
