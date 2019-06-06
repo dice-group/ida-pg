@@ -6,14 +6,6 @@ import java.util.List;
 
 public class Main {
 
-	//    variables
-	private static int lengthDienststellung;
-
-	//    constants
-	private static final char DEFAULT_SEPARATOR = ',';
-	private static final char DEFAULT_QUOTE = '"';
-	private static final String CHARSET = "UTF-8";
-
 	private static final String resourceRoot = ""; // CHANGE THIS PATH BEFORE RUNNING THE PROGRAM
 	private static final String resultFile = "files/result.ttl";
 	private static final String baseUrl = "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/";
@@ -103,9 +95,7 @@ public class Main {
 		File file = new File(resourceRoot + resultFile);
 		if (file.exists()) {
 			file.delete();
-		}
-		else
-		{
+		} else {
 			file.createNewFile();
 		}
 		FileWriter fileWriter = new FileWriter(file);
@@ -121,7 +111,8 @@ public class Main {
 	private static String clean(String input) {
 		boolean leadingQuote = input.startsWith("\"");
 		boolean trailingQuote = input.endsWith("\"");
-		int begin = 0, end = input.length();
+		int begin = 0;
+		int end = input.length();
 
 		if (leadingQuote)
 			begin = begin + 1;
@@ -195,7 +186,7 @@ public class Main {
 			for (int i = 1; i < literatureArray.length; i++) {
 				stringBuilder.append("##\n");
 				stringBuilder.append("literature:").append(literatureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n").
-						append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
+					append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
 				stringBuilder.append("\n");
 				stringBuilder.append("literature:").append(literatureArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n");
 
