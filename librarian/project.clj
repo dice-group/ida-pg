@@ -13,7 +13,7 @@
                  [librarian/scraper]
                  [librarian/generator]]
 
-  :modules {:versions {org.clojure/clojure "1.10.0"
+  :modules {:versions {org.clojure/clojure "1.10.1"
                        org.clojure/tools.logging "0.4.1"
                        datascript "0.18.3"
                        clj-commons/fs "1.5.0"
