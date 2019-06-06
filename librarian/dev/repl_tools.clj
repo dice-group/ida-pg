@@ -5,7 +5,7 @@
             [librarian.model.io.scrape :refer [read-scrape]]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.data-receiver :as data-receiver]
-            [librarian.model.concepts.call-value :as call-value]
+            [librarian.model.concepts.constant :as constant]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.parameter :as parameter]
@@ -29,7 +29,7 @@
         nodes (d/q '[:find ?node ?type
                      :in $ % ?show-patterns
                      :where [(ground [::call/call
-                                      ::call-value/call-value
+                                      ::constant/constant
                                       ::call-parameter/call-parameter
                                       ::call-result/call-result])
                              [?type ...]]
@@ -51,8 +51,8 @@
                                       [(get-in e [::namespace/_member ::named/name] "?")
                                        (::named/name e "?")])]
                             (clojure.string/join "/" n))
-                          ::call-value/call-value
-                          (::call-value/value (d/entity db node))
+                          ::constant/constant
+                          (::constant/value (d/entity db node))
                           ::call-parameter/call-parameter
                           (let [e (d/entity db node)
                                 p (::call-parameter/parameter e)]
@@ -76,8 +76,8 @@
                                          ::semantic-type/semantic-type
                                          (str "s:" (name (::semantic-type/key datatype)) ":"
                                               (name (::semantic-type/value datatype)))
-                                         ::call-value/call-value
-                                         (str "c:" (::call-value/value datatype))
+                                         ::constant/constant
+                                         (str "c:" (::constant/value datatype))
                                          "?"))))
                              (clojure.string/join ", "))
                         ">")})

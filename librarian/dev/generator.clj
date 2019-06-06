@@ -3,7 +3,7 @@
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.call-value :as call-value]
+            [librarian.model.concepts.constant :as constant]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.basetype :as basetype]
             [librarian.model.concepts.role-type :as role-type]
@@ -55,7 +55,7 @@
   [_ & args]
   (apply gen-test*
          "libs/scikit-learn-cluster"
-         (instances->tx [(instanciate call-value/call-value
+         (instances->tx [(instanciate constant/constant
                            :value 123
                            :datatype [(instanciate basetype/basetype
                                         :name "string")
@@ -74,7 +74,7 @@
   (apply gen-test*
          "libs/scikit-learn-cluster"
          (concat (goal-init-tx [:dataset] [:labels])
-                 (instances->tx [(instanciate call-value/call-value
+                 (instances->tx [(instanciate constant/constant
                                    :value 123
                                    :datatype [(instanciate basetype/basetype
                                                 :name "string")])]))

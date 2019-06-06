@@ -8,7 +8,7 @@
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.parameter :as parameter]
             [librarian.model.concepts.data-receiver :as data-receiver]
-            [librarian.model.concepts.call-value :as call-value]
+            [librarian.model.concepts.constant :as constant]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.callable :as callable]
@@ -224,7 +224,7 @@
   ([db flaw snippet]
    (let [datatype-filter (filter (typed-compatible? db flaw))
          deps-filter (remove (depends-on? db flaw))
-         source-types (types->subtypes [::call-result/call-result ::call-value/call-value])]
+         source-types (types->subtypes [::call-result/call-result ::constant/constant])]
      (if snippet
        (into []
              (comp (map :v)
