@@ -12,6 +12,8 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.update.UpdateFactory;
@@ -44,13 +46,14 @@ public class UserController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseBean listUsers() {
-		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
+		RDFConnection builder =  RDFConnectionFactory.connectPW("http://127.0.0.1:3030/user", "admin", "ida");
+	//	RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
 		RDFConnectionFuseki conn= null;
 		QueryExecution qExec = null;
 	//	RDFConnection RDFConnectionFactory.connectPW(String URL, String user, String password)
 		try  {
-			conn = (RDFConnectionFuseki) builder.build();
-			qExec = conn.query("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+		//	conn = (RDFConnectionFuseki) builder.;
+			qExec = builder.query("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
 					+ "prefix owl: <http://www.w3.org/2002/07/owl#> "
 					+ "SELECT ?subject ?predicate ?object WHERE {?subject ?predicate ?object }");
 			ResultSet results = qExec.execSelect();
@@ -70,7 +73,7 @@ public class UserController {
 			// System.out.println("responseBean:"+responseBean);
 		}finally {
 			qExec.close();
-			conn.close();
+		//	conn.close();
 		}
 
 		return responseBean;
