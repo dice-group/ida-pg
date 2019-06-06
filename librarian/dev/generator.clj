@@ -10,18 +10,31 @@
             [librarian.model.concepts.semantic-type :as semantic-type]
             [repl-tools :as rt]))
 
+(defn- print-search-state
+  [i search-state]
+  (let [s (rt/search-state->next-state search-state)
+        {p-flaws :parameter, c-flaws :call} (:flaws s)]
+    (println (format "%6d " (swap! i inc))
+             "id:" (:id s) "pred:" (:id (:predecessor s))
+             "c:" (:cost s) "h:" (:heuristic s) "flaws:" p-flaws c-flaws)
+    search-state))
+
 (defn gen-test*
   ([ds init]
    (gen-test* ds init 10))
   ([ds init limit]
    (let [scrape (scrape/read-scrape ds)
          search-state (gen/initial-search-state scrape init)
-         succs (iterate gen/continue-search search-state)
+         i (atom 0)
+         _ (print-search-state i search-state)
+         succs (iterate (comp (partial print-search-state i)
+                              gen/continue-search)
+                        search-state)
          succs (take limit succs)]
      (time (doall succs))
      (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
-                                     (last succs)
-                                  :show-patterns false))))))
+                                     (last succs))
+                                 :show-patterns false)))))
 
 (defn- goal-init-tx
   [inputs goals]

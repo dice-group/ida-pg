@@ -121,11 +121,15 @@
                                         :sortMethod "directed"
                                         :levelSeparation 80}}})))
 
+(defn search-state->next-state
+  [search-state]
+  (if (:done search-state)
+    (:goal search-state)
+    (-> search-state :queue peek first)))
+
 (defn show-search-state
   [search-state & opts]
-  (apply show-state (if (:done search-state)
-                      (:goal search-state)
-                      (-> search-state :queue peek first))
+  (apply show-state (search-state->next-state search-state)
          opts))
 
 (defn state-past

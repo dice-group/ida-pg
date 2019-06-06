@@ -94,8 +94,6 @@
 (defn successors
   [state]
   (let [{p-flaws :parameter, c-flaws :call} (:flaws state)]
-    (println "id:" (:id state) "pred:" (:id (:predecessor state))
-             "c:" (:cost state) "h:" (:heuristic state) "flaws:" p-flaws c-flaws)
     (if (and (empty? p-flaws) (empty? c-flaws))
       :done
       (let [actions (transient [])
