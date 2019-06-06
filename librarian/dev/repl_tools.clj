@@ -66,16 +66,19 @@
                         " (" node ")"
                         "\n<"
                         (->> (::typed/datatype (d/entity db node))
-                             (map (fn [datatype]
-                                    (condp #(isa? %2 %1) (first (:type datatype))
-                                      ::basetype/basetype
-                                      (::basetype/id datatype)
-                                      ::role-type/role-type
-                                      (str "role:" (name (::role-type/id datatype)))
-                                      ::semantic-type/semantic-type
-                                      (str "s:" (name (::semantic-type/key datatype)) ":"
-                                           (name (::semantic-type/value datatype)))
-                                      "?")))
+                             (keep (fn [datatype]
+                                     (when (not= node (:db/id datatype))
+                                       (condp #(isa? %2 %1) (first (:type datatype))
+                                         ::basetype/basetype
+                                         (::basetype/id datatype)
+                                         ::role-type/role-type
+                                         (str "role:" (name (::role-type/id datatype)))
+                                         ::semantic-type/semantic-type
+                                         (str "s:" (name (::semantic-type/key datatype)) ":"
+                                              (name (::semantic-type/value datatype)))
+                                         ::call-value/call-value
+                                         (str "c:" (::call-value/value datatype))
+                                         "?"))))
                              (clojure.string/join ", "))
                         ">")})
                    nodes)

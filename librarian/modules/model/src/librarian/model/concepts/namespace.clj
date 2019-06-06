@@ -15,6 +15,7 @@
                          :db/isComponent true
                          :db/index true
                          :db/doc "Concept is member of the namespace."}}
+  :spec ::namespace
   :preprocess {::named/name (add-attr ::id)})
 
 (s/def ::namespace (hs/entity-keys :opt [::member]))

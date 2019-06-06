@@ -33,15 +33,18 @@
    {:keys [preprocessors attributes]} _ _]
   (let [id (tempid)
         [pid ptype] ((juxt :id :type) parent)
+        type-processors (preprocessors type)
+        id-processor (get type-processors :db/id)
         tx-base (cond-> [[:db/add id :tempid id]
                          [:db/add id :type concept]]
-                  allow-incomplete (conj [:db/add id :allow-incomplete true]))
+                  allow-incomplete (conj [:db/add id :allow-incomplete true])
+                  id-processor (into (id-processor id id)))
         tx-from (when ref-from-trigger
                   (let [processor (get-in preprocessors [ptype ref-from-trigger])]
                     (conj (if processor (processor id pid) [])
                           [:db/add pid ref-from-trigger id])))
         tx-to (when ref-to-trigger
-                (let [processor (get-in preprocessors [type ref-to-trigger])]
+                (let [processor (get type-processors ref-to-trigger)]
                   (conj (if processor (processor pid id) [])
                         [:db/add id ref-to-trigger pid])))
         {itx true, tx false} (group-by (partial tx/indexing-tx? attributes)
