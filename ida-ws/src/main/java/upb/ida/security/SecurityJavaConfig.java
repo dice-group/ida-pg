@@ -61,11 +61,11 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
           
           
           .and().formLogin()
-		  .loginProcessingUrl("/auth/login-action").usernameParameter("username").passwordParameter("password")
+		  .loginProcessingUrl("/auth/login-action/**").usernameParameter("username").passwordParameter("password")
 		  .successHandler(mySuccessHandler)
 		  .failureHandler(myFailureHandler)
 		  .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-		  .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+		  .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout/**"))
 		  .logoutSuccessHandler(logoutSuccessHandler)
 		  .and()
           .httpBasic();
@@ -76,7 +76,7 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter  {
             @Override
             public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                     AuthenticationException e) throws IOException, ServletException {
-                RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/auth/response");
+                RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/auth/response/**");
                 rd.forward(httpServletRequest, httpServletResponse);
             }
         };
