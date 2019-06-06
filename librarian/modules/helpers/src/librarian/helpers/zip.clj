@@ -34,11 +34,12 @@
   [type loc]
   (let [[type & {:keys [select while skip limit]}] (if (vector? type) type [type])
         [init next continue?] ((step-types type) loc)]
-    (cond->> (take-while continue? (iterate next (init loc)))
-      while  (take-while while)
-      select (filter select)
-      skip   (drop skip)
-      limit  (take limit))))
+    (eduction (comp (take-while continue?)
+                    (if while (take-while while) identity)
+                    (if select (filter select) identity)
+                    (if skip (drop skip) identity)
+                    (if limit (take limit) identity))
+              (iterate next (init loc)))))
 
 (defn select-locs
   [selectors loc]
@@ -49,4 +50,4 @@
       (recur selectors
              (if (fn? selector)
                (keep selector locs)
-               (mapcat (partial select-locs-spread-step selector) locs))))))
+               (mapcat #(select-locs-spread-step selector %) locs))))))
