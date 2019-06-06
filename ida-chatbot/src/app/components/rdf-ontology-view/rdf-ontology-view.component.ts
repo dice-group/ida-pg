@@ -1,7 +1,7 @@
 //import { Component, OnInit } from '@angular/core';
 import {AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 
-declare function createV3RDFOntologyView();
+declare function createV3RDFOntologyGraphView();
 
 @Component({
   selector: 'app-rdf-ontology-view',
@@ -24,6 +24,6 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit {
   ngOnInit() {
   }
   ngAfterViewInit() {
-    createV3RDFOntologyView();
+    createV3RDFOntologyGraphView();
   }
 }
