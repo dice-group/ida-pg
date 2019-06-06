@@ -1,6 +1,5 @@
 (ns librarian.generator.core
   (:require [datascript.core :as d]
-            [clojure.core.memoize :as memo]
             [clojure.data.priority-map :refer [priority-map]]
             [librarian.helpers.transients :refer [into! update!]]
             [librarian.model.concepts.call :as call]
@@ -21,20 +20,20 @@
 (defn flaws
   [{:keys [db]}]
   (let [global-type-finder (comp (gq/types->instances db)
-                                 (remove #(d/datoms db :avet ::snippet/contains %)))]
+                                 (remove #(gq/containing-snippet db %)))]
     {:parameter (into []
                       (comp global-type-finder
-                            (remove #(d/datoms db :eavt % ::data-receiver/receives)))
+                            (remove #(gq/receives? db %)))
                       [::call-parameter/call-parameter])
      :call (into []
                  (comp global-type-finder
                        (remove (fn [id]
                                  (if-let [[{callable :v}] (d/datoms db :eavt id ::call/callable)]
-                                   (not (:v (first (d/datoms db :eavt callable :placeholder))))))))
+                                   (not (gq/placeholder? db callable))))))
                  [::call/call])}))
 
 (defn add-removed!
-  [{:keys [removed] :as state} remove]
+  [{:keys [removed] :as state} {:keys [remove]}]
   (if (some? remove)
     (if removed
       (when (< (peek removed) (first remove))
@@ -62,9 +61,19 @@
                   (:source-candidates state)))]
     (assoc! state :source-candidates cands)))
 
+(defn add-placeholder-matches!
+  [{:keys [db flaws placeholder-matches] :or {placeholder-matches {}} :as state} action]
+  (if (:add action)
+    (assoc! state :placeholder-matches
+            (into placeholder-matches
+                  (comp (remove placeholder-matches)
+                        (map (fn [call] [call (gq/placeholder-matches db (gq/callable db call))])))
+                  (:call flaws)))
+    state))
+
 (defn apply-action
   [state action]
-  (when-let [new-state (add-removed! (transient state) (:remove action))]
+  (when-let [new-state (add-removed! (transient state) action)]
     (as-> new-state $
           (assoc! $ :id (swap! *sid inc))
           (assoc! $ :predecessor state)
@@ -72,14 +81,14 @@
           (update! $ :cost + (:cost action))
           (assoc! $ :flaws (flaws $))
           (add-source-candidates! $ action)
+          (add-placeholder-matches! $ action)
           (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
           (persistent! $))))
 
 (defn initial-state
   [scrape tx]
   (apply-action {:cost 0
-                 :db (:db scrape)
-                 :placeholder-matches (memo/memo #'gq/placeholder-matches)}
+                 :db (:db scrape)}
                 {:cost 0, :tx tx, :add true}))
 
 (defn successors

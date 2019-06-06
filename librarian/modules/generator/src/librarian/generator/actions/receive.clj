@@ -22,5 +22,6 @@
                   (when (< semantic-cost Double/POSITIVE_INFINITY)
                     {:type :receiver
                      :weight 1
+                     :add true
                      :tx tx})))
               solutions)))))

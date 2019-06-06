@@ -1,6 +1,5 @@
 (ns librarian.generator.query
   (:require [datascript.core :as d]
-            [clojure.core.memoize :as memo]
             [librarian.helpers.map :as hm]
             [librarian.helpers.transients :refer [into!]]
             [librarian.model.concepts.datatype :as datatype]
@@ -133,6 +132,18 @@
   [db call-param]
   (-> (d/entity db call-param) ::call-parameter/parameter ::parameter/optional some?))
 
+(defn placeholder?
+  [db id]
+  (:v (first (d/datoms db :aevt :placeholder id)) false))
+
+(defn containing-snippet
+  [db id]
+  (:e (first (d/datoms db :avet ::snippet/contains id))))
+
+(defn receives?
+  [db id]
+  (some? (d/datoms db :aevt ::data-receiver/receives id)))
+
 (defn receivers
   [db id]
   (loop [open (transient [id])
@@ -203,6 +214,10 @@
   [db call-param]
   (-> (d/entity db call-param) ::call-parameter/parameter :placeholder not))
 
+(defn callable
+  [db call]
+  (:v (first (d/datoms db :eavt call ::call/callable))))
+
 (defn compatibly-typed-sources
   ([db flaw]
    (compatibly-typed-sources db flaw nil))
@@ -223,7 +238,7 @@
                    deps-filter datatype-filter)
              source-types)))))
 
-(defn ^{::memo/args-fn second} placeholder-matches
+(defn placeholder-matches
   [db placeholder]
   (let [e (d/entity db placeholder)]
     (if (:placeholder e)
@@ -248,7 +263,7 @@
                           revref-attrs)
             cands (into []
                         (comp (types->instances db)
-                              (remove #(:v (first (d/datoms db :aevt :placeholder %))))
+                              (remove #(placeholder? db %))
                               (filter #(every? (fn [datom] (d/datoms db :eavt % (:a datom) (:v datom)))
                                                base))
                               (filter (fn [cand]

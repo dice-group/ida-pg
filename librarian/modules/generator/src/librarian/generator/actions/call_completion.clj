@@ -56,8 +56,7 @@
 
 (defn call-completion-actions
   [{:keys [db placeholder-matches]} flaw]
-  (let [callable (:v (first (d/datoms db :eavt flaw ::call/callable)))
-        e (d/entity db flaw)
+  (let [e (d/entity db flaw)
         p->cp (into {} (map (fn [p] [(-> p ::call-parameter/parameter :db/id)
                                      (let [id (:db/id p)]
                                        {:db/id id
@@ -68,7 +67,7 @@
                                        {:db/id id
                                         :receivers (gq/receivers db id)})]))
                     (::call/result e))
-        completions (placeholder-matches db callable)]
+        completions (placeholder-matches flaw)]
     (mapcat (fn [{match :match
                   matched-params ::callable/parameter
                   matched-results ::callable/result}]
