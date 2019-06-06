@@ -29,54 +29,9 @@
             '[(subtype ?child ?parent)
               [(clojure.core/isa? ?child ?parent)]]
 
-            ; does the datatype concept ?child extend the datatype concept ?parent:
-            '[(extends ?child ?parent)
-              [(ground ?child) ?parent]]
-            '[(extends ?child ?parent)
-              [?child ::datatype/extends ?parent]]
-            '[(extends ?child ?parent)
-              [?child ::datatype/extends ?p]
-              (extends ?p ?parent)]
-
             ; can values of typed concept ?from be used as values of typed concept ?to:
             ['(typed-compatible ?from ?to)
-             `[(typed-compatible? ~'$ ~'?from ~'?to)]]
-
-            ; does ?a depend on ?b:
-            '[(depends-on ?a ?b)
-              [(ground ?a) ?b]]
-            '[(depends-on ?a ?b)
-              [?a ::call/parameter ?param]
-              (depends-on ?param ?b)]
-            '[(depends-on ?a ?b)
-              [?a ::data-receiver/receives ?x]
-              (depends-on ?x ?b)]
-            '[(depends-on ?a ?b)
-              [?call ::call/result ?a]
-              (depends-on ?call ?b)]
-
-            ; does ?a receive the value of ?b:
-            '[(receives ?a ?b)
-              [(ground ?b) ?a]]
-            '[(receives ?a ?b)
-              [?a ::data-receiver/receives ?b]]
-            '[(receives ?a ?b)
-              [?x ::data-receiver/receives ?b]
-              (receives ?a ?x)]
-
-            ; does ?a receive the semantic types of ?b:
-            '[(receives-semantic ?a ?b)
-              [(ground ?b) ?a]]
-            '[(receives-semantic ?a ?b)
-              [?a ::data-receiver/receives ?b]]
-            '[(receives-semantic ?a ?b)
-              [?x ::data-receiver/receives ?b]
-              (receives-semantic ?a ?x)]
-            '[(receives-semantic ?a ?b)
-              [?a ::data-receiver/receives-semantic ?b]]
-            '[(receives-semantic ?a ?b)
-              [?x ::data-receiver/receives-semantic ?b]
-              (receives-semantic ?a ?x)]])
+             `[(typed-compatible? ~'$ ~'?from ~'?to)]]])
 
 (defn transitive-closure
   [db attrs reverse-attrs start]
