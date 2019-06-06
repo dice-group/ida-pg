@@ -3,10 +3,11 @@
             [librarian.helpers.spec :as hs]
             [librarian.model.syntax :refer [defconcept]]
             [librarian.model.concepts.namespaced :as namespaced :refer [namespaced]]
-            [librarian.model.concepts.datatype :as datatype :refer [datatype]])
+            [librarian.model.concepts.datatype :as datatype :refer [datatype]]
+            [librarian.model.concepts.typed :refer [typed]])
   (:refer-clojure :exclude [class]))
 
-(defconcept class [namespaced datatype]
+(defconcept class [typed namespaced datatype]
   :attributes {::constructor {:db/valueType :db.type/ref
                               :db/cardinality :db.cardinality/many
                               :db/isComponent true

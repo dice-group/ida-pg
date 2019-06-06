@@ -21,7 +21,8 @@
   [value transform parent index loc]
   (let [value (case (or value :content)
                 :content (string/trim (lzip/loc-content loc))
-                :trigger-index (:index parent))]
+                :trigger-index (:index parent)
+                value)]
     (if transform (transform value) value)))
 
 (defmulti trigger-hook*
@@ -51,7 +52,7 @@
                                        (concat tx-from tx-to))]
     {:id id
      :type concept
-     :triggers concept
+     :triggers [concept]
      :itx itx :tx (concat tx-base tx)}))
 
 (defmethod trigger-hook* :attribute
@@ -68,7 +69,7 @@
           {itx true, tx false} (group-by (partial tx/indexing-tx? attributes) tx)]
       {:id id
        :type type
-       :triggers attribute
+       :triggers [attribute]
        :itx itx :tx tx})))
 
 (defmethod trigger-hook* :default
@@ -80,19 +81,22 @@
   (when-let [{:keys [itx tx type triggers id]}
              (trigger-hook* hook stack ecosystem index loc)]
     {:itx itx :tx tx
-     :entry (when triggers {:id id
-                            :type type :triggers triggers
-                            :loc loc :index index})}))
+     :entry (when triggers
+              {:id id
+               :type type :triggers (into triggers (:triggers hook))
+               :loc loc :index index})}))
 
 (defn trigger-hooks
   [hooks stack ecosystem]
-  (let [[{:keys [triggers loc]}] stack
-        triggered (mapcat hooks (conj (ancestors triggers) triggers))]
-    (mapcat (fn [{:keys [selector limit] :as hook}]
-              (let [selection (lzip/select-locs selector loc)]
-                (keep-indexed (partial trigger-hook hook stack ecosystem)
-                              (if limit (take limit selection) selection))))
-            triggered)))
+  (let [[{:keys [triggers loc]}] stack]
+    (into []
+          (comp (mapcat #(conj (ancestors %) %))
+                (mapcat hooks)
+                (mapcat (fn [{:keys [selector] :as hook}]
+                          (let [selection (lzip/select-locs selector loc)]
+                            (eduction (keep-indexed (partial trigger-hook hook stack ecosystem))
+                                      selection)))))
+          triggers)))
 
 (defn traverse!
   [conn hooks ecosystem doc url]
@@ -103,7 +107,7 @@
         [itx tx ids] (loop [merged-itx itx
                             merged-tx tx
                             merged-ids (transient (ordered-set))
-                            queue (queue (list {:triggers :document
+                            queue (queue (list {:triggers [:document]
                                                 :loc (hzip/hickory-zip doc)}))]
                        (if (empty? queue)
                          [merged-itx merged-tx merged-ids]

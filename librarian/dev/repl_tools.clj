@@ -74,8 +74,11 @@
                                          ::role-type/role-type
                                          (str "role:" (name (::role-type/id datatype)))
                                          ::semantic-type/semantic-type
-                                         (str "s:" (name (::semantic-type/key datatype)) ":"
-                                              (name (::semantic-type/value datatype)))
+                                         (let [val (name (::semantic-type/value datatype))]
+                                           (str "s:" (name (::semantic-type/key datatype)) ":"
+                                                (if (> (count val) 7)
+                                                  (str (subs val 0 4) "...")
+                                                  val)))
                                          ::constant/constant
                                          (str "c:" (::constant/value datatype))
                                          "?"))))

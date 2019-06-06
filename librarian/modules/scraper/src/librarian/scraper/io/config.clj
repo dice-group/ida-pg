@@ -23,16 +23,16 @@
 
 (defn index-hooks
   [hooks patterns]
-  (->> hooks
-       (map (fn [hook]
-              (if-let [pattern (patterns (:pattern hook))]
-                (merge pattern hook)
-                hook)))
-       (mapcat (fn [hook]
-                 (if (seqable? (:trigger hook))
-                   (map (partial assoc hook :trigger) (:trigger hook))
-                   [hook])))
-       (group-by :trigger)))
+  (group-by :triggered-by
+            (eduction (comp (map (fn [hook]
+                                   (if-let [pattern (patterns (:pattern hook))]
+                                     (merge pattern hook)
+                                     hook)))
+                            (mapcat (fn [hook]
+                                      (if (seqable? (:triggered-by hook))
+                                        (map #(assoc hook :triggered-by %) (:triggered-by hook))
+                                        [hook]))))
+                      hooks)))
 
 (defn resolve-hook-aliases
   [hooks {:keys [attributes concept-aliases attribute-aliases]}]
@@ -44,10 +44,8 @@
                         (map (partial map/get-or-fail attribute-aliases) attr)
                         (map/get-or-fail attribute-aliases attr)))]
     (map/map-kv (fn [[k v]]
-                  [(map/get-or-fail (merge concept-aliases
-                                           attribute-aliases
-                                           {:document :document})
-                                    k)
+                  [(get (merge concept-aliases attribute-aliases)
+                        k k)
                    (mapv (fn [hook]
                            (let [hook (-> hook
                                           (map/update-keys concept-keys concept-lookup)
@@ -109,23 +107,23 @@
   [config]
   (let [conformed (binding [*full-config-parse* false]
                     ; don't perform full hook and snippet parsing on extended configs:
-                    (s/conform ::config config))
-        conformed (assoc-in conformed [:meta :librarian/cache-id]
-                            (cache-id config conformed))]
+                    (s/conform ::config config))]
     (if (s/invalid? conformed)
       (throw (Exception. (str "Invalid scraper configuration.\n"
                               (s/explain-str ::config config))))
-      (if *full-config-parse*
-        (let [ecosystem (:ecosystem conformed)
-              hooks (-> (:hooks conformed)
-                        (index-hooks (:patterns conformed))
-                        (resolve-hook-aliases ecosystem))
-              snippets (map #(snippet->tx % ecosystem)
-                            (:snippets conformed))]
-          (assoc conformed
-                 :hooks hooks
-                 :snippets snippets))
-        conformed))))
+      (let [conformed (assoc-in conformed [:meta :librarian/cache-id]
+                                (cache-id config conformed))]
+        (if *full-config-parse*
+          (let [ecosystem (:ecosystem conformed)
+                hooks (-> (:hooks conformed)
+                          (index-hooks (:patterns conformed))
+                          (resolve-hook-aliases ecosystem))
+                snippets (map #(snippet->tx % ecosystem)
+                              (:snippets conformed))]
+            (assoc conformed
+                   :hooks hooks
+                   :snippets snippets))
+          conformed)))))
 
 (defmacro defscraper
   [name & {:as config}]
@@ -170,7 +168,9 @@
 
 (s/def ::should-visit (s/and (s/conformer parse-should-visit) fn?))
 
-(s/def ::hook (s/and (s/keys :opt-un [::trigger ::selector
+(s/def ::hook (s/and (s/keys :opt-un [::triggered-by
+                                      ::triggers
+                                      ::selector
                                       ::concept
                                       ::ref-to-trigger
                                       ::ref-from-trigger
@@ -180,15 +180,19 @@
                                       ::pattern
                                       ::allow-incomplete])))
 
-(s/def ::trigger (s/and (s/or :single keyword?
-                              :multiple (s/coll-of keyword?))
-                        (s/conformer second)))
+(s/def ::triggered-by (s/and (s/or :single keyword?
+                                   :multiple (s/coll-of keyword?))
+                             (s/conformer second)))
+(s/def ::triggers (s/and (s/or :single keyword?
+                               :multiple (s/coll-of keyword?))
+                         (s/conformer (fn [[k v]] (if (= k :single) [v] v)))))
 
 (s/def ::concept keyword?)
 (s/def ::ref-to-trigger keyword?)
 (s/def ::ref-from-trigger keyword?)
 (s/def ::attribute #(or (keyword? %) (every? keyword? %)))
-(s/def ::value (partial contains? #{:content :trigger-index}))
+(s/def ::value #(or (contains? #{:content :trigger-index} %)
+                    (string? %) (number? %) (boolean? %)))
 (s/def ::pattern keyword?)
 (s/def ::allow-incomplete boolean?)
 (s/def ::hooks (s/coll-of ::hook))

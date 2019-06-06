@@ -1,9 +1,10 @@
 (ns librarian.model.concepts.callable
   (:require [clojure.spec.alpha :as s]
             [librarian.helpers.spec :as hs]
-            [librarian.model.syntax :refer [defconcept]]))
+            [librarian.model.syntax :refer [defconcept]]
+            [librarian.model.concepts.typed :refer [typed]]))
 
-(defconcept callable
+(defconcept callable [typed]
   :attributes {::parameter {:db/valueType :db.type/ref
                             :db/cardinality :db.cardinality/many
                             :db/isComponent true

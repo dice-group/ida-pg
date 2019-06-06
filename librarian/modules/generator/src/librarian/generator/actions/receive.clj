@@ -19,7 +19,7 @@
                                         (if semantic semantic-receivers receivers)))
                                  types)
                       tx (conj tx [:db/add flaw ::data-receiver/receives solution])]
-                  (when (< semantic-cost Double/POSITIVE_INFINITY)
+                  (when true #_(< semantic-cost Double/POSITIVE_INFINITY)
                     {:type :receiver
                      :weight 1
                      :add true
