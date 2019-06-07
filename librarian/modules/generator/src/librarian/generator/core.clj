@@ -3,9 +3,7 @@
             [clojure.data.priority-map :refer [priority-map]]
             [librarian.helpers.transients :refer [into! update!]]
             [librarian.model.concepts.call :as call]
-            [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.snippet :as snippet]
             [librarian.generator.query :as gq]
             [librarian.generator.cost :as gc]
             [librarian.generator.actions.call :refer [call-actions]]
@@ -91,7 +89,7 @@
                  :db (:db scrape)}
                 {:cost 0, :tx tx, :add true}))
 
-(defn successors
+(defn actions
   [state]
   (let [{p-flaws :parameter, c-flaws :call} (:flaws state)]
     (if (and (empty? p-flaws) (empty? c-flaws))
@@ -107,8 +105,14 @@
             actions (into! actions (mapcat #(param-remove-actions state %)) p-flaws)
             actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)
             actions (persistent! actions)]
-        (keep (partial apply-action state)
-              (gc/costify-actions actions))))))
+        (gc/costify-actions actions)))))
+
+(defn successors
+  [state]
+  (let [acts (actions state)]
+    (if (= acts :done)
+      :done
+      (keep #(apply-action state %) acts))))
 
 (defn search-state
   [state]

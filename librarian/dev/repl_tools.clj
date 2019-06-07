@@ -39,52 +39,54 @@
                                      (not-join [?node]
                                        [_ ::snippet/contains ?node])))]
                    db gq/rules show-patterns)
-        nodes (map (fn [[node type]]
-                     {:id node
-                      :group type
-                      :label
-                      (str
-                        (case type
-                          ::call/call
-                          (let [e (::call/callable (d/entity db node))
-                                n (or (::namespaced/id e)
-                                      [(get-in e [::namespace/_member ::named/name] "?")
-                                       (::named/name e "?")])]
-                            (clojure.string/join "/" n))
-                          ::constant/constant
-                          (::constant/value (d/entity db node))
-                          ::call-parameter/call-parameter
-                          (let [e (d/entity db node)
-                                p (::call-parameter/parameter e)]
-                            (str (::named/name p "?")
-                                 (when (::parameter/optional p) "?")))
-                          ::call-result/call-result
-                          (get-in (d/entity db node)
-                                  [::call-result/result ::named/name]
-                                  "?")
-                          "?")
-                        " (" node ")"
-                        "\n<"
-                        (->> (::typed/datatype (d/entity db node))
-                             (keep (fn [datatype]
-                                     (when (not= node (:db/id datatype))
-                                       (condp #(isa? %2 %1) (first (:type datatype))
-                                         ::basetype/basetype
-                                         (::basetype/id datatype)
-                                         ::role-type/role-type
-                                         (str "role:" (name (::role-type/id datatype)))
-                                         ::semantic-type/semantic-type
-                                         (let [val (name (::semantic-type/value datatype))]
-                                           (str "s:" (name (::semantic-type/key datatype)) ":"
-                                                (if (> (count val) 7)
-                                                  (str (subs val 0 4) "...")
-                                                  val)))
-                                         ::constant/constant
-                                         (str "c:" (::constant/value datatype))
-                                         "?"))))
-                             (clojure.string/join ", "))
-                        ">")})
-                   nodes)
+        nodes (keep (fn [[node type]]
+                      (let [e (d/entity db node)
+                            datatypes (::typed/datatype e)]
+                        (when (or (not= type ::constant/constant)
+                                  (< 1 (count datatypes))
+                                  (::data-receiver/_receives e))
+                          {:id node
+                           :group type
+                           :label
+                           (str
+                             (case type
+                               ::call/call
+                               (let [e (::call/callable e)
+                                     n (or (::namespaced/id e)
+                                           [(get-in e [::namespace/_member ::named/name] "?")
+                                            (::named/name e "?")])]
+                                 (clojure.string/join "/" n))
+                               ::constant/constant
+                               (::constant/value e)
+                               ::call-parameter/call-parameter
+                               (let [p (::call-parameter/parameter e)]
+                                 (str (::named/name p "?")
+                                      (when (::parameter/optional p) "?")))
+                               ::call-result/call-result
+                               (get-in e [::call-result/result ::named/name] "?")
+                               "?")
+                             " (" node ")"
+                             (when (seq datatypes) "\n<")
+                             (->> datatypes
+                                  (keep (fn [datatype]
+                                          (when (not= node (:db/id datatype))
+                                            (condp #(isa? %2 %1) (first (:type datatype))
+                                              ::basetype/basetype
+                                              (::basetype/id datatype)
+                                              ::role-type/role-type
+                                              (str "role:" (name (::role-type/id datatype)))
+                                              ::semantic-type/semantic-type
+                                              (let [val (name (::semantic-type/value datatype))]
+                                                (str "s:" (name (::semantic-type/key datatype)) ":"
+                                                     (if (> (count val) 7)
+                                                       (str (subs val 0 4) "...")
+                                                       val)))
+                                              ::constant/constant
+                                              (str "c:" (:db/id datatype))
+                                              "?"))))
+                                  (clojure.string/join ", "))
+                             (when (seq datatypes) ">"))})))
+                    nodes)
         receive-edges (->> nodes
                            (filter #(= (:group %) ::call-parameter/call-parameter))
                            (mapcat (fn [{:keys [id]}]

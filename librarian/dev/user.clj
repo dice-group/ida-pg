@@ -20,6 +20,7 @@
   (require '[librarian.model.io.scrape :refer :all]
            '[librarian.scraper.io.scrape :refer [create-scrape]]
            '[librarian.scraper.io.config :refer [read-config]]
+           '[librarian.generator.core :refer [actions]]
            '[librarian.cli :refer [main*]]
            '[repl-tools :as rt :refer :all]
            '[generator :refer :all])
@@ -44,6 +45,7 @@
                     " * (show-state-past state predecessor-idx & opts)"
                     " * (last-state [predecessor-idx])"
                     " * (show-last-state [predecessor-idx])"
+                    " * (actions state)"
                     ""
                     "REPL commands:"
                     " * (refresh)"

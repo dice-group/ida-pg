@@ -34,7 +34,7 @@
    {:keys [preprocessors attributes]} _ _]
   (let [id (tempid)
         [pid ptype] ((juxt :id :type) parent)
-        type-processors (preprocessors type)
+        type-processors (preprocessors concept)
         id-processor (get type-processors :db/id)
         tx-base (cond-> [[:db/add id :tempid id]
                          [:db/add id :type concept]]

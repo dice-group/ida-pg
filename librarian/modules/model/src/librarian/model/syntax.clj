@@ -18,14 +18,15 @@
                      :or {check-specs true}}]
   (let [raw-tx (mapcat instance->tx root-instances)
         instances (filter map? raw-tx)
-        preproc-tx (mapcat (fn [instance]
-                             (let [{:keys [concept]} (meta instance)]
-                               (mapcat (fn [[attr processor]]
-                                         (when (contains? instance attr)
-                                           (processor (get instance attr)
-                                                      (:db/id instance))))
-                                       (:preprocess concept))))
-                           instances)
+        preproc-tx (into []
+                         (mapcat (fn [instance]
+                                   (let [{:keys [concept]} (meta instance)]
+                                     (eduction (mapcat (fn [[attr processor]]
+                                                         (when (contains? instance attr)
+                                                           (processor (get instance attr)
+                                                                      (:db/id instance)))))
+                                               (:preprocess concept)))))
+                         instances)
         schema (->> instances
                     (keep (comp :attributes :concept meta))
                     (apply merge common/attributes))

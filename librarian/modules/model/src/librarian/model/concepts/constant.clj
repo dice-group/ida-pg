@@ -5,10 +5,10 @@
             [librarian.helpers.predicate :refer [p-or]]
             [librarian.model.syntax :refer [defconcept]]
             [librarian.model.concepts.typed :as typed :refer [typed]]
-            [librarian.model.concepts.data-receiver :refer [data-receiver]]
+            [librarian.model.concepts.data-receivable :refer [data-receivable]]
             [librarian.model.concepts.datatype :refer [datatype]]))
 
-(defconcept constant [typed datatype data-receiver]
+(defconcept constant [typed datatype data-receivable]
   :attributes {::value {:db/doc "The value of this constant."}}
   :spec ::constant
   :preprocess {:db/id (add-attr ::typed/datatype)})
