@@ -13,7 +13,7 @@
             [librarian.generator.actions.call-completion :refer [call-completion-actions]])
   (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
 
-(def *sid (atom 0))
+(def ^:dynamic *sid (atom 0))
 
 (defn flaws
   [{:keys [db]}]
