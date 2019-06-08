@@ -49,10 +49,11 @@
 ; minimal possible action cost if param-removal is available but not chosen:
 (def c-min-with-param-remove-option (Math/log (+ 2 param-remove-weight)))
 
-(def ^:dynamic *h-param-weight* 2)
+(def ^:dynamic *h-param-weight* 3)
 (def ^:dynamic *h-call-weight* 2)
 
 (defn cost-heuristic
+  "Takes an incomplete CFG state and returns a lower bound on the remaining cost to find an executable CFG."
   [{:keys [db flaws source-candidates]}]
   (let [parameter-flaw-cost
         (transduce (map (fn [flaw]
@@ -61,8 +62,8 @@
                                          c-min-with-param-remove-option
                                          c-min)]
                             (+ (if (nil? candidates) c-min 0) ; placeholder completion cost
-                               (if (empty? candidates) c-step 0)
-                               c-step))))
+                               (if (empty? candidates) c-step 0) ; source addition cost
+                               c-step)))) ; receive cost
                    + 0 (:parameter flaws))]
     (+ (* parameter-flaw-cost *h-param-weight*)
        (-> flaws :call count (* *h-call-weight* c-min)))))

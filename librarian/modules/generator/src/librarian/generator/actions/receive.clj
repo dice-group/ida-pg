@@ -1,6 +1,7 @@
 (ns librarian.generator.actions.receive
   (:require [librarian.generator.query :as gq]
             [librarian.generator.cost :as gc]
+            [librarian.generator.commutation :as gcomm]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.data-receiver :as data-receiver]))
 
@@ -20,8 +21,13 @@
                                  types)
                       tx (conj tx [:db/add flaw ::data-receiver/receives solution])]
                   (when true #_(< semantic-cost Double/POSITIVE_INFINITY)
-                    {:type :receiver
+                    {:type ::receiver
                      :weight 1
                      :add true
+                     :commute-id [solution flaw]
                      :tx tx})))
               solutions)))))
+
+(defmethod gcomm/tie-breaker ::receiver
+  [_ commute-id]
+  (second commute-id))

@@ -83,7 +83,7 @@
                                (into! (result->tx flaw (comp r->cr results-combo))
                                       results)
                                (persistent!))]
-                    {:type :call-completion
+                    {:type ::call-completion
                      :weight 1
                      :add true
                      :tx tx}))))

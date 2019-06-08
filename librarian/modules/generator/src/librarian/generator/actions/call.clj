@@ -37,7 +37,7 @@
                                                      ::call-parameter/parameter id
                                                      ::typed/datatype (map :db/id (::typed/datatype param))}]))
                                  (::callable/parameter callable))]
-             {:type :call
+             {:type ::call
               :weight 1/2
               :add true
               :tx (conj (vec (vals param-map))

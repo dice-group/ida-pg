@@ -6,6 +6,7 @@
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.generator.query :as gq]
             [librarian.generator.cost :as gc]
+            [librarian.generator.commutation :as gcomm]
             [librarian.generator.actions.call :refer [call-actions]]
             [librarian.generator.actions.receive :refer [receive-actions]]
             [librarian.generator.actions.snippet :refer [snippet-actions]]
@@ -30,18 +31,22 @@
                                    (not (gq/placeholder? db callable))))))
                  [::call/call])}))
 
-(defn add-removed!
-  [{:keys [removed] :as state} {:keys [remove]}]
-  (if (some? remove)
-    (if removed
-      (when (< (peek removed) (first remove))
-        (-> state
-            (assoc! :tie-breaker (first remove))
-            (assoc! :removed (into removed remove))))
-      (-> state
-          (assoc! :tie-breaker (first remove))
-          (assoc! :removed (vec remove))))
-    (assoc! state :tie-breaker Double/POSITIVE_INFINITY)))
+(defn update-commutations!
+  [{:keys [seen-commutations commutation] :as state} {:keys [type commute-id]}]
+  (if (some? commute-id)
+    (let [new-commutation (update commutation type
+                                  #(gcomm/add-commute-id type %1 %2)
+                                  commute-id)
+          [old new] (swap-vals! seen-commutations update type
+                                #(gcomm/add-commutation type %1 %2)
+                                new-commutation)]
+      (when (not= old new)
+        (assoc! state
+                :commutation new-commutation
+                :tie-breaker (gcomm/tie-breaker type commute-id))))
+    (assoc! state
+            :seen-commutations (atom {})
+            :commutation {})))
 
 (defn add-source-candidates!
   [{:keys [db flaws] :as state} {add :add, remove-ids :remove}]
@@ -71,7 +76,7 @@
 
 (defn apply-action
   [state action]
-  (when-let [new-state (add-removed! (transient state) action)]
+  (when-let [new-state (update-commutations! (transient state) action)]
     (as-> new-state $
           (assoc! $ :id (swap! *sid inc))
           (assoc! $ :predecessor state)
