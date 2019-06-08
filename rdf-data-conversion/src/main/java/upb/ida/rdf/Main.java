@@ -299,12 +299,12 @@ public class Main {
 						case 7:
 //							firstName
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":firstName", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "foaf:firstName", currentColumnVal, false);
 							break;
 						case 8:
 //							lastName
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":lastName", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "foaf:lastName", currentColumnVal, false);
 							break;
 						case 9:
 //							hasTitle
@@ -323,7 +323,7 @@ public class Main {
 						case 11:
 //							birthPlace
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":birthPlace", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:birthPlace", currentColumnVal, false);
 							break;
 						case 12:
 //							deathDate
@@ -337,7 +337,7 @@ public class Main {
 						case 13:
 //							deathPlace
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":deathPlace", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:deathPlace", currentColumnVal, false);
 							break;
 						case 14:
 //							NSDAPNumber
