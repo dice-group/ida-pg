@@ -33,6 +33,7 @@ public class Main {
 			"@prefix dbo: <http://dbpedia.org/ontology/> .\n" +
 			"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
 			"@prefix dc: <http://purl.org/dc/terms/> .\n" +
+			"@prefix dbr: <http://dbpedia.org/resource/> .\n" +
 			"@prefix regiment: <" + dataBaseUrl + "regiment/> .\n" +
 			"@prefix ssrank: <" + dataBaseUrl + "ssrank/> .\n" +
 			"@prefix decoration: <" + dataBaseUrl + "decoration/> .\n" +
@@ -42,12 +43,8 @@ public class Main {
 			"@prefix soldier_regiment: <" + dataBaseUrl + "soldier_regiment/> .\n" +
 			"@prefix soldier_ssrank: <" + dataBaseUrl + "soldier_ssrank/> .\n" +
 			"@prefix soldier_literature: <" + dataBaseUrl + "soldier_literature/> .\n" +
-			"@prefix : <" + ontologyBaseUrl + "> .\n" +
-			"@base <" + ontologyBaseUrl + "> .\n" +
-			"\n" +
-			"<" + ontologyBaseUrl + "> rdf:type owl:Ontology  ;\n" +
-			"\t\t\t\t\t\t\tdc:title \"SS Vocabulary\"@en ; \n" +
-			"                            dc:description \"Vocabulary describing Concepts and Relationships of Schutzstaffel\"@en .\n\n";
+			"@prefix : <" + dataBaseUrl + "> .\n" +
+			"@base <" + dataBaseUrl + "> .\n\n\n";
 
 
 	public static void main(String[] args) throws Exception {
@@ -83,10 +80,10 @@ public class Main {
 		return builder.append("\t").append(name).append(" \"").append(value).append("\"^^xsd:dateTime ").append(last ? ".\n" : ";\n");
 	}
 
-	private static StringBuilder appendResourceProperty(StringBuilder builder, String domainPrefix, String domain, String name, String rangePrefix, String range, boolean last, boolean leadingTab) {
+	private static StringBuilder appendResourceProperty(StringBuilder builder, String domainPrefix, String domain, String propertyName, String rangePrefix, String range, boolean last, boolean leadingTab) {
 		return builder.append(leadingTab ? "\t" : "")
 			.append(domainPrefix).append(domain).append(" ")
-			.append(name).append(" ")
+			.append(propertyName).append(" ")
 			.append(rangePrefix).append(range).append(" ")
 			.append(last ? ".\n" : ";\n");
 	}
@@ -185,42 +182,47 @@ public class Main {
 
 			for (int i = 1; i < literatureArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("literature:").append(literatureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n").
-					append("\t").append("rdfs:label \"").append(literatureArray[i][1]).append("\" .\n");
-				stringBuilder.append("\n");
-				stringBuilder.append("literature:").append(literatureArray[i][1].replaceAll("\\s+", "")).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n");
+				stringBuilder.append("literature:").append(literatureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Literature ;\n");
 
 				for (int j = 0; j < literatureArray[i].length; j++) {
+					String currentVal = literatureArray[i][j];
 					switch (j) {
 						case 0:
-							stringBuilder.append("\t").append(":id ").append(literatureArray[i][j]).append(" ;\n");
+							stringBuilder.append("\t").append(":id ").append(currentVal).append(" ;\n");
 							break;
 						case 1:
-							appendStringProperty(stringBuilder, ":kurztit", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":name", currentVal, false);
 							break;
 						case 2:
-							appendStringProperty(stringBuilder, ":author", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":author", currentVal, false);
 							break;
 						case 3:
-							stringBuilder.append("\t").append(":year ").append(literatureArray[i][j]).append(" ;\n");
+							stringBuilder.append("\t").append(":publicationYear ").append(currentVal).append(" ;\n");
 							break;
 						case 4:
-							stringBuilder.append("\t").append(":citaviID ").append(literatureArray[i][j]).append(" ;\n");
+							stringBuilder.append("\t").append(":citaviId ").append(currentVal).append(" ;\n");
 							break;
 						case 5:
-							appendStringProperty(stringBuilder, ":provenance", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":origin", currentVal, false);
 							break;
 						case 6:
-							appendStringProperty(stringBuilder, ":signature", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":signature", currentVal, false);
 							break;
 						case 7:
-							appendStringProperty(stringBuilder, ":information", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":information", currentVal, false);
 							break;
 						case 8:
-							appendStringProperty(stringBuilder, ":processingStatus", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":status", currentVal, false);
 							break;
 						case 9:
-							appendStringProperty(stringBuilder, ":comments", literatureArray[i][j], false);
+							if(isValidString(currentVal))
+								appendStringProperty(stringBuilder, ":internalInformation", currentVal, false);
 							break;
 						default:
 							break;
@@ -228,7 +230,6 @@ public class Main {
 
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append(clean(literatureArray[i][1])).append("\" ;\n");
-				stringBuilder.append("\t").append("owl:sameAs ").append("literature:").append(literatureArray[i][0]).append(" .\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -271,85 +272,68 @@ public class Main {
 							break;
 						case 3:
 							if (isValidString(currentColumnVal)) {
-//								System.out.println("Enroll date: " + currentColumnVal);
 								String[] dateParts = currentColumnVal.split("\\.");
 								String entryDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
 								appendDatetimeProperty(stringBuilder, ":enrolledOn", entryDate, false);
 							}
 							break;
 						case 4:
-//							enrollmentReason
 							if (isValidString(currentColumnVal))
 								appendStringProperty(stringBuilder, ":enrollmentReason", currentColumnVal, false);
 							break;
 						case 5:
-//							dischargedOn
 							if (isValidString(currentColumnVal)) {
-//								System.out.println("Discharge date: " + currentColumnVal);
 								String[] dateParts = currentColumnVal.split("\\.");
 								String dischargeDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
 								appendDatetimeProperty(stringBuilder, ":dischargedOn", dischargeDate, false);
 							}
 							break;
 						case 6:
-//							dischargeReason
 							if (isValidString(currentColumnVal))
 								appendStringProperty(stringBuilder, ":dischargeReason", currentColumnVal, false);
 							break;
 						case 7:
-//							firstName
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "foaf:firstName", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:firstName", currentColumnVal, false);
 							break;
 						case 8:
-//							lastName
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "foaf:lastName", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:lastName", currentColumnVal, false);
 							break;
 						case 9:
-//							hasTitle
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":hasTitle", currentColumnVal, false);
+								appendStringProperty(stringBuilder, ":title", currentColumnVal, false);
 							break;
 						case 10:
-//							birthDate
 							if (isValidString(currentColumnVal)) {
-//								System.out.println("Birth date: " + currentColumnVal);
 								String[] dateParts = currentColumnVal.split("\\.");
 								String birthdate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
 								appendDatetimeProperty(stringBuilder, ":birthDate", birthdate, false);
 							}
 							break;
 						case 11:
-//							birthPlace
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:birthPlace", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:birthPlace", "dbo:" + currentColumnVal, false);
 							break;
 						case 12:
-//							deathDate
 							if (isValidString(currentColumnVal)) {
-//								System.out.println("Death date: " + currentColumnVal);
 								String[] dateParts = currentColumnVal.split("\\.");
 								String deathDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
 								appendDatetimeProperty(stringBuilder, ":deathDate", deathDate, false);
 							}
 							break;
 						case 13:
-//							deathPlace
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:deathPlace", currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:deathPlace","dbo:" + currentColumnVal, false);
 							break;
 						case 14:
-//							NSDAPNumber
 							stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
 							break;
 						case 17:
-//							information
 							if (isValidString(currentColumnVal))
 								appendStringProperty(stringBuilder, ":information", currentColumnVal, false);
 							break;
 						case 18:
-//							internalInformation
 							if (isValidString(currentColumnVal))
 								appendStringProperty(stringBuilder, ":internalInformation", currentColumnVal, false);
 							break;
@@ -500,7 +484,7 @@ public class Main {
 
 			for (int i = 1; i < soldierRegimentsArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier_regiment:").append(soldierRegimentsArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierRegimentInfo ;\n");
+				stringBuilder.append("soldier_regiment:").append(soldierRegimentsArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SoldierRegimentInfo ;\n");
 
 				for (int j = 0; j < soldierRegimentsArray[i].length; j++) {
 					String currentValue = soldierRegimentsArray[i][j];
@@ -552,7 +536,7 @@ public class Main {
 
 			for (int i = 1; i < soldierLiteratureArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier_literature:").append(soldierLiteratureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierLiteratureInfo ;\n");
+				stringBuilder.append("soldier_literature:").append(soldierLiteratureArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SoldierLiteratureInfo ;\n");
 
 				for (int j = 0; j < soldierLiteratureArray[i].length; j++) {
 					String currentValue = soldierLiteratureArray[i][j];
@@ -562,17 +546,21 @@ public class Main {
 						case 0:
 							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
 							break;
-						case 1:
-							stringBuilder.append("\t").append(":verkm ").append(currentValue).append(" ;\n");
-							break;
 						case 2:
-							appendResourceProperty(stringBuilder, "", "", ":literatureInfo", "literature:", currentValue, false, true);
+							appendResourceProperty(stringBuilder, "", "", ":hasLiterature", "literature:", currentValue, false, true);
 							break;
 						case 3:
-							stringBuilder.append("\t").append(":page ").append(currentValue).append(" ;\n");
+							stringBuilder.append("\t").append(":originalSoldierId ").append(currentValue).append(" ;\n");
 							break;
 						case 4:
-							stringBuilder.append("\t").append(":information ").append(currentValue).append(" ;\n");
+							stringBuilder.append("\t").append(":listPageNumber ").append(currentValue).append(" ;\n");
+							break;
+						case 5:
+							if (isValidString(currentValue)) {
+								String[] dateParts = currentValue.split("\\.");
+								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
+								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false);
+							}
 							break;
 						default:
 							break;
@@ -580,7 +568,7 @@ public class Main {
 
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n\n");
-				appendResourceProperty(stringBuilder, "soldier:", soldierLiteratureArray[i][1], ":hasLiterature", "soldier_literature:", soldierLiteratureArray[i][0], true, false);
+				appendResourceProperty(stringBuilder, "soldier:", soldierLiteratureArray[i][1], ":literatureInfo", "soldier_literature:", soldierLiteratureArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
 
@@ -606,7 +594,7 @@ public class Main {
 
 			for (int i = 1; i < soldierDecorationArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier_decoration:").append(soldierDecorationArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierDecorationInfo ;\n");
+				stringBuilder.append("soldier_decoration:").append(soldierDecorationArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :DecorationEvent ;\n");
 
 				for (int j = 0; j < soldierDecorationArray[i].length; j++) {
 					String currentValue = soldierDecorationArray[i][j];
@@ -617,7 +605,7 @@ public class Main {
 							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
 							break;
 						case 2:
-							appendResourceProperty(stringBuilder, "", "", ":decorationInfo", "decoration:", currentValue, false, true);
+							appendResourceProperty(stringBuilder, "", "", ":hasDecoration", "decoration:", currentValue, false, true);
 							break;
 						case 3:
 							if (isValidString(currentValue)) {
@@ -632,7 +620,7 @@ public class Main {
 
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Decoration: ").append(soldierDecorationArray[i][0]).append("\" .\n\n");
-				appendResourceProperty(stringBuilder, "soldier:", soldierDecorationArray[i][1], ":hasDecoration", "soldier_decoration:", soldierDecorationArray[i][0], true, false);
+				appendResourceProperty(stringBuilder, "soldier:", soldierDecorationArray[i][1], ":decorationInfo", "soldier_decoration:", soldierDecorationArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
 
@@ -658,7 +646,7 @@ public class Main {
 
 			for (int i = 1; i < soldierRanksArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier_ssrank:").append(soldierRanksArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :_SoldierSSRankInfo ;\n");
+				stringBuilder.append("soldier_ssrank:").append(soldierRanksArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SoldierSSRankInfo ;\n");
 
 				for (int j = 0; j < soldierRanksArray[i].length; j++) {
 					String currentValue = soldierRanksArray[i][j];
@@ -669,7 +657,7 @@ public class Main {
 							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
 							break;
 						case 2:
-							appendResourceProperty(stringBuilder, "", "", ":SSRankInfo", "ssrank:", currentValue, false, true);
+							appendResourceProperty(stringBuilder, "", "", ":hasSSRank", "ssrank:", currentValue, false, true);
 							break;
 						case 3:
 							if (isValidString(currentValue)) {
@@ -684,7 +672,7 @@ public class Main {
 
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Rank: ").append(soldierRanksArray[i][0]).append("\" .\n\n");
-				appendResourceProperty(stringBuilder, "soldier:", soldierRanksArray[i][1], ":hasRegiment", "soldier_ssrank:", soldierRanksArray[i][0], true, false);
+				appendResourceProperty(stringBuilder, "soldier:", soldierRanksArray[i][1], ":SSRankInfo", "soldier_ssrank:", soldierRanksArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
 
