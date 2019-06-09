@@ -32,11 +32,12 @@ import upb.ida.constant.IDALiteral;
 import upb.ida.domains.User;
 import upb.ida.service.UserService;
 
-
 @Controller
 @CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/user")
 public class UserController {
+
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
 	@Autowired
 	private ResponseBean responseBean;
@@ -45,10 +46,11 @@ public class UserController {
 	@ResponseBody
 	public ResponseBean listUsers() {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
-		RDFConnectionFuseki conn= null;
+		RDFConnectionFuseki conn = null;
 		QueryExecution qExec = null;
-	//	RDFConnection RDFConnectionFactory.connectPW(String URL, String user, String password)
-		try  {
+		// RDFConnection RDFConnectionFactory.connectPW(String URL, String user, String
+		// password)
+		try {
 			conn = (RDFConnectionFuseki) builder.build();
 			qExec = conn.query("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
 					+ "prefix owl: <http://www.w3.org/2002/07/owl#> "
@@ -65,10 +67,9 @@ public class UserController {
 			Map<String, Object> returnMap = new HashMap<String, Object>();
 			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
-			
-			
+
 			// System.out.println("responseBean:"+responseBean);
-		}finally {
+		} finally {
 			qExec.close();
 			conn.close();
 		}
@@ -80,76 +81,64 @@ public class UserController {
 	@ResponseBody
 	public ResponseBean updateUser(@RequestBody final User updatedrecord) throws NoSuchAlgorithmException {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
-			
-    	if(updatedrecord == null)
-    	{
-    		responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
-    		return responseBean;
-    	}
-    	else 
-    	{
-		String password = updatedrecord.getPassword();
-		User oldRecord = UserService.getByUsername(updatedrecord.getUsername());
-		
-			if (oldRecord==null) {
+
+		if (updatedrecord == null) {
+			responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
+			return responseBean;
+		} else {
+			String password = updatedrecord.getPassword();
+			User oldRecord = UserService.getByUsername(updatedrecord.getUsername());
+
+			if (oldRecord == null) {
 				responseBean.setErrMsg("user not found");
-	    		return responseBean;
+				return responseBean;
 			}
 
 			// check new password needs to be updated or older one needs to be used
-			if (password == null || password == "") {
+
+			if (password.equals(null)) {
 				password = oldRecord.getPassword();
-			} 
-			else {
+			} else {
 				password = hashPassword(updatedrecord.getPassword());
 				RDFConnectionFuseki conn = null;
 				// In this variation, a connection is built each time.
-				try  {
-					 conn = (RDFConnectionFuseki) builder.build();
+				try {
+					conn = (RDFConnectionFuseki) builder.build();
 					UpdateRequest request = UpdateFactory.create();
-	
-					System.out.println("check request values1  "+request);
+
+					System.out.println("check request values1  " + request);
 					// The idea is SPARQL is not for relational data! Its for graph data
 					// So here we are just deleting the old recorded
-				
-					String query1 =
-							" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
-							" PREFIX ab: <http://userdata/#" + oldRecord.getUsername() +"> "   +
-							" DELETE DATA "                                                 +
-							" { ab:			 				   "     +
-						//	"dc:username \"" + oldRecord.getUsername() + "\" ; "      +
-							"dc:firstname \""  + oldRecord.getFirstname() +  "\" ; "  +
-							"dc:lastname \""  + oldRecord.getLastname() +  "\" ; "  +						
-							"dc:userrole \""  + oldRecord.getUserRole() +  "\" ; "  +
-							"dc:password \""  + oldRecord.getPassword() +  "\" . "+
-							" } ";
+
+					String query1 = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
+							+ " PREFIX ab: <http://userdata/#" + oldRecord.getUsername() + "> " + " DELETE DATA "
+							+ " { ab:			 				   " +
+							// "dc:username \"" + oldRecord.getUsername() + "\" ; " +
+							"dc:firstname \"" + oldRecord.getFirstname() + "\" ; " + "dc:lastname \""
+							+ oldRecord.getLastname() + "\" ; " + "dc:userrole \"" + oldRecord.getUserRole() + "\" ; "
+							+ "dc:password \"" + oldRecord.getPassword() + "\" . " + " } ";
 					request.add(query1);
 					conn.update(request);
-					
-					System.out.println("check request values1.2  "+request);
+
+					System.out.println("check request values1.2  " + request);
 					// inserting updated record
-					String query2 =
-							" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
-							" PREFIX ab: <http://userdata/#" + oldRecord.getUsername() +"> "   +
-							" INSERT DATA "                                                 +
-							" { ab:			 				   "     +
-						//	"dc:username \"" + oldRecord.getUsername() + "\" ; "      +
-							"dc:firstname \""  + updatedrecord.getFirstname() +  "\" ; "  +
-							"dc:lastname \""  + updatedrecord.getLastname() +  "\" ; "  +						
-							"dc:userrole \""  + updatedrecord.getUserRole() +  "\" ; "  +
-							"dc:password \""  + password +  "\" . "+
-							" } ";
+					String query2 = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
+							+ " PREFIX ab: <http://userdata/#" + oldRecord.getUsername() + "> " + " INSERT DATA "
+							+ " { ab:			 				   " +
+							// "dc:username \"" + oldRecord.getUsername() + "\" ; " +
+							"dc:firstname \"" + updatedrecord.getFirstname() + "\" ; " + "dc:lastname \""
+							+ updatedrecord.getLastname() + "\" ; " + "dc:userrole \"" + updatedrecord.getUserRole()
+							+ "\" ; " + "dc:password \"" + password + "\" . " + " } ";
 
 					request.add(query2);
 					conn.update(request);
-					//doing mapping with resposeBean
-					
+					// doing mapping with resposeBean
+
 					Map<String, Object> returnMap = new HashMap<String, Object>();
 					returnMap.put("updatedUser", updatedrecord.getUsername());
 					responseBean.setPayload(returnMap);
-					
-					
-				}finally {
+
+				} finally {
 					conn.close();
 				}
 			}
@@ -172,19 +161,19 @@ public class UserController {
 			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 			return responseBean;
 		}
-		
-	else {
-		RDFConnectionFuseki conn = null;
+
+		else {
+			RDFConnectionFuseki conn = null;
 			// In this variation, a connection is built each time.
-			try  {
-				 conn = (RDFConnectionFuseki) builder.build();
+			try {
+				conn = (RDFConnectionFuseki) builder.build();
 				UpdateRequest request = UpdateFactory.create();
 				String insertString = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
-						+ " PREFIX ab: <http://userdata/#" + record.getUsername() + "> " + " INSERT DATA "
-						+ " { ab: " + "dc:username \"" + record.getUsername() + "\" ; "
-						+ "dc:firstname \"" + record.getFirstname() + "\" ; " + "dc:lastname \"" + record.getLastname()
-						+ "\" ; " + "dc:userrole \"" + record.getUserRole() + "\" ; " + "dc:password \""
-						+ hashPassword(record.getPassword()) + "\" . " + " } ";
+						+ " PREFIX ab: <http://userdata/#" + record.getUsername() + "> " + " INSERT DATA " + " { ab: "
+						+ "dc:username \"" + record.getUsername() + "\" ; " + "dc:firstname \"" + record.getFirstname()
+						+ "\" ; " + "dc:lastname \"" + record.getLastname() + "\" ; " + "dc:userrole \""
+						+ record.getUserRole() + "\" ; " + "dc:password \"" + hashPassword(record.getPassword())
+						+ "\" . " + " } ";
 
 				request.add(insertString);
 				conn.update(request);
@@ -192,9 +181,8 @@ public class UserController {
 				Map<String, Object> returnMap = new HashMap<String, Object>();
 				returnMap.put("newUser", record.getUsername());
 				responseBean.setPayload(returnMap);
-				
-				
-			}finally {
+
+			} finally {
 				conn.close();
 			}
 
@@ -202,7 +190,7 @@ public class UserController {
 
 		return responseBean;
 	}
-	
+
 	@RequestMapping(value = "/delete/{usernames:.+}", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseBean deleteUser(@PathVariable String usernames) {
@@ -212,39 +200,30 @@ public class UserController {
 			System.out.println("username not found");
 			responseBean.setErrMsg("user not found");
 			return responseBean;
-		}		
-		else {
-			RDFConnectionFuseki conn =null;
+		} else {
+			RDFConnectionFuseki conn = null;
 			// In this variation, a connection is built each time.
-			try  {
+			try {
 				conn = (RDFConnectionFuseki) builder.build();
 				UpdateRequest request = UpdateFactory.create();
-			
-				String insertString =
-						" PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "          +
-						" PREFIX ab: <http://userdata/#" + record.getUsername() +"> "   +
-						" DELETE DATA "                                                 +
-						" { ab:			 				   "     +
-						"dc:username \"" + record.getUsername() + "\" ; "      +
-						"dc:firstname \""  + record.getFirstname() +  "\" ; "  +
-						"dc:lastname \""  + record.getLastname() +  "\" ; "  +						
-						"dc:userrole \""  + record.getUserRole() +  "\" ; "  +
-						"dc:password \""  + record.getPassword() +  "\" . "+
-						" } ";
-				request.add(insertString);			
-				
+
+				String insertString = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
+						+ " PREFIX ab: <http://userdata/#" + record.getUsername() + "> " + " DELETE DATA "
+						+ " { ab:			 				   " + "dc:username \"" + record.getUsername() + "\" ; "
+						+ "dc:firstname \"" + record.getFirstname() + "\" ; " + "dc:lastname \"" + record.getLastname()
+						+ "\" ; " + "dc:userrole \"" + record.getUserRole() + "\" ; " + "dc:password \""
+						+ record.getPassword() + "\" . " + " } ";
+				request.add(insertString);
+
 				conn.update(request);
 				responseBean.setErrMsg("User Deleted");
-				
-			}finally {
+
+			} finally {
 				conn.close();
 			}
 		}
 		return responseBean;
 	}
-
-	
-	
 
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
@@ -305,8 +284,6 @@ public class UserController {
 		return bytesToStringHex(hash);
 
 	}
-
-	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
 	private static String bytesToStringHex(byte[] bytes) {
 		char[] hexChars = new char[bytes.length * 2];
