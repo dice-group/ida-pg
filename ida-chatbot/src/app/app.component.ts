@@ -2,6 +2,7 @@ import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angula
 import {Message} from './models/message';
 import {ResponseBean} from './models/response-bean';
 import {SidebarComponent} from './components/sidebar/sidebar.component';
+import {StoryboardDialogComponent} from './dialogs/storyboard/storyboard.dialog.component';
 import {MainviewElement} from './models/mainview-element';
 import {SidebarElement} from './models/sidebar-element';
 import {ChatboxComponent} from './components/chatbox/chatbox.component';
@@ -11,6 +12,8 @@ import {TabElement} from './models/tab-element';
 import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
 import {TabType} from './enums/tab-type.enum';
 import {IdaEventService} from './service/event/ida-event.service';
+import {MatDialog} from "@angular/material";
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +35,7 @@ export class AppComponent {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService) {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService, public dialog: MatDialog, private sanitizer:DomSanitizer) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
@@ -78,6 +81,8 @@ export class AppComponent {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
       this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 11) {
+        this.openPopup(resp.payload.storyUrl);
     }
   }
 
@@ -96,15 +101,18 @@ export class AppComponent {
     this.chatboxComp.addNewMessage(message);
     let actvTbl = '';
     let actvDs = '';
+    let actvVs = '';
     if (this.getActiveMainView() && this.sbComp) {
       actvTbl = this.getActiveMainView().getActiveDataTableName();
       actvDs = this.sbComp.getActiveDatasetName();
+      actvVs = this.getActiveMainView().getActiveVisualizationName();
     }
     const prmobj = {
       msg: message.content,
       actvScrId: this.activeItem,
       actvTbl: actvTbl == null ? '' : actvTbl,
-      actvDs: actvDs == null ? '' : actvDs
+      actvDs: actvDs == null ? '' : actvDs,
+      actvVs: actvVs == null ? '' : actvVs
     };
     // Send the message to server
     this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
@@ -126,13 +134,29 @@ export class AppComponent {
 
   processBotResponse(resp: ResponseBean) {
     this.restservice.requestEvnt.emit(false);
-    const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
+    if(resp.actnCode === 11){
+      const msg: Message = new Message("here is your Storyboard URL: <br><br><a href="+this.sanitize(resp.payload.storyUrl)+" target='_blank'>"+resp.payload.storyUrl+"</a>", 'Assistant', 'chatbot', new Date());
+    } else{
+      const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
+    }
     // Putting delay to make responses look natural
     setTimeout(() => this.chatboxComp.addNewMessage(msg), 300);
     if (resp.actnCode > 0) {
       // load the dataset
       this.actionHandler(resp);
     }
+  }
+
+  openPopup(url){
+    this.dialog.open(StoryboardDialogComponent, {
+      data: {
+        url: url
+      }
+    });
+  }
+
+  sanitize(url:string){
+    return this.sanitizer.bypassSecurityTrustUrl(window.location.protocol + '//' +url).changingThisBreaksApplicationSecurity;
   }
 
   public getActiveMainView(): DataViewContainerComponent {

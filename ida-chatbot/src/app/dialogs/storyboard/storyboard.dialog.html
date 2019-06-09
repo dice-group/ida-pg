@@ -1,0 +1,8 @@
+<div class="container">
+  <h3 align="center" class="mat-h2">Your Storyboard URL</h3>
+  <p matTooltipPosition="below" matTooltip="click to copy URL" (click)="copyText()">{{data.url}}</p>
+  <div mat-dialog-actions align="end">
+      <button mat-button (click)="openLink()" tabindex="-1">Open in new tab</button>
+      <button mat-button (click)="onNoClick()" tabindex="-1">Close</button>
+    </div>
+</div>
