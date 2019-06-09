@@ -60,6 +60,7 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
+import {StoryboardDialogComponent} from "./dialogs/storyboard/storyboard.dialog.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
@@ -80,7 +81,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     DatatableDetailComponent,
     SsbViewComponent,
     VennViewComponent,
-    DeckglHexViewComponent
+    DeckglHexViewComponent,
+    StoryboardDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -123,6 +125,9 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     MatTooltipModule,
     FlexLayoutModule,
     NgbModule
+  ],
+  entryComponents: [
+    StoryboardDialogComponent
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

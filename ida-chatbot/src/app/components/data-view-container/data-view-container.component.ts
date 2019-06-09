@@ -44,6 +44,14 @@ export class DataViewContainerComponent implements OnInit {
     return null;
   }
 
+  public getActiveVisualizationName() {
+    const activeTab: TabElement = this.item.tabArr[this.activeTabIndex];
+    if (activeTab.tabType === TabType.BG || activeTab.tabType === TabType.FDG || activeTab.tabType === TabType.VENND) {
+      return activeTab.label;
+    }
+    return null;
+  }
+
   public focusLastTab() {
     this.activeTabIndex = this.item.tabArr.length - 1;
   }
