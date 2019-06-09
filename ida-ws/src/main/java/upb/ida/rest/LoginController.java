@@ -1,6 +1,10 @@
 package upb.ida.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import upb.ida.bean.ResponseBean;
-import upb.ida.domains.User;
-import upb.ida.constant.IDALiteral;
-import upb.ida.service.UserService;
 
-import java.util.HashMap;
-import java.util.Map;
+import upb.ida.bean.ResponseBean;
+import upb.ida.constant.IDALiteral;
+import upb.ida.domains.User;
+import upb.ida.service.UserService;
 
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
@@ -26,10 +28,7 @@ public class LoginController {
     @Autowired
 	private ResponseBean responseBean;
     
-    @Autowired
-	private UserService userService;
-		
-	@RequestMapping(value = "/response", method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "/response", method = {RequestMethod.GET,RequestMethod.POST})
     public ResponseBean login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
             @RequestParam(value = "success", required = false) String success, HttpServletRequest request) {
@@ -38,7 +37,7 @@ public class LoginController {
             responseBean.setErrMsg("Username/Password Incorrect");
         } else if (success != null) {
             responseBean.setErrMsg("Login Successful");
-            User loggedInuser = userService.getByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+            User loggedInuser = UserService.getByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
             Map<String, Object> returnMap = new HashMap<String, Object>();
             returnMap.put("loggedInUser", loggedInuser);
             responseBean.setPayload(returnMap);

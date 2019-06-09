@@ -84,11 +84,17 @@ public class UserController {
     	if(updatedrecord == null)
     	{
     		responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
+    		return responseBean;
     	}
     	else 
     	{
 		String password = updatedrecord.getPassword();
 		User oldRecord = UserService.getByUsername(updatedrecord.getUsername());
+		
+			if (oldRecord==null) {
+				responseBean.setErrMsg("user not found");
+	    		return responseBean;
+			}
 
 			// check new password needs to be updated or older one needs to be used
 			if (password == null || password == "") {
