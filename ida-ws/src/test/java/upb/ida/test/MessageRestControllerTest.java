@@ -33,10 +33,10 @@ public class MessageRestControllerTest {
 	@Test
 	public void  sendmessagetestPos() throws Exception  {
 		ResponseBean responseBean;
-		responseBean = mrc.sendmessage("I would like a force directed graph visualization for the current table", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city");
+		responseBean = mrc.sendmessage("I would like a force directed graph visualization for the current table", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city", "");
 		
 		System.out.println(responseBean.getPayload().get("fdgData"));
 		
@@ -102,10 +102,10 @@ public class MessageRestControllerTest {
 	@Test
 	public void  sendmessagetestNeg() throws Exception  {
 		ResponseBean responseBean;
-		responseBean = mrc.sendmessage("I would like a force directed graph visualization for the current table", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city");
+		responseBean = mrc.sendmessage("I would like a force directed graph visualization for the current table", "1", "citydistancetest.csv", "city","");
+		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city", "");
 		
 		System.out.println(responseBean.getPayload().get("fdgData"));
 		
@@ -169,10 +169,10 @@ public class MessageRestControllerTest {
 	@Test
 	public void  sendmessagetestExt() throws Exception  {
 		ResponseBean responseBean;
-		responseBean = mrc.sendmessage("I would like a force directed graph visualization for the current table", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city");
-		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city");
+		responseBean = mrc.sendmessage("I would like a force directed graph visualization for the current table", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city", "");
+		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city", "");
 		
 		System.out.println(responseBean.getPayload().get("fdgData"));
 		

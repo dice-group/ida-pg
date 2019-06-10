@@ -28,7 +28,7 @@ public class LoadDsMsgRstCntrlTest {
 	public void sendmessagetestPos() throws Exception {
 
 		ResponseBean responseBean;
-		responseBean = msgRstCntrl.sendmessage("i would like you to load the city3 dataset", "0", "", "");
+		responseBean = msgRstCntrl.sendmessage("i would like you to load the city3 dataset", "0", "", "", "");
 		System.out.println(responseBean.getPayload().get("dsMd"));
 
 		ObjectMapper mapper = new ObjectMapper();

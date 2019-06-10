@@ -36,16 +36,16 @@ public class MessageRestControllerClusterTest {
 	@Test
 	public void  sendmessagetestpos() throws Exception  {
 		ResponseBean responseBean;
-		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Optional parameters should be n_clusters, n_jobs and n_init", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set init as random", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set n_init as 5", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set precompute_distances as auto", "1", "movehubcostofliving.csv", "city"); 
-		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Optional parameters should be n_clusters, n_jobs and n_init", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Set init as random", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Set n_init as 5", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Set precompute_distances as auto", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city", null);
+		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city", null);
 		
 		
 		
@@ -121,16 +121,16 @@ public class MessageRestControllerClusterTest {
 	 @Test
 	public void  sendmessagetestNeg() throws Exception  {
 		ResponseBean responseBean;
-		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Optional parameters should be init and n_init", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set init as random", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Set n_init as 5", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("set precompute_distances as auto", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Optional parameters should be init and n_init", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Set init as random", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Set n_init as 5", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("set precompute_distances as auto", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Clustering features are wine, cinema and gasoline", "1", "movehubcostofliving.csv", "city", "");
+		responseBean = mrc.sendmessage("Label feature should be city", "1", "movehubcostofliving.csv", "city", "");
 		
 		
 		
