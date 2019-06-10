@@ -8,6 +8,7 @@
                  [org.clojure/tools.logging]
                  [datascript]
                  [clj-commons/fs]
+                 [aysylu/loom]
                  [io.forward/semver "0.1.0"]
                  [librarian/helpers]]
 

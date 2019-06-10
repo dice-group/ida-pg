@@ -86,7 +86,12 @@
     <dependency>
       <groupId>datascript</groupId>
       <artifactId>datascript</artifactId>
-      <version>0.18.3</version>
+      <version>0.18.4</version>
+    </dependency>
+    <dependency>
+      <groupId>aysylu</groupId>
+      <artifactId>loom</artifactId>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>

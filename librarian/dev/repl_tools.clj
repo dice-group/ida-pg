@@ -1,8 +1,11 @@
 (ns repl-tools
   (:require [proto-repl-charts.graph :as prg]
             [datascript.core :as d]
+            [loom.graph :as g]
+            [loom.attr :as ga]
             [librarian.scraper.io.scrape :refer [create-scrape]]
             [librarian.model.io.scrape :refer [read-scrape]]
+            [librarian.model.cfg :as cfg]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.constant :as constant]
@@ -15,33 +18,20 @@
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.basetype :as basetype]
             [librarian.model.concepts.role-type :as role-type]
-            [librarian.model.concepts.semantic-type :as semantic-type]
-            [librarian.model.concepts.snippet :as snippet]
-            [librarian.generator.query :as gq]))
+            [librarian.model.concepts.semantic-type :as semantic-type]))
 
 (def show-scrape (comp :db read-scrape create-scrape))
 (def shown-state (atom nil))
 
 (defn show-state
-  [state & {:keys [show-patterns no-effects]
-            :or {show-patterns false, no-effects false}}]
+  [state & {:keys [snippets no-effects]
+            :or {snippets false, no-effects false}}]
   (let [db (:db state)
-        nodes (d/q '[:find ?node ?type
-                     :in $ % ?show-patterns
-                     :where [(ground [::call/call
-                                      ::constant/constant
-                                      ::call-parameter/call-parameter
-                                      ::call-result/call-result])
-                             [?type ...]]
-                            (type ?node ?type)
-                            (or (and [(true? ?show-patterns)] [?node])
-                                (and [(false? ?show-patterns)]
-                                     (not-join [?node]
-                                       [_ ::snippet/contains ?node])))]
-                   db gq/rules show-patterns)
-        nodes (keep (fn [[node type]]
+        g (cfg/db->cfg db :snippets snippets)
+        nodes (keep (fn [node]
                       (let [e (d/entity db node)
-                            datatypes (::typed/datatype e)]
+                            datatypes (::typed/datatype e)
+                            type (ga/attr g node :type)]
                         (when (or (not= type ::constant/constant)
                                   (< 1 (count datatypes))
                                   (::data-receiver/_receives e))
@@ -86,35 +76,14 @@
                                               "?"))))
                                   (clojure.string/join ", "))
                              (when (seq datatypes) ">"))})))
-                    nodes)
-        receive-edges (->> nodes
-                           (filter #(= (:group %) ::call-parameter/call-parameter))
-                           (mapcat (fn [{:keys [id]}]
-                                     (d/q '[:find ?source ?param
-                                            :in $ ?param
-                                            :where [?param ::data-receiver/receives ?source]]
-                                          db id)))
-                           (map (fn [[from to]] {:from from, :to to, :label "flow"})))
-        parameter-edges (->> nodes
-                           (filter #(= (:group %) ::call-parameter/call-parameter))
-                           (mapcat (fn [{:keys [id]}]
-                                     (d/q '[:find ?param ?call
-                                            :in $ ?param
-                                            :where [?call ::call/parameter ?param]]
-                                          db id)))
-                           (map (fn [[from to]] {:from from, :to to, :label "param"})))
-        result-edges (->> nodes
-                        (filter #(= (:group %) ::call-result/call-result))
-                        (mapcat (fn [{:keys [id]}]
-                                  (d/q '[:find ?call ?result
-                                         :in $ ?result
-                                         :where [?call ::call/result ?result]]
-                                       db id)))
-                        (map (fn [[from to]] {:from from, :to to, :label "result"})))
-        edges (concat receive-edges
-                      parameter-edges
-                      result-edges)
-        edges (if (empty? edges) [{:from -1 :to -2}] edges)]
+                    (g/nodes g))
+        edges (g/edges g)
+        edges (if (empty? edges)
+                [{:from -1 :to -2}]
+                (map (fn [[from to]]
+                       {:from from :to to
+                        :label (ga/attr g from to :type)})
+                     edges))]
     (when-not no-effects (reset! shown-state state))
     (prg/graph "Control Flow State"
                {:nodes nodes

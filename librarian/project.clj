@@ -15,9 +15,10 @@
 
   :modules {:versions {org.clojure/clojure "1.10.1"
                        org.clojure/tools.logging "0.4.1"
-                       datascript "0.18.3"
+                       datascript "0.18.4"
                        clj-commons/fs "1.5.0"
                        org.flatland/ordered "1.5.7"
+                       aysylu/loom "1.0.2"
 
                        librarian/helpers "1.0.0-SNAPSHOT"
                        librarian/model "1.0.0-SNAPSHOT"

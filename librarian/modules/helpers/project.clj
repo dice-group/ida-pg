@@ -6,7 +6,6 @@
 
   :dependencies [[org.clojure/clojure]
                  [org.clojure/tools.logging]
-                 [datascript]
-                 [org.clojure/core.memoize "0.7.1"]]
+                 [datascript]]
 
   :modules {:parent "../.."})

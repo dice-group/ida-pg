@@ -111,7 +111,7 @@
     <dependency>
       <groupId>datascript</groupId>
       <artifactId>datascript</artifactId>
-      <version>0.18.3</version>
+      <version>0.18.4</version>
     </dependency>
     <dependency>
       <groupId>clj-commons</groupId>

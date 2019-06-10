@@ -18,21 +18,6 @@
             [librarian.model.concepts.namespaced :as namespaced]
             [librarian.model.concepts.positionable :as positionable]))
 
-(def rules [; is ?c a concept of type ?type:
-            '[(type ?c ?type)
-              [?c :type ?type]]
-            '[(type ?c ?type)
-              [?c :type ?t]
-              (subtype ?t ?type)]
-
-            ; is ?parent a superconcept of ?child:
-            '[(subtype ?child ?parent)
-              [(clojure.core/isa? ?child ?parent)]]
-
-            ; can values of typed concept ?from be used as values of typed concept ?to:
-            ['(typed-compatible ?from ?to)
-             `[(typed-compatible? ~'$ ~'?from ~'?to)]]])
-
 (defn transitive-closure
   [db attrs reverse-attrs start]
   (loop [open (transient (vec start))

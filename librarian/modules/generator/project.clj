@@ -7,6 +7,7 @@
   :dependencies [[org.clojure/clojure]
                  [org.clojure/tools.logging]
                  [datascript]
+                 [aysylu/loom]
                  [org.clojure/data.priority-map "0.0.10"]
                  [org.clojure/math.combinatorics "0.1.5"]
                  [clucie "0.4.2"]

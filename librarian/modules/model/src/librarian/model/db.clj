@@ -42,3 +42,15 @@
   (doseq [instances tx-seq
           :when (some? instances)]
     (d/transact! conn instances)))
+
+(def rules
+  [; is ?c a concept of type ?type:
+   '[(type ?c ?type)
+     [?c :type ?type]]
+   '[(type ?c ?type)
+     [?c :type ?t]
+     (subtype ?t ?type)]
+
+   ; is ?parent a superconcept of ?child:
+   '[(subtype ?child ?parent)
+     [(clojure.core/isa? ?child ?parent)]]])
