@@ -6,10 +6,9 @@ import java.util.List;
 
 public class Main {
 
-	private static final String resourceRoot = ""; // CHANGE THIS PATH BEFORE RUNNING THE PROGRAM
+	private static final String resourceRoot = ""; // CHANGE THIS PATH BEFORE RUNNING THE PROGRAM, PATH ENDS WITH SLASH
 	private static final String resultFile = "files/result.ttl";
 	private static final String baseUrl = "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/";
-	private static final String ontologyBaseUrl = baseUrl + "ontology/";
 	private static final String dataBaseUrl = baseUrl + "data/";
 
 	//    file paths
@@ -76,8 +75,11 @@ public class Main {
 		return builder.append("\t").append(name).append(" \"").append(clean(value)).append("\"^^xsd:string ").append(last ? ".\n" : ";\n");
 	}
 
-	private static StringBuilder appendDatetimeProperty(StringBuilder builder, String name, String value, boolean last) {
-		return builder.append("\t").append(name).append(" \"").append(value).append("\"^^xsd:dateTime ").append(last ? ".\n" : ";\n");
+	private static StringBuilder appendDatetimeProperty(StringBuilder builder, String name, String value, boolean last, boolean withTimezone) {
+		return builder.append("\t").append(name)
+			.append(" \"").append(value)
+			.append(withTimezone ? "\"^^xsd:dateTimeStamp " : "\"^^xsd:dateTime ")
+			.append(last ? ".\n" : ";\n");
 	}
 
 	private static StringBuilder appendResourceProperty(StringBuilder builder, String domainPrefix, String domain, String propertyName, String rangePrefix, String range, boolean last, boolean leadingTab) {
@@ -191,11 +193,11 @@ public class Main {
 							stringBuilder.append("\t").append(":id ").append(currentVal).append(" ;\n");
 							break;
 						case 1:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":name", currentVal, false);
 							break;
 						case 2:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":author", currentVal, false);
 							break;
 						case 3:
@@ -205,23 +207,23 @@ public class Main {
 							stringBuilder.append("\t").append(":citaviId ").append(currentVal).append(" ;\n");
 							break;
 						case 5:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":origin", currentVal, false);
 							break;
 						case 6:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":signature", currentVal, false);
 							break;
 						case 7:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":information", currentVal, false);
 							break;
 						case 8:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":status", currentVal, false);
 							break;
 						case 9:
-							if(isValidString(currentVal))
+							if (isValidString(currentVal))
 								appendStringProperty(stringBuilder, ":internalInformation", currentVal, false);
 							break;
 						default:
@@ -274,7 +276,7 @@ public class Main {
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
 								String entryDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":enrolledOn", entryDate, false);
+								appendDatetimeProperty(stringBuilder, ":enrolledOn", entryDate, false, false);
 							}
 							break;
 						case 4:
@@ -285,7 +287,7 @@ public class Main {
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
 								String dischargeDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":dischargedOn", dischargeDate, false);
+								appendDatetimeProperty(stringBuilder, ":dischargedOn", dischargeDate, false, false);
 							}
 							break;
 						case 6:
@@ -308,7 +310,7 @@ public class Main {
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
 								String birthdate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":birthDate", birthdate, false);
+								appendDatetimeProperty(stringBuilder, ":birthDate", birthdate, false, false);
 							}
 							break;
 						case 11:
@@ -319,12 +321,12 @@ public class Main {
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
 								String deathDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":deathDate", deathDate, false);
+								appendDatetimeProperty(stringBuilder, ":deathDate", deathDate, false, false);
 							}
 							break;
 						case 13:
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:deathPlace","dbo:" + currentColumnVal, false);
+								appendStringProperty(stringBuilder, "dbo:deathPlace", "dbo:" + currentColumnVal, false);
 							break;
 						case 14:
 							stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
@@ -436,11 +438,11 @@ public class Main {
 								String[] years = ordenArray[i][j].replaceAll("[^/\\d{4}-]", "").
 									replaceAll("[/-]", " ").split(" ");
 								if (years.length == 2) {
-									String durationStart = years[0] + "-01-01T00:00:00";
-									String durationEnd = years[1] + "-01-01T00:00:00";
+									String durationStart = years[0] + "-01-01T00:00:00+00:00";
+									String durationEnd = years[1] + "-01-01T00:00:00+00:00";
 
-									appendDatetimeProperty(stringBuilder, ":durationStart", durationStart, false);
-									appendDatetimeProperty(stringBuilder, ":durationEnd", durationEnd, false);
+									appendDatetimeProperty(stringBuilder, "time:hasBeginning", durationStart, false, true);
+									appendDatetimeProperty(stringBuilder, "time:hasEnd", durationEnd, false, true);
 
 								} else {
 									System.out.println("Problem parsing decoration duration for id: " + ordenArray[i][0]);
@@ -501,7 +503,7 @@ public class Main {
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
 								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false);
+								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
 							}
 							break;
 						default:
@@ -559,7 +561,7 @@ public class Main {
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
 								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false);
+								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
 							}
 							break;
 						default:
@@ -611,7 +613,7 @@ public class Main {
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
 								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false);
+								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
 							}
 							break;
 						default:
@@ -663,7 +665,7 @@ public class Main {
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
 								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false);
+								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
 							}
 							break;
 						default:
