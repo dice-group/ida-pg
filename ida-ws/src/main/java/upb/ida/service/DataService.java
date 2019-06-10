@@ -2,8 +2,7 @@ package upb.ida.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,28 @@ public class DataService {
 		// Fetch file content
 		List<Map<String, String>> dataTable = fileUtil.convertToMap(file);
 		// Set it in payload
+		responseBean.getPayload().put("dataTable", dataTable);
+		// Set action code
+		responseBean.setActnCode(IDALiteral.UIA_DTTABLE);
+		// Set Reply
+		responseBean.setChatmsg("Requested Table added to the main view.");
+	}
+
+	public void getDataTableOfSpecificColumns(String actvDs, String actvTbl, List<String> tableColumns) throws JsonProcessingException, IOException {
+
+		String path = fileUtil.getDTFilePath(actvDs, actvTbl);
+		File file = new File(fileUtil.fetchSysFilePath(path));
+		List<Map<String, String>> dataTable = fileUtil.convertToMap(file);
+		for(Map<String, String> item : dataTable)
+		{
+			Iterator<Map.Entry<String, String>> entryIt = item.entrySet().iterator();
+			while (entryIt.hasNext()) {
+				Map.Entry<String, String> entry = entryIt.next();
+				if (!tableColumns.contains(entry.getKey())) {
+					entryIt.remove();
+				}
+			}
+		}
 		responseBean.getPayload().put("dataTable", dataTable);
 		// Set action code
 		responseBean.setActnCode(IDALiteral.UIA_DTTABLE);

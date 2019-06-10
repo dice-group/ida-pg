@@ -29,6 +29,7 @@ public class StoryCreationUtil {
 		String actvDs = (String) responseBean.getPayload().get("actvDs");
 		String actvScrId = (String) responseBean.getPayload().get("actvScrid");
 		String actvVs = (String) responseBean.getPayload().get("actvVs");
+		List<String> columnsList = Arrays.asList(args);
 
 		//Create url for stroy
 		UUID uuid = UUID.randomUUID();

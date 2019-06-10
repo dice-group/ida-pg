@@ -14,6 +14,8 @@
 * <call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> == pass => Your\s
 ^ requested force directed graph is now added to the \s
 ^ main view
++ i want to create story for current table and visualization
+* <call>ScHandler "<get sourceNode>" "<get targetNode>" </call> == pass => Your story is created.
 
 + i want force directed graph visualization
 @ show me fdg
