@@ -9,7 +9,9 @@ import upb.ida.bean.ResponseBean;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,16 +42,17 @@ public class StoryRestController {
 		String actvScrId = "1";
 		String actvTbl = "movehubqualityoflife.csv";
 		String actvDs = "city";
-		String actvVz = "bar-graph";
+		String actvVs = "bar-graph";
+		List<String> columnsList = Arrays.asList("City", "Pollution");
 
 
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
-		dataMap.put("actvVz", actvVz);
+		dataMap.put("actvVs", actvVs);
 		response.setPayload(dataMap);
-		dataService.getDataTable(actvDs, actvTbl);
+		dataService.getDataTableOfSpecificColumns(actvDs, actvTbl, columnsList);
 		return response;
 	}
 

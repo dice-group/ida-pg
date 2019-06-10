@@ -4,6 +4,8 @@
 + use * as latitude and * as longitude
 * <call> GeoDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading geo Spatial diagram in a moment!
 
++ i want to create story for current table and visualization
+* <call>ScHandler "<star1>" "<star2>"</call> == pass => Your story is created.
 
 + i want geospatial diagram for this table
 @ show me the geo spatial diagram

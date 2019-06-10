@@ -4,6 +4,9 @@
 + count of * wrt top * *
 * <call> VennDiagramHandler "<star3>" "<star2>" "<star1>"</call> == pass => All good, loading Venn diagram in a moment!
 
++ i want to create story for current table and visualization
+* <call>ScHandler "<star1>" "<star2>" "<star3>"</call> == pass => Your story is created.
+
 + i want venn diagram for this table
 @ show me a venn diagram
 + i would like a venn diagram for this table
