@@ -331,6 +331,13 @@ public class Main {
 						case 14:
 							stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
 							break;
+						case 15:
+							if(isValidString(currentColumnVal))
+							{
+								boolean truthValue = Boolean.parseBoolean(currentColumnVal);
+								stringBuilder.append("\t").append(":verifiedData ").append(truthValue).append(" ;\n");
+							}
+							break;
 						case 17:
 							if (isValidString(currentColumnVal))
 								appendStringProperty(stringBuilder, ":information", currentColumnVal, false);
