@@ -32,10 +32,10 @@ public class BgMsgRestControllerTest {
 	public void sendmessagetestPos() throws Exception {
 		ResponseBean responseBean;
 		responseBean = msgRstCntrl.sendmessage("I want a bar-graph visualisation for the current table", "1",
-				"movehubcostofliving.csv", "city");
-		responseBean = msgRstCntrl.sendmessage("x-axis is city", "1", "movehubcostofliving.csv", "city2");
-		responseBean = msgRstCntrl.sendmessage("y-axis is wine", "1", "movehubcostofliving.csv", "city2");
-		responseBean = msgRstCntrl.sendmessage("Top 2 records, sorted descending on wine", "1", "movehubcostofliving.csv", "city2");
+				"movehubcostofliving.csv", "city", "");
+		responseBean = msgRstCntrl.sendmessage("x-axis is city", "1", "movehubcostofliving.csv", "city2", "");
+		responseBean = msgRstCntrl.sendmessage("y-axis is wine", "1", "movehubcostofliving.csv", "city2", "");
+		responseBean = msgRstCntrl.sendmessage("Top 2 records, sorted descending on wine", "1", "movehubcostofliving.csv", "city2", "");
 
 		//System.out.println(responseBean.getPayload().get("bgData"));
 

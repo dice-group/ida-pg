@@ -45,16 +45,13 @@ public class MessageRestController {
 	@RequestMapping("/sendmessage")
 	public ResponseBean sendmessage(@RequestParam(value = "msg") String msg,
 			@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
-			@RequestParam(value = "actvDs") String actvDs) throws Exception {
-
-		//TODO: actvVz param should be set in front-end
-		String actvVz = "bar-graph";
+			@RequestParam(value = "actvDs") String actvDs, @RequestParam(value = "actvVs") String actvVs) throws Exception {
 
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
-		dataMap.put("actvVz", actvVz);
+		dataMap.put("actvVs", actvVs);
 		response.setPayload(dataMap);
 		String reply = rsService.getRSResponse(msg);
 
@@ -66,14 +63,10 @@ public class MessageRestController {
 	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
-		//TODO: actvVz param should be set in front-end
-		String actvVz = "bar-graph";
-
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
-		dataMap.put("actvVz", actvVz);
 		response.setPayload(dataMap);
 		dataService.getDataTable(actvDs, actvTbl);
 		return response;
