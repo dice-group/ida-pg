@@ -62,6 +62,7 @@ import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import {StoryboardDialogComponent} from "./dialogs/storyboard/storyboard.dialog.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { StoryboardComponent } from './components/storyboard/storyboard.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
-    StoryboardDialogComponent
+    StoryboardDialogComponent,
+    StoryboardComponent
   ],
   imports: [
     BrowserModule,
