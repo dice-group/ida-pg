@@ -134,11 +134,13 @@ export class AppComponent {
 
   processBotResponse(resp: ResponseBean) {
     this.restservice.requestEvnt.emit(false);
+    let content;
     if(resp.actnCode === 11){
-      const msg: Message = new Message("here is your Storyboard URL: <br><br><a href="+this.sanitize(resp.payload.storyUrl)+" target='_blank'>"+resp.payload.storyUrl+"</a>", 'Assistant', 'chatbot', new Date());
+      content = "here is your Storyboard URL: <br><br><a href="+this.sanitize(resp.payload.storyUrl)+" target='_blank'>"+resp.payload.storyUrl+"</a>";
     } else{
-      const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
+      content = resp.chatmsg;
     }
+    const msg: Message = new Message(content, 'Assistant', 'chatbot', new Date());
     // Putting delay to make responses look natural
     setTimeout(() => this.chatboxComp.addNewMessage(msg), 300);
     if (resp.actnCode > 0) {
