@@ -16,4 +16,4 @@
    :basetype basetype}
 
   :builtins builtins
-  :generate generate)
+  :generate #(apply generate %&))

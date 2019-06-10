@@ -130,3 +130,12 @@
   ([predecessor-idx]
    (show-state-past @shown-state predecessor-idx
                     :no-effects true)))
+
+(defn code
+  [state]
+  (let [{:keys [ecosystem meta]} (:scrape (meta state))]
+    ((:generate ecosystem) meta (:db state))))
+
+(defn last-code
+  []
+  (code (last-state)))

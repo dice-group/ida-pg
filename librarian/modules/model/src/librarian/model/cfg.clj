@@ -32,8 +32,10 @@
                              (conj '(not-join [?node] [_ ::snippet/contains ?node]))
                              (not unused-constants)
                              (conj '(or-join [?node ?type]
-                                      (and [?node] [(not= ?type ::constant/constant)])
-                                      (and [?type] [_ ::data-receiver/receives ?node]))))}
+                                      (and [(not= ?type ::constant/constant)]
+                                           [?node])
+                                      (and [(= ?type ::constant/constant)]
+                                           [_ ::data-receiver/receives ?node]))))}
                    db mdb/rules snippets unused-constants)
         receive-edges (eduction (comp (filter #(= (second %) ::call-parameter/call-parameter))
                                       (mapcat (fn [[id]]

@@ -22,7 +22,7 @@
 
 (defn gen-test*
   ([ds init]
-   (gen-test* ds init 10))
+   (gen-test* ds init 50))
   ([ds init limit]
    (binding [gen/*sid (atom 0)]
      (let [scrape (scrape/read-scrape ds)
@@ -32,11 +32,12 @@
            succs (iterate (comp (partial print-search-state i)
                                 gen/continue-search)
                           search-state)
-           succs (take limit succs)]
-       (time (doall succs))
-       (time (rt/show-search-state (or (some #(when (:goal %) %) succs)
-                                       (last succs))
-                                   :show-patterns false))))))
+           succs (take limit succs)
+           res (time (some #(when (:goal %) %) succs))
+           res (or res (last succs))
+           state (vary-meta (rt/search-state->next-state res)
+                            assoc :scrape scrape)]
+       (rt/show-state state)))))
 
 (defn- goal-init-tx
   [inputs goals]
@@ -77,7 +78,7 @@
          "libs/scikit-learn-cluster"
          (concat (goal-init-tx [:dataset] [:labels])
                  (instances->tx [(instanciate constant/constant
-                                   :value 123
+                                   :value "2"
                                    :datatype [(instanciate basetype/basetype
                                                 :name "string")])]))
          args))
