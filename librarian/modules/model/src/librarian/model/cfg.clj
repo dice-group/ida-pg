@@ -18,20 +18,23 @@
              g ne-attr-pairs))
 
 (defn db->cfg
-  [db & {:keys [snippets] :or {snippets false}}]
-  (let [nodes (d/q '[:find ?node ?type
-                     :in $ % ?snippets
-                     :where [(ground [::call/call
-                                      ::constant/constant
-                                      ::call-parameter/call-parameter
-                                      ::call-result/call-result])
-                             [?type ...]]
-                            (type ?node ?type)
-                            (or (and [(true? ?snippets)] [?node])
-                                (and [(false? ?snippets)]
-                                     (not-join [?node]
-                                       [_ ::snippet/contains ?node])))]
-                   db mdb/rules snippets)
+  [db & {:keys [snippets unused-constants]
+         :or {snippets false, unused-constants false}}]
+  (let [nodes (d/q {:find '[?node ?type]
+                    :in '[$ % ?snippets ?unused-constants]
+                    :where (cond-> '[[(ground [::call/call
+                                               ::constant/constant
+                                               ::call-parameter/call-parameter
+                                               ::call-result/call-result])
+                                      [?type ...]]
+                                     (type ?node ?type)]
+                             (not snippets)
+                             (conj '(not-join [?node] [_ ::snippet/contains ?node]))
+                             (not unused-constants)
+                             (conj '(or-join [?node ?type]
+                                      (and [?node] [(not= ?type ::constant/constant)])
+                                      (and [?type] [_ ::data-receiver/receives ?node]))))}
+                   db mdb/rules snippets unused-constants)
         receive-edges (eduction (comp (filter #(= (second %) ::call-parameter/call-parameter))
                                       (mapcat (fn [[id]]
                                                 (d/q '[:find ?source ?param
