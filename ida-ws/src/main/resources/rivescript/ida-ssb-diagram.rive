@@ -4,6 +4,8 @@
 + use * sequenced on *
 * <call> SSBDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading sequence sun burst diagram in a moment!
 
++ i want to create story for current table and visualization
+* <call>ScHandler "<star1>" "<star2>"</call> == pass => Your story is created.
 
 + i want sequence-sunburst diagram for this table
 @ show me the sequence sun burst diagram

@@ -140,7 +140,7 @@ export class AppComponent {
       const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
     }
     // Putting delay to make responses look natural
-    setTimeout(() => this.chatboxComp.addNewMessage(msg), 300);
+    //setTimeout(() => this.chatboxComp.addNewMessage(msg), 300);
     if (resp.actnCode > 0) {
       // load the dataset
       this.actionHandler(resp);
