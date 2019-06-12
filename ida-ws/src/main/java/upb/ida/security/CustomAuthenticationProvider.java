@@ -22,29 +22,27 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		// name is user name here
+		// name is user name here //userinput
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
+		System.out.println("username entered by user:   " + name);
+		System.out.println("password entered by user:    " + password);
 
-		System.out.println("password from authentication before hashing" + password);
-		try {
-			password = UserController.hashPassword(password);
-		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.println("password from authentication after hashing" + password);
-
-		System.out.println("username entered by user   " + name);
-		System.out.println("password entered by user    " + password);
-
+		//db password stored
 		// User currentUser = userService.getByUsername(name);
 		User currentUser = UserService.getByUsername(name);
-		System.out.println("username databse " + currentUser.getUsername());
-		System.out.println("password database by user    " + currentUser.getPassword());
+		System.out.println("username databse " + currentUser);
 
-		if (currentUser.getUsername().equals(name) && currentUser.getPassword().equals(password)) {
 
+		Boolean PasswordCheck =null;
+		if (currentUser == null) 
+		{
+			return null;
+		}
+
+	
+
+		if (currentUser.getUsername().equals(name) && PasswordCheck) {
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			if (currentUser.getUserRole().equals("ADMIN"))
 				grantedAuths.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
