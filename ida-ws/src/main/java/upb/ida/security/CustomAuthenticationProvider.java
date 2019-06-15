@@ -19,6 +19,7 @@ import upb.ida.service.UserService;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
+	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
