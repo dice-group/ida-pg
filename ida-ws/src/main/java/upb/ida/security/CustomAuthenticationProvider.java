@@ -22,7 +22,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		// name is user name here //userinput
+		// name is user name here //user input
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		System.out.println("username entered by user:   " + name);
@@ -32,15 +32,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		// User currentUser = userService.getByUsername(name);
 		User currentUser = UserService.getByUsername(name);
 		System.out.println("username databse " + currentUser);
-
-
+		
 		Boolean PasswordCheck =null;
 		if (currentUser == null) 
 		{
 			return null;
 		}
 
-	
+		try {
+			String dbPassword = currentUser.getPassword();
+			PasswordCheck = UserController.checkPassword(dbPassword , password);
+		} catch (NoSuchAlgorithmException e) {			
+			e.printStackTrace();
+		}
 
 		if (currentUser.getUsername().equals(name) && PasswordCheck) {
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();

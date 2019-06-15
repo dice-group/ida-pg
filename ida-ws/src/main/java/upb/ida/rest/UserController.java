@@ -302,9 +302,13 @@ public class UserController {
 	    
 	    //  String  originalPassword = "password";
 	        String  originalPassword = Pass;
-	        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
-	        
+	        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));	        
 			return generatedSecuredPasswordHash;
 	    }
-
+	public static boolean checkPassword(String dbPass, String userInputPassword) throws NoSuchAlgorithmException {
+		String  originalPassword = userInputPassword;
+		boolean matched = BCrypt.checkpw(originalPassword, dbPass);
+		System.out.println(" password result:   "+matched);
+		return matched;
+	}
 }
