@@ -39,13 +39,11 @@ export class UpdateDialogComponent implements  OnInit {
 
     submit(updateFormValue) {
       const user = {
-        id: this.data.id,
         username: updateFormValue.username,
         firstname: updateFormValue.firstname,
-        lastname: updateFormValue.lastname,
-        password: updateFormValue.password
+        lastname: updateFormValue.lastname
       }
-      this.restservice.postRequest('user/update', user, {}).subscribe(resp => {
+      this.restservice.postRequest('/user/update', user, {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         if (returnResp.status === false) {
           this.snackBar.open(returnResp.respMsg, '', {
