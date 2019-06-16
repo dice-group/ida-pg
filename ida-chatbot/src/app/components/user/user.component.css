@@ -25,3 +25,7 @@ mat-spinner{
 .table-container h1{
   margin-bottom: 15px;
 }
+
+.userSearch{
+  width:100%;
+}

@@ -48,10 +48,10 @@ export class RestService implements HttpInterceptor {
 
   public postRequest(path: string, body: object,  prmobj: object): Observable<any> {
     const headers = new HttpHeaders({
-      'Content-Type': path === 'auth/login-action' ? 'application/x-www-form-urlencoded' : 'application/json'
+      'Content-Type': path === '/auth/login-action' ? 'application/x-www-form-urlencoded' : 'application/json'
     });
     const options = {headers: headers};
-    const reqObs = this.http.post(this.getFullUrl(path), path === 'auth/login-action' ? this.getFormUrlEncoded(body) : body, options);
+    const reqObs = this.http.post(this.getFullUrl(path), path === '/auth/login-action' ? this.getFormUrlEncoded(body) : body, options);
     return reqObs;
   }
 
