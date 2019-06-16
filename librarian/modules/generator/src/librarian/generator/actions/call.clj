@@ -6,29 +6,12 @@
             [librarian.model.concepts.callable :as callable]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.call-result :as call-result]
-            [librarian.model.concepts.named :as named]))
+            [librarian.model.concepts.call-result :as call-result]))
 
 (defn call-actions
   [{:keys [db]} flaw]
-  (let [candidates
-        (d/q '[:find ?callable ?result
-               :in $ ?flaw
-               :where [?flaw ::typed/datatype ?ft]
-                      [?result ::typed/datatype ?ft]
-                      [?callable ::callable/result ?result]]
-             db flaw)
-        callables (reduce (fn [callables [callable result]]
-                            (if (and (not (contains? callables callable))
-                                     (gq/typed-compatible? db result flaw))
-                              (conj callables callable)
-                              callables))
-                          #{} candidates)
-        callables (map (partial d/pull db [:db/id
-                                           ::named/name
-                                           ::callable/parameter
-                                           ::callable/result])
-                       callables)]
+  (let [callables (gq/compatibly-typed-callables db flaw)
+        callables (map #(d/entity db %) callables)]
     (map (fn [callable]
            (let [param-map (into {}
                                  (map-indexed (fn [i {:keys [db/id] :as param}]

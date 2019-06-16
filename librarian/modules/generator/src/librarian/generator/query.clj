@@ -12,6 +12,7 @@
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.callable :as callable]
+            [librarian.model.concepts.result :as result]
             [librarian.model.concepts.snippet :as snippet]
             [librarian.model.concepts.named :as named]
             [librarian.model.concepts.namespace :as namespace]
@@ -177,6 +178,14 @@
                    (remove #(d/datoms db :avet ::snippet/contains %))
                    deps-filter datatype-filter)
              source-types)))))
+
+(defn compatibly-typed-callables
+  [db flaw]
+  (into #{}
+        (comp (types->direct-instances db)
+              (filter (typed-compatible? db flaw))
+              (keep #(:e (first (d/datoms db :avet ::callable/result %)))))
+        (types->subtypes [::result/result])))
 
 (defn placeholder-matches
   [db placeholder]

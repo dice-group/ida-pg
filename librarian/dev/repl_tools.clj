@@ -109,8 +109,11 @@
 
 (defn state-past
   [state predecessor-idx]
-  (nth (iterate :predecessor state)
-       predecessor-idx))
+  (if (neg? predecessor-idx)
+    (nth (reverse (take-while some? (iterate :predecessor state)))
+         (- predecessor-idx))
+    (nth (iterate :predecessor state)
+         predecessor-idx)))
 
 (defn show-state-past
   [state predecessor-idx & opts]
