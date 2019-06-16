@@ -21,7 +21,7 @@ import upb.ida.service.RiveScriptService;
  */
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
-@RequestMapping("/main/message")
+@RequestMapping("/message")
 public class MessageRestController {
 	@Autowired
 	private ResponseBean response;
