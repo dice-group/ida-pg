@@ -26,8 +26,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		// name is user name here //user input
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
-		System.out.println("username entered by user:   " + name);
-		System.out.println("password entered by user:    " + password);
+//		System.out.println("username entered by user:   " + name);
+//		System.out.println("password entered by user:    " + password);
 
 		//db password stored
 		// User currentUser = userService.getByUsername(name);
