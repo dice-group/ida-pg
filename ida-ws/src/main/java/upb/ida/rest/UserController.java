@@ -86,7 +86,7 @@ public class UserController {
 			responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
 			return responseBean;
 		} else {
-			String password = updatedrecord.getPassword();
+			//String password = updatedrecord.getPassword();
 			User oldRecord = UserService.getByUsername(updatedrecord.getUsername());
 
 			if (oldRecord == null) {
@@ -96,10 +96,10 @@ public class UserController {
 
 			// check new password needs to be updated or older one needs to be used
 
-			if (password.equals(null)) {
-				password = oldRecord.getPassword();
-			} else {
-				password = hashPassword(updatedrecord.getPassword());
+//			if (password.equals(null)) {
+//				password = oldRecord.getPassword();
+//			} else {
+			//	password = hashPassword(updatedrecord.getPassword());
 				RDFConnectionFuseki conn = null;
 				// In this variation, a connection is built each time.
 				try {
@@ -128,7 +128,7 @@ public class UserController {
 							// "dc:username \"" + oldRecord.getUsername() + "\" ; " +
 							"dc:firstname \"" + updatedrecord.getFirstname() + "\" ; " + "dc:lastname \""
 							+ updatedrecord.getLastname() + "\" ; " + "dc:userrole \"" + updatedrecord.getUserRole()
-							+ "\" ; " + "dc:password \"" + password + "\" . " + " } ";
+							+ "\" ; " + "dc:password \"" + oldRecord.getPassword() + "\" . " + " } ";
 
 					request.add(query2);
 					conn.update(request);
@@ -142,7 +142,7 @@ public class UserController {
 					conn.close();
 				}
 			}
-		}
+		//}
 		return responseBean;
 	}
 
