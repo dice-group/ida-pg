@@ -37,8 +37,6 @@ import upb.ida.service.UserService;
 @RequestMapping("/user")
 public class UserController {
 
-	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-
 	@Autowired
 	private ResponseBean responseBean;
 
@@ -95,11 +93,6 @@ public class UserController {
 			}
 
 			// check new password needs to be updated or older one needs to be used
-
-//			if (password.equals(null)) {
-//				password = oldRecord.getPassword();
-//			} else {
-			//	password = hashPassword(updatedrecord.getPassword());
 				RDFConnectionFuseki conn = null;
 				// In this variation, a connection is built each time.
 				try {
@@ -121,7 +114,7 @@ public class UserController {
 					conn.update(request);
 
 					//System.out.println("check request values1.2  " + request);
-					// inserting updated record
+					// inserting updated record..
 					String query2 = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
 							+ " PREFIX ab: <http://userdata/#" + oldRecord.getUsername() + "> " + " INSERT DATA "
 							+ " { ab:			 				   " +
@@ -142,7 +135,6 @@ public class UserController {
 					conn.close();
 				}
 			}
-		//}
 		return responseBean;
 	}
 
@@ -161,7 +153,6 @@ public class UserController {
 			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 			return responseBean;
 		}
-
 		else {
 			RDFConnectionFuseki conn = null;
 			// In this variation, a connection is built each time.
@@ -185,7 +176,6 @@ public class UserController {
 			} finally {
 				conn.close();
 			}
-
 		}
 
 		return responseBean;
@@ -265,42 +255,12 @@ public class UserController {
 
 		return obj;
 	}
-
-	// password hashing
-
-//	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
-//
-//		String data = Pass;
-//		String algorithm = "SHA-256";
-//		generateHash(data, algorithm);
-//		// System.out.println("SHA-256 HASH:"+ generateHash(data, algorithm));
-//		return generateHash(data, algorithm);
-//
-//	}
-//
-//	private static String generateHash(String data, String algorithm) throws NoSuchAlgorithmException {
-//		MessageDigest digest = MessageDigest.getInstance(algorithm);
-//		digest.reset();
-//		byte[] hash = digest.digest(data.getBytes());
-//		return bytesToStringHex(hash);
-//
-//	}
-//
-//	private static String bytesToStringHex(byte[] bytes) {
-//		char[] hexChars = new char[bytes.length * 2];
-//		for (int j = 0; j < bytes.length; j++) {
-//			int v = bytes[j] & 0xFF;
-//			hexChars[j * 2] = hexArray[v >>> 4];
-//			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-//		}
-//
-//		return new String(hexChars);
-//	}
-
+	
+	//changed sha-256 hashing
+	// password hashing and salting using Bcrypt library
 	
 	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
 	    
-	    //  String  originalPassword = "password";
 	        String  originalPassword = Pass;
 	        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));	        
 			return generatedSecuredPasswordHash;
