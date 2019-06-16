@@ -31,6 +31,8 @@ export class UpdateDialogComponent implements  OnInit {
       firstname: this.data.firstname,
       lastname: this.data.lastname,
     });
+
+    this.updateForm.get('username').disable();
   }
 
     hasError(controlName: string, errorName: string) {
@@ -39,7 +41,7 @@ export class UpdateDialogComponent implements  OnInit {
 
     submit(updateFormValue) {
       const user = {
-        username: updateFormValue.username,
+        username: this.data.username,
         firstname: updateFormValue.firstname,
         lastname: updateFormValue.lastname
       }
