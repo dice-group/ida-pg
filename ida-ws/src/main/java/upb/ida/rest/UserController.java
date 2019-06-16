@@ -1,7 +1,6 @@
 package upb.ida.rest;
 
 import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,7 @@ import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -234,10 +234,10 @@ public class UserController {
 
 		User obj = null;
 		QueryExecution q = null;
+		ResultSet results = null;
 		try {
 			q = QueryExecutionFactory.sparqlService(serviceURI, query1.trim());
-			ResultSet results = q.execSelect();
-
+			results = q.execSelect();
 			while (results.hasNext()) {
 				QuerySolution soln = results.nextSolution();
 				// assumes that you have an "?x" in your query.
@@ -256,7 +256,9 @@ public class UserController {
 				obj = new User(fetchedUserName, fetchedPassword, fetchedFirstName, fetchedLastName, fetchedUserRole);
 
 			}
-		} finally {
+		 
+		} 
+		finally {
 			if (q != null)
 				q.close();
 		}
@@ -266,34 +268,47 @@ public class UserController {
 
 	// password hashing
 
+//	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
+//
+//		String data = Pass;
+//		String algorithm = "SHA-256";
+//		generateHash(data, algorithm);
+//		// System.out.println("SHA-256 HASH:"+ generateHash(data, algorithm));
+//		return generateHash(data, algorithm);
+//
+//	}
+//
+//	private static String generateHash(String data, String algorithm) throws NoSuchAlgorithmException {
+//		MessageDigest digest = MessageDigest.getInstance(algorithm);
+//		digest.reset();
+//		byte[] hash = digest.digest(data.getBytes());
+//		return bytesToStringHex(hash);
+//
+//	}
+//
+//	private static String bytesToStringHex(byte[] bytes) {
+//		char[] hexChars = new char[bytes.length * 2];
+//		for (int j = 0; j < bytes.length; j++) {
+//			int v = bytes[j] & 0xFF;
+//			hexChars[j * 2] = hexArray[v >>> 4];
+//			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+//		}
+//
+//		return new String(hexChars);
+//	}
+
+	
 	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
-
-		String data = Pass;
-
-		String algorithm = "SHA-256";
-		generateHash(data, algorithm);
-		// System.out.println("SHA-256 HASH:"+ generateHash(data, algorithm));
-		return generateHash(data, algorithm);
-
+	    
+	    //  String  originalPassword = "password";
+	        String  originalPassword = Pass;
+	        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));	        
+			return generatedSecuredPasswordHash;
+	    }
+	public static boolean checkPassword(String dbPass, String userInputPassword) throws NoSuchAlgorithmException {
+		String  originalPassword = userInputPassword;
+		boolean matched = BCrypt.checkpw(originalPassword, dbPass);
+		System.out.println(" password result:   "+matched);
+		return matched;
 	}
-
-	private static String generateHash(String data, String algorithm) throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance(algorithm);
-		digest.reset();
-		byte[] hash = digest.digest(data.getBytes());
-		return bytesToStringHex(hash);
-
-	}
-
-	private static String bytesToStringHex(byte[] bytes) {
-		char[] hexChars = new char[bytes.length * 2];
-		for (int j = 0; j < bytes.length; j++) {
-			int v = bytes[j] & 0xFF;
-			hexChars[j * 2] = hexArray[v >>> 4];
-			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-		}
-
-		return new String(hexChars);
-	}
-
 }
