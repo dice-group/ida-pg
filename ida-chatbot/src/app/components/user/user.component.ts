@@ -13,12 +13,9 @@ import {RestService} from '../../service/rest/rest.service';
 })
 export class UserComponent implements OnInit {
 
-    index: number;
-    id: number;
-    isHidden = false;
+    isHidden = true;
 
     displayedColumns: string[] = ['id', 'username', 'firstname', 'lastname', 'actions'];
-    // dataSource = [];
     dataSource = new MatTableDataSource();
     showSpinner = false;
 
@@ -26,15 +23,12 @@ export class UserComponent implements OnInit {
 
   ngOnInit() {
       this.isAdmin();
-      this.loadUser();
   }
 
-    startEdit(i: number, id: number, username: string, firstname: string, lastname: string) {
-        this.id = id;
-        this.index = i;
+    startEdit(username: string, firstname: string, lastname: string) {
 
         const dialogRef = this.dialog.open(UpdateDialogComponent, {
-            data: {id: id, username: username, firstname: firstname, lastname: lastname}
+            data: {username: username, firstname: firstname, lastname: lastname}
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -44,11 +38,9 @@ export class UserComponent implements OnInit {
         });
     }
 
-    deleteItem(i: number, id: number, username: string) {
-        this.index = i;
-        this.id = id;
+    deleteItem(username: string) {
         const dialogRef = this.dialog.open(DeleteDialogComponent, {
-            data: {id: id, username: username}
+            data: {username: username}
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -59,10 +51,11 @@ export class UserComponent implements OnInit {
     }
 
     isAdmin() {
-      this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+      this.restservice.getRequest('/auth/check-login', {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         if (returnResp.status === true && returnResp.respData['isAdmin'] === true) {
           this.isHidden = false;
+          this.loadUser();
         } else {
           this.router.navigate(['']);
         }
@@ -71,15 +64,44 @@ export class UserComponent implements OnInit {
 
     loadUser() {
       this.showSpinner = true;
-      this.restservice.getRequest('user/list', {}).subscribe(resp => {
+      this.restservice.getRequest('/user/list', {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
+        let userArray= JSON.parse(resp.payload.users).results.bindings;
+        let users = [];
+        let user = {
+          'firstname':'',
+          'lastname':'',
+          'username':'',
+          'userrole':'',
+          'password':'',
+        };
+        let counter = 0;
+        for(let i=0; i<userArray.length; i++){
+          if(counter < 5){
+            user[userArray[i].predicate.value.split("#")[1]] = userArray[i].object.value;
+            counter++;
+          }
+          if(counter == 5){
+            counter = 0;
+            if(user.userrole == "USER"){
+              users.push(user);
+            }
+            user = {
+              'firstname':'',
+              'lastname':'',
+              'username':'',
+              'userrole':'',
+              'password':'',
+            };
+          }
+        }
         if (returnResp.status === false) {
           this.snackBar.open(returnResp.respMsg, '', {
             duration: 4000,
           });
         } else {
-          this.dataSource = new MatTableDataSource(returnResp.respData);
+          this.dataSource = new MatTableDataSource(users);
         }
       });
     }

@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
     }
 
     checkLoggedIn() {
-      this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+      this.restservice.getRequest('/auth/check-login', {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         if (returnResp.status === true) {
           this.router.navigate(['']);
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       const userData = {username: loginFormValue.username , password : loginFormValue.password};
 
       this.showSpinner = true;
-      this.restservice.postRequest('auth/login-action', userData, {}).subscribe(resp => {
+      this.restservice.postRequest('/auth/login-action', userData, {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
         if (returnResp.status === false) {

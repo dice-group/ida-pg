@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit {
   }
 
   checkLoggedIn() {
-    this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+    this.restservice.getRequest('/auth/check-login', {}).subscribe(resp => {
       const returnResp = this.userservice.processUserResponse(resp);
       if (returnResp.status === true) {
         this.isHidden = false;
