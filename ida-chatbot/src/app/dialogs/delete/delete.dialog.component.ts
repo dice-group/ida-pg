@@ -1,7 +1,6 @@
 import {MAT_DIALOG_DATA, MatDialogRef, MatSnackBar} from '@angular/material';
 import {Component, Inject} from '@angular/core';
 import {UserService} from '../../service/user/user.service';
-import {Router} from "@angular/router";
 import {RestService} from "../../service/rest/rest.service";
 
 
@@ -21,11 +20,10 @@ export class DeleteDialogComponent {
     }
 
     confirmDelete(): void {
-      this.restservice.deleteRequest('/user/delete/' + this.data.username).subscribe(resp => {
+      this.restservice.postRequest('/user/delete/' + this.data.username,{},{}).subscribe(resp => {
         this.snackBar.open('User deleted successfully', '', {
           duration: 3000,
         });
-
       } );
     }
 }
