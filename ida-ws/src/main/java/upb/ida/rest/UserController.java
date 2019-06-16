@@ -106,7 +106,7 @@ public class UserController {
 					conn = (RDFConnectionFuseki) builder.build();
 					UpdateRequest request = UpdateFactory.create();
 
-					System.out.println("check request values1  " + request);
+					//System.out.println("check request values1  " + request);
 					// The idea is SPARQL is not for relational data! Its for graph data
 					// So here we are just deleting the old recorded
 
@@ -120,7 +120,7 @@ public class UserController {
 					request.add(query1);
 					conn.update(request);
 
-					System.out.println("check request values1.2  " + request);
+					//System.out.println("check request values1.2  " + request);
 					// inserting updated record
 					String query2 = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
 							+ " PREFIX ab: <http://userdata/#" + oldRecord.getUsername() + "> " + " INSERT DATA "
@@ -197,7 +197,7 @@ public class UserController {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
 		User record = UserService.getByUsername(usernames);
 		if (record == null) {
-			System.out.println("username not found");
+			//System.out.println("username not found");
 			responseBean.setErrMsg("user not found");
 			return responseBean;
 		} else {
@@ -228,7 +228,7 @@ public class UserController {
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
 		String serviceURI = "http://127.0.0.1:3030/user";
-		System.out.println("userName" + userName);
+		//System.out.println("userName" + userName);
 		String query1 = " PREFIX ab: <http://userdata/#" + userName + "> "
 				+ "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?firstname ?lastname ?username ?password  ?userrole where {ab: dc:firstname ?firstname ;dc:lastname ?lastname; dc:password ?password ; dc:userrole ?userrole; dc:username ?username .}";
 
