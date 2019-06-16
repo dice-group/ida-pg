@@ -11,21 +11,23 @@ import {Router} from "@angular/router";
 export class TopmenuComponent implements OnInit {
 
   showButton = false;
+  chatbot = true;
   constructor(private userservice: UserService, private restservice: RestService, private router: Router) { }
 
   ngOnInit() {
     this.isAdmin();
+    this.checkURL();
   }
 
   logout() {
-    this.restservice.postRequest('auth/logout', {}, {}).subscribe(resp => {
+    this.restservice.postRequest('/auth/logout', {}, {}).subscribe(resp => {
       localStorage.removeItem('user');
       this.router.navigate(['login']);
     } );
   }
 
   isAdmin() {
-    this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+    this.restservice.getRequest('/auth/check-login', {}).subscribe(resp => {
       const returnResp = this.userservice.processUserResponse(resp);
       if (returnResp.status === true && returnResp.respData['isAdmin'] === true) {
         this.showButton = true;
@@ -33,6 +35,14 @@ export class TopmenuComponent implements OnInit {
         this.router.navigate(['']);
       }
     });
+  }
+
+  checkURL() {
+    if(this.router.url === "/"){
+      this.chatbot = true;
+    } else{
+      this.chatbot = false;
+    }
   }
 
 }

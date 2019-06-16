@@ -42,7 +42,7 @@ export class SignupComponent implements OnInit {
     }
 
     checkLoggedIn() {
-      this.restservice.getRequest('auth/check-login', {}).subscribe(resp => {
+      this.restservice.getRequest('/auth/check-login', {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         if (returnResp.status === true) {
           this.router.navigate(['']);
@@ -61,7 +61,7 @@ export class SignupComponent implements OnInit {
             password: signupFormValue.password
         }
 
-      this.restservice.postRequest('user/new', user, {}).subscribe(resp => {
+      this.restservice.postRequest('/user/new', user, {}).subscribe(resp => {
         const returnResp = this.userservice.processUserResponse(resp);
         this.showSpinner = false;
         if (returnResp.status === false) {
