@@ -8,7 +8,9 @@
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
             [librarian.model.concepts.snippet :as snippet]
-            [librarian.model.concepts.data-receiver :as data-receiver]))
+            [librarian.model.concepts.data-receiver :as data-receiver]
+            [librarian.model.concepts.typed :as typed]
+            [librarian.model.concepts.semantic-type :as semantic-type]))
 
 (defn add-attrs
   [g ne-attr-pairs]
@@ -18,8 +20,8 @@
              g ne-attr-pairs))
 
 (defn db->cfg
-  [db & {:keys [snippets unused-constants]
-         :or {snippets false, unused-constants false}}]
+  [db & {:keys [snippets unused-constants semantic-constants]
+         :or {snippets false, unused-constants false, semantic-constants false}}]
   (let [nodes (d/q {:find '[?node ?type]
                     :in '[$ % ?snippets ?unused-constants]
                     :where (cond-> '[[(ground [::call/call
@@ -31,11 +33,18 @@
                              (not snippets)
                              (conj '(not-join [?node] [_ ::snippet/contains ?node]))
                              (not unused-constants)
-                             (conj '(or-join [?node ?type]
-                                      (and [(not= ?type ::constant/constant)]
-                                           [?node])
-                                      (and [(= ?type ::constant/constant)]
-                                           [_ ::data-receiver/receives ?node]))))}
+                             (conj (let [or-join
+                                         '(or-join [?node ?type]
+                                            (and [(not= ?type ::constant/constant)]
+                                                 [?node])
+                                            (and [(= ?type ::constant/constant)]
+                                                 [_ ::data-receiver/receives ?node]))]
+                                     (if semantic-constants
+                                       (concat or-join
+                                               ['(and [(= ?type ::constant/constant)]
+                                                      [?node ::typed/datatype ?dt]
+                                                      [?dt :type ::semantic-type/semantic-type])])
+                                       or-join))))}
                    db mdb/rules snippets unused-constants)
         receive-edges (eduction (comp (filter #(= (second %) ::call-parameter/call-parameter))
                                       (mapcat (fn [[id]]

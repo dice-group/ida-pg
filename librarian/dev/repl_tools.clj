@@ -23,12 +23,17 @@
 (def shown-state (atom nil))
 
 (defn show-state
-  [state & {:keys [snippets unused-constants no-effects]
-            :or {snippets false, unused-constants false, no-effects false}}]
+  [state & {:keys [snippets unused-constants semantic-constants semantic-values no-effects]
+            :or {snippets false,
+                 unused-constants false
+                 semantic-constants true
+                 semantic-values false
+                 no-effects false}}]
   (let [db (:db state)
         g (cfg/db->cfg db
                        :snippets snippets
-                       :unused-constants unused-constants)
+                       :unused-constants unused-constants
+                       :semantic-constants semantic-constants)
         nodes (keep (fn [node]
                       (let [e (d/entity db node)
                             datatypes (::typed/datatype e)
@@ -66,11 +71,12 @@
                                             ::semantic-type/semantic-type
                                             (let [key (name (::semantic-type/key datatype))
                                                   val (name (::semantic-type/value datatype))]
-                                              (if (not= key "name")
+                                              (if semantic-values
                                                 (str "s:" key ":"
                                                      (if (> (count val) 7)
                                                        (str (subs val 0 4) "...")
-                                                       val))))
+                                                       val))
+                                                (str "s:" key)))
                                             ::constant/constant
                                             (str "c:" (:db/id datatype))
                                             "?"))))

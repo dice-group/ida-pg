@@ -39,7 +39,7 @@
                     ""
                     "Generator commands:"
                     " * (gen-test :goal|:base)"
-                    " * (show-state state & {:keys [snippets unused-constants no-effects]})"
+                    " * (show-state state & {:keys [snippets unused-constants semantic-constants semantic-values no-effects]})"
                     " * (show-search-state search-state & opts)"
                     " * (state-past state predecessor-idx)"
                     " * (show-state-past state predecessor-idx & opts)"

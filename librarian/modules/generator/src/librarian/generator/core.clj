@@ -75,17 +75,18 @@
 
 (defn apply-action
   [state action]
-  (when-let [new-state (update-commutations! (transient state) action)]
-    (as-> new-state $
-          (assoc! $ :id (swap! *sid inc))
-          (assoc! $ :predecessor state)
-          (update! $ :db d/db-with (:tx action))
-          (update! $ :cost + (:cost action))
-          (assoc! $ :flaws (flaws $))
-          (add-source-candidates! $ action)
-          (add-placeholder-matches! $ action)
-          (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
-          (persistent! $))))
+  (when (< (:cost action) Double/POSITIVE_INFINITY)
+    (when-let [new-state (update-commutations! (transient state) action)]
+      (as-> new-state $
+            (assoc! $ :id (swap! *sid inc))
+            (assoc! $ :predecessor state)
+            (update! $ :db d/db-with (:tx action))
+            (update! $ :cost + (:cost action))
+            (assoc! $ :flaws (flaws $))
+            (add-source-candidates! $ action)
+            (add-placeholder-matches! $ action)
+            (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
+            (persistent! $)))))
 
 (defn initial-state
   [scrape tx]

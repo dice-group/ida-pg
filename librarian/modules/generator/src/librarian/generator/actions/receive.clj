@@ -10,11 +10,11 @@
   (let [solutions (source-candidates flaw)]
     (when (seq solutions)
       (let [{semantic-receivers :semantic, receivers :full} (gq/receivers db flaw)
-            cost-evaluator (gc/semantic-cost-evaluator db (gq/semantic-types db flaw))]
+            compat-evaluator (gc/semantic-compatibility-evaluator db (gq/semantic-types db flaw))]
         (keep (fn [solution]
                 (let [types (gq/types db solution)
                       semantic-types (keep (fn [{:keys [db/id semantic]}] (when semantic id)) types)
-                      semantic-cost (cost-evaluator semantic-types)
+                      compat (compat-evaluator semantic-types)
                       tx (mapcat (fn [{:keys [db/id semantic]}]
                                    (map (fn [r] [:db/add r ::typed/datatype id])
                                         (if semantic semantic-receivers receivers)))
@@ -22,7 +22,7 @@
                       tx (conj tx [:db/add flaw ::data-receiver/receives solution])]
                   (when true #_(< semantic-cost Double/POSITIVE_INFINITY)
                     {:type ::receiver
-                     :weight 1
+                     :weight compat
                      :add true
                      :commute-id [solution flaw]
                      :tx tx})))

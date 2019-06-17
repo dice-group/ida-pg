@@ -80,5 +80,8 @@
                  (instances->tx [(instanciate constant/constant
                                    :value "2"
                                    :datatype [(instanciate basetype/basetype
-                                                :name "string")])]))
+                                                :name "string")
+                                              (instanciate semantic-type/semantic-type
+                                                :key "name"
+                                                :value "n_clusters")])]))
          args))
