@@ -25,10 +25,8 @@
    If an io-container is found in call, it will be replaced; if not, a new io-container will be created."
   [call-io-type call-io->io-attr call->call-io-attr]
   (fn [call io->call-io-data]
-    (mapcat (fn [{io :db/id, types :types}]
-              (if-some [{call-io :db/id
-                         {:keys [semantic full]} :receivers
-                         name ::named/name}
+    (mapcat (fn [{io :db/id, types :types, name ::named/name}]
+              (if-some [{call-io :db/id, {:keys [semantic full]} :receivers}
                         (io->call-io-data io)]
                 (let [st-id (d/tempid nil)
                       types (conj types {:db/id st-id, :semantic true})]
@@ -62,11 +60,12 @@
 
 (defn call->io-conts
   [db call io-type]
-  (mapv (fn [p]
-          (let [pid (:v p)]
-            {:db/id pid
-             :types (gq/types db pid)}))
-       (d/datoms db :eavt call io-type)))
+  (mapv (fn [io]
+          (let [id (:v io)]
+            {:db/id id
+             ::named/name (::named/name (d/entity db id))
+             :types (gq/types db id)}))
+        (d/datoms db :eavt call io-type)))
 
 (defn call-completion-actions
   [{:keys [db placeholder-matches]} flaw]
@@ -74,18 +73,11 @@
         p->cp (into {} (map (fn [p] [(-> p ::call-parameter/parameter :db/id)
                                      (let [id (:db/id p)]
                                        {:db/id id
-                                        ::named/name (-> p
-                                                         ::call-parameter/parameter
-                                                         ::named/name)
                                         :receivers (gq/receivers db id)})]))
                     (::call/parameter e))
         r->cr (into {} (map (fn [r] [(-> r ::call-result/result :db/id)
                                      (let [id (:db/id r)]
-                                       {:db/id id
-                                        ::named/name (-> r
-                                                         ::call-result/result
-                                                         ::named/name)
-                                        :receivers (gq/receivers db id)})]))
+                                        :receivers (gq/receivers db id))]))
                     (::call/result e))
         completions (placeholder-matches flaw)]
     (mapcat (fn [{match :match

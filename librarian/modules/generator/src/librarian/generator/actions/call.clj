@@ -6,20 +6,26 @@
             [librarian.model.concepts.callable :as callable]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.call-result :as call-result]))
+            [librarian.model.concepts.call-result :as call-result]
+            [librarian.model.concepts.semantic-type :as semantic-type]
+            [librarian.model.concepts.named :as named]))
 
 (defn call-actions
   [{:keys [db]} flaw]
-  (let [callables (gq/compatibly-typed-callables db flaw)
-        callables (map #(d/entity db %) callables)]
-    (map (fn [callable]
-           (let [param-map
+  (let [callables (gq/compatibly-typed-callables db flaw)]
+    (map (fn [cid]
+           (let [callable (d/entity db cid)
+                 param-map
                  (into {}
                        (map-indexed (fn [i {:keys [db/id] :as param}]
                                       [id {:db/id (- (inc i))
                                            :type ::call-parameter/call-parameter
                                            ::call-parameter/parameter id
-                                           ::typed/datatype (map :db/id (::typed/datatype param))}]))
+                                           ::typed/datatype
+                                           (conj (map :db/id (::typed/datatype param))
+                                                 {:type ::semantic-type/semantic-type
+                                                  ::semantic-type/key "name"
+                                                  ::semantic-type/value (::named/name param)})}]))
                        (::callable/parameter callable))]
              {:type ::call
               :weight 1/2
@@ -33,7 +39,11 @@
                                 (let [call-result
                                       {:type ::call-result/call-result
                                        ::call-result/result (:db/id result)
-                                       ::typed/datatype (map :db/id (::typed/datatype result))
+                                       ::typed/datatype
+                                       (conj (map :db/id (::typed/datatype result))
+                                             {:type ::semantic-type/semantic-type
+                                              ::semantic-type/key "name"
+                                              ::semantic-type/value (::named/name result)})
                                        ::data-receiver/receives-semantic
                                        (keep (comp :db/id param-map :db/id)
                                              (::data-receiver/receives-semantic result))}

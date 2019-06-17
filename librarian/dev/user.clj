@@ -45,6 +45,7 @@
                     " * (show-state-past state predecessor-idx & opts)"
                     " * (last-state [predecessor-idx])"
                     " * (show-last-state [predecessor-idx])"
+                    " * (last-code)"
                     " * (actions state)"
                     ""
                     "REPL commands:"

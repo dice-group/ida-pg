@@ -11,8 +11,7 @@
             [librarian.generator.actions.receive :refer [receive-actions]]
             [librarian.generator.actions.snippet :refer [snippet-actions]]
             [librarian.generator.actions.param-remove :refer [param-remove-actions]]
-            [librarian.generator.actions.call-completion :refer [call-completion-actions]])
-  (:import (org.apache.lucene.analysis.en EnglishAnalyzer)))
+            [librarian.generator.actions.call-completion :refer [call-completion-actions]]))
 
 (def ^:dynamic *sid (atom 0))
 
