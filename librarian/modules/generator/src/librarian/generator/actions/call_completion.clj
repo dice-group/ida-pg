@@ -7,15 +7,15 @@
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
-            [librarian.model.concepts.typed :as typed]))
+            [librarian.model.concepts.typed :as typed]
+            [librarian.model.concepts.semantic-type :as semantic-type]
+            [librarian.model.concepts.named :as named]))
 
 (defn- all-valid-call-io-match-combos
   [matched-entities]
   (into []
         (comp (filter #(apply distinct? (map :placeholder %)))
-              (map #(into {} (map (fn [p] [(:match p)
-                                           (:placeholder p)]))
-                          %)))
+              (map #(into {} (map (juxt :match :placeholder)) %)))
         (apply combo/cartesian-product matched-entities)))
 
 (defn- io-conts->tx
@@ -26,16 +26,30 @@
   [call-io-type call-io->io-attr call->call-io-attr]
   (fn [call io->call-io-data]
     (mapcat (fn [{io :db/id, types :types}]
-              (if-some [{call-io :db/id, {:keys [semantic full]} :receivers} (io->call-io-data io)]
-                (into [[:db/add call-io call-io->io-attr io]]
-                      (mapcat #(eduction (map (fn [rec] [:db/add rec ::typed/datatype (:db/id %)]))
-                                         (if (:semantic %) semantic full)))
-                      types)
+              (if-some [{call-io :db/id
+                         {:keys [semantic full]} :receivers
+                         name ::named/name}
+                        (io->call-io-data io)]
+                (let [st-id (d/tempid nil)
+                      types (conj types {:db/id st-id, :semantic true})]
+                  (into [{:db/id st-id
+                          :type ::semantic-type/semantic-type
+                          ::semantic-type/key "name"
+                          ::semantic-type/value name}
+                         {:db/id call-io
+                          call-io->io-attr io
+                          ::typed/datatype st-id}]
+                        (mapcat #(eduction (map (fn [rec] [:db/add rec ::typed/datatype (:db/id %)]))
+                                           (if (:semantic %) semantic full)))
+                        types))
                 (let [call-io (d/tempid nil)]
                   [{:db/id call-io
                     :type call-io-type
                     call-io->io-attr io
-                    ::typed/datatype (map :db/id types)}
+                    ::typed/datatype (into [{:type ::semantic-type/semantic-type
+                                             ::semantic-type/key "name"
+                                             ::semantic-type/value name}]
+                                           (map :db/id) types)}
                    [:db/add call call->call-io-attr call-io]]))))))
 
 (def param->tx (io-conts->tx ::call-parameter/call-parameter
@@ -60,11 +74,17 @@
         p->cp (into {} (map (fn [p] [(-> p ::call-parameter/parameter :db/id)
                                      (let [id (:db/id p)]
                                        {:db/id id
+                                        ::named/name (-> p
+                                                         ::call-parameter/parameter
+                                                         ::named/name)
                                         :receivers (gq/receivers db id)})]))
                     (::call/parameter e))
         r->cr (into {} (map (fn [r] [(-> r ::call-result/result :db/id)
                                      (let [id (:db/id r)]
                                        {:db/id id
+                                        ::named/name (-> r
+                                                         ::call-result/result
+                                                         ::named/name)
                                         :receivers (gq/receivers db id)})]))
                     (::call/result e))
         completions (placeholder-matches flaw)]

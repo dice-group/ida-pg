@@ -13,13 +13,14 @@
   (let [callables (gq/compatibly-typed-callables db flaw)
         callables (map #(d/entity db %) callables)]
     (map (fn [callable]
-           (let [param-map (into {}
-                                 (map-indexed (fn [i {:keys [db/id] :as param}]
-                                                [id {:db/id (- (inc i))
-                                                     :type ::call-parameter/call-parameter
-                                                     ::call-parameter/parameter id
-                                                     ::typed/datatype (map :db/id (::typed/datatype param))}]))
-                                 (::callable/parameter callable))]
+           (let [param-map
+                 (into {}
+                       (map-indexed (fn [i {:keys [db/id] :as param}]
+                                      [id {:db/id (- (inc i))
+                                           :type ::call-parameter/call-parameter
+                                           ::call-parameter/parameter id
+                                           ::typed/datatype (map :db/id (::typed/datatype param))}]))
+                       (::callable/parameter callable))]
              {:type ::call
               :weight 1/2
               :add true
@@ -36,7 +37,7 @@
                                        ::data-receiver/receives-semantic
                                        (keep (comp :db/id param-map :db/id)
                                              (::data-receiver/receives-semantic result))}
-                                      rec-id (some-> result ::data-receiver/receives :db/id param-map :db/id)]
+                                      rec-id (-> result ::data-receiver/receives :db/id param-map :db/id)]
                                   (if rec-id
                                     (assoc call-result ::data-receiver/receives rec-id)
                                     call-result)))
