@@ -44,7 +44,9 @@ import upb.ida.service.UserService;
 @RequestMapping("/user")
 public class UserController {
 	
-	private static String dbUrl = System.getenv("FUSEKI_URL");
+	private static String dbhost = System.getenv("FUSEKI_URL");
+	private static String datasetName = "/user";	
+	private static String dbUrl = dbhost + datasetName;
 	
 	@Autowired
 	private ResponseBean responseBean;
@@ -52,6 +54,7 @@ public class UserController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseBean listUsers() {
+		System.out.println("dbUrl"+dbUrl);
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		RDFConnectionFuseki conn = null;
 		QueryExecution qExec = null;
