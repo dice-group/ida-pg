@@ -1,5 +1,12 @@
 package upb.ida.rest;
 
+/**
+ * Exposes CRUD REST controllers
+ *
+ * @author Deepak Garg
+ *
+ */
+
 import java.io.ByteArrayOutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -36,6 +43,8 @@ import upb.ida.service.UserService;
 @CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/user")
 public class UserController {
+	
+	static String dbUrl = System.getenv("IDA_CHATBOT");
 
 	@Autowired
 	private ResponseBean responseBean;
@@ -43,7 +52,7 @@ public class UserController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseBean listUsers() {
-		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
+		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		RDFConnectionFuseki conn = null;
 		QueryExecution qExec = null;
 		// RDFConnection RDFConnectionFactory.connectPW(String URL, String user, String
@@ -78,7 +87,7 @@ public class UserController {
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseBean updateUser(@RequestBody final User updatedrecord) throws NoSuchAlgorithmException {
-		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
+		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 
 		if (updatedrecord == null) {
 			responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
@@ -143,7 +152,7 @@ public class UserController {
 	@ResponseBody
 	public ResponseBean createNewUser(@RequestBody final User record) throws Exception {
 
-		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
+		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		if (record == null) {
 			responseBean.setErrMsg("Invalid Input");
 			return responseBean;
@@ -184,7 +193,7 @@ public class UserController {
 	@RequestMapping(value = "/delete/{usernames:.+}", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseBean deleteUser(@PathVariable String usernames) {
-		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://127.0.0.1:3030/user");
+		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		User record = UserService.getByUsername(usernames);
 		if (record == null) {
 			//System.out.println("username not found");
@@ -217,7 +226,7 @@ public class UserController {
 
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
-		String serviceURI = "http://127.0.0.1:3030/user";
+		String serviceURI = dbUrl;
 		//System.out.println("userName" + userName);
 		String query1 = " PREFIX ab: <http://userdata/#" + userName + "> "
 				+ "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?firstname ?lastname ?username ?password  ?userrole where {ab: dc:firstname ?firstname ;dc:lastname ?lastname; dc:password ?password ; dc:userrole ?userrole; dc:username ?username .}";
@@ -268,7 +277,7 @@ public class UserController {
 	public static boolean checkPassword(String dbPass, String userInputPassword) throws NoSuchAlgorithmException {
 		String  originalPassword = userInputPassword;
 		boolean matched = BCrypt.checkpw(originalPassword, dbPass);
-		System.out.println(" password result:   "+matched);
+		//System.out.println(" password result:   "+matched);
 		return matched;
 	}
 }
