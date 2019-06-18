@@ -32,7 +32,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		//db password stored
 		// User currentUser = userService.getByUsername(name);
 		User currentUser = UserService.getByUsername(name);
-		System.out.println("username databse " + currentUser);
+//		System.out.println("username databse " + currentUser);
 		
 		Boolean PasswordCheck =null;
 		if (currentUser == null) 
