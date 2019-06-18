@@ -44,8 +44,8 @@ import upb.ida.service.UserService;
 @RequestMapping("/user")
 public class UserController {
 	
-	static String dbUrl = System.getenv("IDA_CHATBOT");
-
+	private static String dbUrl = System.getenv("FUSEKI_URL");
+	
 	@Autowired
 	private ResponseBean responseBean;
 
