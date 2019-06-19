@@ -5,7 +5,7 @@
 <app-sidebar fxFlex="nogrow" [items]="getSidebarItems()" (activeItmEmitter)="changeActiveItem($event)"
 [activeItem]="getActiveItem()"></app-sidebar>
 <!-- </div>-->
-<div fxFlex="60%">
+<div fxFlex="100%">
 <app-intro [ngClass]="{'hidden-cls': activeItem!==0 }"></app-intro>
 <ng-container *ngFor="let mvw of getMainviewItems()" >
 <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
