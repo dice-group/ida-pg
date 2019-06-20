@@ -16,7 +16,7 @@ services:
   ida-ws:
     image: $REGISTRY/ida/ida-ws-dev:$VERSION
     environment:
-      - FUSEKI_URL=http://fuseki:3030/user
+      - FUSEKI_URL=http://fuseki:3030
     volumes:
       - "../ida-ws/src:/app/ida-ws/src"
       - "../ida-ws/target:/app/ida-ws/target"
