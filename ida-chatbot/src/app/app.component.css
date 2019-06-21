@@ -6,3 +6,9 @@
   right: 0;
   background: lightseagreen;
 }
+
+#chatBox {
+  position: absolute ;
+  z-index: 100;
+  left: 70%;
+}
