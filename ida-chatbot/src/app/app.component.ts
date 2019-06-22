@@ -136,7 +136,7 @@ export class AppComponent {
     this.restservice.requestEvnt.emit(false);
     let content;
     if(resp.actnCode === 11){
-      content = "here is your Storyboard URL: <br><br><a href="+this.sanitize(resp.payload.storyUrl)+" target='_blank'>"+resp.payload.storyUrl+"</a>";
+      // content = "here is your Storyboard URL: <br><br><a href="+this.sanitize(resp.payload.storyUrl)+" target='_blank'>"+resp.payload.storyUrl+"</a>";
     } else{
       content = resp.chatmsg;
     }
@@ -158,7 +158,7 @@ export class AppComponent {
   }
 
   sanitize(url:string){
-    return this.sanitizer.bypassSecurityTrustUrl(window.location.protocol + '//' +url).changingThisBreaksApplicationSecurity;
+    // return this.sanitizer.bypassSecurityTrustUrl(window.location.protocol + '//' +url).changingThisBreaksApplicationSecurity;
   }
 
   public getActiveMainView(): DataViewContainerComponent {
