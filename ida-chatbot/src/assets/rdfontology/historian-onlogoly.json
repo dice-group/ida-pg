@@ -1,0 +1,1172 @@
+{
+  "@context": {
+    "data": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/",
+    "dbo": "http://dbpedia.org/ontology/",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "time": "http://www.w3.org/2006/time#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@graph": [
+    {
+      "@id": "dbo:deathPlace",
+      "@type": "owl:DatatypeProperty"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierLiteratureInfo",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "en",
+          "@value": "SoldierLiteratureInfo"
+        },
+        {
+          "@language": "de",
+          "@value": "SoldatenLiteratur Info"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        }
+      ]
+    },
+    {
+      "@id": "time:hasBeginning",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:comment": "Describes the beginning time of a temporal entity",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "startsAt"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Decoration",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Orden"
+        },
+        {
+          "@language": "en",
+          "@value": "Decoration"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Abbreviable"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timeframable"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/NSDAPFunctionInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierNSDAPFunctionInfo"
+      },
+	  "rdfs:label": {
+        "@language": "en",
+        "@value": "NSDAPFunctionInfo"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/listPageNumber",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierLiteratureInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "listPageNumber"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierNSDAPFunctionInfo",
+      "@type": "owl:Class",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "SoldierNSDAPFunctionInfo"
+      },
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/author",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "author"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasRegiment",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierRegimentInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasRegiment"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Regiment"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasSSRank",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierSSRankInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasSSRank"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSRank"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSRank",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "SSRang"
+        },
+        {
+          "@language": "en",
+          "@value": "SSRank"
+        }
+      ],
+      "rdfs:subClassOf": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Dischargable",
+      "@type": "owl:Class",
+      "dc:description": {
+        "@language": "en",
+        "@value": "Describes the entity which can be discharged with a reason i.e. Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Dischargable"
+      },
+      "rdfs:subClassOf": {
+        "@id": "owl:Thing"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/applicableFrom",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:comment": "Date on which a Soldier was given a Medal/Decoration.",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "applicableFrom"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/internalInformation",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "internalInformation"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/name",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "name"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/dataDifference",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Difference from DAL"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/enrolledOn",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "enrolledOn"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/citaviId",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Citavi Database Id"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/origin",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:comment": "Origin of the Literature",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Origin"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/dischargeReason",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Dischargable"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "dischargeReason"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "time:TemporalEntity",
+      "@type": "owl:Class"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/verifiedData",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Data verified on DAL?"
+      },
+      "rdfs:range": {
+        "@id": "xsd:boolean"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierGovernmentFunctionInfo",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Soldatenregierungsfunktion Info"
+        },
+        {
+          "@language": "en",
+          "@value": "SoldierGovernmentFunctionInfo"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/dischargedOn",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "dischargedOn"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "dbo:lastName",
+      "@type": "owl:DatatypeProperty"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/literatureInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierLiteratureInfo"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasLiterature",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierLiteratureInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasLiterature"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass",
+      "@type": "owl:Class",
+      "dc:description": {
+        "@language": "en",
+        "@value": "Top level resource of SS Ontology"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "SSClass"
+      },
+      "rdfs:subClassOf": {
+        "@id": "owl:Thing"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/enrollmentReason",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "enrollmentReason"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/NSDAPFunction",
+      "@type": "owl:Class",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "NSDAPFunction"
+      },
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Abbreviable"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierDischargeInfo",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Soldatenentlassung Info"
+        },
+        {
+          "@language": "en",
+          "@value": "SoldierDischargeInfo"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Dischargable"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Literatur"
+        },
+        {
+          "@language": "en",
+          "@value": "Literature"
+        }
+      ],
+      "rdfs:subClassOf": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/information",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "information"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/signature",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "signature"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "dbo:birthPlace",
+      "@type": "owl:DatatypeProperty"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/publicationYear",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "publicationYear"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/governmentFunctionInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierGovernmentFunctionInfo"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/deathDate",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "deathDate"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSRankInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierSSRankInfo"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/GovernmentFunction",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "en",
+          "@value": "GovernmentFunction"
+        },
+        {
+          "@language": "de",
+          "@value": "Regierungsfunktion"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Abbreviable"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/regimentInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierRegimentInfo"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/sortation",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSRank"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "sortation"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/membershipNumber",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "membershipNumber"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasNSDAPFunction",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierNSDAPFunctionInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasNSDAPFunction"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/NSDAPFunction"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/birthDate",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "birthDate"
+      },
+      "rdfs:range": {
+        "@id": "xsd:dateTime"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Soldat"
+        },
+        {
+          "@language": "en",
+          "@value": "Soldier"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Dischargable"
+        },
+        {
+          "@id": "dbo:Person"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/id",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "id"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasTitle",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasTitle"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/title",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "title"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierRegimentInfo",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Soldatendienststellung Info"
+        },
+        {
+          "@language": "en",
+          "@value": "SoldierRegimentInfo"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/originalSoldierId",
+      "@type": [
+        "owl:FunctionalProperty",
+        "owl:DatatypeProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierLiteratureInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "originalSoldierId"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasDischargeInfo",
+      "@type": [
+        "owl:ObjectProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierDischargeInfo"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/abbreviation",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Abbreviable"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "abbreviation"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/",
+      "@type": "owl:Ontology",
+      "dc:description": {
+        "@language": "en",
+        "@value": "Vocabulary describing Concepts and Relationships of Schutzstaffel"
+      },
+      "dc:title": {
+        "@language": "en",
+        "@value": "SS Vocabulary"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/membershipType",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:comment": "XML has no occurence of this column.",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "membershipType"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/status",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Literature"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "processing status"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "dbo:Person",
+      "@type": "owl:Class"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasDecoration",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/DecorationEvent"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasDecoration"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Decoration"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/NSDAPNumber",
+      "@type": [
+        "owl:DatatypeProperty",
+        "owl:FunctionalProperty"
+      ],
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "NSDAP Number"
+      },
+      "rdfs:range": {
+        "@id": "xsd:positiveInteger"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topDataProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable",
+      "@type": "owl:Class",
+      "dc:description": {
+        "@language": "en",
+        "@value": "Describes a specific point in time"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Timestampable"
+      },
+      "rdfs:subClassOf": {
+        "@id": "owl:Thing"
+      }
+    },
+    {
+      "@id": "time:hasEnd",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:comment": "Describes the ending time of a temporal entity",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "endsAt"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/decorationInfo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Soldier"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/DecorationEvent"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasGovernmentFunction",
+      "@type": "owl:ObjectProperty",
+      "rdfs:domain": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierGovernmentFunctionInfo"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "hasGovernmentFunction"
+      },
+      "rdfs:range": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/GovernmentFunction"
+      },
+      "rdfs:subPropertyOf": {
+        "@id": "owl:topObjectProperty"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timeframable",
+      "@type": "owl:Class",
+      "dc:description": {
+        "@language": "en",
+        "@value": "Describes temporal entities, i.e with a beginning and end in time"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Timeframable"
+      },
+      "rdfs:subClassOf": {
+        "@id": "time:TemporalEntity"
+      }
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Abbreviable",
+      "@type": "owl:Class",
+      "dc:description": {
+        "@language": "en",
+        "@value": "Describes entities which have an abbreviated name"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Abbreviable"
+      },
+      "rdfs:subClassOf": {
+        "@id": "owl:Thing"
+      }
+    },
+    {
+      "@id": "dc:description",
+      "@type": "owl:AnnotationProperty"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/DecorationEvent",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "en",
+          "@value": "DecorationEvent"
+        },
+        {
+          "@language": "de",
+          "@value": "Soldatendekoration Info"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Timestampable"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        }
+      ]
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Regiment",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Dienststellung"
+        },
+        {
+          "@language": "en",
+          "@value": "Regiment"
+        }
+      ],
+      "rdfs:subClassOf": [
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+        },
+        {
+          "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/Abbreviable"
+        }
+      ]
+    },
+    {
+      "@id": "dc:title",
+      "@type": "owl:AnnotationProperty"
+    },
+    {
+      "@id": "dbo:firstName",
+      "@type": "owl:DatatypeProperty"
+    },
+    {
+      "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SoldierSSRankInfo",
+      "@type": "owl:Class",
+      "rdfs:label": [
+        {
+          "@language": "de",
+          "@value": "Soldat SS Rang Info"
+        },
+        {
+          "@language": "en",
+          "@value": "Soldier SS Rank Info"
+        }
+      ],
+      "rdfs:subClassOf": {
+        "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/SSClass"
+      }
+    }
+  ]
+}
