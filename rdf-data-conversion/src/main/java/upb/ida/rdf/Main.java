@@ -30,17 +30,18 @@ public class Main {
 			"@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n" +
 			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
 			"@prefix dbo: <http://dbpedia.org/ontology/> .\n" +
+			"@prefix time: <http://www.w3.org/2006/time#> .\n" +
 			"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n" +
 			"@prefix dc: <http://purl.org/dc/terms/> .\n" +
 			"@prefix dbr: <http://dbpedia.org/resource/> .\n" +
 			"@prefix regiment: <" + dataBaseUrl + "regiment/> .\n" +
-			"@prefix ssrank: <" + dataBaseUrl + "ssrank/> .\n" +
+			"@prefix rank: <" + dataBaseUrl + "rank/> .\n" +
 			"@prefix decoration: <" + dataBaseUrl + "decoration/> .\n" +
 			"@prefix literature: <" + dataBaseUrl + "literature/> .\n" +
 			"@prefix soldier: <" + dataBaseUrl + "soldier/> .\n" +
 			"@prefix soldier_decoration: <" + dataBaseUrl + "soldier_decoration/> .\n" +
 			"@prefix soldier_regiment: <" + dataBaseUrl + "soldier_regiment/> .\n" +
-			"@prefix soldier_ssrank: <" + dataBaseUrl + "soldier_ssrank/> .\n" +
+			"@prefix soldier_rank: <" + dataBaseUrl + "soldier_rank/> .\n" +
 			"@prefix soldier_literature: <" + dataBaseUrl + "soldier_literature/> .\n" +
 			"@prefix : <" + dataBaseUrl + "> .\n" +
 			"@base <" + dataBaseUrl + "> .\n\n\n";
@@ -53,7 +54,7 @@ public class Main {
 
 		o.processRegiments(stringBuilder);
 		o.processDecorations(stringBuilder);
-		o.processSSRanks(stringBuilder);
+		o.processRanks(stringBuilder);
 		o.processSoldiers(stringBuilder);
 		o.processSoldierDecorations(stringBuilder);
 		o.processSoldierRegiments(stringBuilder);
@@ -79,6 +80,13 @@ public class Main {
 		return builder.append("\t").append(name)
 			.append(" \"").append(value)
 			.append(withTimezone ? "\"^^xsd:dateTimeStamp " : "\"^^xsd:dateTime ")
+			.append(last ? ".\n" : ";\n");
+	}
+
+	private static StringBuilder appendDateProperty(StringBuilder builder, String propertyName, String date, boolean last) {
+		return builder.append("\t").append(propertyName)
+			.append(" \"").append(date).append("\"")
+			.append("^^xsd:date ")
 			.append(last ? ".\n" : ";\n");
 	}
 
@@ -231,7 +239,7 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append(clean(literatureArray[i][1])).append("\" ;\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append(clean(literatureArray[i][1])).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -309,34 +317,40 @@ public class Main {
 						case 10:
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
-								String birthdate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":birthDate", birthdate, false, false);
+								String birthdate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+								appendDateProperty(stringBuilder, "dbo:birthDate", birthdate, false);
 							}
 							break;
 						case 11:
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:birthPlace", "dbo:" + currentColumnVal, false);
+								appendStringProperty(stringBuilder, ":birthPlaceStr", currentColumnVal, false);
+								// appendStringProperty(stringBuilder, "dbo:birthPlace", "dbo:" + currentColumnVal, false);
 							break;
 						case 12:
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
-								String deathDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":deathDate", deathDate, false, false);
+								String deathDate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+								appendDateProperty(stringBuilder, "dbo:deathDate", deathDate, false);
 							}
 							break;
 						case 13:
 							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:deathPlace", "dbo:" + currentColumnVal, false);
+								appendStringProperty(stringBuilder, ":deathPlaceStr", currentColumnVal, false);
+								// appendStringProperty(stringBuilder, "dbo:deathPlace", "dbo:" + currentColumnVal, false);
 							break;
 						case 14:
-							stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
+							if(isValidString(currentColumnVal))
+								stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
 							break;
 						case 15:
-							if(isValidString(currentColumnVal))
-							{
+							if (isValidString(currentColumnVal)) {
 								boolean truthValue = Boolean.parseBoolean(currentColumnVal);
-								stringBuilder.append("\t").append(":verifiedData ").append(truthValue).append(" ;\n");
+								stringBuilder.append("\t").append(":DALVerified ").append(truthValue).append(" ;\n");
 							}
+							break;
+						case 16:
+							if (isValidString(currentColumnVal))
+								appendStringProperty(stringBuilder, ":divergentDAL", currentColumnVal, false);
 							break;
 						case 17:
 							if (isValidString(currentColumnVal))
@@ -363,8 +377,8 @@ public class Main {
 	}
 
 
-	private void processSSRanks(StringBuilder stringBuilder) {
-		stringBuilder.append("########## SSRANKS ########################################################\n\n");
+	private void processRanks(StringBuilder stringBuilder) {
+		stringBuilder.append("########## RANKS ########################################################\n\n");
 
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(ssrangFile)))) {
 			String thisLine;
@@ -377,7 +391,7 @@ public class Main {
 
 			for (int i = 1; i < rankArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("ssrank:").append(rankArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SSRank ;\n");
+				stringBuilder.append("rank:").append(rankArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Rank ;\n");
 
 				for (int j = 0; j < rankArray[i].length; j++) {
 					switch (j) {
@@ -405,7 +419,7 @@ public class Main {
 			}
 
 		} catch (Exception e) {
-			System.out.println("SSRanks processing failed");
+			System.out.println("Ranks processing failed");
 			e.printStackTrace();
 		}
 	}
@@ -559,10 +573,10 @@ public class Main {
 							appendResourceProperty(stringBuilder, "", "", ":hasLiterature", "literature:", currentValue, false, true);
 							break;
 						case 3:
-							stringBuilder.append("\t").append(":originalSoldierId ").append(currentValue).append(" ;\n");
+							stringBuilder.append("\t").append(":originalDALId ").append(currentValue).append(" ;\n");
 							break;
 						case 4:
-							stringBuilder.append("\t").append(":listPageNumber ").append(currentValue).append(" ;\n");
+							stringBuilder.append("\t").append(":originalDALPage ").append(currentValue).append(" ;\n");
 							break;
 						case 5:
 							if (isValidString(currentValue)) {
@@ -655,7 +669,7 @@ public class Main {
 
 			for (int i = 1; i < soldierRanksArray.length; i++) {
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier_ssrank:").append(soldierRanksArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SoldierSSRankInfo ;\n");
+				stringBuilder.append("soldier_rank:").append(soldierRanksArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :SoldierRankInfo ;\n");
 
 				for (int j = 0; j < soldierRanksArray[i].length; j++) {
 					String currentValue = soldierRanksArray[i][j];
@@ -666,7 +680,7 @@ public class Main {
 							stringBuilder.append("\t").append(":id ").append(currentValue).append(" ;\n");
 							break;
 						case 2:
-							appendResourceProperty(stringBuilder, "", "", ":hasSSRank", "ssrank:", currentValue, false, true);
+							appendResourceProperty(stringBuilder, "", "", ":hasRank", "rank:", currentValue, false, true);
 							break;
 						case 3:
 							if (isValidString(currentValue)) {
@@ -681,7 +695,7 @@ public class Main {
 
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Rank: ").append(soldierRanksArray[i][0]).append("\" .\n\n");
-				appendResourceProperty(stringBuilder, "soldier:", soldierRanksArray[i][1], ":SSRankInfo", "soldier_ssrank:", soldierRanksArray[i][0], true, false);
+				appendResourceProperty(stringBuilder, "soldier:", soldierRanksArray[i][1], ":rankInfo", "soldier_rank:", soldierRanksArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
 
