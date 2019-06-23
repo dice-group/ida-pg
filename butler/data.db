@@ -1,0 +1,20 @@
+__label__greet Hello
+__label__greet Hello dear
+__label__greet Hi
+__label__greet Hey, whats up?
+__label__greet Hey
+__label__help What you can do for me?
+__label__help How can you help me?
+__label__help What can you do?
+__label__help What are you capable of doing?
+
+__label__dataset Load <> database
+__label__dataset Open <> dataset
+__label__dataset Please load <> dataset
+__label__dataset can you please load <> dataset
+__label__dataset Load dataset <> data for me
+
+__label__barchart Can you draw me bar chart for this table?   
+__label__barchart Draw me a bar chart for random table
+__label__barchart Go ahead and give me a bar chart
+__label__barchart Create me bar chart of nava database

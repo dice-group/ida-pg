@@ -9,3 +9,6 @@
 out/
 *.iws
 *.iml
+
+# mac
+.DS_Store
