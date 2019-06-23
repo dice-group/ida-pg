@@ -78,6 +78,11 @@
            :attribute :io-container/name
            :selector [:children (tag :strong)]}
           {:triggered-by :io-container
+           :concept :semantic-type
+           :selector [:children (tag :strong)]
+           :ref-from-trigger :io-container/datatype
+           :triggers :name-type}
+          {:triggered-by :io-container
            :attribute :io-container/position
            :value :trigger-index}
           {:triggered-by :io-container
@@ -102,6 +107,14 @@
           {:triggered-by :constant
            :attribute :constant/value
            :transform #"(?<=[‘“'\"]).*?(?=[’”'\"])"}
+
+          ; name-types:
+          {:triggered-by :name-type
+           :attribute :semantic-type/key
+           :value "name"}
+          {:triggered-by :name-type
+           :attribute :semantic-type/value
+           :value :content}
 
           ; descriptions:
           {:triggered-by :description
