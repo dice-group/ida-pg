@@ -31,7 +31,7 @@ public class StoryRestController {
 	private ResponseBean response;
 	@Autowired 
 	private DataService dataService;
-	private static String dbhost = "http://localhost:3030";//System.getenv("FUSEKI_URL");
+	private static String dbhost = System.getenv("FUSEKI_URL"); //"http://localhost:3030";
 	private static String datasetName = "/storyboard";
 	private static String dbUrl = dbhost + datasetName;
 	/**
