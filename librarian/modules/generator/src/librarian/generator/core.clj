@@ -2,6 +2,7 @@
   (:require [datascript.core :as d]
             [clojure.data.priority-map :refer [priority-map]]
             [librarian.helpers.transients :refer [into! update!]]
+            [librarian.helpers.map :refer [update-into]]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.generator.query :as gq]
@@ -69,9 +70,34 @@
     (assoc! state :placeholder-matches
             (into placeholder-matches
                   (comp (remove placeholder-matches)
-                        (map (fn [call] [call (gq/placeholder-matches db (gq/callable db call))])))
+                        (map (fn [call]
+                              (let [matches (gq/placeholder-matches db (gq/callable db call))
+                                    heuristic (gc/match-completion-heuristic db matches)]
+                                [call (with-meta matches {:heuristic heuristic})]))))
                   (:call flaws)))
     state))
+
+(defn add-compatibly-typed-callables!
+  [{:keys [db flaws compatibly-typed-callables] :or {compatibly-typed-callables {}} :as state}
+   {:keys [type-changes]}]
+  (if type-changes
+    (let [xform (comp (filter #(gq/fillable-call-param? db %))
+                      (map (fn [flaw] [flaw (delay (gq/compatibly-typed-callables db flaw))])))
+          xform (if (= type-changes :all)
+                  xform
+                  (comp (filter #(or (contains? type-changes %)
+                                     (not (contains? compatibly-typed-callables %))))
+                        xform))]
+      (assoc! state :compatibly-typed-callables
+              (into compatibly-typed-callables xform
+                    (:parameter flaws))))
+    state))
+
+(defn add-heuristic!
+  [state]
+  (let [h (gc/cost-heuristic state)]
+    (when (< h Double/POSITIVE_INFINITY)
+      (assoc! state :heuristic (+ (:cost state) h)))))
 
 (defn apply-action
   [state action]
@@ -80,33 +106,41 @@
       (as-> new-state $
             (assoc! $ :id (swap! *sid inc))
             (assoc! $ :predecessor state)
+            (assoc! $ :last-action action)
             (update! $ :db d/db-with (:tx action))
             (update! $ :cost + (:cost action))
             (assoc! $ :flaws (flaws $))
             (add-source-candidates! $ action)
             (add-placeholder-matches! $ action)
-            (assoc! $ :heuristic (+ (:cost $) (gc/cost-heuristic $)))
+            (add-compatibly-typed-callables! $ action)
+            (add-heuristic! $)
             (persistent! $)))))
 
 (defn initial-state
   [scrape tx]
   (apply-action {:cost 0
                  :db (:db scrape)}
-                {:cost 0, :tx tx, :add true}))
-
+                {:cost 0, :tx tx, :add true, :type-changes :all}))
 (defn actions
   [state]
   (let [{p-flaws :parameter, c-flaws :call} (:flaws state)]
     (if (and (empty? p-flaws) (empty? c-flaws))
       :done
       (let [actions (transient [])
-            actions (into! actions (mapcat #(receive-actions state %)) p-flaws)
-            actions (if (zero? (count actions))
-                      (into! actions
-                             (mapcat #(concat (call-actions state %)
-                                              (snippet-actions state %)))
-                             p-flaws)
-                      actions)
+            actions (into! actions
+                           (mapcat #(receive-actions state %))
+                           p-flaws)
+            merged-actions
+            (update-into {}
+                         (comp (mapcat #(concat (call-actions state %)
+                                                (snippet-actions state %)))
+                               (map (fn [a] [(:id a) a])))
+                         (fn [a b]
+                           (if (nil? a)
+                             b
+                             (update a :weight + (:weight b))))
+                         p-flaws)
+            actions (into! actions (vals merged-actions))
             actions (into! actions (mapcat #(param-remove-actions state %)) p-flaws)
             actions (into! actions (mapcat #(call-completion-actions state %)) c-flaws)
             actions (persistent! actions)]

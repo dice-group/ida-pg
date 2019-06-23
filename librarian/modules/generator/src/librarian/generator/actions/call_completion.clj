@@ -77,14 +77,30 @@
                     results-combos (all-valid-call-io-match-combos matched-results)]
                 (for [params-combo params-combos
                       results-combo results-combos]
-                  (let [tx (-> (transient [[:db/add flaw ::call/callable match]])
-                               (into! (param->tx flaw (comp p->cp params-combo))
+                  (let [p->new-cp (comp p->cp params-combo)
+                        r->new-cr (comp r->cr results-combo)
+                        tx (-> (transient [[:db/add flaw ::call/callable match]])
+                               (into! (param->tx flaw p->new-cp)
                                       params)
-                               (into! (result->tx flaw (comp r->cr results-combo))
+                               (into! (result->tx flaw r->new-cr)
                                       results)
-                               (persistent!))]
+                               (persistent!))
+                        type-changes
+                        (-> (transient #{})
+                            (into! (comp (map :db/id)
+                                         (keep p->new-cp)
+                                         (mapcat (fn [{id :db/id {:keys [semantic]} :receivers}]
+                                                   (conj semantic id))))
+                                  params)
+                            (into! (comp (map :db/id)
+                                         (keep r->new-cr)
+                                         (mapcat (fn [{id :db/id {:keys [semantic]} :receivers}]
+                                                   (conj semantic id))))
+                                  results)
+                            (persistent!))]
                     {:type ::call-completion
                      :weight 1
                      :add true
+                     :type-changes type-changes
                      :tx tx}))))
          completions)))

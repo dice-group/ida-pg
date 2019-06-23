@@ -12,6 +12,7 @@
     {:type ::snippet
      :weight 1/2
      :add true
+     :id snippet
      :tx tx}))
 
 (defn snippet-actions
