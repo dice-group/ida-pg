@@ -37,7 +37,7 @@ public class StoryCreationUtil {
 			.destination(dbUrl);
 
 		// Fetch active dataset details
-		String actvScrId = (String) responseBean.getPayload().get("actvScrid");
+		String actvScrId = (String) responseBean.getPayload().get("actvScrId");
 		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 		String actvDs = (String) responseBean.getPayload().get("actvDs");
 		String actvVs = (String) responseBean.getPayload().get("actvVs");
