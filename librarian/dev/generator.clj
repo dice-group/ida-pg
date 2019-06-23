@@ -17,7 +17,8 @@
     (println (format "%6d " (swap! i inc))
              "id:" (:id s) "pred:" (:id (:predecessor s))
              "c:" (:cost s) "h:" (:heuristic s)
-             "flaws:" p-flaws c-flaws)
+             "flaws:" p-flaws c-flaws
+             (some-> s :last-action :type name))
     search-state))
 
 (defn gen-test*
@@ -59,17 +60,25 @@
   (apply gen-test*
          "libs/scikit-learn-cluster"
          (instances->tx [(instanciate constant/constant
-                           :value 123
+                           :value "123"
                            :datatype [(instanciate basetype/basetype
                                         :name "string")
                                       (instanciate semantic-type/semantic-type
-                                        :key "foo"
-                                        :value "bar")
-                                      (instanciate role-type/role-type
-                                        :id :result)])
+                                        :key "name"
+                                        :value "foo")])
+                         (instanciate constant/constant
+                           :value 42
+                           :datatype [(instanciate basetype/basetype
+                                        :name "int")
+                                      (instanciate semantic-type/semantic-type
+                                        :key "name"
+                                        :value "bar")])
                          (instanciate call-parameter/call-parameter
                            :datatype [(instanciate basetype/basetype
-                                        :name "int")])])
+                                        :name "int")
+                                      (instanciate semantic-type/semantic-type
+                                        :key "name"
+                                        :value "foo")])])
          args))
 
 (defmethod gen-test :goal
@@ -83,5 +92,19 @@
                                                 :name "string")
                                               (instanciate semantic-type/semantic-type
                                                 :key "name"
-                                                :value "n_clusters")])]))
+                                                :value "n_clusters")])
+                                 (instanciate constant/constant
+                                   :value 42
+                                   :datatype [(instanciate basetype/basetype
+                                                :name "int")
+                                              (instanciate semantic-type/semantic-type
+                                                :key "name"
+                                                :value "abc")])
+                                 (instanciate constant/constant
+                                   :value 99.5
+                                   :datatype [(instanciate basetype/basetype
+                                                :name "float")
+                                              (instanciate semantic-type/semantic-type
+                                                :key "name"
+                                                :value "xyz")])]))
          args))

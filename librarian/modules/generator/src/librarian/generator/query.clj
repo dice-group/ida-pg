@@ -211,14 +211,15 @@
                                 (map (fn [datom] [(:a datom) (placeholder-matches db (:e datom))])))
                           revref-attrs)
             cands (into []
-                        (comp (types->instances db)
-                              (remove #(placeholder? db %))
+                        (comp (types->instances db) ; all instances of placeholder's type
+                              (remove #(placeholder? db %)) ; only non-placeholder instances
                               (filter #(every? (fn [datom] (d/datoms db :eavt % (:a datom) (:v datom)))
-                                               base))
+                                               base)) ; only instances with same base attributes
                               (filter (fn [cand]
                                         (every? (fn [[attr cand-refs]]
                                                   (some #(d/datoms db :avet attr cand (:match %)) cand-refs))
-                                                revrefs)))
+                                                revrefs))) ; only instances from matched namespaces
+                              ; only instances with matched params and results:
                               (keep (fn [cand]
                                       (hm/update-into {:placeholder placeholder, :match cand}
                                                       (comp (map (fn [[attr cand-refs]]

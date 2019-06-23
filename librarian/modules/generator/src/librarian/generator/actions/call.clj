@@ -1,18 +1,15 @@
 (ns librarian.generator.actions.call
   (:require [datascript.core :as d]
-            [librarian.generator.query :as gq]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.data-receiver :as data-receiver]
             [librarian.model.concepts.callable :as callable]
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
-            [librarian.model.concepts.call-result :as call-result]
-            [librarian.model.concepts.semantic-type :as semantic-type]
-            [librarian.model.concepts.named :as named]))
+            [librarian.model.concepts.call-result :as call-result]))
 
 (defn call-actions
-  [{:keys [db]} flaw]
-  (let [callables (gq/compatibly-typed-callables db flaw)]
+  [{:keys [db compatibly-typed-callables]} flaw]
+  (let [callables (some-> (compatibly-typed-callables flaw) deref)]
     (map (fn [cid]
            (let [callable (d/entity db cid)
                  param-map
@@ -22,14 +19,12 @@
                                            :type ::call-parameter/call-parameter
                                            ::call-parameter/parameter id
                                            ::typed/datatype
-                                           (conj (map :db/id (::typed/datatype param))
-                                                 {:type ::semantic-type/semantic-type
-                                                  ::semantic-type/key "name"
-                                                  ::semantic-type/value (::named/name param)})}]))
+                                           (map :db/id (::typed/datatype param))}]))
                        (::callable/parameter callable))]
              {:type ::call
               :weight 1/2
               :add true
+              :id (:db/id callable)
               :tx (conj (vec (vals param-map))
                         {:type ::call/call
                          ::call/callable (:db/id callable)
@@ -40,10 +35,7 @@
                                       {:type ::call-result/call-result
                                        ::call-result/result (:db/id result)
                                        ::typed/datatype
-                                       (conj (map :db/id (::typed/datatype result))
-                                             {:type ::semantic-type/semantic-type
-                                              ::semantic-type/key "name"
-                                              ::semantic-type/value (::named/name result)})
+                                       (map :db/id (::typed/datatype result))
                                        ::data-receiver/receives-semantic
                                        (keep (comp :db/id param-map :db/id)
                                              (::data-receiver/receives-semantic result))}

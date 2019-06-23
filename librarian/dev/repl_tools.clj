@@ -67,7 +67,7 @@
                                             ::basetype/basetype
                                             (::basetype/id datatype)
                                             ::role-type/role-type
-                                            (str "role:" (name (::role-type/id datatype)))
+                                            (str "r:" (name (::role-type/id datatype)))
                                             ::semantic-type/semantic-type
                                             (let [key (name (::semantic-type/key datatype))
                                                   val (name (::semantic-type/value datatype))]

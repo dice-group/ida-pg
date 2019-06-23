@@ -7,9 +7,7 @@
             [librarian.model.concepts.call :as call]
             [librarian.model.concepts.call-parameter :as call-parameter]
             [librarian.model.concepts.call-result :as call-result]
-            [librarian.model.concepts.typed :as typed]
-            [librarian.model.concepts.semantic-type :as semantic-type]
-            [librarian.model.concepts.named :as named]))
+            [librarian.model.concepts.typed :as typed]))
 
 (defn- all-valid-call-io-match-combos
   [matched-entities]
@@ -25,29 +23,19 @@
    If an io-container is found in call, it will be replaced; if not, a new io-container will be created."
   [call-io-type call-io->io-attr call->call-io-attr]
   (fn [call io->call-io-data]
-    (mapcat (fn [{io :db/id, types :types, name ::named/name}]
+    (mapcat (fn [{io :db/id, types :types}]
               (if-some [{call-io :db/id, {:keys [semantic full]} :receivers}
                         (io->call-io-data io)]
-                (let [st-id (d/tempid nil)
-                      types (conj types {:db/id st-id, :semantic true})]
-                  (into [{:db/id st-id
-                          :type ::semantic-type/semantic-type
-                          ::semantic-type/key "name"
-                          ::semantic-type/value name}
-                         {:db/id call-io
-                          call-io->io-attr io
-                          ::typed/datatype st-id}]
-                        (mapcat #(eduction (map (fn [rec] [:db/add rec ::typed/datatype (:db/id %)]))
-                                           (if (:semantic %) semantic full)))
-                        types))
+                (into [{:db/id call-io
+                        call-io->io-attr io}]
+                      (mapcat #(eduction (map (fn [rec] [:db/add rec ::typed/datatype (:db/id %)]))
+                                         (if (:semantic %) semantic full)))
+                      types)
                 (let [call-io (d/tempid nil)]
                   [{:db/id call-io
                     :type call-io-type
                     call-io->io-attr io
-                    ::typed/datatype (into [{:type ::semantic-type/semantic-type
-                                             ::semantic-type/key "name"
-                                             ::semantic-type/value name}]
-                                           (map :db/id) types)}
+                    ::typed/datatype (mapv :db/id types)}
                    [:db/add call call->call-io-attr call-io]]))))))
 
 (def param->tx (io-conts->tx ::call-parameter/call-parameter
@@ -63,7 +51,6 @@
   (mapv (fn [io]
           (let [id (:v io)]
             {:db/id id
-             ::named/name (::named/name (d/entity db id))
              :types (gq/types db id)}))
         (d/datoms db :eavt call io-type)))
 
@@ -77,7 +64,8 @@
                     (::call/parameter e))
         r->cr (into {} (map (fn [r] [(-> r ::call-result/result :db/id)
                                      (let [id (:db/id r)]
-                                        :receivers (gq/receivers db id))]))
+                                       {:db/id id
+                                        :receivers (gq/receivers db id)})]))
                     (::call/result e))
         completions (placeholder-matches flaw)]
     (mapcat (fn [{match :match
