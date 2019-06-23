@@ -22,7 +22,7 @@ export class DataViewContainerComponent implements OnInit {
     // TODO: Create and push tabs inside mainviewelement
     const metaDt = this.item.dsMd;
     if (metaDt) {
-      const tempTab = new TabElement(this.uis.getUniqueId(), metaDt.dsName + ' Schema', TabType.DSDET, metaDt, false);
+      const tempTab = new TabElement(this.uis.getUniqueId(), metaDt.dsName + ' Schema', TabType.DSDET, '', metaDt, false);
       this.item.getTabArr().push(tempTab);
       this.focusLastTab();
     }
@@ -40,13 +40,15 @@ export class DataViewContainerComponent implements OnInit {
     if (activeTab.tabType === TabType.DTTBL) {
       // returning the associated filename
       return activeTab.label;
+    } else{
+      return activeTab.table;
     }
-    return null;
   }
 
   public getActiveVisualizationName() {
     const activeTab: TabElement = this.item.tabArr[this.activeTabIndex];
-    if (activeTab.tabType === TabType.BG || activeTab.tabType === TabType.FDG || activeTab.tabType === TabType.VENND) {
+    if (activeTab.tabType === TabType.BG || activeTab.tabType === TabType.FDG || activeTab.tabType === TabType.VENND ||
+      activeTab.tabType === TabType.GSD || activeTab.tabType === TabType.SSB) {
       return activeTab.label;
     }
     return null;

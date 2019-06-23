@@ -12,8 +12,8 @@ import {TabElement} from './models/tab-element';
 import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
 import {TabType} from './enums/tab-type.enum';
 import {IdaEventService} from './service/event/ida-event.service';
-import {MatDialog} from "@angular/material";
-import {DomSanitizer} from '@angular/platform-browser';
+import {MatDialog} from '@angular/material';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +35,7 @@ export class AppComponent {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService, public dialog: MatDialog, private sanitizer:DomSanitizer) {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService, public dialog: MatDialog, private sanitizer: DomSanitizer) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
@@ -55,34 +55,34 @@ export class AppComponent {
       this.activeItem = newId;
     } else if (resp.actnCode === 2) {
       // Open new tab with Force Directed Graph
-      const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.fdgData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.actvTbl, resp.payload.fdgData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 3) {
       // Open new tab with Bar Graph
-      const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.bgData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.actvTbl, resp.payload.bgData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 4) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.tabLabel, TabType.DTTBL, resp.payload.clusterData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.tabLabel, TabType.DTTBL, '', resp.payload.clusterData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 5) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, resp.payload.dataTable, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, '', resp.payload.dataTable, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 7) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.VENND, resp.payload.vennDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.VENND, resp.payload.actvTbl, resp.payload.vennDiagramData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 8) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.GSD, resp.payload, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.GSD, resp.payload.actvTbl, resp.payload, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 9) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.actvTbl, resp.payload.ssbDiagramData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 11) {
-        this.openPopup(resp.payload.storyUrl);
+        // this.openPopup(resp.payload.storyUrl);
     }
   }
 
@@ -135,9 +135,12 @@ export class AppComponent {
   processBotResponse(resp: ResponseBean) {
     this.restservice.requestEvnt.emit(false);
     let content;
-    if(resp.actnCode === 11){
-      // content = "here is your Storyboard URL: <br><br><a href="+this.sanitize(resp.payload.storyUrl)+" target='_blank'>"+resp.payload.storyUrl+"</a>";
-    } else{
+    if (resp.actnCode === 11) {
+      resp.payload.storyUrl = 11;
+      content = 'Here is your Storyboard URL: ' +
+        '<a href=http://127.0.0.1:3080/getstory?id=' + resp.payload.storyUrl + ' target="_blank"> ' +
+        'http://127.0.0.1:3080/getstory?id=' + resp.payload.storyUrl + '</a>';
+    } else {
       content = resp.chatmsg;
     }
     const msg: Message = new Message(content, 'Assistant', 'chatbot', new Date());
@@ -149,17 +152,13 @@ export class AppComponent {
     }
   }
 
-  openPopup(url){
-    this.dialog.open(StoryboardDialogComponent, {
-      data: {
-        url: url
-      }
-    });
-  }
-
-  sanitize(url:string){
-    // return this.sanitizer.bypassSecurityTrustUrl(window.location.protocol + '//' +url).changingThisBreaksApplicationSecurity;
-  }
+  // openPopup(url) {
+  //   this.dialog.open(StoryboardDialogComponent, {
+  //     data: {
+  //       url: url
+  //     }
+  //   });
+  // }
 
   public getActiveMainView(): DataViewContainerComponent {
     let activeMainDtVw = null;

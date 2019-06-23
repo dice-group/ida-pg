@@ -63,6 +63,8 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
 import {StoryboardDialogComponent} from "./dialogs/storyboard/storyboard.dialog.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { StoryboardComponent } from './components/storyboard/storyboard.component';
+import {AppRoutingModule} from './app-routing.module';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -126,7 +128,8 @@ import { StoryboardComponent } from './components/storyboard/storyboard.componen
     MatToolbarModule,
     MatTooltipModule,
     FlexLayoutModule,
-    NgbModule
+    NgbModule,
+    RouterModule
   ],
   entryComponents: [
     StoryboardDialogComponent
@@ -136,6 +139,7 @@ import { StoryboardComponent } from './components/storyboard/storyboard.componen
     useClass: RestService ,
     multi: true
   }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: [AppRoutingModule]
 })
 export class AppModule { }
