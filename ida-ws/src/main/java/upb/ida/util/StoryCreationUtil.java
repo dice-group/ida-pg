@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Component
 public class StoryCreationUtil {
-	private static String dbhost = "http://localhost:3030"; //System.getenv("FUSEKI_URL");
+	private static String dbhost = System.getenv("FUSEKI_URL"); //"http://localhost:3030";
 	private static String datasetName = "/storyboard";
 	private static String dbUrl = dbhost + datasetName;
 	/**
