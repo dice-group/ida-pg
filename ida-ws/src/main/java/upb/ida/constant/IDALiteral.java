@@ -17,6 +17,7 @@ public interface IDALiteral {
 	public static final int UIA_GSDIAGRAM = 8;
 	public static final int UIA_SSBDIAGRAM = 9;
 	public static final int UIA_SC = 11;
+	public static final int UIA_GS = 12;
 	
 	//Rivescript literals
 	public static final String RS_INSTANCE = "RSbot";
