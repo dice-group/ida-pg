@@ -18,10 +18,10 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
     .attr("height", height);
  
   svg.append("svg:defs").selectAll("marker")
-  .data(["end"])
+  .data(["normal"])
   .enter().append("svg:marker")
   .attr("id", String)
-  .attr("viewBox", "0 -5 15 15")
+  .attr("viewBox", "0 -4 10 10")
   .attr("refX", 30) 
   .attr("refY", -0.5)
   .attr("markerWidth", 26)
@@ -29,13 +29,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
   .attr("orient", "auto")
   .append("svg:polyline")
   .style("fill","black")
-  .attr("points", "0,-5 18,0 0,5")
+  .attr("points", "0,-4 20,0 0,5")
   ;
   svg.append("svg:defs").selectAll("marker")
-  .data(["end1"])
+  .data(["subclass"])
   .enter().append("svg:marker")
   .attr("id", String)
-  .attr("viewBox", "0 -5 15 15")
+  .attr("viewBox", "0 -4 10 10")
   .attr("refX", 30) 
   .attr("refY", -0.5)
   .attr("markerWidth", 26)
@@ -43,7 +43,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
   .attr("orient", "auto")
   .append("svg:polyline")
   .style("fill", "grey")
-  .attr("points", "0,-5 10,0 0,5")
+  .attr("points", "0,-4 20,0 0,5")
   ;
   
 
@@ -293,8 +293,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
           //.attr("marker-end", "url(#end)")
           .attr("marker-end",function (d) { 
             var labelStr = d.predicate; 
-            if(labelStr.includes('subClassOf')){return  "url(#end1)";}
-            return  "url(#end)"})
+            if(labelStr.includes('subClassOf')){return  "url(#subclass)";}
+            return  "url(#normal)"})
           .style("stroke-dasharray",function (d) { 
             var labelStr = d.predicate; 
             if(labelStr.includes('subClassOf')){return  ("3, 3");}
