@@ -17,6 +17,11 @@ export class RdfOntologyViewComponent implements OnInit {
   allPropChecked = false;
   allNodesInBoundClicked = false;
   disableZoomClicked = false;
+  edgeSize = 100;
+  graphCharge = 1000;
+  resourceRadius = 10;
+  literalRadius = 6;
+  resourceNodeColor ="#311B92";
   
   constructor(public uip: UniqueIdProviderService) {
     this.figId = 'fig' + this.uip.getUniqueId();
@@ -38,12 +43,18 @@ export class RdfOntologyViewComponent implements OnInit {
     this.languageCheked = false;
     this.classHeirarchyChecked = true;
     this.allPropChecked = false;
-    //this.graphResetClicked = false;
+    this.allNodesInBoundClicked = false;
+    this.disableZoomClicked = false;
+    createV4RDFOntologyGraph(this.figId, this.svgId,this.fileName,this.languageCheked,this.classHeirarchyChecked,this.allPropChecked,this.allNodesInBoundClicked,this.disableZoomClicked);
+  }
+
+  applyConfigClicked(event){
+    this.languageCheked = false;
+    this.classHeirarchyChecked = true;
+    this.allPropChecked = false;
     this.allNodesInBoundClicked = false;
     this.disableZoomClicked = false;
     
-    console.log('inside reset');
     createV4RDFOntologyGraph(this.figId, this.svgId,this.fileName,this.languageCheked,this.classHeirarchyChecked,this.allPropChecked,this.allNodesInBoundClicked,this.disableZoomClicked);
-    //this.graphResetClicked = false;
   }
 }

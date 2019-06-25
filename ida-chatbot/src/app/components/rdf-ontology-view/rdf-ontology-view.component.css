@@ -15,3 +15,14 @@
     top: -8px;
     *overflow: hidden;
   }
+  .inputLabelClass {
+    padding-left: 10px;
+    font-size: 19px;
+    float: left;
+  }
+  
+  .inputTextClass {
+    border-radius: 8px;
+    width: 33%;
+    padding-left: 3px;
+  }
