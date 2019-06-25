@@ -45,7 +45,8 @@
   [db g id]
   (let [e (d/entity db id)]
     (if-not (::call-parameter/parameter e)
-      {:output (vname (:db/id (::data-receiver/receives e)))})))
+      {:output (vname (:db/id (::data-receiver/receives e)))
+       :position (::positionable/position e)})))
 
 (defmethod line ::call-result/call-result
   [db g id]
@@ -56,7 +57,8 @@
                  (> (count (::call/result call)) 1))
         {:line (str (vname id) " = " (vname (:db/id call))
                     "[" (::positionable/position (::call-result/result e) 0) "]")})
-      {:input (vname id)})))
+      {:input (vname id)
+       :position (::positionable/position e)})))
 
 (defmethod line ::call/call
   [db g id]
@@ -86,8 +88,8 @@
         order (alg/topsort g)
         lines (map #(line db g %) order)
         imports (into #{} (keep :import) lines)
-        inputs (into #{} (keep :input) lines)
-        outputs (into #{} (keep :output) lines)
+        inputs (into [] (map :input)  (sort-by :position (filter :input lines)))
+        outputs (into [] (map :output)  (sort-by :position (filter :output lines)))
         lines (into [] (comp (keep :line)
                              (map #(str "  " %)))
                     lines)]

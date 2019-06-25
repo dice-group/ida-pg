@@ -91,16 +91,16 @@
                                          (keep p->new-cp)
                                          (mapcat (fn [{id :db/id {:keys [semantic]} :receivers}]
                                                    (conj semantic id))))
-                                  params)
+                                   params)
                             (into! (comp (map :db/id)
                                          (keep r->new-cr)
                                          (mapcat (fn [{id :db/id {:keys [semantic]} :receivers}]
                                                    (conj semantic id))))
-                                  results)
+                                   results)
                             (persistent!))]
                     {:type ::call-completion
                      :weight 1
                      :add true
                      :type-changes type-changes
                      :tx tx}))))
-         completions)))
+            completions)))

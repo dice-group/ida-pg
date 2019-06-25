@@ -42,11 +42,12 @@
 
 (defn- goal-init-tx
   [inputs goals]
-  (instances->tx (concat (mapv (fn [input]
-                                 (instanciate call-result/call-result
-                                   :datatype [(instanciate role-type/role-type
-                                                :id input)]))
-                               inputs)
+  (instances->tx (concat (map-indexed (fn [idx input]
+                                        (instanciate call-result/call-result
+                                          :datatype [(instanciate role-type/role-type
+                                                       :id input)]
+                                          :position (inc idx)))
+                                      inputs)
                          (mapv (fn [goal]
                                  (instanciate call-parameter/call-parameter
                                    :datatype [(instanciate role-type/role-type
@@ -86,13 +87,13 @@
   (apply gen-test*
          "libs/scikit-learn-cluster"
          (concat (goal-init-tx [:dataset] [:labels])
-                 (instances->tx [(instanciate constant/constant
-                                   :value "2"
+                 (instances->tx [(instanciate call-result/call-result
                                    :datatype [(instanciate basetype/basetype
                                                 :name "string")
                                               (instanciate semantic-type/semantic-type
                                                 :key "name"
-                                                :value "n_clusters")])
+                                                :value "n_clusters")]
+                                   :position 0)
                                  (instanciate constant/constant
                                    :value 42
                                    :datatype [(instanciate basetype/basetype
@@ -101,10 +102,16 @@
                                                 :key "name"
                                                 :value "abc")])
                                  (instanciate constant/constant
-                                   :value 99.5
+                                   :value 1/2
                                    :datatype [(instanciate basetype/basetype
                                                 :name "float")
                                               (instanciate semantic-type/semantic-type
                                                 :key "name"
-                                                :value "xyz")])]))
+                                                :value "tol")])
+                                 #_(instanciate call-parameter/call-parameter
+                                     :datatype [(instanciate basetype/basetype
+                                                  :name "float")
+                                                (instanciate semantic-type/semantic-type
+                                                  :key "name"
+                                                  :value "centroid")])]))
          args))

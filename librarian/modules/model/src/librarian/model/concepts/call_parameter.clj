@@ -3,9 +3,10 @@
             [librarian.helpers.spec :as hs]
             [librarian.model.syntax :refer [defconcept]]
             [librarian.model.concepts.typed :refer [typed]]
+            [librarian.model.concepts.positionable :refer [positionable]]
             [librarian.model.concepts.data-receiver :refer [data-receiver]]))
 
-(defconcept call-parameter [typed data-receiver]
+(defconcept call-parameter [typed positionable data-receiver]
   :attributes {::parameter {:db/valueType :db.type/ref
                             :db/doc "A callable's parameter."}}
   :spec ::call-parameter)
