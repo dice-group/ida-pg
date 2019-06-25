@@ -1,3 +1,25 @@
+<div id="filtersId" 
+  style="width: 99%;height: 36px;margin-left: 3px;border-radius: 8px;background-color: #5DADE2;">  
+    <!--<button  (click)="closeSideBar()">Close &times;</button> 
+    ng-style="{ 'display' : displayLeftSideBar ? 'block' : 'none' }"  -->
+    <label class="labelClass">
+      Filters: 
+       
+    </label>
+    <label class="labelClass">
+      Display in deustch  
+      <input class="checkboxClass" type="checkbox" [(ngModel)]="languageCheked" (change)="checkboxValuesChanged(isChecked)" /> 
+    </label>
+    <label class="labelClass"> 
+      Include class heirarchy 
+      <input class="checkboxClass" type="checkbox" [(ngModel)]="classHeirarchyChecked" value="1" (change)="checkboxValuesChanged(isChecked)" /> 
+    </label>
+    <label class="labelClass">
+      Include all properties 
+      <input class="checkboxClass" type="checkbox" [(ngModel)]="allPropChecked" (change)="checkboxValuesChanged(isChecked)" /> 
+    </label>
+  </div>
+
 <div align='center' [attr.id]="fdgId">
   <h2>RDF Ontology Class Hierarchy</h2>
   <div [attr.id]="svgId"> RDF-ontology-class-hierarchy img </div>

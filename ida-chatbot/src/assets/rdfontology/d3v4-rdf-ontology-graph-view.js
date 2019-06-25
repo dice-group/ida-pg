@@ -1,10 +1,14 @@
-function createV4RDFOntologyGraph(figId, svgId, fileName,) {
+function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displaySubclasses,dispalyAllprop,) {
   var linksArray = [];
   var nodesArray = [];
+  var enLabelArray = [];
+  var deLabelArray = [];
 
-  var width = 1060,height = 900;
+  var width = 1000,height = 900;
 
-
+  var svgClear = d3.select("#"+svgId);
+  svgClear.selectAll("*").remove(); 
+  
   var svg = d3.select("#"+svgId)
     .append("svg")
     .attr("width", width)
@@ -12,7 +16,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
  
   svg.append("svg:defs").selectAll("marker")
   .data(["end"])
-  .enter().append("svg:marker")
+  .enter().append("svg:marker") 
   .attr("id", String)
   .attr("viewBox", "0 -5 15 15")
   .attr("refX", 30) 
@@ -34,49 +38,214 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
   
   d3.json("assets/rdfontology/historian-onlogoly.json", function(error, data) 
   {
+    //START :: get english and deutsch labels values into arrays
+    data["@graph"].forEach(function(elem) 
+    {
+      if(elem["rdfs:label"] != undefined)
+      {
+        if(Object.prototype.toString.call(elem["rdfs:label"]) === '[object Array]')
+        {
+          elem["rdfs:label"].forEach(function(eachIds)
+          {  
+            if(eachIds["@language"] == "de")
+            {
+              var tempLabel = {"id":elem["@id"],"language":"de","value":eachIds["@value"]}
+              deLabelArray.push(tempLabel);
+            }
+            if(eachIds["@language"] == "en")
+            {
+              var tempLabel = {"id":elem["@id"],"language":"en","value":eachIds["@value"]}
+              enLabelArray.push(tempLabel);
+            }
+
+          });
+        }
+        else
+        {
+          if(elem["rdfs:label"]["@language"] == "de")
+          {
+            var tempLabel = {"id":elem["@id"],"language":"de","value":elem["rdfs:label"]["@value"]}
+            deLabelArray.push(tempLabel);
+          }
+          if(elem["rdfs:label"]["@language"] == "en")
+          {
+            var tempLabel = {"id":elem["@id"],"language":"en","value":elem["rdfs:label"]["@value"]}
+            enLabelArray.push(tempLabel);
+          }
+        }
+      }
+        
+    });
+    //END :: get english and deutch labels values into arrays
+
+    //START :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
     var literalIndex = 0;
     var circleIdIndex = 0;
     data["@graph"].forEach(function(element) 
     {
-        var tempSub ="";
-        var tempPred ="";
-        var tempObj ="";
+        var tempSub ="?";
+        var tempPred ="?";
+        var tempObj ="?";
         var pred="---subClassOf---";
         var tempDomainArray = [];
         //START :: Nodes and Links creation for subClassOf
-        if(element["rdfs:subClassOf"] != undefined)
+        if(displaySubclasses)
         {
-          
-          var tempLabelArray = element["@id"].split('/');
-          tempSub = tempLabelArray[tempLabelArray.length -1 ];
-          
-          if(Object.prototype.toString.call(element["rdfs:subClassOf"]) === '[object Array]')
-          {
-            element["rdfs:subClassOf"].forEach(function(eachIds)
-            {  
-              var tempLabelArray = eachIds["@id"].split('/');
-              tempObj = tempLabelArray[tempLabelArray.length -1 ];
+            if(element["rdfs:subClassOf"] != undefined)
+            {
+              tempSub = getLabel(displayDeustch,element["@id"]);
+              if(tempSub == "noLabel")
+              {
+                var tempLabelArray = element["@id"].split('/');
+                tempSub = tempLabelArray[tempLabelArray.length -1 ]+'?';
+              }
 
-              var tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
-              linksArray.push(tripleValue);
-              createNewNode(tempSub,pred,tempObj);
-            });
-          }
-          else
-          {
-            var tempLabelArray = element["rdfs:subClassOf"]["@id"].split('/');
-            tempObj = tempLabelArray[tempLabelArray.length -1 ];
-            var tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
-            linksArray.push(tripleValue);
+              if(Object.prototype.toString.call(element["rdfs:subClassOf"]) === '[object Array]')
+              {
+                element["rdfs:subClassOf"].forEach(function(eachIds)
+                {  
+                  tempObj = getLabel(displayDeustch,eachIds["@id"]);
+                  if(tempObj == "noLabel")
+                  {
+                    var tempLabelArray = eachIds["@id"].split('/');
+                    tempObj = tempLabelArray[tempLabelArray.length -1 ]+'?';
+                  }
 
-            createNewNode(tempSub,pred,tempObj);
-          }
-            
+                  var tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
+                  linksArray.push(tripleValue);
+                  createNewNode(tempSub,pred,tempObj);
+                });
+              }
+              else
+              {
+                tempObj = getLabel(displayDeustch,element["rdfs:subClassOf"]["@id"]);
+                if(tempObj == "noLabel")
+                {
+                  var tempLabelArray = element["rdfs:subClassOf"]["@id"].split('/');
+                  tempObj = tempLabelArray[tempLabelArray.length -1 ]+'?';
+                }
+                //var tripleValue = {source:tempSub, 	predicate:'---subClassOf---', 	target:tempObj,value: 1};
+                var tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
+                linksArray.push(tripleValue);
+
+                //createNewNode(tempSub,'---subClassOf---',tempObj);
+                createNewNode(tempSub,pred,tempObj);
+              }
+                
+            }
         }
         //END :: Nodes and Links creation for subClassOf
+
+        //START :: Nodes and Links creation for all Properties
+        if(dispalyAllprop)
+        {
+            //get the subject label  
+            if(element["rdfs:domain"]!=undefined)
+            {
+              if(Object.prototype.toString.call(element["rdfs:domain"]) === '[object Array]'){
+                //console.log("inside if");
+                element["rdfs:domain"].forEach(function(eachIds)
+                {
+                  var tempDomainLabel = getLabel(displayDeustch,eachIds["@id"]);
+                  if(tempDomainLabel == "noLabel")
+                  {
+                    var tempLabelArray = eachIds["@id"].split('/');
+                    tempDomainLabel = tempLabelArray[tempLabelArray.length -1 ]+'?';
+                  }
+                  tempDomainArray.push(tempDomainLabel);
+                });
+              }
+              else
+              {
+                tempSub = getLabel(displayDeustch,element["rdfs:domain"]["@id"]);
+                if(tempSub == "noLabel")
+                {
+                  var tempLabelArray = element["rdfs:domain"]["@id"].split('/');
+                  tempSub = tempLabelArray[tempLabelArray.length -1 ]+'?';
+                }
+              }
+            }
+
+            //get the predicate
+            if(element["rdfs:domain"]!=undefined)
+            {
+              tempPred = getLabel(displayDeustch,element["@id"]);
+              if(tempPred == "noLabel")
+              {
+                var tempLabelArray = element["@id"].split('/');
+                tempPred = tempLabelArray[tempLabelArray.length -1 ]+'?';
+              }
+            }
+
+
+            //get the object  range
+            if(element["rdfs:range"]!=undefined){
+              //console.log(element.domain["@id"]);
+              if ("@id" in element["rdfs:range"])
+              {
+                tempObj = getLabel(displayDeustch,element["rdfs:range"]["@id"]);
+                if(tempObj == "noLabel")
+                {
+                  var tempLabelArray = element["rdfs:range"]["@id"].split('/');
+                  tempObj = tempLabelArray[tempLabelArray.length -1 ]+'?';
+                }
+              }  
+            }
+            
+            if(tempObj.toLowerCase().includes("string") || tempObj.toLowerCase().includes("boolean")|| tempObj.toLowerCase().includes("integer") || tempObj.toLowerCase().includes("date") || tempObj.toLowerCase().includes("time"))
+            {
+              tempObj = tempObj + literalIndex;
+              literalIndex = literalIndex + 1 ;
+            }
+
+            if(!tempDomainArray.length  ==0)
+            {
+              tempDomainArray.forEach(function(el)
+              {
+                if(el != "?" && tempPred != "?" && tempObj != "?")
+                {
+                  var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                  linksArray.push(tripleValue);
+                  createNewNode(el,tempPred,tempObj);
+                }
+              });
+            }
+            else
+            {
+              if(tempSub != "?" && tempPred != "?" && tempObj != "?")
+              {
+                var tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
+                linksArray.push(tripleValue);
+                createNewNode(tempSub,tempPred,tempObj);
+              }
+            }
+        }
+        //END :: Nodes and Links creation for all Properties
         
+        /*
+        if(element.subPropertyOf != undefined){
+          tempSub = element.label.value;
+          
+          tempObj = element.subPropertyOf["@id"];
+            data["@graph"].forEach(function(elem) {
+              //console.log(elem["@id"]);
+              if(elem["@id"] == element.subPropertyOf["@id"]){
+                if(elem.label != undefined){
+                  
+                tempObj = elem.label.value;
+                //console.log("elem.label.value => "+elem.label.value);
+                }
+              }
+            });
+          var tripleValue = {subject:tempSub, 	predicate:'---subPropertyOf---', 	object:tempObj};
+          triples.push(tripleValue);
+          
+        }
+          */
+        //}
       });
-      
+      //END :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
+
       if (error) {
           return console.warn('Error in createV3RDFOntologyGraphView() method :'+error);
       }
@@ -93,7 +262,12 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
           .attr("stroke-width",1)
           .style("fill","#999")
           .attr("marker-end", "url(#end)")
-          .style("stroke-dasharray",function (d) {return  ("0, 0");})
+          .style("stroke-dasharray",function (d) { 
+            var labelStr = d.predicate; 
+            if(labelStr.includes('subClassOf')){return  ("3, 3");}
+            if(labelStr.includes('subPropertyOf')){return  ("5, 5");}
+            return  ("0, 0");})
+          
           ;
 
           // ==================== Add Link Names =====================
@@ -103,14 +277,24 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
             .append("text")
               .attr("class", "link-text")
               .text( function (d) { 
-                //console.log(d);
                 return d.predicate; }) 
-                .style("fill",function(d){return "#28B463";})
+                .style("fill",function(d){var labelStr = d.predicate; 
+                  if(labelStr.includes('subClassOf'))
+                  {return "#3498DB";}
+                  if(labelStr.includes('subPropertyOf'))
+                  {return "#85929E";}
+                  return "#28B463";})
                 .style("font-size", "80%")
                 .style("font-style", "italic")
                 .attr('x', 12)
                 .attr('y', 3)
-    ;           
+    ;        
+
+    linkTexts.append("title")
+              .text(function(d) { var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
+                return returnValue;
+              });
+    ;        
     // ==================== Add Link Names =====================
 
     var node = g.append("g")
@@ -121,8 +305,14 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
     ;    
     var circles = node.append("circle")
           .attr("id",function(d){return d.nodeId ;})
-          .attr("r","8")
-          .style("fill",function(d){ return "#311B92";})
+          .attr("r",function(d){var labelStr = d.id; 
+            if(labelStr.toLowerCase().includes('string')|| labelStr.toLowerCase().includes('integer')|| labelStr.toLowerCase().includes('datetime')|| labelStr.toLowerCase().includes('boolean'))
+            {return 6;}
+            return 10;})
+          .style("fill",function(d){var labelStr = d.id; 
+            if(labelStr.toLowerCase().includes('string')|| labelStr.toLowerCase().includes('integer')|| labelStr.toLowerCase().includes('datetime')|| labelStr.toLowerCase().includes('boolean'))
+                {return "#FF9800";} 
+            return "#311B92";})
           .call(d3.drag()
               .on("start", dragstarted)
               .on("drag", dragged)
@@ -131,11 +321,34 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
 
     var lables = node.append("text")
               .attr("class", "node-text")
-              .text(function (d) { return d.id;  })
-              .style("font-size","100%")
-              .style("fill","#311B92")
+              .text(function (d) {
+                var labelStr = d.id; 
+                if(labelStr.toLowerCase().includes('string')){return "String";}
+                if(labelStr.toLowerCase().includes('datetime')){return "DateTime";}
+                if(labelStr.toLowerCase().includes('integer')){return "Integer";}
+                if(labelStr.toLowerCase().includes('boolean')){return "Boolean";}
+                return d.id; 
+              })
+              .style("font-size", function(d){var labelStr = d.id; 
+                if(labelStr.toLowerCase().includes('string')|| labelStr.toLowerCase().includes('integer')|| labelStr.toLowerCase().includes('datetime')|| labelStr.toLowerCase().includes('boolean'))
+                {return "80%";}
+                return "100%";})
+              .style("font-style", function(d){var labelStr = d.id; 
+                if(labelStr.toLowerCase().includes('string')|| labelStr.toLowerCase().includes('integer')|| labelStr.toLowerCase().includes('datetime')|| labelStr.toLowerCase().includes('boolean'))
+                {return "italic";}
+                return "bold";})
+              .style("fill",function(d){var labelStr = d.id; 
+                if(labelStr.toLowerCase().includes('string')|| labelStr.toLowerCase().includes('integer')|| labelStr.toLowerCase().includes('datetime')|| labelStr.toLowerCase().includes('boolean'))
+                    {return "#FF9800";}
+                return "#311B92";})
               .attr('x', 12)
               .attr('y', 3)
+    ;
+
+    node.append("title")
+          .text(function(d) { 
+            var returnValue = 'Node : '+d.id;
+            return returnValue; })
     ;
 
     simulation
@@ -160,7 +373,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
           .attr("y2", function(d) { return d.target.y; })
       ;
       linkTexts
-          .attr("x", function(d) { //return  Math.max(5, Math.min(width - 10, (d.source.x + d.target.x)/2 ));
+          .attr("x", function(d) { 
             return 4 + (d.source.x + d.target.x)/2  ; })
           .attr("y", function(d) { 
             return 4 + (d.source.y + d.target.y)/2 ; })
@@ -170,6 +383,31 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,) {
             return "translate(" + d.x + "," + d.y + ")";
           })
       ;
+    }
+    function getLabel(displayDeustch,id)
+    {
+      var returnVaule = "noLabel"
+      if(!displayDeustch)
+      {
+        enLabelArray.forEach(function(elem) 
+        {
+          if(elem["id"] === id)
+          {
+            returnVaule = elem["value"];
+          } 
+        });
+      }
+      else if(displayDeustch)
+      {
+        deLabelArray.forEach(function(elem) 
+        {
+          if(elem["id"] === id)
+          {
+            returnVaule = elem["value"];
+          } 
+        });
+      }
+      return returnVaule;
     }
 
     function createNewNode(tempSub,tempPred,tempObj)
