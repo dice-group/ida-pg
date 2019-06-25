@@ -38,6 +38,8 @@ public class DataService {
 	public void getDataTableOfSpecificColumns(String actvDs, String actvTbl, List<String> tableColumns) throws JsonProcessingException, IOException {
 
 		String path = fileUtil.getDTFilePath(actvDs, actvTbl);
+		if (path == null)
+			path = String.format("dataset/%s/%s", actvDs, actvTbl);
 		File file = new File(fileUtil.fetchSysFilePath(path));
 		List<Map<String, String>> dataTable = fileUtil.convertToMap(file);
 		for(Map<String, String> item : dataTable)
@@ -45,11 +47,13 @@ public class DataService {
 			Iterator<Map.Entry<String, String>> entryIt = item.entrySet().iterator();
 			while (entryIt.hasNext()) {
 				Map.Entry<String, String> entry = entryIt.next();
-				if (!tableColumns.contains(entry.getKey())) {
+				String keyVal = entry.getKey().toLowerCase();
+				if (!tableColumns.contains(keyVal)) {
 					entryIt.remove();
 				}
 			}
 		}
+		responseBean.setPayload(new HashMap<>());
 		responseBean.getPayload().put("dataTable", dataTable);
 		// Set action code
 		responseBean.setActnCode(IDALiteral.UIA_DTTABLE);
