@@ -1,4 +1,10 @@
-<div id="filtersId" 
+
+<div  [attr.id]="fdgId1" fxFlexstyle="height: 150vh; margin: 20px;border-color: #eaeaea;border-style: solid">
+  
+  <div style="width: 100%; height: 20%;">
+    <h1 align='center'>RDF Ontology Graph</h1>
+  </div>
+  <div id="filtersId" 
   style="width: 99%;height: 36px;margin-left: 3px;border-radius: 8px;background-color: #5DADE2;">  
     <label class="labelClass">
       Filters: 
@@ -24,9 +30,14 @@
       Disable zoom
       <input class="checkboxClass" type="checkbox" [(ngModel)]="disableZoomClicked" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
+    <label class="labelClass"> 
+      <button #graphReset (click)="graphResetChanged($event)" 
+        style="width: 8%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:whitesmoke;">
+        Reset garph
+      </button> 
+    </label>
   </div>
 
-<div align='center' [attr.id]="fdgId">
-  <h2>RDF Ontology Class Hierarchy</h2>
-  <div [attr.id]="svgId"> </div>
+  <div  [attr.id]="svgId" style="float: left; height: 140vh;background-color: #F8F9F9;border-radius: 8px;"></div>
+
 </div>

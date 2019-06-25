@@ -386,8 +386,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       if(applyNodesBoundary)
       {
         node
-        .attr("cx", function(d) { return d.x = Math.max(Math.max(resourceRadius,literalRadius), Math.min(width - Math.max(resourceRadius,literalRadius), d.x)); })
-        .attr("cy", function(d) { return d.y = Math.max(Math.max(resourceRadius,literalRadius), Math.min(height - Math.max(resourceRadius,literalRadius), d.y)); });
+        .attr("cx", function(d) { return d.x = Math.max(Math.max(10,6), Math.min(width - Math.max(10,6), d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(Math.max(10,6), Math.min(height - Math.max(10,6), d.y)); });
       }
     }
 

@@ -34,4 +34,16 @@ export class RdfOntologyViewComponent implements OnInit {
     createV4RDFOntologyGraph(this.figId, this.svgId,this.fileName,this.languageCheked,this.classHeirarchyChecked,this.allPropChecked,this.allNodesInBoundClicked,this.disableZoomClicked);
     
   }
+  graphResetChanged(event){
+    this.languageCheked = false;
+    this.classHeirarchyChecked = true;
+    this.allPropChecked = false;
+    //this.graphResetClicked = false;
+    this.allNodesInBoundClicked = false;
+    this.disableZoomClicked = false;
+    
+    console.log('inside reset');
+    createV4RDFOntologyGraph(this.figId, this.svgId,this.fileName,this.languageCheked,this.classHeirarchyChecked,this.allPropChecked,this.allNodesInBoundClicked,this.disableZoomClicked);
+    //this.graphResetClicked = false;
+  }
 }
