@@ -10,7 +10,7 @@
        
     </label>
     <label class="labelClass">
-      Display in deustch  
+      Display in deustch 
       <input class="checkboxClass" type="checkbox" [(ngModel)]="languageCheked" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
     <label class="labelClass"> 
@@ -51,20 +51,40 @@
           <div  id="nodeInfoTagesId" 
               style="display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
                 padding-top: 10px;">
-            <label class="inputLabelClass" id="nodeNameId" >
-              Node name: 
+            <label class="inputLabelClass" [attr.id]="nodeId" > 
+                Node: 
             </label>
             <br/><br/>
-            <label class="inputLabelClass">
-              Node ID: - -
+            <label class="inputLabelClass" [attr.id]="nodeLabelId" > 
+              Label:
             </label>
             <br/><br/>
-            <label class="inputLabelClass">
-              Description: - -
+            <label class="inputLabelClass" [attr.id]="nodeIdsId">
+                Id:
             </label>
             <br/><br/>
-            <label class="inputLabelClass">
-              Type: - -
+            <label class="inputLabelClass" [attr.id]="nodeTypeId">
+                Type:
+            </label>
+            <br/><br/>
+            <label class="inputLabelClass" [attr.id]="nodeDescripId">
+                Description: 
+            </label>
+            <br/><br/>
+            <label class="inputLabelClass" [attr.id]="nodeSubClassId">
+                Sub class of :
+            </label>
+            <br/><br/>
+            <label class="inputLabelClass" [attr.id]="nodeDomainId">
+                Domain:
+            </label>
+            <br/><br/>
+            <label class="inputLabelClass" [attr.id]="nodeRangeId">
+                Range:
+            </label>
+            <br/><br/>
+            <label class="inputLabelClass" [attr.id]="nodeCommentId">
+                Comment:
             </label>
             <br/><br/>
           </div>
