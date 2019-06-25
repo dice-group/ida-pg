@@ -1,4 +1,4 @@
-function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displaySubclasses,dispalyAllprop,) {
+function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displaySubclasses,dispalyAllprop,applyNodesBoundary,disableZoom) {
   var linksArray = [];
   var nodesArray = [];
   var enLabelArray = [];
@@ -383,7 +383,26 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             return "translate(" + d.x + "," + d.y + ")";
           })
       ;
+      if(applyNodesBoundary)
+      {
+        node
+        .attr("cx", function(d) { return d.x = Math.max(Math.max(resourceRadius,literalRadius), Math.min(width - Math.max(resourceRadius,literalRadius), d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(Math.max(resourceRadius,literalRadius), Math.min(height - Math.max(resourceRadius,literalRadius), d.y)); });
+      }
     }
+
+    if(!disableZoom)
+    {
+      var zoom_handler = d3.zoom()
+        .on("zoom", zoom_actions);
+      zoom_handler(svg);
+      //Zoom functions 
+      function zoom_actions(){
+        g.attr("transform", d3.event.transform)
+        
+      }
+    }
+    
     function getLabel(displayDeustch,id)
     {
       var returnVaule = "noLabel"
