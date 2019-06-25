@@ -53,7 +53,7 @@ public class StoryRestController {
 		Map<String, Object> dataMap = getStoryDataFromDB(id);
 		String actvDs = dataMap.get("actvDs").toString();
 		String actvTbl = dataMap.get("actvTbl").toString();
-		String[] columnsList = dataMap.get("columnsList").toString().replaceAll("[\\[\\]]","").split(",");
+		String[] columnsList = dataMap.get("columnsList").toString().replaceAll("[\\[\\]\\s+]","").split(",");
 		if(columnsList.length > 0)
 			dataService.getDataTableOfSpecificColumns(actvDs, actvTbl, Arrays.asList(columnsList));
 		else
@@ -68,7 +68,7 @@ public class StoryRestController {
 		Map<String, Object> dataMap =  new HashMap<>();
 
 		String query = " PREFIX ab: <http://storydata/#" + uuid + "> "
-			+ "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?actvScrId ?actvTbl ?actvDs ?actvVs  ?columnsList where {ab: dc:actvScrId ?actvScrId ;dc:actvTbl ?actvTbl; dc:actvVs ?actvDs ; dc:actvVs ?actvVs; dc:columnsList ?columnsList .}";
+			+ "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?actvScrId ?actvTbl ?actvDs ?actvVs  ?columnsList where {ab: dc:actvScrId ?actvScrId ;dc:actvTbl ?actvTbl; dc:actvDs ?actvDs ; dc:actvVs ?actvVs; dc:columnsList ?columnsList .}";
 
 		QueryExecution q = null;
 		ResultSet results = null;
