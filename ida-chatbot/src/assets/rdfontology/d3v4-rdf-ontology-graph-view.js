@@ -1,12 +1,12 @@
 function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displaySubclasses,
-                                  dispalyAllprop,applyNodesBoundary,disableZoom,idsArray) {
+                                  dispalyAllprop,applyNodesBoundary,disableZoom,idsArray,customizeGraphArray) {
   var linksArray = [];
   var nodesArray = [];
   var enLabelArray = [];
   var deLabelArray = [];
   var expandedNodesArray = [];
 
-  var width = 1060,height = 900,resourceRadius = 8,literalRadius = 5;
+  var width = 1060,height = 900,resourceRadius = customizeGraphArray.resourceRadius,literalRadius = customizeGraphArray.literalRadius;
 
   
   var svgClear = d3.select("#"+svgId);
@@ -50,8 +50,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
   var color = d3.scaleOrdinal(d3.schemeCategory20);
 
   var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(50))
-    .force("charge", d3.forceManyBody().strength(-1000)) //Charge strength is here
+    .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(customizeGraphArray.edgeSize))
+    .force("charge", d3.forceManyBody().strength(-customizeGraphArray.graphCharge)) //Charge strength is here
     .force("center", d3.forceCenter((width / 2), (height / 2)));
   
   d3.json("assets/rdfontology/historian-onlogoly.json", function(error, data) 
@@ -270,28 +270,6 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             }
         }
         //END :: Nodes and Links creation for all Properties
-        
-        /*
-        if(element.subPropertyOf != undefined){
-          tempSub = element.label.value;
-          
-          tempObj = element.subPropertyOf["@id"];
-            data["@graph"].forEach(function(elem) {
-              //console.log(elem["@id"]);
-              if(elem["@id"] == element.subPropertyOf["@id"]){
-                if(elem.label != undefined){
-                  
-                tempObj = elem.label.value;
-                //console.log("elem.label.value => "+elem.label.value);
-                }
-              }
-            });
-          var tripleValue = {subject:tempSub, 	predicate:'---subPropertyOf---', 	object:tempObj};
-          triples.push(tripleValue);
-          
-        }
-          */
-        //}
       });
       //END :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
 
@@ -332,14 +310,14 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             .append("text")
               .attr("class", "link-text")
               .text( function (d) { 
-                //console.log(d);
+                var labelStr = d.predicate; 
+                if(labelStr.includes('subClassOf'))
+                  {return customizeGraphArray.subClassLabel;}
                 return d.predicate; }) 
                 .style("fill",function(d){var labelStr = d.predicate; 
                   if(labelStr.includes('subClassOf'))
-                  {return "#3498DB";}
-                  if(labelStr.includes('subPropertyOf'))
-                  {return "#85929E";}
-                  return "#28B463";})
+                  {return customizeGraphArray.subClassLabelColor;}
+                  return customizeGraphArray.propertyTextColor;})
                 .style("font-size", "80%")
                 .style("font-style", "italic")
                 .attr('x', 12)
@@ -353,7 +331,17 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
     ; 
 
     linkTexts.append("title")
-              .text(function(d) { var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
+              .text(function(d) { 
+                var labelStr = d.predicate; 
+                if(labelStr.includes('subClassOf'))
+                {
+                    var returnValue = 'Source : '+d.source +'\nProperty : '+customizeGraphArray.subClassLabel+'\nObject : '+d.target;
+                }
+                else
+                {
+                  var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
+                }
+                
                 return returnValue;
               });
     ;        
@@ -373,8 +361,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             return resourceRadius;})
           .style("fill",function(d){var labelStr = d.id; 
             if(d.isLitteral)
-                {return "#FF9800";} 
-            return "#311B92";})
+                {return customizeGraphArray.literalNodeColor;} 
+            return customizeGraphArray.resourceNodeColor;})
           .call(d3.drag()
               .on("start", dragstarted)
               .on("drag", dragged)
@@ -394,8 +382,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 return "bold";})
               .style("fill",function(d){var labelStr = d.id; 
                 if(d.isLitteral)
-                    {return "#FF9800";}
-                return "#311B92";})
+                    {return customizeGraphArray.literalNodeTextColor;}
+                return customizeGraphArray.resourceNodeTextColor;})
               .attr('x', function(d){
                 if(d.isLitteral)
                     {return 8;}

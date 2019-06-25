@@ -101,7 +101,7 @@
               style="display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
                 padding-top: 10px;">
             <label class="inputLabelClass">
-              Edge size: <input type="text" class="inputTextClass" [(ngModel)]="edgeSize" placeholder=" 100">
+              Edge size: <input type="text" class="inputTextClass" [(ngModel)]="edgeSize" placeholder=" 50">
             </label><br/>
             <label class="inputLabelClass">
               Graph charge/depth : <input type="text" class="inputTextClass" [(ngModel)]="graphCharge" placeholder=" 1000">
@@ -135,9 +135,6 @@
             </label><br/>
             <label class="inputLabelClass">
               On click node color: <input type="text" class="inputTextClass" [(ngModel)]="onClickNodeColor" placeholder=" red" >
-            </label><br/>
-            <label class="inputLabelClass">
-              On double click node color: <input type="text" class="inputTextClass" [(ngModel)]="propertyTextColor" placeholder=" pink" >
             </label><br/> <br/><br/> 
  
             <button #applyConfigBtn (click)="applyConfigClicked($event)" 
