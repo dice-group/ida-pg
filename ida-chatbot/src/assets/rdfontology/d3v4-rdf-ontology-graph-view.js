@@ -4,7 +4,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
   var enLabelArray = [];
   var deLabelArray = [];
 
-  var width = 1000,height = 900;
+  var width = 1060,height = 900;
 
   var svgClear = d3.select("#"+svgId);
   svgClear.selectAll("*").remove(); 
