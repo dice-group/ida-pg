@@ -96,7 +96,7 @@ export class UserComponent implements OnInit {
             };
           }
         }
-        if (returnResp.status === false) {
+        if (!returnResp.status) {
           this.snackBar.open(returnResp.respMsg, '', {
             duration: 4000,
           });

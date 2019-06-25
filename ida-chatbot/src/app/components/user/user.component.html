@@ -46,7 +46,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
-    <div *ngIf="this.dataSource.data.length === 0">
+    <div *ngIf="!this.dataSource.data.length">
       No Users Found
     </div>
   </div>
