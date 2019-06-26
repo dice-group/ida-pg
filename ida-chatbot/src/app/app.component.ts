@@ -24,6 +24,7 @@ export class AppComponent {
   public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
+
   @ViewChild(ChatboxComponent)
   private chatboxComp: ChatboxComponent;
   @ViewChildren(DataViewContainerComponent)

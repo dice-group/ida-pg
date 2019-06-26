@@ -3,12 +3,11 @@
   <app-sidebar fxFlex="nogrow" [items]="getSidebarItems()" (activeItmEmitter)="changeActiveItem($event)"
                [activeItem]="getActiveItem()"></app-sidebar>
   <!-- </div>-->
-  <div fxFlex="60%">
+  <div fxFlex="100%" id="mainView">
     <app-intro [ngClass]="{'hidden-cls': activeItem!==0 }"></app-intro>
     <ng-container *ngFor="let mvw of getMainviewItems()" >
     <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
     </ng-container>
   </div>
-  <app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
-  <!--<app-message-list fxFlex [messages]="this.getMessages()"></app-message-list>-->
+  <app-chatbox id="chatBox" fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
 </div>
