@@ -428,7 +428,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       {
         nodeDescription.append("text")
             .text(d.nodeContains["dc:description"]["@value"]) ; 
-      }
+      }/*
+      var node = d3.select("#"+idsArray.nodeDescripId)
+      if(d.nodeContains["rdfs:subClassOf"] != undefined && d.nodeContains["rdfs:subClassOf"]["@id"] != undefined )
+      {
+        nodeDescription.append("text")
+            .text(d.nodeContains["dc:description"]["@value"]) ; 
+      }*/
     });
 
     simulation
@@ -474,12 +480,15 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       }
     }
 
+    
+
     if(!disableZoom)
     {
       var zoom_handler = d3.zoom()
         .on("zoom", zoom_actions);
-      zoom_handler(svg);
+      //zoom_handler(svg);
       //Zoom functions 
+      svg.call(zoom_handler).on("dblclick.zoom", null);
       function zoom_actions(){
         g.attr("transform", d3.event.transform)
         
