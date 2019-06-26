@@ -53,10 +53,9 @@ public class DataService {
 				}
 			}
 		}
-		responseBean.setPayload(new HashMap<>());
 		responseBean.getPayload().put("dataTable", dataTable);
 		// Set action code
-		responseBean.setActnCode(IDALiteral.UIA_DTTABLE);
+		responseBean.setActnCode(IDALiteral.UIA_GS);
 		// Set Reply
 		responseBean.setChatmsg("Requested Table added to the main view.");
 	}
