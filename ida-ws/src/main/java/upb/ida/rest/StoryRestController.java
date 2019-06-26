@@ -31,7 +31,7 @@ public class StoryRestController {
 	private ResponseBean response;
 	@Autowired 
 	private DataService dataService;
-	private static String dbhost = System.getenv("FUSEKI_URL"); //"http://localhost:3030";
+	private static String dbhost =  System.getenv("FUSEKI_URL"); //"http://localhost:3030";
 	private static String datasetName = "/storyboard";
 	private static String dbUrl = dbhost + datasetName;
 	/**
@@ -43,23 +43,24 @@ public class StoryRestController {
 	public ResponseBean getStoryData(@RequestParam("id") String storyId) throws Exception {
 
 		String id = storyId ;
-		//This data will be filled from backend
-		//String actvScrId = "1";
-		//String actvTbl = "movehubqualityoflife.csv";
-		//String actvDs = "city";
-		//String actvVs = "bar-graph";
-		//List<String> columnsList = Arrays.asList("City", "Pollution");
 
-		Map<String, Object> dataMap = getStoryDataFromDB(id);
-		String actvDs = dataMap.get("actvDs").toString();
-		String actvTbl = dataMap.get("actvTbl").toString();
-		String[] columnsList = dataMap.get("columnsList").toString().replaceAll("[\\[\\]\\s+]","").split(",");
+		Map<String, Object> dataFromDB = getStoryDataFromDB(id);
+		String actvScrId = dataFromDB.get("actvScrId").toString();
+		String actvDs = dataFromDB.get("actvDs").toString();
+		String actvTbl = dataFromDB.get("actvTbl").toString();
+		String actvVs = dataFromDB.get("actvVs").toString();
+		String[] columnsList = dataFromDB.get("columnsList").toString().replaceAll("[\\[\\]\\s+]","").split(",");
+
+		Map<String, Object> dataMap = new HashMap<>();
+		dataMap.put("actvScrId", actvScrId);
+		dataMap.put("actvTbl", actvTbl);
+		dataMap.put("actvDs", actvDs);
+		dataMap.put("actvVs", actvVs);
+		response.setPayload(dataMap);
 		if(columnsList.length > 0)
 			dataService.getDataTableOfSpecificColumns(actvDs, actvTbl, Arrays.asList(columnsList));
 		else
 			dataService.getDataTable(actvDs, actvTbl);
-		response.setPayload(dataMap);
-		response.setActnCode(IDALiteral.UIA_GS);
 		return response;
 	}
 
