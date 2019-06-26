@@ -10,7 +10,7 @@
                  [aysylu/loom]
                  [org.clojure/data.priority-map "0.0.10"]
                  [org.clojure/math.combinatorics "0.1.5"]
-                 [clucie "0.4.2"]
+                 [cnuernber/libpython-clj "0.8"]
                  [librarian/helpers]
                  [librarian/model]]
 

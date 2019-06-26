@@ -5,9 +5,10 @@ WORKDIR /app
 COPY pom.xml pom.xml
 COPY ida-ws/pom.xml ida-ws/pom.xml
 COPY librarian/pom.xml librarian/pom.xml
-COPY librarian/helpers/pom.xml librarian/helpers/pom.xml
-COPY librarian/model/pom.xml librarian/model/pom.xml
-COPY librarian/scraper/pom.xml librarian/scraper/pom.xml
+COPY librarian/modules/helpers/pom.xml librarian/helpers/pom.xml
+COPY librarian/modules/model/pom.xml librarian/model/pom.xml
+COPY librarian/modules/scraper/pom.xml librarian/scraper/pom.xml
+COPY librarian/modules/generator/pom.xml librarian/generator/pom.xml
 
 WORKDIR /app/librarian
 RUN mvn install

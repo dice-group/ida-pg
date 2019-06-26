@@ -38,7 +38,7 @@ public class DataDumpProvider {
 	@Autowired
 	public FileUtil demoMain;
 	public static final String DATADUMP_PATH = "./libs/scikit-learn-cluster";
-	
+
 	/**
 	 * Method to generate a map of clustering algorithms in the scrape database
 	 * @return map of clustering algorithms
@@ -52,17 +52,17 @@ public class DataDumpProvider {
 	public Map<String, ClusterAlgoDesc> getScktClstrDtDmp() {
 		File scrapeFile = new File(demoMain.fetchSysFilePath(DATADUMP_PATH));
 		Scrape scrape = Scrape.load(scrapeFile);
-				
+
 		Map<String, ClusterAlgoDesc> res = new HashMap<>();
 
 		res.put("KMeans", queryAlgoDesc(scrape,
 				PersistentVector.create("sklearn.cluster", "KMeans")));
 		res.put("AffinityPropagation", queryAlgoDesc(scrape,
 				PersistentVector.create("sklearn.cluster", "AffinityPropagation")));
-		
+
 		return res;
 	}
-	
+
 	/**
 	 * Queries a scrape for a given fully qualified class name and its properties.
 	 * @param scrape - The scrape that should be queried.
@@ -71,28 +71,36 @@ public class DataDumpProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	private ClusterAlgoDesc queryAlgoDesc(Scrape scrape, PersistentVector fqn) {
-		String q = ":find ?class ?name ?summary (distinct ?desc) (distinct ?param) "
+		String q = ":find ?class ?name (distinct ?d) (distinct ?param) "
 				+ ":in $ ?id :where "
 				+ "[?class :class/id ?id] [?class :class/name ?name] "
-				+ "[?class :description-summary ?summary] [?class :description ?desc] "
+				+ "[?class :class/datatype ?st] [?st :type :semantic-type] "
+				+ "[?st :semantic-type/key \"description\"] "
+				+ "[?st :semantic-type/value ?desc] [?st :semantic-type/position ?dp] "
+				+ "[(vector ?dp ?desc) ?d] "
 				+ "[?class :class/constructor ?ctr] [?ctr :constructor/parameter ?param]";
-		
+
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(fqn));
-		
+
 		List<Object> data = res.get(0);
 		Integer id = (Integer) data.get(0);
 		String name = (String) data.get(1);
-		String summary = (String) data.get(2);
-		Collection<String> descs = (Collection<String>) data.get(3);
-		Collection<Long> paramIds = (Collection<Long>) data.get(4);
+		Collection<PersistentVector> descs = (Collection<PersistentVector>) data.get(2);
+		Collection<Long> paramIds = (Collection<Long>) data.get(3);
+		List<String> sortedDescs = descs.stream()
+				.sorted((a, b) -> (Integer) a.get(0) - (Integer) b.get(0))
+				.map(d -> (String) d.get(1))
+				.collect(Collectors.toList());
 		List<ClusterParam> params = paramIds.stream()
 				.map(pid -> queryClusterParam(scrape, pid))
 				.sorted((a, b) -> a.getPosition() - b.getPosition())
 				.collect(Collectors.toList());
-		
-		return new ClusterAlgoDesc(id.intValue(), name, summary, String.join("\n", descs), params);
+
+		return new ClusterAlgoDesc(id.intValue(), name,
+		 		sortedDescs.get(0),
+				String.join("\n", sortedDescs), params);
 	}
-	
+
 	private ClusterParam queryClusterParam(Scrape scrape, Long pid) {
 		String q = ":find ?name ?optional ?tname ?position "
 				+ ":in $ ?param :where "
@@ -101,16 +109,16 @@ public class DataDumpProvider {
 				+ "[(get-else $ ?param :parameter/position -1) ?position]"
 				+ "[(get-else $ ?param :parameter/datatype -1) ?type] "
 				+ "[(get-else $ ?type :basetype/name \"\") ?tname]";
-		
+
 		@SuppressWarnings("unchecked")
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(pid));
-		
+
 		List<Object> data = res.get(0);
 		String name = (String) data.get(0);
 		Boolean optional = (Boolean) data.get(1);
 		String type = (String) data.get(2);
 		Long position = (Long) data.get(3);
-		
+
 		return new ClusterParam(name, Arrays.asList(type), optional.booleanValue(), position.intValue());
 	}
 

@@ -104,9 +104,9 @@
       <version>0.1.5</version>
     </dependency>
     <dependency>
-      <groupId>clucie</groupId>
-      <artifactId>clucie</artifactId>
-      <version>0.4.2</version>
+      <groupId>cnuernber</groupId>
+      <artifactId>libpython-clj</artifactId>
+      <version>0.8</version>
     </dependency>
     <dependency>
       <groupId>librarian</groupId>
