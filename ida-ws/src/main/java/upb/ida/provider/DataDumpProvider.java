@@ -88,7 +88,7 @@ public class DataDumpProvider {
 		Collection<PersistentVector> descs = (Collection<PersistentVector>) data.get(2);
 		Collection<Long> paramIds = (Collection<Long>) data.get(3);
 		List<String> sortedDescs = descs.stream()
-				.sorted((a, b) -> (Integer) a.get(0) - (Integer) b.get(0))
+				.sorted((a, b) -> (int)((Long) a.get(0) - (Long) b.get(0)))
 				.map(d -> (String) d.get(1))
 				.collect(Collectors.toList());
 		List<ClusterParam> params = paramIds.stream()
