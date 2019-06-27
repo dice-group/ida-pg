@@ -136,10 +136,11 @@
         (zipmap $ $)))
 
 (defn paradigm->ecosystem
-  [{:keys [concepts builtins generate]}]
+  [{:keys [concepts builtins generate execute]}]
   {:concepts concepts
    :builtins builtins
    :generate generate
+   :execute execute
    :concept-aliases (map/map-v :ident concepts)
    :attribute-aliases (into common-attribute-aliases
                             (for [[c {:keys [attributes]}] concepts
@@ -221,9 +222,10 @@
                               (s/conformer (fn [{:keys [paradigm extends]
                                                  :or {paradigm {}}}]
                                              (merge-paradigms paradigm extends)))))
-(s/def ::paradigm (s/and (hs/keys* :opt-un [::concepts ::builtins ::generate])))
+(s/def ::paradigm (s/and (hs/keys* :opt-un [::concepts ::builtins ::generate ::execute])))
 (s/def ::builtins coll?)
-(s/def ::generate fn?)
+(s/def ::generate (some-fn fn? var?))
+(s/def ::execute (some-fn fn? var?))
 
 (s/def ::ecosystem-desc (s/and ::paradigm-desc
                                (s/conformer paradigm->ecosystem)))

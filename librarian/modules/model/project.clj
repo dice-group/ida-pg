@@ -10,6 +10,7 @@
                  [clj-commons/fs]
                  [aysylu/loom]
                  [io.forward/semver "0.1.0"]
+                 [cnuernber/libpython-clj "0.9"]
                  [librarian/helpers]]
 
   :modules {:parent "../.."})

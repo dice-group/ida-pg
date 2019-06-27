@@ -84,17 +84,18 @@
 
 (defn generate
   [metadata db]
-  (let [g (cfg/db->cfg db)
+  (let [{:keys [fn-name] :or {fn-name "f"}} metadata
+        g (cfg/db->cfg db)
         order (alg/topsort g)
         lines (map #(line db g %) order)
         imports (into #{} (keep :import) lines)
-        inputs (into [] (map :input)  (sort-by :position (filter :input lines)))
-        outputs (into [] (map :output)  (sort-by :position (filter :output lines)))
+        inputs (into [] (map :input) (sort-by :position (filter :input lines)))
+        outputs (into [] (map :output) (sort-by :position (filter :output lines)))
         lines (into [] (comp (keep :line)
                              (map #(str "  " %)))
                     lines)]
     (str (str/join (map #(str "import " % "\n") imports))
-         "\ndef solve("
+         "\ndef " fn-name "("
          (str/join ", " inputs)
          "):\n"
          (str/join "\n" lines)

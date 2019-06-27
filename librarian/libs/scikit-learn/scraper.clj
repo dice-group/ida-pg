@@ -99,7 +99,7 @@
            :pattern :io-container-info}
           {:triggered-by :basetype
            :attribute :basetype/name
-           :transform #"^[A-Za-z]+"}
+           :transform #"^[A-Za-z]+(?!.*ndarray)"}
           {:triggered-by :io-container
            :concept :constant
            :ref-from-trigger :io-container/datatype

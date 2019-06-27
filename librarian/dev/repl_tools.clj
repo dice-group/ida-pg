@@ -147,6 +147,15 @@
   (let [{:keys [ecosystem meta]} (:scrape (meta state))]
     ((:generate ecosystem) meta (:db state))))
 
+(defn solver
+  [state]
+  (let [{:keys [ecosystem meta]} (:scrape (meta state))]
+    ((:execute ecosystem) meta (:db state))))
+
 (defn last-code
   []
   (code (last-state)))
+
+(defn last-solver
+  []
+  (solver (last-state)))
