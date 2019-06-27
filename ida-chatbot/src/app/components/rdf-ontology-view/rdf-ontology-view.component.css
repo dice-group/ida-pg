@@ -26,3 +26,9 @@
     width: 33%;
     padding-left: 3px;
   }
+
+  .nodeInfoDiv {
+    padding-left: 35px;
+    font-size: 20px;
+    width:275px;
+  }

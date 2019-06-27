@@ -946,7 +946,7 @@
         "@language": "en",
         "@value": "membershipType"
       },
-      "rdfs:range": {
+      "rdfs:range": { 
         "@id": "xsd:string"
       },
       "rdfs:subPropertyOf": {

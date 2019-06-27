@@ -5,6 +5,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
   var enLabelArray = [];
   var deLabelArray = [];
   var expandedNodesArray = [];
+  var nodeContents = [];
 
   var width = 1060,height = 900,resourceRadius = customizeGraphArray.resourceRadius,literalRadius = customizeGraphArray.literalRadius;
 
@@ -69,12 +70,26 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             {
               var tempLabel = {"id":elem["@id"],"language":"de","value":eachIds["@value"]}
               deLabelArray.push(tempLabel);
+
+              var tepmNodeContent = {label:eachIds["@value"], contents:elem};
+              nodeContents.push(tepmNodeContent);
             }
             if(eachIds["@language"] == "en")
             {
               var tempLabel = {"id":elem["@id"],"language":"en","value":eachIds["@value"]}
               enLabelArray.push(tempLabel);
+
+              var tepmNodeContent = {label:eachIds["@value"], contents:elem};
+              nodeContents.push(tepmNodeContent);
             }
+           
+            var tempLabelArray = elem["@id"].split('/');
+            var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+            var tempLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+
+            var tepmNodeContent = {label:tempLabel, contents:elem};
+            nodeContents.push(tepmNodeContent);
+            
 
           });
         }
@@ -84,15 +99,37 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
           {
             var tempLabel = {"id":elem["@id"],"language":"de","value":elem["rdfs:label"]["@value"]}
             deLabelArray.push(tempLabel);
+
+            var tepmNodeContent = {label:elem["rdfs:label"]["@value"], contents:elem};
+            nodeContents.push(tepmNodeContent);
           }
           if(elem["rdfs:label"]["@language"] == "en")
           {
             var tempLabel = {"id":elem["@id"],"language":"en","value":elem["rdfs:label"]["@value"]}
             enLabelArray.push(tempLabel);
+
+            var tepmNodeContent = {label:elem["rdfs:label"]["@value"], contents:elem};
+            nodeContents.push(tepmNodeContent);
           }
+          
+          var tempLabelArray = elem["@id"].split('/');
+          var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+          var tempLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+
+          var tepmNodeContent = {label:tempLabel, contents:elem};
+          nodeContents.push(tepmNodeContent);
          }
       }
-        
+      else
+      {
+        var tempLabelArray = elem["@id"].split('/');
+        var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+        var tempLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+
+        var tepmNodeContent = {label:tempLabel, contents:elem};
+        nodeContents.push(tepmNodeContent);
+      }
+      
     });
     //END :: get english and deutch labels values into arrays
 
@@ -135,7 +172,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                   linksArray.push(tripleValue);
                   
                   //createNewNode(tempSub,'---subClassOf---',tempObj);
-                  createNewNode(tempSub,pred,tempObj,false,'',element);
+                  createNewNode(tempSub,pred,tempObj,false,'');
                 });
               }
               else
@@ -152,7 +189,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 linksArray.push(tripleValue);
 
                 //createNewNode(tempSub,'---subClassOf---',tempObj);
-                createNewNode(tempSub,pred,tempObj,false,'',element);
+                createNewNode(tempSub,pred,tempObj,false,'');
               }
             }
         }
@@ -245,7 +282,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                   {
                     var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
                     linksArray.push(tripleValue);
-                    createNewNode(el,tempPred,tempObj,isLitteral,literalDataType,element);
+                    createNewNode(el,tempPred,tempObj,isLitteral,literalDataType);
                   }
                 }
               });
@@ -258,13 +295,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 {
                   var tripleValue = {source:tempSub, 	predicate:' ', 	target:tempPred,value: 1};
                   linksArray.push(tripleValue);
-                  createNewNode(tempSub,'',tempPred,isLitteral,literalDataType,element);
+                  createNewNode(tempSub,'',tempPred,isLitteral,literalDataType);
                 }
                 else
                 {
                   var tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
                   linksArray.push(tripleValue);
-                  createNewNode(tempSub,tempPred,tempObj,isLitteral,literalDataType,element);
+                  createNewNode(tempSub,tempPred,tempObj,isLitteral,literalDataType);
                 }
               }
             }
@@ -282,9 +319,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
           
         
 
-    var link = g.append("g")
-          .attr("class", "links")
-          .selectAll("line")
+    var link =//g.attr("class", "links")
+          g.selectAll("line")
           .data(linksArray)
           .enter().append("line")
           .attr("class", "link")
@@ -302,6 +338,15 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             return  ("0, 0");})
           
           ;
+          /*
+          link.append("title")
+          .text(function(d) { var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
+         
+          return returnValue;
+            
+          });*/
+;
+
 
           // ==================== Add Link Names =====================
     var linkTexts = g.selectAll(".link-text")
@@ -323,12 +368,12 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 .attr('x', 12)
                 .attr('y', 3)
     ;    
-    
+    /*
     link.append("title")
               .text(function(d) { var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
                 return returnValue;
               });
-    ; 
+    ; */
 
     linkTexts.append("title")
               .text(function(d) { 
@@ -399,42 +444,240 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             return returnValue; })
     ;
     
-    node.on("dblclick",function(d){   
-      var idVal =  "#"+d.nodeId;
+    node.on("dblclick",function(d)
+    {   
+      var nodeIdVal =  d.id;
+      var tempNodeContains = [];
+      nodeContents.forEach(function(val){
+        if(val.label == nodeIdVal)
+        {
+          tempNodeContains = val.contents
+        }
+      });
 
       var tempNode = d3.select("#"+idsArray.nodeId)
       tempNode.selectAll("*").remove(); 
-
       tempNode.append("text")
-             .text(d.id) ; 
+             .text(" " + nodeIdVal+"\n")
+              .style("font-style","italic")
+              .style("font-size", "80%");
 
-      
-      var nodeLabel = d3.select("#"+idsArray.nodeLabelId)
-      nodeLabel.selectAll("*").remove(); 
-
-      console.log('d.nodeContains => '+d.nodeContains);
-      console.log('d.nodeContains["rdfs:label"] => '+d.nodeContains["rdfs:label"]);
-      
-      console.log('d.nodeContains["rdfs:label"]["@value"]  => '+d.nodeContains["rdfs:label"]["@value"]);
-      if(d.nodeContains["rdfs:label"] != undefined && d.nodeContains["rdfs:label"]["@value"] != undefined )
+    
+      //node label on double click
+      if(tempNodeContains != undefined)
       {
-        nodeLabel.append("text")
-            .text(d.nodeContains["rdfs:label"]["@value"]) ; 
+        var nodeLabel = d3.select("#"+idsArray.nodeLabelId)
+        nodeLabel.selectAll("*").remove();
+        if(tempNodeContains["rdfs:label"] != undefined)
+        { 
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:label"]) === '[object Array]')
+          {
+            tempNodeContains["rdfs:label"].forEach(function(eachIds)
+            {
+              if(eachIds["@language"] == "de" && displayDeustch)
+              {
+                
+                nodeLabel.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              }
+              else if (eachIds["@language"] == "en" && !displayDeustch)
+              {
+                nodeLabel.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              }
+  
+            });
+          }
+          else
+          {
+            nodeLabel.append("text")
+              .text(" " + tempNodeContains["rdfs:label"]["@value"] +"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%");
+          }
+        }
+  
+        //node id on double click
+        var nodeID = d3.select("#"+idsArray.nodeIdsId)
+        nodeID.selectAll("*").remove(); 
+        if(tempNodeContains["@id"] != undefined )
+        {
+          nodeID.append("text")
+              .text(" " + tempNodeContains["@id"]+"\n") 
+                .style("font-style","italic")
+                .style("font-size", "80%");
+        }
+        //node type on double click
+        var nodeType = d3.select("#"+idsArray.nodeTypeId)
+        nodeType.selectAll("*").remove(); 
+        if(tempNodeContains["@type"] != undefined)
+        {
+          nodeType.append("text")
+              .text(" " + tempNodeContains["@type"]+"\n\n")
+                .style("font-style","italic")
+                .style("font-size", "80%"); 
+        }
+        
+        //node description on double click
+        var nodeDescription = d3.select("#"+idsArray.nodeDescripId)
+        nodeDescription.selectAll("*").remove();
+        if(tempNodeContains["dc:description"] != undefined)
+        { 
+          if(Object.prototype.toString.call(tempNodeContains["dc:description"]) === '[object Array]')
+          {
+            tempNodeContains["dc:description"].forEach(function(eachIds)
+            {
+              if(eachIds["@language"] == "de" && displayDeustch)
+              {
+                
+                nodeDescription.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              }
+              else if (eachIds["@language"] == "en" && !displayDeustch)
+              {
+                nodeDescription.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              }
+
+            });
+          }
+          else
+          {
+            nodeDescription.append("text")
+              .text(" " + tempNodeContains["dc:description"]["@value"] +"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%");
+          }
+        }
+        
+        var nodeSubClass = d3.select("#"+idsArray.nodeSubClassId)
+        nodeSubClass.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:subClassOf"] != undefined)
+        {
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:subClassOf"]) === '[object Array]')
+          {
+            var tempIndexSubClassof =1;
+            tempNodeContains["rdfs:subClassOf"].forEach(function(eachIds)
+            {
+              var subClassLabel = getLabel(displayDeustch,eachIds["@id"]);
+              if(subClassLabel == "noLabel")
+              {
+                var tempLabelArray = eachIds["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                subClassLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+
+              nodeSubClass.append("text")
+                  .text(" " + tempIndexSubClassof +". "+ subClassLabel +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              
+              tempIndexSubClassof = tempIndexSubClassof+1;
+
+            });
+          }
+          else
+          {
+            var subClassLabel = getLabel(displayDeustch,tempNodeContains["rdfs:subClassOf"]["@id"]);
+            if(subClassLabel == "noLabel")
+            {
+              var tempLabelArray = tempNodeContains["rdfs:subClassOf"]["@id"].split('/');
+              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+              subClassLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+            }
+
+            nodeSubClass.append("text")
+              .text( " " + subClassLabel+"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%");
+          }
+        }
+
+        var nodeDomain = d3.select("#"+idsArray.nodeDomainId)
+        nodeDomain.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:domain"] != undefined && tempNodeContains["rdfs:domain"]["@id"] != undefined )
+        {
+          
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:domain"]) === '[object Array]')
+          {
+            var tempIndexSubClassof =1;
+            tempNodeContains["rdfs:domain"].forEach(function(eachIds)
+            {
+              var domainLabel = getLabel(displayDeustch,eachIds["@id"]);
+              if(domainLabel == "noLabel")
+              {
+                var tempLabelArray = eachIds["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                domainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+
+              nodeDomain.append("text")
+                  .text(" " +  tempIndexSubClassof +". "+ domainLabel +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              
+              tempIndexSubClassof = tempIndexSubClassof+1;
+
+            });
+          }
+          else
+          {
+            var domainLabel = getLabel(displayDeustch,tempNodeContains["rdfs:domain"]["@id"]);
+            if(domainLabel == "noLabel")
+            {
+              var tempLabelArray = tempNodeContains["rdfs:domain"]["@id"].split('/');
+              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+              domainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+            }
+
+            nodeDomain.append("text")
+              .text(" " + domainLabel+"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%");
+          }  
+        }
+
+
+
+
+
+
       }
-         
-      var nodeDescription = d3.select("#"+idsArray.nodeDescripId)
-      nodeDescription.selectAll("*").remove(); 
-      if(d.nodeContains["dc:description"] != undefined && d.nodeContains["dc:description"]["@value"] != undefined )
+      
+      /*
+    
+
+      var nodeDomain = d3.select("#"+idsArray.nodeDomainId)
+      nodeDomain.selectAll("*").remove(); 
+      if(d.nodeContains["rdfs:domain"] != undefined && d.nodeContains["rdfs:domain"]["@id"] != undefined )
       {
-        nodeDescription.append("text")
-            .text(d.nodeContains["dc:description"]["@value"]) ; 
-      }/*
-      var node = d3.select("#"+idsArray.nodeDescripId)
-      if(d.nodeContains["rdfs:subClassOf"] != undefined && d.nodeContains["rdfs:subClassOf"]["@id"] != undefined )
+        nodeDomain.append("text")
+            .text(d.nodeContains["rdfs:domain"]["@id"]+"\n") ; 
+      }
+      var nodeRange = d3.select("#"+idsArray.nodeRangeId)
+      nodeRange.selectAll("*").remove(); 
+      if(d.nodeContains["rdfs:range"] != undefined && d.nodeContains["rdfs:range"]["@id"] != undefined )
       {
-        nodeDescription.append("text")
-            .text(d.nodeContains["dc:description"]["@value"]) ; 
-      }*/
+        nodeRange.append("text")
+            .text(d.nodeContains["rdfs:range"]["@id"]+"\n") ; 
+      }
+
+      var nodeComment = d3.select("#"+idsArray.nodeCommentId)
+      nodeComment.selectAll("*").remove(); 
+      if(d.nodeContains["rdfs:comment"] != undefined && d.nodeContains["rdfs:comment"] != undefined )
+      {
+        nodeComment.append("text")
+            .text(d.nodeContains["rdfs:comment"]+"\n") ; 
+      }
+*/
     });
 
     simulation
@@ -521,7 +764,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       return returnVaule;
     }
 
-    function createNewNode(tempSub,tempPred,tempObj,isLitteralVal,literalDataTypeVal,element)
+    function createNewNode(tempSub,tempPred,tempObj,isLitteralVal,literalDataTypeVal)
     {
       //START :: Node creation
       var subNodeAdded = false;  
@@ -545,13 +788,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       if(subNodeAdded === false)
       {
         circleIdIndex =circleIdIndex+1; 
-        var nodeValue = {nodeContains:element,id:tempSub ,predicate:tempPred,nodeId:"circleId"+circleIdIndex,isLitteral:false,literalDataType:literalDataTypeVal, group: 1};
+        var nodeValue = {id:tempSub ,predicate:tempPred,nodeId:"circleId"+circleIdIndex,isLitteral:false,literalDataType:literalDataTypeVal, group: 1};
         nodesArray.push(nodeValue);
       }
       if(objNodeAdded === false)
       {
         circleIdIndex =circleIdIndex+1;
-        var nodeValue = {nodeContains:element,id:tempObj ,predicate:tempPred,nodeId:"circleId"+circleIdIndex,isLitteral:isLitteralVal,literalDataType:literalDataTypeVal, group: 1};
+        var nodeValue = {id:tempObj ,predicate:tempPred,nodeId:"circleId"+circleIdIndex,isLitteral:isLitteralVal,literalDataType:literalDataTypeVal, group: 1};
         nodesArray.push(nodeValue);
       }
       //END :: Node creation

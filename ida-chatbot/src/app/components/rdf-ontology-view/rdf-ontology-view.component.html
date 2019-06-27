@@ -49,43 +49,52 @@
           </div>
           
           <div  id="nodeInfoTagesId" 
-              style="display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
+              style=" text-align: justify;overflow: auto;display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
                 padding-top: 10px;">
-            <label class="inputLabelClass" [attr.id]="nodeId" > 
+            <label class="inputLabelClass"> 
                 Node: 
             </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeId"> </div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeLabelId" > 
+            <label class="inputLabelClass" > 
               Label:
             </label>
+            <div class="nodeInfoDiv"  [attr.id]="nodeLabelId" ></div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeIdsId">
+            <label class="inputLabelClass" >
                 Id:
             </label>
+            <div class="nodeInfoDiv"  [attr.id]="nodeIdsId"></div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeTypeId">
-                Type:
+            <label class="inputLabelClass" >
+                Type: 
             </label>
+            <div class="nodeInfoDiv"  [attr.id]="nodeTypeId"> </div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeDescripId">
+            <label class="inputLabelClass">
                 Description: 
             </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeDescripId"> </div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeSubClassId">
-                Sub class of :
+            <label class="inputLabelClass">
+                Sub class of:
             </label>
+            <div class="nodeInfoDiv"  [attr.id]="nodeSubClassId"> </div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeDomainId">
+            <label class="inputLabelClass">
                 Domain:
             </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeDomainId"> </div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeRangeId">
+            <label class="inputLabelClass" >
                 Range:
             </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeRangeId"> </div>
             <br/><br/>
-            <label class="inputLabelClass" [attr.id]="nodeCommentId">
+            <label class="inputLabelClass">
                 Comment:
-            </label>
+            </label> 
+            <div class="nodeInfoDiv" [attr.id]="nodeCommentId"> </div>
             <br/><br/>
           </div>
 
