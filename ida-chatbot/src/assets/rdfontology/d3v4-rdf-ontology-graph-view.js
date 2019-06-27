@@ -603,12 +603,12 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
 
         var nodeDomain = d3.select("#"+idsArray.nodeDomainId)
         nodeDomain.selectAll("*").remove(); 
-        if(tempNodeContains["rdfs:domain"] != undefined && tempNodeContains["rdfs:domain"]["@id"] != undefined )
+        if(tempNodeContains["rdfs:domain"] != undefined )
         {
           
           if(Object.prototype.toString.call(tempNodeContains["rdfs:domain"]) === '[object Array]')
           {
-            var tempIndexSubClassof =1;
+            var tempIndexdomain =1;
             tempNodeContains["rdfs:domain"].forEach(function(eachIds)
             {
               var domainLabel = getLabel(displayDeustch,eachIds["@id"]);
@@ -620,11 +620,11 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               }
 
               nodeDomain.append("text")
-                  .text(" " +  tempIndexSubClassof +". "+ domainLabel +"\n")
+                  .text(" " +  tempIndexdomain +". "+ domainLabel +"\n")
                     .style("font-style","italic")
                     .style("font-size", "80%");
               
-              tempIndexSubClassof = tempIndexSubClassof+1;
+              tempIndexdomain = tempIndexdomain+1;
 
             });
           }
@@ -646,38 +646,62 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
         }
 
 
+        var nodeRange = d3.select("#"+idsArray.nodeRangeId)
+        nodeRange.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:range"] != undefined )
+        {
+          
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:range"]) === '[object Array]')
+          {
+            var tempIndexRange =1;
+            tempNodeContains["rdfs:range"].forEach(function(eachIds)
+            {
+              var rangeLabel = getLabel(displayDeustch,eachIds["@id"]);
+              if(rangeLabel == "noLabel")
+              {
+                var tempLabelArray = eachIds["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                rangeLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
 
+              nodeRange.append("text")
+                  .text(" " +  tempIndexRange +". "+ rangeLabel +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%");
+              
+              tempIndexRange = tempIndexRange+1;
 
+            });
+          }
+          else
+          {
+            var rangeLabel = getLabel(displayDeustch,tempNodeContains["rdfs:range"]["@id"]);
+            if(rangeLabel == "noLabel")
+            {
+              var tempLabelArray = tempNodeContains["rdfs:range"]["@id"].split('/');
+              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+              rangeLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+            }
 
+            nodeRange.append("text")
+              .text(" " + rangeLabel+"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%");
+          }  
+        }
+        
+        var nodeComment = d3.select("#"+idsArray.nodeCommentId)
+        nodeComment.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:comment"] != undefined)
+        {
+          nodeComment.append("text")
+              .text(tempNodeContains["rdfs:comment"]+"\n") 
+                .style("font-style","italic")
+                .style("font-size", "80%");
+        }
 
       }
       
-      /*
-    
-
-      var nodeDomain = d3.select("#"+idsArray.nodeDomainId)
-      nodeDomain.selectAll("*").remove(); 
-      if(d.nodeContains["rdfs:domain"] != undefined && d.nodeContains["rdfs:domain"]["@id"] != undefined )
-      {
-        nodeDomain.append("text")
-            .text(d.nodeContains["rdfs:domain"]["@id"]+"\n") ; 
-      }
-      var nodeRange = d3.select("#"+idsArray.nodeRangeId)
-      nodeRange.selectAll("*").remove(); 
-      if(d.nodeContains["rdfs:range"] != undefined && d.nodeContains["rdfs:range"]["@id"] != undefined )
-      {
-        nodeRange.append("text")
-            .text(d.nodeContains["rdfs:range"]["@id"]+"\n") ; 
-      }
-
-      var nodeComment = d3.select("#"+idsArray.nodeCommentId)
-      nodeComment.selectAll("*").remove(); 
-      if(d.nodeContains["rdfs:comment"] != undefined && d.nodeContains["rdfs:comment"] != undefined )
-      {
-        nodeComment.append("text")
-            .text(d.nodeContains["rdfs:comment"]+"\n") ; 
-      }
-*/
     });
 
     simulation

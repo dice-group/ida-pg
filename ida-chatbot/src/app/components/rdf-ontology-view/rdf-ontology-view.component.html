@@ -49,53 +49,71 @@
           </div>
           
           <div  id="nodeInfoTagesId" 
-              style=" text-align: justify;overflow: auto;display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
+              style=" text-align: justify;overflow: auto;display: block;background-color:#AED6F1;border-radius: 8px;
                 padding-top: 10px;">
-            <label class="inputLabelClass"> 
-                Node: 
-            </label>
-            <div class="nodeInfoDiv" [attr.id]="nodeId"> </div>
-            <br/><br/>
-            <label class="inputLabelClass" > 
-              Label:
-            </label>
-            <div class="nodeInfoDiv"  [attr.id]="nodeLabelId" ></div>
-            <br/><br/>
-            <label class="inputLabelClass" >
-                Id:
-            </label>
-            <div class="nodeInfoDiv"  [attr.id]="nodeIdsId"></div>
-            <br/><br/>
-            <label class="inputLabelClass" >
-                Type: 
-            </label>
-            <div class="nodeInfoDiv"  [attr.id]="nodeTypeId"> </div>
-            <br/><br/>
-            <label class="inputLabelClass">
-                Description: 
-            </label>
-            <div class="nodeInfoDiv" [attr.id]="nodeDescripId"> </div>
-            <br/><br/>
-            <label class="inputLabelClass">
-                Sub class of:
-            </label>
-            <div class="nodeInfoDiv"  [attr.id]="nodeSubClassId"> </div>
-            <br/><br/>
-            <label class="inputLabelClass">
-                Domain:
-            </label>
-            <div class="nodeInfoDiv" [attr.id]="nodeDomainId"> </div>
-            <br/><br/>
-            <label class="inputLabelClass" >
-                Range:
-            </label>
-            <div class="nodeInfoDiv" [attr.id]="nodeRangeId"> </div>
-            <br/><br/>
-            <label class="inputLabelClass">
-                Comment:
-            </label> 
-            <div class="nodeInfoDiv" [attr.id]="nodeCommentId"> </div>
-            <br/><br/>
+            <div class="nodeInfoDivClass"> 
+              <label class="inputLabelClass"> 
+                  Node: 
+              </label>
+              <div class="nodeInfoDiv" [attr.id]="nodeId"> </div>
+              <br/>
+            </div>
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass" > 
+                Label:
+              </label>
+              <div class="nodeInfoDiv"  [attr.id]="nodeLabelId" ></div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass" >
+                  Id:
+              </label>
+              <div class="nodeInfoDiv"  [attr.id]="nodeIdsId"></div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass" >
+                  Type: 
+              </label>
+              <div class="nodeInfoDiv"  [attr.id]="nodeTypeId"> </div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass">
+                  Description: 
+              </label>
+              <div class="nodeInfoDiv" [attr.id]="nodeDescripId"> </div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass">
+                  Sub class of:
+              </label>
+              <div class="nodeInfoDiv"  [attr.id]="nodeSubClassId"> </div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass">
+                  Domain:
+              </label>
+              <div class="nodeInfoDiv" [attr.id]="nodeDomainId"> </div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass" >
+                  Range:
+              </label>
+              <div class="nodeInfoDiv" [attr.id]="nodeRangeId"> </div>
+              <br/>
+            </div> 
+            <div class="nodeInfoDivClass">
+              <label class="inputLabelClass">
+                  Comment:
+              </label> 
+              <div class="nodeInfoDiv" [attr.id]="nodeCommentId"> </div>
+              <br/>
+            </div> 
           </div>
 
           <div  id="graphConfigId" 
@@ -144,7 +162,7 @@
             </label><br/>
             <label class="inputLabelClass">
               On click node color: <input type="text" class="inputTextClass" [(ngModel)]="onClickNodeColor" placeholder=" red" >
-            </label><br/> <br/><br/> 
+            </label><br/> <br/><br/> <br/> <br/> 
  
             <button #applyConfigBtn (click)="applyConfigClicked($event)" 
               style="width: 33%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:white;">
