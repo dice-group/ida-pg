@@ -31,7 +31,7 @@ public class StoryRestController {
 	private ResponseBean response;
 	@Autowired 
 	private DataService dataService;
-	private static String dbhost =  System.getenv("FUSEKI_URL"); //"http://localhost:3030";
+	private static String dbhost = System.getenv("FUSEKI_URL"); //"http://localhost:3030";
 	private static String datasetName = "/storyboard";
 	private static String dbUrl = dbhost + datasetName;
 	/**
@@ -39,7 +39,7 @@ public class StoryRestController {
 	 * @return - instance of {@link ResponseBean}
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/id")
+	@RequestMapping
 	public ResponseBean getStoryData(@RequestParam("id") String storyId) throws Exception {
 
 		String id = storyId ;
