@@ -14,6 +14,10 @@
   (-> instance meta (:tx [instance]) vec))
 
 (defn instances->tx
+  "Transforms a collection of instances (created via instanciate* or instanciate) into a datascript transaction.
+   The transaction will include all given instances and their nested subinstances.
+   The resulting graph of concepts will be automatically processed and spec validated for consistency.
+   Spec validation can be disabled if a tranaction for an incomplete/inconsistent set of concepts is needed."
   [root-instances & {:keys [^boolean check-specs]
                      :or {check-specs true}}]
   (let [raw-tx (mapcat instance->tx root-instances)
@@ -52,6 +56,8 @@
                     postproc-tx))))
 
 (defn instanciate*
+  "Takes a concept and a map of namespaced or unnamespaced attributes and returns an instance of that concept.
+   Instances can be nested and referenced by providing an instance as a value to a reference attribute."
   ([concept vals]
    (instanciate* identity concept vals))
   ([ref-map-handler concept vals]
@@ -96,8 +102,33 @@
      (with-meta instance {:tx (conj tx (with-meta instance {:concept concept}))}))))
 
 (defn instanciate
+  "Syntactic sugar for instanciate*."
   [concept & {:as vals}]
   (instanciate* concept vals))
+
+(defn instanciate-with-ecosystem
+  "Instanciates a concept description using a given ecosystem.
+   All concept names and attributes can be provided via their alias.
+   All concept attributes have to be either fully-qualified or namespaced with a concept alias.
+   The concept will be resolved from the ecosystem by providing its alias keyword at :type.
+   Concepts can be nested simply by nesting maps of concept-descs.
+   The returned instance can be used like the ones returned by instanciate."
+  ([ecosystem concept-desc]
+   (instanciate-with-ecosystem ecosystem identity concept-desc))
+  ([{:keys [attribute-aliases concepts] :as ecosystem} transformer concept-desc]
+   (let [concept (map/get-or-fail concepts (:type concept-desc))
+         concept-desc (dissoc concept-desc :type)
+         concept-desc (map/map-k (fn [k]
+                                   (let [kname (name k)]
+                                     (if (= (first kname) \_)
+                                       (keyword (namespace (map/get-or-fail attribute-aliases
+                                                                            (keyword (namespace k)
+                                                                                     (subs kname 1))))
+                                                kname)
+                                       k)))
+                                 concept-desc)]
+     (instanciate* #(instanciate-with-ecosystem ecosystem transformer %)
+                   concept (transformer concept concept-desc)))))
 
 (defn- merge-concepts
   [concept extends]

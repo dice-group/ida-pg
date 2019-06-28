@@ -58,33 +58,22 @@
                 hooks)))
 
 (defn- instanciate-snippet-part
-  [snippet-part concepts attribute-aliases snippet-instance]
-  (let [concept (map/get-or-fail concepts (:type snippet-part))
-        concept-ident (:ident concept)
-        snippet-part (dissoc snippet-part :type)
-        snippet-part (map/map-k (fn [k]
-                                  (let [kname (name k)]
-                                    (if (= (first kname) \_)
-                                      (keyword (namespace (map/get-or-fail attribute-aliases
-                                                                           (keyword (namespace k)
-                                                                                    (subs kname 1))))
-                                               kname)
-                                      k)))
-                                snippet-part)]
-    (msyntax/instanciate* #(instanciate-snippet-part % concepts attribute-aliases snippet-instance)
-                          concept
-                          (if (or (:placeholder snippet-part)
-                                  (isa? concept-ident (:ident call/call))
-                                  (isa? concept-ident (:ident call-parameter/call-parameter))
-                                  (isa? concept-ident (:ident call-result/call-result))
-                                  (isa? concept-ident (:ident semantic-type/semantic-type)))
-                            (assoc snippet-part ::snippet/_contains snippet-instance)
-                            snippet-part))))
+  [snippet-part ecosystem snippet-instance]
+  (msyntax/instanciate-with-ecosystem ecosystem
+                                      (fn [{:keys [ident]} snippet-part]
+                                        (if (or (:placeholder snippet-part)
+                                                (isa? ident (:ident call/call))
+                                                (isa? ident (:ident call-parameter/call-parameter))
+                                                (isa? ident (:ident call-result/call-result))
+                                                (isa? ident (:ident semantic-type/semantic-type)))
+                                          (assoc snippet-part ::snippet/_contains snippet-instance)
+                                          snippet-part))
+                                      snippet-part))
 
 (defn snippet->tx
-  [snippet {:keys [concepts attribute-aliases]}]
+  [snippet ecosystem]
   (let [snippet-instance (msyntax/instanciate snippet/snippet)]
-    (msyntax/instances->tx (map #(instanciate-snippet-part % concepts attribute-aliases snippet-instance)
+    (msyntax/instances->tx (map #(instanciate-snippet-part % ecosystem snippet-instance)
                                 snippet))))
 
 (defn cache-id
