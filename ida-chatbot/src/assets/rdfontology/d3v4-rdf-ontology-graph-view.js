@@ -9,7 +9,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
 
   var width = 1060,height = 900,resourceRadius = customizeGraphArray.resourceRadius,literalRadius = customizeGraphArray.literalRadius;
 
-  
+  var g,link,linkTexts,node,circles,lables;
   var svgClear = d3.select("#"+svgId);
   svgClear.selectAll("*").remove(); 
 
@@ -314,404 +314,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
           return console.warn('Error in createV3RDFOntologyGraphView() method :'+error);
       }
       
-      var g = svg.append("g")
-          .attr("class", "everything");
-          
-        
-
-    var link =//g.attr("class", "links")
-          g.selectAll("line")
-          .data(linksArray)
-          .enter().append("line")
-          .attr("class", "link")
-          .attr("stroke-width",1)
-          .style("fill","#999")
-          //.attr("marker-end", "url(#end)")
-          .attr("marker-end",function (d) { 
-            var labelStr = d.predicate; 
-            if(labelStr.includes('subClassOf')){return  "url(#subclass)";}
-            return  "url(#normal)"})
-          .style("stroke-dasharray",function (d) { 
-            var labelStr = d.predicate; 
-            if(labelStr.includes('subClassOf')){return  ("3, 3");}
-            if(labelStr.includes('subPropertyOf')){return  ("5, 5");}
-            return  ("0, 0");})
-          
-          ;
-          /*
-          link.append("title")
-          .text(function(d) { var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
-         
-          return returnValue;
-            
-          });*/
-;
-
-
-          // ==================== Add Link Names =====================
-    var linkTexts = g.selectAll(".link-text")
-            .data(linksArray)
-            .enter()
-            .append("text")
-              .attr("class", "link-text")
-              .text( function (d) { 
-                var labelStr = d.predicate; 
-                if(labelStr.includes('subClassOf'))
-                  {return customizeGraphArray.subClassLabel;}
-                return d.predicate; }) 
-                .style("fill",function(d){var labelStr = d.predicate; 
-                  if(labelStr.includes('subClassOf'))
-                  {return customizeGraphArray.subClassLabelColor;}
-                  return customizeGraphArray.propertyTextColor;})
-                .style("font-size", "80%")
-                .style("font-style", "italic")
-                .attr('x', 12)
-                .attr('y', 3)
-    ;    
-    /*
-    link.append("title")
-              .text(function(d) { var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
-                return returnValue;
-              });
-    ; */
-
-    linkTexts.append("title")
-              .text(function(d) { 
-                var labelStr = d.predicate; 
-                if(labelStr.includes('subClassOf'))
-                {
-                    var returnValue = 'Source : '+d.source +'\nProperty : '+customizeGraphArray.subClassLabel+'\nObject : '+d.target;
-                }
-                else
-                {
-                  var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
-                }
-                
-                return returnValue;
-              });
-    ;        
-    // ==================== Add Link Names =====================
-
-    var node = g.append("g")
-          .attr("class", "nodes")
-        .selectAll("g")
-        .data(nodesArray)
-        .enter().append("g")
-    ;    
-    var circles = node.append("circle")
-          .attr("id",function(d){return d.nodeId ;})
-          .attr("r",function(d){var labelStr = d.id;
-            if(d.isLitteral)
-            {return literalRadius;}
-            return resourceRadius;})
-          .style("fill",function(d){var labelStr = d.id; 
-            if(d.isLitteral)
-                {return customizeGraphArray.literalNodeColor;} 
-            return customizeGraphArray.resourceNodeColor;})
-          .call(d3.drag()
-              .on("start", dragstarted)
-              .on("drag", dragged)
-             .on("end", dragended)
-    );
-
-    var lables = node.append("text")
-              .attr("class", "node-text")
-              .text(function (d) {return d.id; })
-              .style("font-size", function(d){var labelStr = d.id; 
-                if(d.isLitteral)
-                {return "80%";}
-                return "100%";})
-              .style("font-style", function(d){var labelStr = d.id; 
-                if(d.isLitteral)
-                {return "italic";}
-                return "bold";})
-              .style("fill",function(d){var labelStr = d.id; 
-                if(d.isLitteral)
-                    {return customizeGraphArray.literalNodeTextColor;}
-                return customizeGraphArray.resourceNodeTextColor;})
-              .attr('x', function(d){
-                if(d.isLitteral)
-                    {return 8;}
-                return 12;})
-              .attr('y', 3) 
-    ;
-
-    node.append("title")
-          .text(function(d) { 
-            var returnValue = 'Node : '+d.id;
-            if(d.isLitteral){returnValue = 'Node : '+d.id +'\nData type : '+d.literalDataType;}
-            else{returnValue = 'Node : '+d.id;}
-            return returnValue; })
-    ;
-    
-    node.on("dblclick",function(d)
-    {   
-      var nodeIdVal =  d.id;
-      var tempNodeContains = [];
-      nodeContents.forEach(function(val){
-        if(val.label == nodeIdVal)
-        {
-          tempNodeContains = val.contents
-        }
-      });
-
-      var tempNode = d3.select("#"+idsArray.nodeId)
-      tempNode.selectAll("*").remove(); 
-      tempNode.append("text")
-             .text(" " + nodeIdVal+"\n")
-              .style("font-style","italic")
-              .style("font-size", "80%");
 
     
-      //node label on double click
-      if(tempNodeContains != undefined)
-      {
-        var nodeLabel = d3.select("#"+idsArray.nodeLabelId)
-        nodeLabel.selectAll("*").remove();
-        if(tempNodeContains["rdfs:label"] != undefined)
-        { 
-          if(Object.prototype.toString.call(tempNodeContains["rdfs:label"]) === '[object Array]')
-          {
-            tempNodeContains["rdfs:label"].forEach(function(eachIds)
-            {
-              if(eachIds["@language"] == "de" && displayDeustch)
-              {
-                
-                nodeLabel.append("text")
-                  .text(" " + eachIds["@value"] +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              }
-              else if (eachIds["@language"] == "en" && !displayDeustch)
-              {
-                nodeLabel.append("text")
-                  .text(" " + eachIds["@value"] +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              }
-  
-            });
-          }
-          else
-          {
-            nodeLabel.append("text")
-              .text(" " + tempNodeContains["rdfs:label"]["@value"] +"\n")
-                .style("font-style","italic")
-                .style("font-size", "80%");
-          }
-        }
-  
-        //node id on double click
-        var nodeID = d3.select("#"+idsArray.nodeIdsId)
-        nodeID.selectAll("*").remove(); 
-        if(tempNodeContains["@id"] != undefined )
-        {
-          nodeID.append("text")
-              .text(" " + tempNodeContains["@id"]+"\n") 
-                .style("font-style","italic")
-                .style("font-size", "80%");
-        }
-        //node type on double click
-        var nodeType = d3.select("#"+idsArray.nodeTypeId)
-        nodeType.selectAll("*").remove(); 
-        if(tempNodeContains["@type"] != undefined)
-        {
-          nodeType.append("text")
-              .text(" " + tempNodeContains["@type"]+"\n\n")
-                .style("font-style","italic")
-                .style("font-size", "80%"); 
-        }
-        
-        //node description on double click
-        var nodeDescription = d3.select("#"+idsArray.nodeDescripId)
-        nodeDescription.selectAll("*").remove();
-        if(tempNodeContains["dc:description"] != undefined)
-        { 
-          if(Object.prototype.toString.call(tempNodeContains["dc:description"]) === '[object Array]')
-          {
-            tempNodeContains["dc:description"].forEach(function(eachIds)
-            {
-              if(eachIds["@language"] == "de" && displayDeustch)
-              {
-                
-                nodeDescription.append("text")
-                  .text(" " + eachIds["@value"] +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              }
-              else if (eachIds["@language"] == "en" && !displayDeustch)
-              {
-                nodeDescription.append("text")
-                  .text(" " + eachIds["@value"] +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              }
-
-            });
-          }
-          else
-          {
-            nodeDescription.append("text")
-              .text(" " + tempNodeContains["dc:description"]["@value"] +"\n")
-                .style("font-style","italic")
-                .style("font-size", "80%");
-          }
-        }
-        
-        var nodeSubClass = d3.select("#"+idsArray.nodeSubClassId)
-        nodeSubClass.selectAll("*").remove(); 
-        if(tempNodeContains["rdfs:subClassOf"] != undefined)
-        {
-          if(Object.prototype.toString.call(tempNodeContains["rdfs:subClassOf"]) === '[object Array]')
-          {
-            var tempIndexSubClassof =1;
-            tempNodeContains["rdfs:subClassOf"].forEach(function(eachIds)
-            {
-              var subClassLabel = getLabel(displayDeustch,eachIds["@id"]);
-              if(subClassLabel == "noLabel")
-              {
-                var tempLabelArray = eachIds["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-                subClassLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
-              }
-
-              nodeSubClass.append("text")
-                  .text(" " + tempIndexSubClassof +". "+ subClassLabel +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              
-              tempIndexSubClassof = tempIndexSubClassof+1;
-
-            });
-          }
-          else
-          {
-            var subClassLabel = getLabel(displayDeustch,tempNodeContains["rdfs:subClassOf"]["@id"]);
-            if(subClassLabel == "noLabel")
-            {
-              var tempLabelArray = tempNodeContains["rdfs:subClassOf"]["@id"].split('/');
-              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-              subClassLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
-            }
-
-            nodeSubClass.append("text")
-              .text( " " + subClassLabel+"\n")
-                .style("font-style","italic")
-                .style("font-size", "80%");
-          }
-        }
-
-        var nodeDomain = d3.select("#"+idsArray.nodeDomainId)
-        nodeDomain.selectAll("*").remove(); 
-        if(tempNodeContains["rdfs:domain"] != undefined )
-        {
-          
-          if(Object.prototype.toString.call(tempNodeContains["rdfs:domain"]) === '[object Array]')
-          {
-            var tempIndexdomain =1;
-            tempNodeContains["rdfs:domain"].forEach(function(eachIds)
-            {
-              var domainLabel = getLabel(displayDeustch,eachIds["@id"]);
-              if(domainLabel == "noLabel")
-              {
-                var tempLabelArray = eachIds["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-                domainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
-              }
-
-              nodeDomain.append("text")
-                  .text(" " +  tempIndexdomain +". "+ domainLabel +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              
-              tempIndexdomain = tempIndexdomain+1;
-
-            });
-          }
-          else
-          {
-            var domainLabel = getLabel(displayDeustch,tempNodeContains["rdfs:domain"]["@id"]);
-            if(domainLabel == "noLabel")
-            {
-              var tempLabelArray = tempNodeContains["rdfs:domain"]["@id"].split('/');
-              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-              domainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
-            }
-
-            nodeDomain.append("text")
-              .text(" " + domainLabel+"\n")
-                .style("font-style","italic")
-                .style("font-size", "80%");
-          }  
-        }
-
-
-        var nodeRange = d3.select("#"+idsArray.nodeRangeId)
-        nodeRange.selectAll("*").remove(); 
-        if(tempNodeContains["rdfs:range"] != undefined )
-        {
-          
-          if(Object.prototype.toString.call(tempNodeContains["rdfs:range"]) === '[object Array]')
-          {
-            var tempIndexRange =1;
-            tempNodeContains["rdfs:range"].forEach(function(eachIds)
-            {
-              var rangeLabel = getLabel(displayDeustch,eachIds["@id"]);
-              if(rangeLabel == "noLabel")
-              {
-                var tempLabelArray = eachIds["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-                rangeLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
-              }
-
-              nodeRange.append("text")
-                  .text(" " +  tempIndexRange +". "+ rangeLabel +"\n")
-                    .style("font-style","italic")
-                    .style("font-size", "80%");
-              
-              tempIndexRange = tempIndexRange+1;
-
-            });
-          }
-          else
-          {
-            var rangeLabel = getLabel(displayDeustch,tempNodeContains["rdfs:range"]["@id"]);
-            if(rangeLabel == "noLabel")
-            {
-              var tempLabelArray = tempNodeContains["rdfs:range"]["@id"].split('/');
-              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-              rangeLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
-            }
-
-            nodeRange.append("text")
-              .text(" " + rangeLabel+"\n")
-                .style("font-style","italic")
-                .style("font-size", "80%");
-          }  
-        }
-        
-        var nodeComment = d3.select("#"+idsArray.nodeCommentId)
-        nodeComment.selectAll("*").remove(); 
-        if(tempNodeContains["rdfs:comment"] != undefined)
-        {
-          nodeComment.append("text")
-              .text(tempNodeContains["rdfs:comment"]+"\n") 
-                .style("font-style","italic")
-                .style("font-size", "80%");
-        }
-
-      }
-      
-    });
-
-    simulation
-          .nodes(nodesArray)
-          .on("tick", ticked)
-    ;
-
-    simulation.force("link")
-          .links(linksArray)
-    ;
 
     function ticked()
     {
@@ -747,20 +351,9 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       }
     }
 
-    
+    update();
 
-    if(!disableZoom)
-    {
-      var zoom_handler = d3.zoom()
-        .on("zoom", zoom_actions);
-      //zoom_handler(svg);
-      //Zoom functions 
-      svg.call(zoom_handler).on("dblclick.zoom", null);
-      function zoom_actions(){
-        g.attr("transform", d3.event.transform)
-        
-      }
-    }
+    
     
     function getLabel(displayDeustch,id)
     {
@@ -823,6 +416,624 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
       }
       //END :: Node creation
       //console.log("nodeValue len =>"+nodesArray.length);
+    }
+
+    function clickFunctionality(d)
+    {  
+      var idVal =  "#"+d.nodeId;
+      var clickedNodeLabel =  d.id;
+      console.log("d.id =< "+d.id);
+      if(expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal))
+      {
+        expandedNodesArray.push(idVal);
+
+
+        d3.select(idVal)
+          .attr('r',resourceRadius+4)
+          .style("fill",customizeGraphArray.onClickNodeColor)
+        
+          
+        
+        data["@graph"].forEach(function(element) 
+        {
+          var tempSub ="?";
+          var tempPred ="?";
+          var tempObj ="?";
+          var pred="---subClassOf---";
+          var tempDomainArray = [];
+          
+          var includeThis = false;
+          //START :: Nodes and Links creation for all Properties
+          //get the subject label  
+          if(element["rdfs:domain"]!=undefined)
+          {
+            if(Object.prototype.toString.call(element["rdfs:domain"]) === '[object Array]')
+            {
+              //console.log("inside if");
+              element["rdfs:domain"].forEach(function(eachIds)
+              {
+                var tempDomainLabel = getLabel(displayDeustch,eachIds["@id"]);
+                if(tempDomainLabel == "noLabel")
+                {
+                  var tempLabelArray = eachIds["@id"].split('/');
+                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempDomainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+                }
+                
+                if(clickedNodeLabel === tempDomainLabel)
+                {
+                  includeThis = true;
+                  tempDomainArray.push(tempDomainLabel);
+                  console.log("include tempDomainLabel< "+tempDomainLabel);
+                }
+                
+              });
+            }
+            else
+            {
+              tempSub = getLabel(displayDeustch,element["rdfs:domain"]["@id"]);
+              if(tempSub == "noLabel")
+              {
+                var tempLabelArray = element["rdfs:domain"]["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                tempSub = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+
+              if(clickedNodeLabel === tempSub)
+              {
+                includeThis = true;
+                console.log("include tempSub< "+element["@id"]);
+              }
+            }
+          }
+          
+          if(includeThis)
+          {
+            //get the predicate
+            if(element["rdfs:domain"]!=undefined)
+            {
+              tempPred = getLabel(displayDeustch,element["@id"]);
+              if(tempPred == "noLabel")
+              {
+                var tempLabelArray = element["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                tempPred = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+            }
+
+
+            //get the object  range
+            if(element["rdfs:range"]!=undefined)
+            {
+              //console.log(element.domain["@id"]);
+              if ("@id" in element["rdfs:range"])
+              {
+                tempObj = getLabel(displayDeustch,element["rdfs:range"]["@id"]);
+                if(tempObj == "noLabel")
+                {
+                  var tempLabelArray = element["rdfs:range"]["@id"].split('/');
+                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempObj = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+                }
+              }  
+            }
+            
+            var isLitteral = false;
+            var literalDataType = tempObj;
+
+            if(tempObj.toLowerCase().includes("string") || tempObj.toLowerCase().includes("boolean")|| tempObj.toLowerCase().includes("integer") || tempObj.toLowerCase().includes("datetime"))
+            {
+              tempObj = tempObj + literalIndex;
+              literalIndex = literalIndex + 1 ;
+              isLitteral = true;
+            }
+
+            if(!tempDomainArray.length  ==0)
+            {
+              tempDomainArray.forEach(function(el)
+              {
+                if(el != "?" && tempPred != "?" && tempObj != "?")
+                {
+                  if(isLitteral)
+                  {
+                    var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                    linksArray.push(tripleValue);
+                    console.log("include 1 source "+el +" predicate- "+tempPred +"  target-" +tempObj);
+                    createNewNode(el,tempPred,tempObj,isLitteral,literalDataType,element,this.simulation);
+                  }
+                  else
+                  {
+                    var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                    linksArray.push(tripleValue);
+                    console.log("include 2 source "+el +" predicate- "+tempPred +"  target-" +tempObj);
+                    createNewNode(el,tempPred,tempObj,isLitteral,literalDataType,this.simulation);
+                  }
+                }
+              });
+            }
+            else
+            {
+              if(tempSub != "?" && tempPred != "?" && tempObj != "?")
+              {
+                if(isLitteral)
+                {
+                  var tripleValue = {source:tempSub, 	predicate:' ', 	target:tempPred,value: 1};
+                  linksArray.push(tripleValue);
+                  console.log("include 3 source "+tempSub +" predicate- "+tempPred +"  target-" +tempObj);
+                  createNewNode(tempSub,'',tempPred,isLitteral,literalDataType,this.simulation);
+                }
+                else
+                {
+                  var tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
+                  linksArray.push(tripleValue);
+                  console.log("include 4 source "+tempSub +" predicate- "+tempPred +"  target-" +tempObj);
+                  createNewNode(tempSub,tempPred,tempObj,isLitteral,literalDataType,this.simulation);
+                }
+              }
+            }
+          }
+          //END :: Nodes and Links creation for all Properties
+        });
+        
+
+        var allClear = d3.selectAll(".everything");
+        allClear.selectAll("*").remove(); 
+
+        update();
+        simulation.restart(); 
+      }
+      else
+      {
+        d3.select(idVal)
+          .attr('r',resourceRadius)
+          .style("fill",'#311B92')
+
+        expandedNodesArray.pop(idVal);
+      }
+    }
+    
+    function update() {
+      simulation.restart();
+      simulation
+            .nodes(nodesArray)
+            .on("tick", ticked)
+      ;
+
+      simulation.force("link")
+            .links(linksArray)
+      ;
+
+
+      g = svg.append("g")
+          .attr("class", "everything");
+          
+      link =g.selectAll("line")
+            .attr("class", "links")
+            .data(linksArray)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("stroke-width",1)
+            .style("fill","#999")
+            .attr("marker-end",function (d) { 
+              var labelStr = d.predicate; 
+              if(labelStr.includes('subClassOf')){return  "url(#subclass)";}
+              return  "url(#normal)"})
+            .style("stroke-dasharray",function (d) { 
+              var labelStr = d.predicate; 
+              if(labelStr.includes('subClassOf')){return  ("3, 3");}
+              if(labelStr.includes('subPropertyOf')){return  ("5, 5");}
+              return  ("0, 0");});
+      ;
+
+      link.exit().remove();
+      // ==================== Add Link Names =====================
+      linkTexts = g.selectAll(".link-text")
+              .data(linksArray)
+              .enter()
+              .append("text")
+                .attr("class", "link-text")
+                .text( function (d) { 
+                  var labelStr = d.predicate; 
+                  if(labelStr.includes('subClassOf'))
+                    {return customizeGraphArray.subClassLabel;}
+                  return d.predicate; }) 
+                  .style("fill",function(d){var labelStr = d.predicate; 
+                    if(labelStr.includes('subClassOf'))
+                    {return customizeGraphArray.subClassLabelColor;}
+                    return customizeGraphArray.propertyTextColor;})
+                  .style("font-size", "80%")
+                  .style("font-style", "italic")
+                  .attr('x', 12)
+                  .attr('y', 3)
+      ;    
+
+      linkTexts.append("title")
+                .text(function(d) { 
+                  var labelStr = d.predicate; 
+                  if(labelStr.includes('subClassOf'))
+                  {
+                      var returnValue = 'Source : '+d.source +'\nProperty : '+customizeGraphArray.subClassLabel+'\nObject : '+d.target;
+                  }
+                  else
+                  {
+                    var returnValue = 'Source : '+d.source +'\nProperty : '+d.predicate+'\nObject : '+d.target;
+                  }
+                  
+                  return returnValue;
+                });
+      ;        
+      // ==================== Add Link Names =====================
+      
+      node = g.append("g")
+            .attr("class", "nodes")
+          .selectAll("g")
+          .data(nodesArray)
+          .enter().append("g")
+      ;    
+      node.exit().remove();
+      
+      circles = node.append("circle")
+            .attr("id",function(d){return d.nodeId ;})
+            .attr("r",function(d){var labelStr = d.id;
+              if(d.isLitteral)
+              {return literalRadius;}
+              return resourceRadius;})
+            .style("fill",function(d){var labelStr = d.id; 
+              if(d.isLitteral)
+                  {return customizeGraphArray.literalNodeColor;} 
+              return customizeGraphArray.resourceNodeColor;})
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+              .on("end", dragended)
+      );
+
+      lables = node.append("text")
+                .attr("class", "node-text")
+                .text(function (d) {return d.id; })
+                .style("font-size", function(d){var labelStr = d.id; 
+                  if(d.isLitteral)
+                  {return "80%";}
+                  return "100%";})
+                .style("font-style", function(d){var labelStr = d.id; 
+                  if(d.isLitteral)
+                  {return "italic";}
+                  return "bold";})
+                .style("fill",function(d){var labelStr = d.id; 
+                  if(d.isLitteral)
+                      {return customizeGraphArray.literalNodeTextColor;}
+                  return customizeGraphArray.resourceNodeTextColor;})
+                .attr('x', function(d){
+                  if(d.isLitteral)
+                      {return 8;}
+                  return 12;})
+                .attr('y', 3) 
+      ;
+
+      node.append("title")
+            .text(function(d) { 
+              var returnValue = 'Node : '+d.id;
+              if(d.isLitteral){returnValue = 'Node : '+d.id +'\nData type : '+d.literalDataType;}
+              else{returnValue = 'Node : '+d.id;}
+              return returnValue; })
+      ;
+
+      //START :: on click
+      node.on("dblclick",clickFunctionality);
+      //END :: on click    
+
+      //START :: on double click
+      node.on("click",doubleClickFuntionality);
+      //END :: on double click
+    
+    
+      if(!disableZoom)
+      {
+        var zoom_handler = d3.zoom()
+          .on("zoom", zoom_actions);
+        //zoom_handler(svg);
+        //Zoom functions 
+        svg.call(zoom_handler).on("dblclick.zoom", null);
+        function zoom_actions(){
+          g.attr("transform", d3.event.transform)
+          
+        }
+      }
+    
+    }
+
+
+    function doubleClickFuntionality(d)
+    {   
+      var nodeIdVal =  d.id;
+      var tempNodeContains = [];
+      nodeContents.forEach(function(val){
+        if(val.label == nodeIdVal)
+        {
+          tempNodeContains = val.contents
+        }
+      });
+
+      var tempNode = d3.select("#"+idsArray.nodeId)
+      tempNode.selectAll("*").remove(); 
+      tempNode.append("text")
+             .text(" " + nodeIdVal+"\n")
+              .style("font-style","italic")
+              .style("font-size", "80%")
+              .style("position", "relative")
+              .style("bottom", "2px")
+        ;
+
+    
+      //node label on double click
+      if(tempNodeContains != undefined)
+      {
+        var nodeLabel = d3.select("#"+idsArray.nodeLabelId)
+        nodeLabel.selectAll("*").remove();
+        if(tempNodeContains["rdfs:label"] != undefined)
+        { 
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:label"]) === '[object Array]')
+          {
+            tempNodeContains["rdfs:label"].forEach(function(eachIds)
+            {
+              if(eachIds["@language"] == "de" && displayDeustch)
+              {
+                
+                nodeLabel.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              }
+              else if (eachIds["@language"] == "en" && !displayDeustch)
+              {
+                nodeLabel.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              }
+  
+            });
+          }
+          else
+          {
+            nodeLabel.append("text")
+              .text(" " + tempNodeContains["rdfs:label"]["@value"] +"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+          }
+        }
+  
+        //node id on double click
+        var nodeID = d3.select("#"+idsArray.nodeIdsId)
+        nodeID.selectAll("*").remove(); 
+        if(tempNodeContains["@id"] != undefined )
+        {
+          nodeID.append("text")
+              .text(" " + tempNodeContains["@id"]+"\n") 
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+        }
+        //node type on double click
+        var nodeType = d3.select("#"+idsArray.nodeTypeId)
+        nodeType.selectAll("*").remove(); 
+        if(tempNodeContains["@type"] != undefined)
+        {
+          nodeType.append("text")
+              .text(" " + tempNodeContains["@type"]+"\n\n")
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px"); 
+        }
+        
+        //node description on double click
+        var nodeDescription = d3.select("#"+idsArray.nodeDescripId)
+        nodeDescription.selectAll("*").remove();
+        if(tempNodeContains["dc:description"] != undefined)
+        { 
+          if(Object.prototype.toString.call(tempNodeContains["dc:description"]) === '[object Array]')
+          {
+            tempNodeContains["dc:description"].forEach(function(eachIds)
+            {
+              if(eachIds["@language"] == "de" && displayDeustch)
+              {
+                
+                nodeDescription.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              }
+              else if (eachIds["@language"] == "en" && !displayDeustch)
+              {
+                nodeDescription.append("text")
+                  .text(" " + eachIds["@value"] +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              }
+
+            });
+          }
+          else
+          {
+            nodeDescription.append("text")
+              .text(" " + tempNodeContains["dc:description"]["@value"] +"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+          }
+        }
+        
+        var nodeSubClass = d3.select("#"+idsArray.nodeSubClassId)
+        nodeSubClass.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:subClassOf"] != undefined)
+        {
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:subClassOf"]) === '[object Array]')
+          {
+            var tempIndexSubClassof =1;
+            tempNodeContains["rdfs:subClassOf"].forEach(function(eachIds)
+            {
+              var subClassLabel = getLabel(displayDeustch,eachIds["@id"]);
+              if(subClassLabel == "noLabel")
+              {
+                var tempLabelArray = eachIds["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                subClassLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+
+              nodeSubClass.append("text")
+                  .text(" " + tempIndexSubClassof +". "+ subClassLabel +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              
+              tempIndexSubClassof = tempIndexSubClassof+1;
+
+            });
+          }
+          else
+          {
+            var subClassLabel = getLabel(displayDeustch,tempNodeContains["rdfs:subClassOf"]["@id"]);
+            if(subClassLabel == "noLabel")
+            {
+              var tempLabelArray = tempNodeContains["rdfs:subClassOf"]["@id"].split('/');
+              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+              subClassLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+            }
+
+            nodeSubClass.append("text")
+              .text( " " + subClassLabel+"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+          }
+        }
+
+        var nodeDomain = d3.select("#"+idsArray.nodeDomainId)
+        nodeDomain.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:domain"] != undefined )
+        {
+          
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:domain"]) === '[object Array]')
+          {
+            var tempIndexdomain =1;
+            tempNodeContains["rdfs:domain"].forEach(function(eachIds)
+            {
+              var domainLabel = getLabel(displayDeustch,eachIds["@id"]);
+              if(domainLabel == "noLabel")
+              {
+                var tempLabelArray = eachIds["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                domainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+
+              nodeDomain.append("text")
+                  .text(" " +  tempIndexdomain +". "+ domainLabel +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              
+              tempIndexdomain = tempIndexdomain+1;
+
+            });
+          }
+          else
+          {
+            var domainLabel = getLabel(displayDeustch,tempNodeContains["rdfs:domain"]["@id"]);
+            if(domainLabel == "noLabel")
+            {
+              var tempLabelArray = tempNodeContains["rdfs:domain"]["@id"].split('/');
+              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+              domainLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+            }
+
+            nodeDomain.append("text")
+              .text(" " + domainLabel+"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+          }  
+        }
+
+
+        var nodeRange = d3.select("#"+idsArray.nodeRangeId)
+        nodeRange.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:range"] != undefined )
+        {
+          
+          if(Object.prototype.toString.call(tempNodeContains["rdfs:range"]) === '[object Array]')
+          {
+            var tempIndexRange =1;
+            tempNodeContains["rdfs:range"].forEach(function(eachIds)
+            {
+              var rangeLabel = getLabel(displayDeustch,eachIds["@id"]);
+              if(rangeLabel == "noLabel")
+              {
+                var tempLabelArray = eachIds["@id"].split('/');
+                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                rangeLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+              }
+
+              nodeRange.append("text")
+                  .text(" " +  tempIndexRange +". "+ rangeLabel +"\n")
+                    .style("font-style","italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+              
+              tempIndexRange = tempIndexRange+1;
+
+            });
+          }
+          else
+          {
+            var rangeLabel = getLabel(displayDeustch,tempNodeContains["rdfs:range"]["@id"]);
+            if(rangeLabel == "noLabel")
+            {
+              var tempLabelArray = tempNodeContains["rdfs:range"]["@id"].split('/');
+              var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+              rangeLabel = tempLabelArray1[tempLabelArray1.length -1 ]+'?';
+            }
+
+            nodeRange.append("text")
+              .text(" " + rangeLabel+"\n")
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+          }  
+        }
+        
+        var nodeComment = d3.select("#"+idsArray.nodeCommentId)
+        nodeComment.selectAll("*").remove(); 
+        if(tempNodeContains["rdfs:comment"] != undefined)
+        {
+          nodeComment.append("text")
+              .text(tempNodeContains["rdfs:comment"]+"\n") 
+                .style("font-style","italic")
+                .style("font-size", "80%")
+                .style("position", "relative")
+                .style("bottom", "2px");
+        }
+
+      }
+      
     }
   });
   

@@ -90,7 +90,7 @@
               <label class="inputLabelClass">
                   Sub class of:
               </label>
-              <div class="nodeInfoDiv"  [attr.id]="nodeSubClassId"> </div>
+              <div class="nodeInfoDiv" style="width: 309px;" [attr.id]="nodeSubClassId"> </div>
               <br/>
             </div> 
             <div class="nodeInfoDivClass">
@@ -160,9 +160,10 @@
             <label class="inputLabelClass">
               Property text color: <input type="text" class="inputTextClass" [(ngModel)]="propertyTextColor" placeholder=" #28B463">
             </label><br/>
+            <!--
             <label class="inputLabelClass">
               On click node color: <input type="text" class="inputTextClass" [(ngModel)]="onClickNodeColor" placeholder=" red" >
-            </label><br/> <br/><br/> <br/> <br/> 
+            </label>--><br/> <br/><br/> <br/> <br/> 
  
             <button #applyConfigBtn (click)="applyConfigClicked($event)" 
               style="width: 33%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:white;">

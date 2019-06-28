@@ -17,7 +17,7 @@
   }
   .inputLabelClass {
     padding-left: 10px;
-    font-size: 19px;
+    font-size: 15px;
     float: left;
   }
   
@@ -33,6 +33,6 @@
   
   .nodeInfoDiv {
     padding-left: 35px;
-    font-size: 20px;
+    font-size: 18px;
     width:275px;
   }
