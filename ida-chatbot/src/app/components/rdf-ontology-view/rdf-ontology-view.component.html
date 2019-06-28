@@ -10,29 +10,29 @@
        
     </label>
     <label class="labelClass">
-      Display in deustch 
+      Display in Deutsch
       <input class="checkboxClass" type="checkbox" [(ngModel)]="languageCheked" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
     <label class="labelClass"> 
-      Include class heirarchy 
+      Include Class Hierarchy
       <input class="checkboxClass" type="checkbox" [(ngModel)]="classHeirarchyChecked" value="1" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
     <label class="labelClass">
-      Include all properties 
+      Include All Properties 
       <input class="checkboxClass" type="checkbox" [(ngModel)]="allPropChecked" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
     <label class="labelClass">
-      Bounded graph
+      Bounded Graph
       <input class="checkboxClass" type="checkbox" [(ngModel)]="allNodesInBoundClicked" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
     <label class="labelClass">
-      Disable zoom
+      Disable Zoom
       <input class="checkboxClass" type="checkbox" [(ngModel)]="disableZoomClicked" (change)="checkboxValuesChanged(isChecked)" /> 
     </label>
     <label class="labelClass"> 
       <button #graphReset (click)="graphResetChanged($event)" 
         style="width: 8%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:whitesmoke;">
-        Reset garph
+        Reset Graph
       </button> 
     </label>
   </div>
@@ -43,7 +43,7 @@
           <div  id="nodeInformationId" 
               style="display: block;height: 26px;background-color:#5DADE2;border-radius: 8px;padding-top: 9px;">
             <label class="inputLabelClass">
-              Node information: 
+              Node Information: 
             </label>
             <br/>
           </div>
@@ -88,7 +88,7 @@
             </div> 
             <div class="nodeInfoDivClass">
               <label class="inputLabelClass">
-                  Sub class of:
+                  Sub Class Of:
               </label>
               <div class="nodeInfoDiv" style="width: 309px;" [attr.id]="nodeSubClassId"> </div>
               <br/>
@@ -119,7 +119,7 @@
           <div  id="graphConfigId" 
               style="display: block;height: 26px;background-color:#5DADE2;border-radius: 8px;padding-top: 9px;">
             <label class="inputLabelClass">
-              Customize graph: 
+              Customize Graph: 
             </label>
             <br/>
           </div>
@@ -128,37 +128,37 @@
               style="display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
                 padding-top: 10px;">
             <label class="inputLabelClass">
-              Edge size: <input type="text" class="inputTextClass" [(ngModel)]="edgeSize" placeholder=" 50">
+              Edge Size: <input type="text" class="inputTextClass" [(ngModel)]="edgeSize" placeholder=" 50">
             </label><br/>
             <label class="inputLabelClass">
-              Graph charge/depth : <input type="text" class="inputTextClass" [(ngModel)]="graphCharge" placeholder=" 1000">
+              Graph Charge/Depth : <input type="text" class="inputTextClass" [(ngModel)]="graphCharge" placeholder=" 1000">
             </label><br/>
             <label class="inputLabelClass">
-              Resource node radius: <input type="text" class="inputTextClass" [(ngModel)]="resourceRadius" placeholder=" 10">
+              Resource Node Radius: <input type="text" class="inputTextClass" [(ngModel)]="resourceRadius" placeholder=" 10">
             </label><br/>
             <label class="inputLabelClass">
-              Literal node radius: <input type="text" class="inputTextClass" [(ngModel)]="literalRadius" placeholder=" 6">
+              Literal Node Radius: <input type="text" class="inputTextClass" [(ngModel)]="literalRadius" placeholder=" 6">
             </label><br/>
             <label class="inputLabelClass">
-              Resource node color: <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeColor" placeholder=" #311B92">
+              Resource Node Color: <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeColor" placeholder=" #311B92">
             </label><br/>
             <label class="inputLabelClass">
-              Resource node text color: <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeTextColor" placeholder=" #311B92" >
+              Resource Node Text Color: <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeTextColor" placeholder=" #311B92" >
             </label><br/>
             <label class="inputLabelClass">
-              Literal node color: <input type="text" class="inputTextClass" [(ngModel)]="literalNodeColor" placeholder=" #FF9800">
+              Literal Node Color: <input type="text" class="inputTextClass" [(ngModel)]="literalNodeColor" placeholder=" #FF9800">
             </label><br/>
             <label class="inputLabelClass">
               Literal node text color: <input type="text" class="inputTextClass" [(ngModel)]="literalNodeTextColor" placeholder=" #FF9800" >
             </label><br/>
             <label class="inputLabelClass">
-              Sub class label: <input type="text" class="inputTextClass" [(ngModel)]="subClassLabel" placeholder=" --subClassOf--" >
+              Sub Class Label: <input type="text" class="inputTextClass" [(ngModel)]="subClassLabel" placeholder=" --subClassOf--" >
             </label><br/>
             <label class="inputLabelClass">
-              Sub class label color: <input type="text" class="inputTextClass" [(ngModel)]="subClassLabelColor" placeholder=" #3498DB" >
+              Sub Class Label Color: <input type="text" class="inputTextClass" [(ngModel)]="subClassLabelColor" placeholder=" #3498DB" >
             </label><br/>
             <label class="inputLabelClass">
-              Property text color: <input type="text" class="inputTextClass" [(ngModel)]="propertyTextColor" placeholder=" #28B463">
+              Property Text Color: <input type="text" class="inputTextClass" [(ngModel)]="propertyTextColor" placeholder=" #28B463">
             </label><br/>
             <!--
             <label class="inputLabelClass">
@@ -167,7 +167,7 @@
  
             <button #applyConfigBtn (click)="applyConfigClicked($event)" 
               style="width: 33%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:white;">
-              Apply changes
+              Apply Changes
             </button>
           </div>
     </div>
