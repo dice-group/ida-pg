@@ -2,7 +2,9 @@ package upb.ida.rdf;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -83,8 +85,10 @@ public class Main {
 			.append(last ? ".\n" : ";\n");
 	}
 
-	private static StringBuilder appendDateProperty(StringBuilder builder, String propertyName, String date, boolean last) {
-		return builder.append("\t").append(propertyName)
+	private static StringBuilder appendDateProperty(StringBuilder builder, String domainPrefix, String domain, String propertyName, String date, boolean last, boolean leadingTab) {
+		return builder.append(leadingTab ? "\t" : "")
+			.append(domainPrefix).append(domain).append(" ")
+			.append(propertyName)
 			.append(" \"").append(date).append("\"")
 			.append("^^xsd:date ")
 			.append(last ? ".\n" : ";\n");
@@ -318,7 +322,7 @@ public class Main {
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
 								String birthdate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
-								appendDateProperty(stringBuilder, "dbo:birthDate", birthdate, false);
+								appendDateProperty(stringBuilder, "", "", "dbo:birthDate", birthdate, false, true);
 							}
 							break;
 						case 11:
@@ -330,7 +334,7 @@ public class Main {
 							if (isValidString(currentColumnVal)) {
 								String[] dateParts = currentColumnVal.split("\\.");
 								String deathDate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
-								appendDateProperty(stringBuilder, "dbo:deathDate", deathDate, false);
+								appendDateProperty(stringBuilder, "", "", "dbo:deathDate", deathDate, false, true);
 							}
 							break;
 						case 13:
@@ -427,6 +431,8 @@ public class Main {
 
 	private void processDecorations(StringBuilder stringBuilder) {
 		stringBuilder.append("########## DECORATIONS ########################################################\n\n");
+
+		Map<String, String> instantTriples = new HashMap<>();
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(ordenFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
@@ -459,11 +465,16 @@ public class Main {
 								String[] years = ordenArray[i][j].replaceAll("[^/\\d{4}-]", "").
 									replaceAll("[/-]", " ").split(" ");
 								if (years.length == 2) {
-									String durationStart = years[0] + "-01-01T00:00:00+00:00";
-									String durationEnd = years[1] + "-01-01T00:00:00+00:00";
+									String durationStart = years[0] + "-01-01";
+									String durationEnd = years[1] + "-12-31";
 
-									appendDatetimeProperty(stringBuilder, "time:hasBeginning", durationStart, false, true);
-									appendDatetimeProperty(stringBuilder, "time:hasEnd", durationEnd, false, true);
+									String decorationStartInstantName = "decoration_start_" + ordenArray[i][0]; //id
+									String decorationEndInstantName = "decoration_end_" + ordenArray[i][0]; //id
+									instantTriples.put(decorationStartInstantName, durationStart);
+									instantTriples.put(decorationEndInstantName, durationEnd);
+
+									appendResourceProperty(stringBuilder, "", "", "time:hasBeginning", "decoration:", decorationStartInstantName, false, true);
+									appendResourceProperty(stringBuilder, "", "", "time:hasEnd", "decoration:", decorationEndInstantName, false, true);
 
 								} else {
 									System.out.println("Problem parsing decoration duration for id: " + ordenArray[i][0]);
@@ -484,6 +495,18 @@ public class Main {
 				}
 
 				stringBuilder.append("\t").append("rdfs:label \"").append(clean(ordenArray[i][1])).append("\" .\n");
+
+				for(String instantName : instantTriples.keySet())
+				{
+					String instantValue = instantTriples.get(instantName);
+
+					stringBuilder.append("\n");
+					stringBuilder.append("decoration:").append(instantName).append("\n\trdf:type owl:NamedIndividual, time:Instant ;\n");
+					appendDateProperty(stringBuilder, "", "", "time:inXSDDate", instantValue, true, true);
+				}
+				instantTriples.clear();
+
+				stringBuilder.append("\n");
 				stringBuilder.append("##\n\n");
 			}
 		} catch (Exception e) {
@@ -496,6 +519,7 @@ public class Main {
 	private void processSoldierRegiments(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER REGIMENTS ########################################################\n\n");
 
+		Map<String, String> instantTriples = new HashMap<>();
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierRegimentsFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
@@ -523,8 +547,12 @@ public class Main {
 						case 3:
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
-								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
+								String start = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+
+								String instantName = "soldier_regiment_from_" + soldierRegimentsArray[i][0]; //id
+								instantTriples.put(instantName, start);
+
+								appendResourceProperty(stringBuilder, "", "", ":applicableFrom", "soldier_regiment:", instantName, false, true);
 							}
 							break;
 						default:
@@ -532,7 +560,19 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Regiment: ").append(soldierRegimentsArray[i][0]).append("\" .\n\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Regiment: ").append(soldierRegimentsArray[i][0]).append("\" .\n");
+
+				for(String instantName : instantTriples.keySet())
+				{
+					String instantValue = instantTriples.get(instantName);
+
+					stringBuilder.append("\n");
+					stringBuilder.append("soldier_regiment:").append(instantName).append("\n\trdf:type owl:NamedIndividual, time:Instant ;\n");
+					appendDateProperty(stringBuilder, "", "", "time:inXSDDate", instantValue, true, true);
+				}
+				instantTriples.clear();
+
+				stringBuilder.append("\n");
 				appendResourceProperty(stringBuilder, "soldier:", soldierRegimentsArray[i][1], ":hasRegiment", "soldier_regiment:", soldierRegimentsArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
@@ -548,6 +588,7 @@ public class Main {
 	private void processSoldierLiterature(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER LITERATURE ########################################################\n\n");
 
+		Map<String, String> instantTriples = new HashMap<>();
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierLiteratureFile)))) {
 			List<String[]> lines = new ArrayList<String[]>();
 			String thisLine;
@@ -581,8 +622,12 @@ public class Main {
 						case 5:
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
-								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
+								String start = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+
+								String instantName = "soldier_literature_from_" + soldierLiteratureArray[i][0]; //id
+								instantTriples.put(instantName, start);
+
+								appendResourceProperty(stringBuilder, "", "", ":applicableFrom", "soldier_literature:", instantName, false, true);
 							}
 							break;
 						default:
@@ -590,7 +635,19 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n");
+
+				for(String instantName : instantTriples.keySet())
+				{
+					String instantValue = instantTriples.get(instantName);
+
+					stringBuilder.append("\n");
+					stringBuilder.append("soldier_literature:").append(instantName).append("\n\trdf:type owl:NamedIndividual, time:Instant ;\n");
+					appendDateProperty(stringBuilder, "", "", "time:inXSDDate", instantValue, true, true);
+				}
+				instantTriples.clear();
+
+				stringBuilder.append("\n");
 				appendResourceProperty(stringBuilder, "soldier:", soldierLiteratureArray[i][1], ":literatureInfo", "soldier_literature:", soldierLiteratureArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
@@ -606,6 +663,7 @@ public class Main {
 	private void processSoldierDecorations(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER DECORATIONS ########################################################\n\n");
 
+		Map<String, String> instantTriples = new HashMap<>();
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierDecorationsFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
@@ -633,8 +691,12 @@ public class Main {
 						case 3:
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
-								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
+								String start = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+
+								String instantName = "soldier_decoration_from_" + soldierDecorationArray[i][0]; //id
+								instantTriples.put(instantName, start);
+
+								appendResourceProperty(stringBuilder, "", "", ":applicableFrom", "soldier_decoration:", instantName, false, true);
 							}
 							break;
 						default:
@@ -642,7 +704,19 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Decoration: ").append(soldierDecorationArray[i][0]).append("\" .\n\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Decoration: ").append(soldierDecorationArray[i][0]).append("\" .\n");
+
+				for(String instantName : instantTriples.keySet())
+				{
+					String instantValue = instantTriples.get(instantName);
+
+					stringBuilder.append("\n");
+					stringBuilder.append("soldier_decoration:").append(instantName).append("\n\trdf:type owl:NamedIndividual, time:Instant ;\n");
+					appendDateProperty(stringBuilder, "", "", "time:inXSDDate", instantValue, true, true);
+				}
+				instantTriples.clear();
+
+				stringBuilder.append("\n");
 				appendResourceProperty(stringBuilder, "soldier:", soldierDecorationArray[i][1], ":decorationInfo", "soldier_decoration:", soldierDecorationArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
@@ -658,6 +732,7 @@ public class Main {
 	private void processSoldierRanks(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIER RANKS ########################################################\n\n");
 
+		Map<String, String> instantTriples = new HashMap<>();
 		try (BufferedReader myInput = new BufferedReader(new InputStreamReader(getFileInputStream(soldierRanksFile)))) {
 			String thisLine;
 			List<String[]> lines = new ArrayList<String[]>();
@@ -685,8 +760,12 @@ public class Main {
 						case 3:
 							if (isValidString(currentValue)) {
 								String[] dateParts = currentValue.split("\\.");
-								String start = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":applicableFrom", start, false, false);
+								String start = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+
+								String instantName = "soldier_rank_from_" + soldierRanksArray[i][0]; //id
+								instantTriples.put(instantName, start);
+
+								appendResourceProperty(stringBuilder, "", "", ":applicableFrom", "soldier_rank:", instantName, false, true);
 							}
 							break;
 						default:
@@ -694,7 +773,19 @@ public class Main {
 					}
 
 				}
-				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Rank: ").append(soldierRanksArray[i][0]).append("\" .\n\n");
+				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Rank: ").append(soldierRanksArray[i][0]).append("\" .\n");
+
+				for(String instantName : instantTriples.keySet())
+				{
+					String instantValue = instantTriples.get(instantName);
+
+					stringBuilder.append("\n");
+					stringBuilder.append("soldier_rank:").append(instantName).append("\n\trdf:type owl:NamedIndividual, time:Instant ;\n");
+					appendDateProperty(stringBuilder, "", "", "time:inXSDDate", instantValue, true, true);
+				}
+				instantTriples.clear();
+
+				stringBuilder.append("\n");
 				appendResourceProperty(stringBuilder, "soldier:", soldierRanksArray[i][1], ":rankInfo", "soldier_rank:", soldierRanksArray[i][0], true, false);
 				stringBuilder.append("##\n\n");
 			}
