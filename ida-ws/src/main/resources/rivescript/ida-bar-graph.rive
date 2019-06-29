@@ -23,7 +23,7 @@
 + from * to *
 * <call>BgdHandler "<get x>" "<get y>" FROMTO "<star1>" "<star2>"</call> == pass => Your requested
 ^ \sBar Graph is now added to the main view
-+ i want to create story for current table and visualization
++ i want to create story for current table and bar graph visualization
 * <call>ScHandler "<get x>" "<get y>"</call> == pass => Your story is created.
 
 
