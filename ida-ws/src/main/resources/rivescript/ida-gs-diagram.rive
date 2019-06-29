@@ -2,10 +2,11 @@
 - alright! tell me which columns should i use as latitude and longitude?
 ^ <br> (HINT: you can tell as <br> e.g. use column1 as latitude and column2 as longitude)
 + use * as latitude and * as longitude
-* <call> GeoDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading geo Spatial diagram in a moment!
+- <set arg1=<star1>> <set arg2=<star2>>
+^ <call> GeoDiagramHandler "<get arg1>" "<get arg2>" </call> == pass => All good, loading geo Spatial diagram in a moment!
 
-+ i want to create story for current table and visualization
-* <call>ScHandler "<star1>" "<star2>"</call> == pass => Your story is created.
++ i want to create story for current table and geo spatial diagram visualization
+* <call>ScHandler "<get arg1>" "<get arg2>"</call> == pass => Your story is created.
 
 + i want geospatial diagram for this table
 @ show me the geo spatial diagram
