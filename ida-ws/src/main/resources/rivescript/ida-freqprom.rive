@@ -1,0 +1,5 @@
++ show me the promotions frequency diagram
+- alright! tell me which columns should i use as latitude and longitude?
+^ <br> (HINT: you can tell as <br> e.g. use column1 as latitude and column2 as longitude)
++ use * as latitude and * as longitude
+* <call> PRMFRQDiagramHandler "<star1>" "<star2>" </call> == pass => All good, loading it in a moment!

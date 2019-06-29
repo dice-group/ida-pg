@@ -16,6 +16,7 @@ public interface IDALiteral {
 	public static final int UIA_VENNDIAGRAM = 7;
 	public static final int UIA_GSDIAGRAM = 8;
 	public static final int UIA_SSBDIAGRAM = 9;
+	public static final int UIA_PRMFRQDIAGRAM = 10;
 
 	
 	//Rivescript literals
