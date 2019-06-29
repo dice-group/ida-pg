@@ -1,5 +1,6 @@
 (ns generator
-  (:require [librarian.generator.core :as gen]
+  (:require [librarian.generator.generate :as gen]
+            [librarian.generator.core :as gc]
             [librarian.model.io.scrape :as scrape]
             [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.call-parameter :as call-parameter]
@@ -115,3 +116,39 @@
                                                   :key "name"
                                                   :value "centroid")])]))
          args))
+
+(defmethod gen-test :cluster
+  [& args]
+  (when-let [res (gc/search (scrape/read-scrape "libs/scikit-learn-cluster")
+                            [{:type :call-result
+                              :datatype [{:type :basetype
+                                          :name "int"}
+                                         {:type :semantic-type
+                                          :key "name"
+                                          :value "n_clusters"}]}
+                             {:type :call-result
+                              :datatype [{:type :role-type
+                                          :id :dataset}]}
+                             {:type :call
+                              :callable {:type :function
+                                         :placeholder true
+                                         :namespace/_member {:type :namespace
+                                                             :name "sklearn.cluster"}
+                                         :name "k_means"}
+                              :parameter {:type :call-parameter
+                                          :datatype {:type :role-type
+                                                     :id :dataset}
+                                          :parameter {:type :parameter
+                                                      :placeholder true
+                                                      :name "X"}}
+                              :result {:type :call-result
+                                       :datatype {:type :role-type
+                                                  :id :labels}
+                                       :result {:type :result
+                                                :placeholder true
+                                                :name "label"}}}
+                             {:type :call-parameter
+                              :datatype [{:type :role-type
+                                          :id :labels}]}]
+                            50)]
+    (rt/show-state res)))

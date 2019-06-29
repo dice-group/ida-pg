@@ -7,7 +7,7 @@
             [librarian.model.ecosystems.python.basetype :refer [basetype]]
             [librarian.model.ecosystems.python.builtins :refer [builtins]]
             [librarian.model.ecosystems.python.generator :refer [generate]]
-            [librarian.model.ecosystems.python.executor :refer [execute]])
+            [librarian.model.ecosystems.python.executor :refer [executor]])
   (:refer-clojure :exclude [class]))
 
 (defecosystem python [oo functional]
@@ -18,4 +18,4 @@
 
   :builtins builtins
   :generate #'generate
-  :execute #'execute)
+  :executor #'executor)

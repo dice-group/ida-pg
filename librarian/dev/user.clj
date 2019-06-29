@@ -20,7 +20,7 @@
   (require '[librarian.model.io.scrape :refer :all]
            '[librarian.scraper.io.scrape :refer [create-scrape]]
            '[librarian.scraper.io.config :refer [read-config]]
-           '[librarian.generator.core :refer [actions successors]]
+           '[librarian.generator.generate :refer [actions successors]]
            '[librarian.cli :refer [main*]]
            '[repl-tools :as rt :refer :all]
            '[generator :refer :all])

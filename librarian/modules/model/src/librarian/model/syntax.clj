@@ -80,22 +80,29 @@
                                      attr-desc (get-in concept [:attributes attr])
                                      ref (tx/ref-attr? attr-desc)
                                      many (tx/many-attr? attr-desc)
-                                     [val insts]
+                                     unique (tx/unique-attr? attr-desc)
+                                     [val insts tx-add]
                                      (cond
-                                       (not ref) [v []]
+                                       (not ref) [v [] (when unique [[:db/add tempid attr v]])]
                                        (or (not many) (map? v) (not (coll? v)))
-                                       (let [v (if (map? v) (ref-map-handler v) v)]
-                                         [(:db/id v v) (if (map? v) [v] [])])
+                                       (let [v (if (map? v) (ref-map-handler v) v)
+                                             vid (:db/id v v)]
+                                         [vid (if (map? v) [v] [])
+                                          (when unique [[:db/add tempid attr vid]])])
                                        :else
-                                       (let [v (map #(if (map? %) (ref-map-handler %) %) v)]
-                                         [(mapv #(:db/id % %) v)
-                                          (filter map? v)]))]
-                                 [(conj vals [attr val]) (into tx (mapcat instance->tx)
-                                                               insts)])))
+                                       (let [v (map #(if (map? %) (ref-map-handler %) %) v)
+                                             vids (mapv #(:db/id % %) v)
+                                             tx-add (when unique (mapv (fn [vid] [:db/add tempid attr vid]) vids))]
+                                         [vids (filter map? v) tx-add]))]
+                                 [(conj vals [attr val])
+                                  (-> tx
+                                      (into tx-add)
+                                      (into (mapcat instance->tx) insts))])))
                            [[] #{}] vals)
          instance (into {:db/id tempid
                          :type (:ident concept)}
                         vals)]
+
      ; Add a datascript transaction for the instance.
      ; The instance itself is part of the transaction and gets a concept reference.
      ; This attached metadata is an implementation detail.
@@ -114,7 +121,7 @@
    Concepts can be nested simply by nesting maps of concept-descs.
    The returned instance can be used like the ones returned by instanciate."
   ([ecosystem concept-desc]
-   (instanciate-with-ecosystem ecosystem identity concept-desc))
+   (instanciate-with-ecosystem ecosystem (fn [_ m] m) concept-desc))
   ([{:keys [attribute-aliases concepts] :as ecosystem} transformer concept-desc]
    (let [concept (map/get-or-fail concepts (:type concept-desc))
          concept-desc (dissoc concept-desc :type)
@@ -167,11 +174,11 @@
         (zipmap $ $)))
 
 (defn paradigm->ecosystem
-  [{:keys [concepts builtins generate execute]}]
+  [{:keys [concepts builtins generate executor]}]
   {:concepts concepts
    :builtins builtins
    :generate generate
-   :execute execute
+   :executor executor
    :concept-aliases (map/map-v :ident concepts)
    :attribute-aliases (into common-attribute-aliases
                             (for [[c {:keys [attributes]}] concepts
@@ -253,10 +260,10 @@
                               (s/conformer (fn [{:keys [paradigm extends]
                                                  :or {paradigm {}}}]
                                              (merge-paradigms paradigm extends)))))
-(s/def ::paradigm (s/and (hs/keys* :opt-un [::concepts ::builtins ::generate ::execute])))
+(s/def ::paradigm (s/and (hs/keys* :opt-un [::concepts ::builtins ::generate ::executor])))
 (s/def ::builtins coll?)
 (s/def ::generate (some-fn fn? var?))
-(s/def ::execute (some-fn fn? var?))
+(s/def ::executor (some-fn fn? var?))
 
 (s/def ::ecosystem-desc (s/and ::paradigm-desc
                                (s/conformer paradigm->ecosystem)))

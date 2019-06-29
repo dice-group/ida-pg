@@ -2,7 +2,7 @@
   (:require [libpython-clj.python :as lp]
             [librarian.model.ecosystems.python.generator :as pg]))
 
-(defn execute
+(defn executor
   [metadata db]
   (lp/initialize!)
   (let [code (pg/generate (assoc metadata :fn-name "solve") db)

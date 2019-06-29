@@ -8,6 +8,7 @@
                              librarian.scraper.io.scrape
                              librarian.scraper.io.config
                              librarian.generator.core
+                             librarian.generator.generate
                              ; dev:
                              repl-tools
                              generator]}

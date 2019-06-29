@@ -11,7 +11,7 @@
   [e]
   (let [pname (some-> e ::namespace/_member ::named/name)
         ename (::named/name e)]
-    (when (and pname ename)
+    (when (and (not (:placeholder e)) pname ename)
       [pname ename])))
 
 (defconcept namespaced [named]
