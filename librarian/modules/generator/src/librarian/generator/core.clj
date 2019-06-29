@@ -14,6 +14,13 @@
 
 (defn solver
   [solution]
-  ((-> solution meta :scrape :ecosystem :executor) solution))
+  (let [scrape (-> solution meta :scrape)]
+    ((-> scrape :ecosystem :executor) (:meta scrape) (:db solution))))
+
+(defn code
+  [solution & args]
+  (let [scrape (-> solution meta :scrape)]
+    (apply (-> scrape :ecosystem :generate) (:meta scrape) (:db solution) args)))
 
 (def search-solver (comp solver search))
+(def search-code (comp code search))
