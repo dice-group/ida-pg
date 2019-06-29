@@ -2,9 +2,8 @@
 - alright! tell me which columns should i use?
 ^ <br> (HINT: you can tell as <br> e.g. use column1 sequenced on column2)
 + use * sequenced on *
-- <set arg1=<star1>> <set arg2=<star2>> Great!
-+ create the diagram now
-* <call> SSBDiagramHandler "<get arg1>" "<get arg2>" </call> == pass => All good, loading sequence sun burst diagram in a moment!
+- <set arg1=<star1>> <set arg2=<star2>>
+^ <call> SSBDiagramHandler "<get arg1>" "<get arg2>" </call> == pass => All good, loading sequence sun burst diagram in a moment!
 
 + i want to create story for current table and sun burst diagram visualization
 * <call>ScHandler "<get arg1>" "<get arg2>"</call> == pass => Your story is created.
