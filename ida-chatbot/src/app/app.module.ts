@@ -6,6 +6,7 @@ import { MessageListComponent } from './components/message-list/message-list.com
 import { MessageItemComponent } from './components/message-item/message-item.component';
 import { MessageFormComponent } from './components/message-form/message-form.component';
 import { ChatboxComponent } from './components/chatbox/chatbox.component';
+import { StoryboardComponent } from './components/storyboard/storyboard.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
@@ -60,11 +61,7 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
-import {StoryboardDialogComponent} from "./dialogs/storyboard/storyboard.dialog.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { StoryboardComponent } from './components/storyboard/storyboard.component';
-import {AppRoutingModule} from './app-routing.module';
-import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -85,7 +82,6 @@ import {RouterModule} from '@angular/router';
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
-    StoryboardDialogComponent,
     StoryboardComponent
   ],
   imports: [
@@ -128,18 +124,13 @@ import {RouterModule} from '@angular/router';
     MatToolbarModule,
     MatTooltipModule,
     FlexLayoutModule,
-    NgbModule,
-    RouterModule
-  ],
-  entryComponents: [
-    StoryboardDialogComponent
+    NgbModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: RestService ,
     multi: true
   }],
-  bootstrap: [AppComponent],
-  exports: [AppRoutingModule]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
