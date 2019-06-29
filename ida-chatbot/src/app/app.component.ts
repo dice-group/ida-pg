@@ -35,7 +35,8 @@ export class AppComponent {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService, public dialog: MatDialog, private sanitizer: DomSanitizer) {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService,
+              public dialog: MatDialog, private sanitizer: DomSanitizer) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
@@ -55,7 +56,8 @@ export class AppComponent {
       this.activeItem = newId;
     } else if (resp.actnCode === 2) {
       // Open new tab with Force Directed Graph
-      const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.actvTbl, resp.payload.fdgData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.actvTbl,
+        resp.payload.fdgData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 3) {
       // Open new tab with Bar Graph
@@ -71,15 +73,18 @@ export class AppComponent {
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 7) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.VENND, resp.payload.actvTbl, resp.payload.vennDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Venn Diagram', TabType.VENND, resp.payload.actvTbl,
+        resp.payload.vennDiagramData, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 8) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.GSD, resp.payload.actvTbl, resp.payload, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Geospatial Diagram', TabType.GSD, resp.payload.actvTbl,
+        resp.payload, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 9) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.actvTbl, resp.payload.ssbDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Sequence Sun Burst diagram', TabType.SSB, resp.payload.actvTbl,
+        resp.payload.ssbDiagramData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 11) {
         // this.openPopup(resp.payload.storyUrl);
@@ -136,10 +141,9 @@ export class AppComponent {
     this.restservice.requestEvnt.emit(false);
     let content;
     if (resp.actnCode === 11) {
-      resp.payload.storyUrl = 11;
       content = 'Here is your Storyboard URL: ' +
-        '<a href=http://127.0.0.1:3080/getstory?id=' + resp.payload.storyUrl + ' target="_blank"> ' +
-        'http://127.0.0.1:3080/getstory?id=' + resp.payload.storyUrl + '</a>';
+        '<a href=http://127.0.0.1:3080/getstory?id=' + resp.payload.storyUuid + ' target="_blank"> ' +
+        'http://127.0.0.1:3080/getstory?id=' + resp.payload.storyUuid + '</a>';
     } else {
       content = resp.chatmsg;
     }

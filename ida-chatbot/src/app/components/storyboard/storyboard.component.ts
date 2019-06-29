@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {RestService} from '../../service/rest/rest.service';
+import {AppComponent} from '../../app.component';
 
 @Component({
   selector: 'app-storyboard',
@@ -7,9 +10,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class StoryboardComponent implements OnInit {
 
-  constructor() { }
+  storyUID: string;
+  constructor(private route: ActivatedRoute, private restservice: RestService, private appcomponent: AppComponent) {
+    this.route.queryParams.subscribe(params => {
+      this.storyUID = params['id'];
+    });
+  }
 
   ngOnInit() {
+    this.callbackendAPI();
+  }
+
+  callbackendAPI() {
+    const prmobj = {};
+    this.restservice.getRequest('/getstory?id=' + this.storyUID, prmobj).subscribe(resp => this.appcomponent.processBotResponse(resp));
   }
 
 }

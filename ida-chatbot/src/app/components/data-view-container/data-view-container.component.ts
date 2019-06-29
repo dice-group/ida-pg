@@ -40,7 +40,7 @@ export class DataViewContainerComponent implements OnInit {
     if (activeTab.tabType === TabType.DTTBL) {
       // returning the associated filename
       return activeTab.label;
-    } else{
+    } else {
       return activeTab.table;
     }
   }
