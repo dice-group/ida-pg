@@ -2,8 +2,9 @@
 - alright! tell me with which sets?
 ^ <br> (HINT: you can select columns from table <br> e.g. count of column_1_name w.r.t top Limit|10 column_2_name ..)
 + count of * wrt top * *
-- <set arg1=<star1>> <set arg2=<star2>> <set arg3=<star3>>
-^ <call> VennDiagramHandler "<get arg3>" "<get arg2>" "<get arg1>"</call> == pass => All good, loading Venn diagram in a moment!
+- <set arg1=<star1>> <set arg2=<star2>> <set arg3=<star3>> Great!
++ create the diagram now
+* <call> VennDiagramHandler "<get arg3>" "<get arg2>" "<get arg1>"</call> == pass => All good, loading Venn diagram in a moment!
 
 + i want to create story for current table and venn diagram visualization
 * <call>ScHandler "<get arg3>" "<get arg2>" "<get arg1>"</call> == pass => Your story is created.
