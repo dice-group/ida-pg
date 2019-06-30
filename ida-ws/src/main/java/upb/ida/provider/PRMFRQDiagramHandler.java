@@ -50,7 +50,7 @@ public class PRMFRQDiagramHandler implements Subroutine{
                 responseBean.setActnCode(IDALiteral.UIA_PRMFRQDIAGRAM);
                 responseBean.setPayload(dataMap);
             }
-            dataMap.put("gsDiagramData", response);
+            dataMap.put("prmfrqDiagramData", response);
         } catch (IOException e) {
             e.printStackTrace();
         }
