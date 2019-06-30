@@ -11,11 +11,12 @@
 - <set targetNode=<star>> Which feature should depict the strength \s
 ^ between the nodes ?
 + strength is *
-* <call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> == pass => Your\s
+- <set strength=strength is <star>>
+^ <call>FdgHandler "<get sourceNode>" "<get targetNode>" "<star>"</call> == pass => Your\s
 ^ requested force directed graph is now added to the \s
 ^ main view
 + i want to create story for current table and force directed graph visualization
-* <call>ScHandler "<get sourceNode>" "<get targetNode>" </call> == pass => Your story is created.
+* <call>ScHandler "<get sourceNode>" "<get targetNode>" "<get strength>" </call> == pass => Your story is created.
 
 + i want force directed graph visualization
 @ show me fdg

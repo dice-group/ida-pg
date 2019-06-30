@@ -49,16 +49,18 @@ public class StoryRestController {
 		String actvDs = dataFromDB.get("actvDs").toString();
 		String actvTbl = dataFromDB.get("actvTbl").toString();
 		String actvVs = dataFromDB.get("actvVs").toString();
-		String[] columnsList = dataFromDB.get("columnsList").toString().replaceAll("[\\[\\]\\s+]","").split(",");
+		String[] columnsListToDB = dataFromDB.get("columnsList").toString().replaceAll("[\\[\\]\\s+]","").split(",");
+		String[] columnsList = dataFromDB.get("columnsList").toString().replaceAll("[\\[\\]]","").split(",");
 
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
 		dataMap.put("actvVs", actvVs);
+		dataMap.put("actvVsData", columnsList);
 		response.setPayload(dataMap);
-		if(columnsList.length > 0)
-			dataService.getDataTableOfSpecificColumns(actvDs, actvTbl, Arrays.asList(columnsList));
+		if(columnsListToDB.length > 0)
+			dataService.getDataTableOfSpecificColumns(actvDs, actvTbl, Arrays.asList(columnsListToDB));
 		else
 			dataService.getDataTable(actvDs, actvTbl);
 		return response;
