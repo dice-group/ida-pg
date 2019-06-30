@@ -1,4 +1,5 @@
 sudo: required
+dist: xenial
 matrix:
   include:
     - language: java
@@ -6,11 +7,16 @@ matrix:
 
       before_install:
         - sudo apt-get update -qq
+        - sudo add-apt-repository -y ppa:jonathonf/python-3.6
+        - sudo apt-get update -y
+        - sudo apt-get -y install build-essential libpq-dev libssl-dev openssl libffi-dev zlib1g-dev
+        - sudo apt-get -y install python3.6 python3.6-dev python3-pip python3-setuptools
+        - sudo pip3 install sklearn
 
       script:
-        - cd ./ida-ws      
+        - cd ./ida-ws
         - mvn clean install -DskipTests -P linux
-        - mvn test 
+        - mvn test
 
       cache:
         directories:
@@ -21,8 +27,6 @@ matrix:
 #        - cd ./ida-chatbot
 #        - npm ci
 #        - npm run test-headless
-        
+
       after_success:
         - bash <(curl -s https://codecov.io/bash)
-  
-
