@@ -1,5 +1,6 @@
 (ns repl-tools
-  (:require [proto-repl-charts.graph :as prg]
+  (:require [clojure.string :as str]
+            [proto-repl-charts.graph :as prg]
             [datascript.core :as d]
             [loom.graph :as g]
             [loom.attr :as ga]
@@ -48,7 +49,7 @@
                                    n (or (::namespaced/id e)
                                          [(get-in e [::namespace/_member ::named/name] "?")
                                           (::named/name e "?")])]
-                               (clojure.string/join "/" n))
+                               (str/join "/" n))
                              ::constant/constant
                              (::constant/value e)
                              ::call-parameter/call-parameter
@@ -80,7 +81,7 @@
                                             ::constant/constant
                                             (str "c:" (:db/id datatype))
                                             "?"))))
-                                (clojure.string/join ", "))
+                                (str/join ", "))
                            (when (seq datatypes) ">"))}))
                     (g/nodes g))
         edges (g/edges g)
@@ -150,7 +151,7 @@
 (defn solver
   [state]
   (let [{:keys [ecosystem meta]} (:scrape (meta state))]
-    ((:execute ecosystem) meta (:db state))))
+    ((:executor ecosystem) meta (:db state))))
 
 (defn last-code
   []
