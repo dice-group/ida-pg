@@ -1,0 +1,44 @@
+! version = 2.0
+
+//User queries for Force Directed Graph
+
++ show me soldier profile
+- Alright!, but before proceeding tell me what is the \s
+^ soldierid ?
++ soldierid is *
+- <set sourceNode=<star>> Great! 
+//+ target node is *
+//- <set targetNode=<star>> Which feature should depict the strength \s
+//^ between the nodes ?
+//+ strength is *
+* <call>SoldierHandler "<get sourceNode>" "<star>"</call> == pass => soldier profile is on your screen now
+
++ i want force directed graph visualization
+@ show me fdg
+
++ i want force graph for this dataset
+@ show me fdg
+
++ i want force graph
+@ show me fdg
+
++ show me force graph for this
+@ show me fdg
+
++ show me force graph
+@ show me fdg
+
++ display force graph
+@ show me fdg
+
++ display force graph for this dataset
+@ show me fdg
+
++ display froce graph for this file
+@ show me fdg
+
++ i would like a force directed graph visualization for the current table
+@ show me fdg
+
++ strength between the nodes should be represented by *
+@ strength is <star>

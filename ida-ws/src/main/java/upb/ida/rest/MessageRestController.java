@@ -47,10 +47,15 @@ public class MessageRestController {
 			@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
+		System.out.println("actvScrId..sm"+actvScrId);
+		System.out.println("actvTbl"+actvTbl);
+		System.out.println("actvDs"+actvDs);
+		
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
+		System.out.println("dataMap....sm"+dataMap);
 		response.setPayload(dataMap);
 		String reply = rsService.getRSResponse(msg);
 
@@ -62,10 +67,17 @@ public class MessageRestController {
 	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
 
+		System.out.println("actvScrId...gd"+actvScrId);
+		System.out.println("actvTbl"+actvTbl);
+		System.out.println("actvDs"+actvDs);
+				
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("actvScrId", actvScrId);
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
+		
+		System.out.println("dataMap"+dataMap);
+		
 		response.setPayload(dataMap);
 		dataService.getDataTable(actvDs, actvTbl);
 		return response;

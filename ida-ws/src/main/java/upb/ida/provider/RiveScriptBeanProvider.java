@@ -51,6 +51,8 @@ public class RiveScriptBeanProvider {
 	private GeoDiagramHandler GeoDiagramHandler;
 	@Autowired
 	private SSBDiagramHandler SSBDiagramHandler;
+	@Autowired
+	private SoldierHandler SoldierHandler;
 
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
@@ -82,6 +84,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("VennDiagramHandler", VennDiagramHandler);
 		bot.setSubroutine("GeoDiagramHandler", GeoDiagramHandler);
 		bot.setSubroutine("SSBDiagramHandler", SSBDiagramHandler);
+		bot.setSubroutine("SoldierHandler", SoldierHandler);
 		return bot;
 	}
 
