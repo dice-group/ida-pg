@@ -28,9 +28,8 @@ public class DataDumpTest {
 	public void  getClusteringAlgoNamesPosTest() {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
-		resList.add("KMeans");
-		resList.add("AffinityPropagation");
-
+		resList.add("affinity_propagation");
+		resList.add("k_means");
 
 
 		assertEquals(algonames, resList);
@@ -44,8 +43,8 @@ public class DataDumpTest {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
 
-		resList.add("KMeans");
-		resList.add("AffinityPropagation");
+		resList.add("affinity_propagation");
+		resList.add("k_means");
 
 		assertEquals(algonames, resList);
 		assertEquals(algonames.size(), 2);
@@ -57,8 +56,8 @@ public class DataDumpTest {
 	public void  getClusteringAlgoNamesExtTest() {
 		List<String> algonames = dataDumpUtil.getClusteringAlgoNames();
 		List<String> resList = new ArrayList<>();
-		resList.add("KMeans");
-		resList.add("AffinityPropagation");
+		resList.add("affinity_propagation");
+		resList.add("k_means");
 
 		assertEquals(algonames, resList);
 		assertEquals(algonames.size(),2);

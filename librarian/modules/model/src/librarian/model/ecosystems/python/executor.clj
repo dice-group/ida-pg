@@ -1,5 +1,6 @@
 (ns librarian.model.ecosystems.python.executor
-  (:require [libpython-clj.python :as lp]
+  (:require [clojure.tools.logging :as log]
+            [libpython-clj.python :as lp]
             [libpython-clj.python.object :as lpo]
             [libpython-clj.python.protocols :as lpp]
             [librarian.model.ecosystems.python.generator :as pg]))
@@ -19,4 +20,5 @@
         solve (-> (lp/run-simple-string code)
                   :locals
                   (get "solve"))]
-    #(apply solve (map lp/->python %&))))
+    (log/info (str "Created python executor for:\n" code))
+    (fn [& args] @(future (apply solve (map lp/->python args))))))

@@ -121,12 +121,14 @@
   [& args]
   (when-let [res (gc/search (scrape/read-scrape "libs/scikit-learn-cluster")
                             [{:type :call-result
+                              :position 1
                               :datatype [{:type :basetype
-                                          :name "int"}
+                                          :name "string"}
                                          {:type :semantic-type
                                           :key "name"
                                           :value "n_clusters"}]}
                              {:type :call-result
+                              :position 2
                               :datatype [{:type :role-type
                                           :id :dataset}]}
                              {:type :call

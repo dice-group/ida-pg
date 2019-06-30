@@ -22,6 +22,7 @@ import com.rivescript.macro.Subroutine;
 import upb.ida.bean.ResponseBean;
 import upb.ida.bean.cluster.ClusterParam;
 import upb.ida.constant.IDALiteral;
+import upb.ida.util.CodeGeneratorUtil;
 import upb.ida.util.DataDumpUtil;
 import upb.ida.util.FileUtil;
 import upb.ida.util.GetCorrectParamTypes;
@@ -39,6 +40,8 @@ public class ClusterDataGetter implements Subroutine {
 	private SessionUtil sessionUtil;
 	@Autowired
 	private DataDumpUtil DataDumpUtil;
+	@Autowired
+	private CodeGeneratorUtil generatorUtil;
 	/**
 	 * Method to create and set response of clustering results 
 	 * @param rs
@@ -63,15 +66,13 @@ public class ClusterDataGetter implements Subroutine {
 
 			File file = new File(demoMain.fetchSysFilePath(path));
 			List<Map<String, String>> lstt = demoMain.convertToMap(file);
-			ObjectMapper mapper = new ObjectMapper();
-			ArrayNode nodeArr1 = mapper.createArrayNode();
 			List <String> keys = new ArrayList <String> ();
 			for(int i=0;i<columnsForCluster.size();i++) {
 				keys.add(getMatchingKey(columnsForCluster.get(i), lstt.get(0)));
 				
 			}
             
-			List<Object> outer_list = new ArrayList<>();
+			List<List<Double>> outer_list = new ArrayList<>();
 			/**
 			 * getting Array list of columns from file provided by user  
 			 */
@@ -107,8 +108,7 @@ public class ClusterDataGetter implements Subroutine {
 				 * creating Array node of jsonDataForCluster - which is the data
 				 *  on which clustering algorithm will be appied 
 				 */
-				nodeArr1.add(mapper.readTree(mapper.writeValueAsString(jsonDataForCluster)));
-				nodeArr1.toString().replace('\"','\'');
+
 				/**
 				 * creating instance of kernelHttpRequest call to make an http request 
 				 * to Jupyter kernel gateway server for running clustering on nodeArr1.
@@ -116,8 +116,9 @@ public class ClusterDataGetter implements Subroutine {
 				sessionUtil.getSessionMap().remove("clusterParams");
 				sessionUtil.getSessionMap().remove("colledtedParams");
 				sessionUtil.getSessionMap().remove("algoName");
-				KernelHttpRequest kernel=new KernelHttpRequest();
-				List<String> clusterResult = kernel.getClusterResults(nodeArr1);
+				
+				List<Long> clusterResult = generatorUtil.performClustering(algoName, outer_list, mMap);
+				
 				columns=args[0].replaceAll("\\sand\\s"," ");
 				String keyFeature=args[1];
 				columns=keyFeature+" "+columns;
@@ -177,7 +178,7 @@ public class ClusterDataGetter implements Subroutine {
 	 * 
 	 * 
 	 */
-	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<String>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
+	private  void prepareResponseForCluster(List<String> columnsForResponse,String path,List<Long>clusterResult,Map<String,Object> dataMap) throws JsonProcessingException, IOException, NumberFormatException, ParseException {
 		
 		List<Map<String, Object>> responseList=new ArrayList<>();
 		File responseReader = new File(demoMain.fetchSysFilePath(path));
@@ -199,7 +200,7 @@ public class ClusterDataGetter implements Subroutine {
 				innerMap.put(columnsForResponse.get(x),Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
 			    }
 			}
-			innerMap.put("clusterLabel",Integer.parseInt(clusterResult.get(i)));
+			innerMap.put("clusterLabel",clusterResult.get(i));
 			responseList.add(innerMap);
 		}
 		

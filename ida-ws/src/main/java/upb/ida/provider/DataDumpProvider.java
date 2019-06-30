@@ -1,6 +1,5 @@
 package upb.ida.provider;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +24,6 @@ import clojure.lang.PersistentVector;
 import librarian.model.Scrape;
 import upb.ida.bean.cluster.ClusterAlgoDesc;
 import upb.ida.bean.cluster.ClusterParam;
-import upb.ida.util.FileUtil;
 /**
  * Beans Provider for Scikit datadump
  * @author Nikit
@@ -36,8 +34,7 @@ public class DataDumpProvider {
 	@Autowired
 	public ServletContext context;
 	@Autowired
-	public FileUtil demoMain;
-	public static final String DATADUMP_PATH = "./libs/scikit-learn-cluster";
+	public Scrape scrape;
 
 	/**
 	 * Method to generate a map of clustering algorithms in the scrape database
@@ -50,15 +47,12 @@ public class DataDumpProvider {
 	@Scope(value = "singleton", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	@Qualifier("scktClstrDtDmp")
 	public Map<String, ClusterAlgoDesc> getScktClstrDtDmp() {
-		File scrapeFile = new File(demoMain.fetchSysFilePath(DATADUMP_PATH));
-		Scrape scrape = Scrape.load(scrapeFile);
-
 		Map<String, ClusterAlgoDesc> res = new HashMap<>();
 
-		res.put("KMeans", queryAlgoDesc(scrape,
-				PersistentVector.create("sklearn.cluster", "KMeans")));
-		res.put("AffinityPropagation", queryAlgoDesc(scrape,
-				PersistentVector.create("sklearn.cluster", "AffinityPropagation")));
+		res.put("k_means", queryAlgoDesc(scrape,
+				PersistentVector.create("sklearn.cluster", "k_means")));
+		res.put("affinity_propagation", queryAlgoDesc(scrape,
+				PersistentVector.create("sklearn.cluster", "affinity_propagation")));
 
 		return res;
 	}
@@ -71,14 +65,15 @@ public class DataDumpProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	private ClusterAlgoDesc queryAlgoDesc(Scrape scrape, PersistentVector fqn) {
-		String q = ":find ?class ?name (distinct ?d) (distinct ?param) "
+		String q = ""
+				+ ":find ?fn ?name (distinct ?d) (distinct ?param) "
 				+ ":in $ ?id :where "
-				+ "[?class :class/id ?id] [?class :class/name ?name] "
-				+ "[?class :class/datatype ?st] [?st :type :semantic-type] "
+				+ "[?fn :function/id ?id] [?fn :function/name ?name] "
+				+ "[?fn :function/datatype ?st] [?st :type :semantic-type] "
 				+ "[?st :semantic-type/key \"description\"] "
 				+ "[?st :semantic-type/value ?desc] [?st :semantic-type/position ?dp] "
 				+ "[(vector ?dp ?desc) ?d] "
-				+ "[?class :class/constructor ?ctr] [?ctr :constructor/parameter ?param]";
+				+ "[?fn :function/parameter ?param]";
 
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(fqn));
 
@@ -93,6 +88,7 @@ public class DataDumpProvider {
 				.collect(Collectors.toList());
 		List<ClusterParam> params = paramIds.stream()
 				.map(pid -> queryClusterParam(scrape, pid))
+				.filter(p -> p != null)
 				.sorted((a, b) -> a.getPosition() - b.getPosition())
 				.collect(Collectors.toList());
 
@@ -102,24 +98,36 @@ public class DataDumpProvider {
 	}
 
 	private ClusterParam queryClusterParam(Scrape scrape, Long pid) {
-		String q = ":find ?name ?optional ?tname ?position "
+		String q = ""
+				+ ":find ?name ?optional ?tname ?position (max ?desc) "
 				+ ":in $ ?param :where "
 				+ "[?param :parameter/name ?name] "
+				+ "[(not= ?name \"X\")]"
 				+ "[(get-else $ ?param :parameter/optional false) ?optional] "
-				+ "[(get-else $ ?param :parameter/position -1) ?position]"
-				+ "[(get-else $ ?param :parameter/datatype -1) ?type] "
-				+ "[(get-else $ ?type :basetype/name \"\") ?tname]";
+				+ "[(get-else $ ?param :parameter/position -1) ?position] "
+				+ "[?param :parameter/datatype ?basetype] "
+				+ "[(get-else $ ?basetype :basetype/name \"\") ?tname] "
+				+ "[?param :parameter/datatype ?desctype] "
+				+ "(or-join [?desctype ?desc]"
+				+ "  (and [?desctype :semantic-type/key \"description\"]"
+				+ "       [?desctype :semantic-type/position 0]"
+				+ "       [?desctype :semantic-type/value ?desc])"
+				+ "  (and [?desctype] [(ground \"\") ?desc]))";
 
 		@SuppressWarnings("unchecked")
 		List<List<Object>> res = scrape.query("[" + q + "]", Arrays.asList(pid));
+		
+		if(res.size() == 0)
+			return null;
 
 		List<Object> data = res.get(0);
 		String name = (String) data.get(0);
 		Boolean optional = (Boolean) data.get(1);
 		String type = (String) data.get(2);
 		Long position = (Long) data.get(3);
+		String desc = (String) data.get(4);
 
-		return new ClusterParam(name, Arrays.asList(type), optional.booleanValue(), position.intValue());
+		return new ClusterParam(name, Arrays.asList(type), optional.booleanValue(), position.intValue(), desc);
 	}
 
 }
