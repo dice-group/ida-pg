@@ -359,7 +359,16 @@
     },
     {
       "@id": "time:TemporalEntity",
-      "@type": "owl:Class"
+      "@type": "owl:Class" ,"rdfs:label": [
+        {
+          "@language": "en",
+          "@value": "TemporalEntity"
+        },
+        {
+          "@language": "de",
+          "@value": "TemporalEntity"
+        }
+      ]
     },
     {
       "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/verifiedData",
@@ -972,7 +981,17 @@
     },
     {
       "@id": "dbo:Person",
-      "@type": "owl:Class"
+      "@type": "owl:Class",
+	  "rdfs:label": [
+        {
+          "@language": "en",
+          "@value": "Person"
+        },
+        {
+          "@language": "de",
+          "@value": "Person"
+        }
+      ]
     },
     {
       "@id": "https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/ontology/hasDecoration",
