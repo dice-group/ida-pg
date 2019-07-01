@@ -14,6 +14,7 @@ import {TabType} from '../../enums/tab-type.enum';
 import {IdaEventService} from '../../service/event/ida-event.service';
 import {MatDialog} from '@angular/material';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -40,9 +41,6 @@ export class HomeComponent {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
-  }
-
-  AppComponent() {
   }
 
   public actionHandler(resp: ResponseBean) {
@@ -142,8 +140,8 @@ export class HomeComponent {
     let content;
     if (resp.actnCode === 11) {
       content = 'Here is your Storyboard URL: ' +
-        '<a href=http://localhost:4200/getstory?id=' + resp.payload.storyUuid + ' target="_blank"> ' +
-        'http://localhost:4200/getstory?id=' + resp.payload.storyUuid + '</a>';
+        '<a href=' + environment.chatbotBase + '/getstory?id=' + resp.payload.storyUuid + ' target="_blank"> ' +
+         environment.chatbotBase + '/getstory?id=' + resp.payload.storyUuid + '</a>';
     } else {
       content = resp.chatmsg;
     }

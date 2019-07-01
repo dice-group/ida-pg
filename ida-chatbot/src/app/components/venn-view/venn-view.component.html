@@ -2,4 +2,5 @@
   <div [attr.id]="vennContainerId" fxFlexFill>
     <div [attr.id]="vennMainId"></div>
   </div>
+  <mat-spinner style="position: absolute; top:50%; left:50%;" *ngIf="this.showSpinner"></mat-spinner>
 </div>

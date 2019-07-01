@@ -1,15 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {RestService} from '../../service/rest/rest.service';
-// import {AppComponent} from '../../app.component';
 import {MainviewElement} from '../../models/mainview-element';
-import {DatafileMetadata} from '../../models/datafile-metadata';
 import {TabElement} from '../../models/tab-element';
 import {TabType} from '../../enums/tab-type.enum';
-import {HomeComponent} from '../home/home.component';
-import {AppComponent} from '../../app.component';
-import {concat, forkJoin} from 'rxjs';
-import {DataViewContainerComponent} from '../data-view-container/data-view-container.component';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-storyboard',
@@ -20,7 +15,7 @@ export class StoryboardComponent implements OnInit {
 
   private mainViewItems: MainviewElement[] = [];
   storyUID: string;
-  constructor(private route: ActivatedRoute, private restservice: RestService, private appcomponent: AppComponent, private dataviewcomponent: DataViewContainerComponent) {
+  constructor(private route: ActivatedRoute, private restservice: RestService) {
     this.route.queryParams.subscribe(params => {
       this.storyUID = params['id'];
     });
@@ -37,7 +32,6 @@ export class StoryboardComponent implements OnInit {
   callbackendAPI() {
     // call to get Table and visualization data
     const prmobj = {};
-    const tableResp = {};
     this.restservice.getRequest('/getstory?id=' + this.storyUID, prmobj).subscribe(
       resp => {
         const mvEle = new MainviewElement(0, resp.payload.actvTbl, null);
@@ -83,6 +77,7 @@ export class StoryboardComponent implements OnInit {
     const d = this.restservice.getRequest('/message/sendmessage', prmobj);
 
     forkJoin([a, b, c, d]).subscribe(([ra, rb, rc, rd]) => {
+      rd.payload.bgData.timeInterval = 1500;
       const tab = new TabElement(1, payload.actvVs, TabType.BG, payload.actvTbl, rd.payload.bgData, true, true);
       this.mainViewItems[0].tabArr.push(tab);
     });
@@ -109,6 +104,7 @@ export class StoryboardComponent implements OnInit {
     const d = this.restservice.getRequest('/message/sendmessage', prmobj);
 
     forkJoin([a, b, c, d]).subscribe(([ra, rb, rc, rd]) => {
+      rd.payload.fdgData.timeInterval = 4000;
       const tab = new TabElement(1, payload.actvVs, TabType.FDG, payload.actvTbl, rd.payload.fdgData, true, true);
       this.mainViewItems[0].tabArr.push(tab);
     });
@@ -129,6 +125,7 @@ export class StoryboardComponent implements OnInit {
     const b = this.restservice.getRequest('/message/sendmessage', prmobj);
 
     forkJoin([a, b]).subscribe(([ra, rb]) => {
+      rb.payload.vennDiagramData.timeInterval = 400;
       const tab = new TabElement(1, payload.actvVs, TabType.VENND, payload.actvTbl, rb.payload.vennDiagramData, true, true);
       this.mainViewItems[0].tabArr.push(tab);
     });

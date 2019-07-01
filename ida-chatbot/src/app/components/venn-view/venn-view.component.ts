@@ -13,6 +13,7 @@ export class VennViewComponent implements OnInit, AfterViewInit {
   public vennContainerId;
   public vennMainId;
   public intervalId: any;
+  public showSpinner: boolean;
   constructor(public uip: UniqueIdProviderService) {
     this.vennContainerId = 'venn-container' + this.uip.getUniqueId();
     this.vennMainId = 'venn-main' + this.uip.getUniqueId();
@@ -20,12 +21,14 @@ export class VennViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.demDt = this.demDt;
+    this.showSpinner = !!this.demDt.timeInterval;
   }
 
   ngAfterViewInit() {
     this.intervalId = setInterval(x => {
+      this.showSpinner = false;
       this.renderGraph();
-    }, 400);
+    }, this.demDt.timeInterval ? this.demDt.timeInterval : 400);
 
   }
 
