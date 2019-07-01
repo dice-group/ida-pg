@@ -25,7 +25,7 @@ export class BargraphViewComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.intervalId = setInterval(x => {
       this.renderGraph();
-    }, 400);
+    }, 1500);
 
   }
 

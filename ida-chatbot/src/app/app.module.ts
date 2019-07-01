@@ -60,11 +60,12 @@ import {DatatableDetailComponent} from './components/datatable-detail/datatable-
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
-import {StoryboardDialogComponent} from "./dialogs/storyboard/storyboard.dialog.component";
+import {StoryboardDialogComponent} from './dialogs/storyboard/storyboard.dialog.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { StoryboardComponent } from './components/storyboard/storyboard.component';
 import {AppRoutingModule} from './app-routing.module';
 import {RouterModule} from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import {RouterModule} from '@angular/router';
     VennViewComponent,
     DeckglHexViewComponent,
     StoryboardDialogComponent,
-    StoryboardComponent
+    StoryboardComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -138,7 +140,9 @@ import {RouterModule} from '@angular/router';
     provide: HTTP_INTERCEPTORS,
     useClass: RestService ,
     multi: true
-  }],
+  },
+    DataViewContainerComponent
+  ],
   bootstrap: [AppComponent],
   exports: [AppRoutingModule]
 })

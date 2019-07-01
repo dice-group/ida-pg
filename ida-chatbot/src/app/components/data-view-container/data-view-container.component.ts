@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Injectable, Input, OnInit} from '@angular/core';
 import {MainviewElement} from '../../models/mainview-element';
 import {TabElement} from '../../models/tab-element';
 import {TabType} from '../../enums/tab-type.enum';
@@ -9,6 +9,7 @@ import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.ser
   templateUrl: './data-view-container.component.html',
   styleUrls: ['./data-view-container.component.css']
 })
+@Injectable()
 export class DataViewContainerComponent implements OnInit {
   @Input('item')
   public item: MainviewElement;
