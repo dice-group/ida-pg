@@ -35,27 +35,27 @@
   [o]
   (if (map? o)
     (cond
-      (contains? o "py/set") (set (o "py/set"))
-      (contains? o "py/tuple") (o "py/tuple")
-      (= (o "py/object") "numpy.ndarray") (o "values")
+      (contains? o "__set__") (set (o "__set__"))
+      (contains? o "__ndarray__") (o "__ndarray__")
+      (contains? o "__decimal__") (Double/parseDouble (o "__decimal__"))
+      (contains? o "__fraction__") (/ (o "numerator") (o "denominator"))
       :else o)
     o))
 
 (defmethod executor :shell
   [metadata db]
-  (let [code (pg/generate (assoc metadata :fn-name "solve") db)]
-    (log/info (str "Created python executor for:\n" code))
-    (fn [& args]
-      (let [arg-str (str/join ", " (map pg/literal args))
-            call-code
-            (str code "\n"
-                 "import jsonpickle\n"
-                 "import jsonpickle.ext.numpy as jsonpickle_numpy\n"
-                 "jsonpickle_numpy.register_handlers()\n"
-                 "print(jsonpickle.encode(solve(" arg-str ")))\n")
-            {:keys [exit out err]} (sh/sh "python3" :in call-code)]
-        (if (zero? exit)
-          (walk/postwalk python->clj (json/read-str out))
-          (throw (ex-info "Error executing Python code."
-                          {:exit exit
-                           :err err})))))))
+  (let [code (pg/generate (assoc metadata :fn-name "solve") db)
+        _ (log/info (str "Created python executor for:\n" code))
+        f (fn [& args]
+            (let [arg-str (str/join ", " (map pg/literal args))
+                  call-code
+                  (str code "\n"
+                       "import json_tricks\n"
+                       "print(json_tricks.dumps(solve(" arg-str ")))\n")
+                  {:keys [exit out err]} (sh/sh "python3" :in call-code)]
+              (if (zero? exit)
+                (walk/postwalk python->clj (json/read-str out))
+                (throw (ex-info "Error executing Python code."
+                                {:exit exit
+                                 :err err})))))]
+    (vary-meta f assoc :code code)))
