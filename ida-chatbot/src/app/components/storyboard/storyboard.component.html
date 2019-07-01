@@ -1,3 +1,8 @@
-<p>
-  storyboard works!
-</p>
+<div fxLayout="row">
+  <!-- </div>-->
+  <div fxFlex="100%" id="mainView">
+    <ng-container *ngFor="let mvw of getMainviewItems()" >
+      <app-data-view-container [item]="mvw" [ngClass]=""></app-data-view-container>
+    </ng-container>
+  </div>
+</div>

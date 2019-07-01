@@ -41,8 +41,7 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
 
     this.intervalId = setInterval(x => {
       this.renderGraph();
-    }, 400);
-
+    }, 4000);
   }
 
   renderGraph() {
