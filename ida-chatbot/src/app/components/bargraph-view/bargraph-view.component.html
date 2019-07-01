@@ -1,3 +1,4 @@
 <div fxFlex style="height: 85vh; margin: 20px;">
   <svg [attr.id]="bgid" fxFlexFill style="border-color: #eaeaea;border-style: solid"></svg>
+  <mat-spinner style="position: absolute; top:50%; left:50%;" *ngIf="this.showSpinner"></mat-spinner>
 </div>

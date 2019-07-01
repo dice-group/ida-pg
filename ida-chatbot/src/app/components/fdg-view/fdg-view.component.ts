@@ -18,6 +18,7 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
   public svgid: string;
   public graph: any;
   public intervalId: any;
+  public showSpinner: boolean;
 
   constructor(public uip: UniqueIdProviderService) {
     this.fdgid = 'fdg' + this.uip.getUniqueId();
@@ -26,6 +27,7 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.graph = this.content;
+    this.showSpinner = !!this.content.timeInterval;
   }
 
   ngAfterViewInit() {
@@ -40,8 +42,9 @@ export class FdgViewComponent implements OnInit, AfterViewInit {
     });*/
 
     this.intervalId = setInterval(x => {
+      this.showSpinner = false;
       this.renderGraph();
-    }, 4000);
+    }, this.content.timeInterval ? this.content.timeInterval : 400);
   }
 
   renderGraph() {

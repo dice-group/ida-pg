@@ -131,7 +131,7 @@ import { HomeComponent } from './components/home/home.component';
     MatTooltipModule,
     FlexLayoutModule,
     NgbModule,
-    RouterModule
+    RouterModule,
   ],
   entryComponents: [
     StoryboardDialogComponent
@@ -146,4 +146,4 @@ import { HomeComponent } from './components/home/home.component';
   bootstrap: [AppComponent],
   exports: [AppRoutingModule]
 })
-export class AppModule { }
+export class AppModule {}
