@@ -1,8 +1,8 @@
-FROM maven:3.6.0-jdk-11 as builder
+FROM maven:3.6.1-jdk-11 as builder
 
-RUN apt-get update -qq; \
-	apt-get -y install python3 python3-pip python3-setuptools
-RUN pip3 install sklearn json-tricks
+RUN apt-get update -qq --no-install-recommends; \
+	apt-get -y install python3=3.5.3-1 python3-pip=9.0.1-2+deb9u1 python3-setuptools=33.1.1-1
+RUN pip3 install scikit-learn==0.21.2 json-tricks==3.13.1
 
 WORKDIR /app
 
