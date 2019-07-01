@@ -1,23 +1,26 @@
 import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {Message} from './models/message';
-import {ResponseBean} from './models/response-bean';
-import {SidebarComponent} from './components/sidebar/sidebar.component';
-import {MainviewElement} from './models/mainview-element';
-import {SidebarElement} from './models/sidebar-element';
-import {ChatboxComponent} from './components/chatbox/chatbox.component';
-import {RestService} from './service/rest/rest.service';
-import {DataViewContainerComponent} from './components/data-view-container/data-view-container.component';
-import {TabElement} from './models/tab-element';
-import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
-import {TabType} from './enums/tab-type.enum';
-import {IdaEventService} from './service/event/ida-event.service';
+import {Message} from '../../models/message';
+import {ResponseBean} from '../../models/response-bean';
+import {SidebarComponent} from '../sidebar/sidebar.component';
+import {StoryboardDialogComponent} from '../../dialogs/storyboard/storyboard.dialog.component';
+import {MainviewElement} from '../../models/mainview-element';
+import {SidebarElement} from '../../models/sidebar-element';
+import {ChatboxComponent} from '../chatbox/chatbox.component';
+import {RestService} from '../../service/rest/rest.service';
+import {DataViewContainerComponent} from '../data-view-container/data-view-container.component';
+import {TabElement} from '../../models/tab-element';
+import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
+import {TabType} from '../../enums/tab-type.enum';
+import {IdaEventService} from '../../service/event/ida-event.service';
+import {MatDialog} from '@angular/material';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
-export class AppComponent {
+export class HomeComponent {
   idCount = 1;
   title = 'app';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
@@ -32,10 +35,14 @@ export class AppComponent {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService) {
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService,
+              public dialog: MatDialog, private sanitizer: DomSanitizer) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
+  }
+
+  AppComponent() {
   }
 
   public actionHandler(resp: ResponseBean) {
@@ -49,32 +56,38 @@ export class AppComponent {
       this.activeItem = newId;
     } else if (resp.actnCode === 2) {
       // Open new tab with Force Directed Graph
-      const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.fdgData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Force Directed Graph', TabType.FDG, resp.payload.actvTbl,
+        resp.payload.fdgData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 3) {
       // Open new tab with Bar Graph
-      const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.bgData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Bar Graph', TabType.BG, resp.payload.actvTbl, resp.payload.bgData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 4) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.tabLabel, TabType.DTTBL, resp.payload.clusterData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.tabLabel, TabType.DTTBL, '', resp.payload.clusterData, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 5) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, resp.payload.dataTable, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.DTTBL, '', resp.payload.dataTable, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 7) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.VENND, resp.payload.vennDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Venn Diagram', TabType.VENND, resp.payload.actvTbl,
+        resp.payload.vennDiagramData, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 8) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.GSD, resp.payload, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Geospatial Diagram', TabType.GSD, resp.payload.actvTbl,
+        resp.payload, true, true);
       this.addNewTab(newTab, resp);
     } else if (resp.actnCode === 9) {
       // Open new tab with DataTable
-      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
+      const newTab = new TabElement(this.uis.getUniqueId(), 'Sequence Sun Burst diagram', TabType.SSB, resp.payload.actvTbl,
+        resp.payload.ssbDiagramData, true, true);
       this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 11) {
+        // this.openPopup(resp.payload.storyUrl);
     }
   }
 
@@ -93,15 +106,18 @@ export class AppComponent {
     this.chatboxComp.addNewMessage(message);
     let actvTbl = '';
     let actvDs = '';
+    let actvVs = '';
     if (this.getActiveMainView() && this.sbComp) {
       actvTbl = this.getActiveMainView().getActiveDataTableName();
       actvDs = this.sbComp.getActiveDatasetName();
+      actvVs = this.getActiveMainView().getActiveVisualizationName();
     }
     const prmobj = {
       msg: message.content,
       actvScrId: this.activeItem,
       actvTbl: actvTbl == null ? '' : actvTbl,
-      actvDs: actvDs == null ? '' : actvDs
+      actvDs: actvDs == null ? '' : actvDs,
+      actvVs: actvVs == null ? '' : actvVs
     };
     // Send the message to server
     this.restservice.getRequest('/message/sendmessage', prmobj).subscribe(resp => this.processBotResponse(resp));
@@ -123,7 +139,15 @@ export class AppComponent {
 
   processBotResponse(resp: ResponseBean) {
     this.restservice.requestEvnt.emit(false);
-    const msg: Message = new Message(resp.chatmsg, 'Assistant', 'chatbot', new Date());
+    let content;
+    if (resp.actnCode === 11) {
+      content = 'Here is your Storyboard URL: ' +
+        '<a href=http://localhost:4200/getstory?id=' + resp.payload.storyUuid + ' target="_blank"> ' +
+        'http://localhost:4200/getstory?id=' + resp.payload.storyUuid + '</a>';
+    } else {
+      content = resp.chatmsg;
+    }
+    const msg: Message = new Message(this.cleanResponse(content), 'Assistant', 'chatbot', new Date());
     // Putting delay to make responses look natural
     setTimeout(() => this.chatboxComp.addNewMessage(msg), 300);
     if (resp.actnCode > 0) {
@@ -131,6 +155,18 @@ export class AppComponent {
       this.actionHandler(resp);
     }
   }
+
+  cleanResponse(content) {
+    return content.replace('pass == pass => ', '');
+  }
+
+  // openPopup(url) {
+  //   this.dialog.open(StoryboardDialogComponent, {
+  //     data: {
+  //       url: url
+  //     }
+  //   });
+  // }
 
   public getActiveMainView(): DataViewContainerComponent {
     let activeMainDtVw = null;
