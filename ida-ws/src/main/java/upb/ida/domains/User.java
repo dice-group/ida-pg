@@ -1,9 +1,9 @@
 package upb.ida.domains;
 
-//@NodeEntity
+
 public class User {	
 
-//	@GeneratedValue
+
     private Long id;
     private String username;
     private String password;
@@ -33,12 +33,7 @@ public class User {
 	public User() {
 		this.userrole = "USER";
 	}
-    
-//	@Bean
-//	public PasswordEncoder encoder() {
-//	    return new BCryptPasswordEncoder();
-//	}
-    
+        
     public Long getId() {
         return id;
     }

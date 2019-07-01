@@ -58,8 +58,7 @@ public class UserController {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		RDFConnectionFuseki conn = null;
 		QueryExecution qExec = null;
-		// RDFConnection RDFConnectionFactory.connectPW(String URL, String user, String
-		// password)
+		
 		try {
 			conn = (RDFConnectionFuseki) builder.build();
 			qExec = conn.query("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
@@ -71,14 +70,11 @@ public class UserController {
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ResultSetFormatter.outputAsJSON(outputStream, results);
 			String jsonOutput = new String(outputStream.toByteArray());
-
-			// System.out.println("json output:"+jsonOutput);
-
+			
 			Map<String, Object> returnMap = new HashMap<String, Object>();
 			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
-
-			// System.out.println("responseBean:"+responseBean);
+			
 		} finally {
 			qExec.close();
 			conn.close();
@@ -96,22 +92,20 @@ public class UserController {
 			responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
 			return responseBean;
 		} else {
-			//String password = updatedrecord.getPassword();
+			
 			User oldRecord = UserService.getByUsername(updatedrecord.getUsername());
 
 			if (oldRecord == null) {
 				responseBean.setErrMsg("user not found");
 				return responseBean;
 			}
-
-			// check new password needs to be updated or older one needs to be used
+		
 				RDFConnectionFuseki conn = null;
-				// In this variation, a connection is built each time.
+			
 				try {
 					conn = (RDFConnectionFuseki) builder.build();
 					UpdateRequest request = UpdateFactory.create();
-
-					//System.out.println("check request values1  " + request);
+				
 					// The idea is SPARQL is not for relational data! Its for graph data
 					// So here we are just deleting the old recorded
 
@@ -125,7 +119,7 @@ public class UserController {
 					request.add(query1);
 					conn.update(request);
 
-					//System.out.println("check request values1.2  " + request);
+				
 					// inserting updated record..
 					String query2 = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
 							+ " PREFIX ab: <http://userdata/#" + oldRecord.getUsername() + "> " + " INSERT DATA "
@@ -199,12 +193,12 @@ public class UserController {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		User record = UserService.getByUsername(usernames);
 		if (record == null) {
-			//System.out.println("username not found");
+		
 			responseBean.setErrMsg("user not found");
 			return responseBean;
 		} else {
 			RDFConnectionFuseki conn = null;
-			// In this variation, a connection is built each time.
+			
 			try {
 				conn = (RDFConnectionFuseki) builder.build();
 				UpdateRequest request = UpdateFactory.create();
@@ -230,7 +224,7 @@ public class UserController {
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
 		String serviceURI = dbUrl;
-		//System.out.println("userName" + userName);
+		
 		String query1 = " PREFIX ab: <http://userdata/#" + userName + "> "
 				+ "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?firstname ?lastname ?username ?password  ?userrole where {ab: dc:firstname ?firstname ;dc:lastname ?lastname; dc:password ?password ; dc:userrole ?userrole; dc:username ?username .}";
 
@@ -242,7 +236,7 @@ public class UserController {
 			results = q.execSelect();
 			while (results.hasNext()) {
 				QuerySolution soln = results.nextSolution();
-				// assumes that you have an "?x" in your query.
+		
 				RDFNode x = soln.get("username");
 				RDFNode y = soln.get("firstname");
 				RDFNode w = soln.get("lastname");
@@ -268,7 +262,7 @@ public class UserController {
 		return obj;
 	}
 	
-	//changed sha-256 hashing
+
 	// password hashing and salting using Bcrypt library
 	
 	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
@@ -280,7 +274,6 @@ public class UserController {
 	public static boolean checkPassword(String dbPass, String userInputPassword) throws NoSuchAlgorithmException {
 		String  originalPassword = userInputPassword;
 		boolean matched = BCrypt.checkpw(originalPassword, dbPass);
-		//System.out.println(" password result:   "+matched);
 		return matched;
 	}
 }

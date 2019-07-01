@@ -23,17 +23,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		// name is user name here //user input
+		// name is username here i.e user input
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
-//		System.out.println("username entered by user:   " + name);
-//		System.out.println("password entered by user:    " + password);
-
-		//db password stored
-		// User currentUser = userService.getByUsername(name);
 		User currentUser = UserService.getByUsername(name);
-//		System.out.println("username databse " + currentUser);
-		
 		Boolean PasswordCheck =null;
 		if (currentUser == null) 
 		{
