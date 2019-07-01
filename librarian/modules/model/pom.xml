@@ -99,6 +99,11 @@
       <version>1.0.2</version>
     </dependency>
     <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>data.json</artifactId>
+      <version>0.2.6</version>
+    </dependency>
+    <dependency>
       <groupId>io.forward</groupId>
       <artifactId>semver</artifactId>
       <version>0.1.0</version>

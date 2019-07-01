@@ -31,7 +31,9 @@
          "\"")
     (number? val) (str val)
     (boolean? val) (if val "True" "False")
-    (nil? val) "None"))
+    (nil? val) "None"
+    (coll? val)
+    (str "[" (str/join ", " (map literal val)) "]")))
 
 (defmulti line
   (fn [db g id] (ga/attr g id :type)))

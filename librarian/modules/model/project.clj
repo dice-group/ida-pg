@@ -9,6 +9,7 @@
                  [datascript]
                  [clj-commons/fs]
                  [aysylu/loom]
+                 [org.clojure/data.json "0.2.6"]
                  [io.forward/semver "0.1.0"]
                  [cnuernber/libpython-clj "0.11"]
                  [librarian/helpers]]

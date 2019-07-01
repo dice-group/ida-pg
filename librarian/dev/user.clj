@@ -38,7 +38,7 @@
                     " * (pull-file scrape-file selector eid)"
                     ""
                     "Generator commands:"
-                    " * (gen-test :goal|:base)"
+                    " * (gen-test :goal|:base|:cluster)"
                     " * (show-state state & {:keys [snippets unused-constants semantic-constants semantic-values no-effects]})"
                     " * (show-search-state search-state & opts)"
                     " * (state-past state predecessor-idx)"
