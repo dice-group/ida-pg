@@ -5,7 +5,7 @@
 p='s/<dependency>\s*<groupId>librarian<\/groupId>\s*<artifactId>[^<]*<\/artifactId>\s*<version>[^<]*<\/version>\s*<\/dependency>//g'
 
 for f in librarian/modules/*/pom.xml; do
-	content=$(cat $f | tr '\n' ' ')
+	content=$(< $f tr '\n' ' ')
 	newContent=$(echo $content | sed $p)
 	echo $newContent > $f
 done

@@ -1,7 +1,7 @@
 FROM maven:3.6.1-jdk-11 as builder
 
-RUN apt-get update -qq --no-install-recommends; \
-	apt-get -y install python3=3.5.3-1 python3-pip=9.0.1-2+deb9u1 python3-setuptools=33.1.1-1
+RUN apt-get update -qq; \
+	apt-get -y --no-install-recommends install python3=3.5.3-1 python3-pip=9.0.1-2+deb9u1 python3-setuptools=33.1.1-1
 RUN pip3 install scikit-learn==0.21.2 json-tricks==3.13.1
 
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY librarian/modules/helpers/pom.xml librarian/modules/helpers/pom.xml
 COPY librarian/modules/model/pom.xml librarian/modules/model/pom.xml
 COPY librarian/modules/generator/pom.xml librarian/modules/generator/pom.xml
 
-ADD services/ida-ws/rewrite_poms.sh rewrite_poms.sh
+COPY services/ida-ws/rewrite_poms.sh rewrite_poms.sh
 RUN bash rewrite_poms.sh
 
 WORKDIR /app/librarian/modules/helpers
