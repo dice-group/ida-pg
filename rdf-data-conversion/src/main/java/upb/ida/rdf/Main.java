@@ -252,6 +252,103 @@ public class Main {
 		}
 	}
 
+	private void processSoldierProperty(StringBuilder stringBuilder, String[][] ssfuehrerArray, int i, int j) {
+		String currentColumnVal = ssfuehrerArray[i][j];
+		switch (j) {
+			case 0:
+				stringBuilder.append("\t").append(":id ").append(currentColumnVal).append(" ;\n");
+				break;
+			case 1:
+				stringBuilder.append("\t").append(":membershipNumber ").append(currentColumnVal).append(" ;\n");
+				break;
+			case 2:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":membershipType", currentColumnVal, false);
+				break;
+			case 3:
+				if (isValidString(currentColumnVal)) {
+					String[] dateParts = currentColumnVal.split("\\.");
+					String entryDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
+					appendDatetimeProperty(stringBuilder, ":enrolledOn", entryDate, false, false);
+				}
+				break;
+			case 4:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":enrollmentReason", currentColumnVal, false);
+				break;
+			case 5:
+				if (isValidString(currentColumnVal)) {
+					String[] dateParts = currentColumnVal.split("\\.");
+					String dischargeDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
+					appendDatetimeProperty(stringBuilder, ":dischargedOn", dischargeDate, false, false);
+				}
+				break;
+			case 6:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":dischargeReason", currentColumnVal, false);
+				break;
+			case 7:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, "dbo:firstName", currentColumnVal, false);
+				break;
+			case 8:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, "dbo:lastName", currentColumnVal, false);
+				break;
+			case 9:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":title", currentColumnVal, false);
+				break;
+			case 10:
+				if (isValidString(currentColumnVal)) {
+					String[] dateParts = currentColumnVal.split("\\.");
+					String birthdate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+					appendDateProperty(stringBuilder, "", "", "dbo:birthDate", birthdate, false, true);
+				}
+				break;
+			case 11:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":birthPlaceStr", currentColumnVal, false);
+				// appendStringProperty(stringBuilder, "dbo:birthPlace", "dbo:" + currentColumnVal, false);
+				break;
+			case 12:
+				if (isValidString(currentColumnVal)) {
+					String[] dateParts = currentColumnVal.split("\\.");
+					String deathDate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+					appendDateProperty(stringBuilder, "", "", "dbo:deathDate", deathDate, false, true);
+				}
+				break;
+			case 13:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":deathPlaceStr", currentColumnVal, false);
+				// appendStringProperty(stringBuilder, "dbo:deathPlace", "dbo:" + currentColumnVal, false);
+				break;
+			case 14:
+				if (isValidString(currentColumnVal))
+					stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
+				break;
+			case 15:
+				if (isValidString(currentColumnVal)) {
+					boolean truthValue = Boolean.parseBoolean(currentColumnVal);
+					stringBuilder.append("\t").append(":DALVerified ").append(truthValue).append(" ;\n");
+				}
+				break;
+			case 16:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":divergentDAL", currentColumnVal, false);
+				break;
+			case 17:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":information", currentColumnVal, false);
+				break;
+			case 18:
+				if (isValidString(currentColumnVal))
+					appendStringProperty(stringBuilder, ":internalInformation", currentColumnVal, false);
+				break;
+			default:
+				break;
+		}
+	}
 
 	private void processSoldiers(StringBuilder stringBuilder) {
 		stringBuilder.append("########## SOLDIERS ########################################################\n\n");
@@ -271,109 +368,11 @@ public class Main {
 				stringBuilder.append("soldier:").append(ssfuehrerArray[i][1]).append("\n\trdf:type owl:NamedIndividual, :Soldier ;\n");
 
 				for (int j = 0; j < ssfuehrerArray[i].length; j++) {
-					String currentColumnVal = ssfuehrerArray[i][j];
-
-					switch (j) {
-						case 0:
-							stringBuilder.append("\t").append(":id ").append(currentColumnVal).append(" ;\n");
-							break;
-						case 1:
-							stringBuilder.append("\t").append(":membershipNumber ").append(currentColumnVal).append(" ;\n");
-							break;
-						case 2:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":membershipType", currentColumnVal, false);
-							break;
-						case 3:
-							if (isValidString(currentColumnVal)) {
-								String[] dateParts = currentColumnVal.split("\\.");
-								String entryDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":enrolledOn", entryDate, false, false);
-							}
-							break;
-						case 4:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":enrollmentReason", currentColumnVal, false);
-							break;
-						case 5:
-							if (isValidString(currentColumnVal)) {
-								String[] dateParts = currentColumnVal.split("\\.");
-								String dischargeDate = String.format("%s-%s-%sT00:00:00", dateParts[2], dateParts[1], dateParts[0]);
-								appendDatetimeProperty(stringBuilder, ":dischargedOn", dischargeDate, false, false);
-							}
-							break;
-						case 6:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":dischargeReason", currentColumnVal, false);
-							break;
-						case 7:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:firstName", currentColumnVal, false);
-							break;
-						case 8:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, "dbo:lastName", currentColumnVal, false);
-							break;
-						case 9:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":title", currentColumnVal, false);
-							break;
-						case 10:
-							if (isValidString(currentColumnVal)) {
-								String[] dateParts = currentColumnVal.split("\\.");
-								String birthdate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
-								appendDateProperty(stringBuilder, "", "", "dbo:birthDate", birthdate, false, true);
-							}
-							break;
-						case 11:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":birthPlaceStr", currentColumnVal, false);
-								// appendStringProperty(stringBuilder, "dbo:birthPlace", "dbo:" + currentColumnVal, false);
-							break;
-						case 12:
-							if (isValidString(currentColumnVal)) {
-								String[] dateParts = currentColumnVal.split("\\.");
-								String deathDate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
-								appendDateProperty(stringBuilder, "", "", "dbo:deathDate", deathDate, false, true);
-							}
-							break;
-						case 13:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":deathPlaceStr", currentColumnVal, false);
-								// appendStringProperty(stringBuilder, "dbo:deathPlace", "dbo:" + currentColumnVal, false);
-							break;
-						case 14:
-							if(isValidString(currentColumnVal))
-								stringBuilder.append("\t").append(":NSDAPNumber ").append(currentColumnVal).append(" ;\n");
-							break;
-						case 15:
-							if (isValidString(currentColumnVal)) {
-								boolean truthValue = Boolean.parseBoolean(currentColumnVal);
-								stringBuilder.append("\t").append(":DALVerified ").append(truthValue).append(" ;\n");
-							}
-							break;
-						case 16:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":divergentDAL", currentColumnVal, false);
-							break;
-						case 17:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":information", currentColumnVal, false);
-							break;
-						case 18:
-							if (isValidString(currentColumnVal))
-								appendStringProperty(stringBuilder, ":internalInformation", currentColumnVal, false);
-							break;
-						default:
-							break;
-					}
-
+					processSoldierProperty(stringBuilder, ssfuehrerArray, i, j);
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append(ssfuehrerArray[i][7]).append(", ").append(ssfuehrerArray[i][8]).append("\" .\n");
 				stringBuilder.append("##\n\n");
 			}
-
-
 		} catch (Exception e) {
 			System.out.println("Soldiers processing failed");
 			e.printStackTrace();
@@ -496,8 +495,7 @@ public class Main {
 
 				stringBuilder.append("\t").append("rdfs:label \"").append(clean(ordenArray[i][1])).append("\" .\n");
 
-				for(String instantName : instantTriples.keySet())
-				{
+				for (String instantName : instantTriples.keySet()) {
 					String instantValue = instantTriples.get(instantName);
 
 					stringBuilder.append("\n");
@@ -562,8 +560,7 @@ public class Main {
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Regiment: ").append(soldierRegimentsArray[i][0]).append("\" .\n");
 
-				for(String instantName : instantTriples.keySet())
-				{
+				for (String instantName : instantTriples.keySet()) {
 					String instantValue = instantTriples.get(instantName);
 
 					stringBuilder.append("\n");
@@ -637,8 +634,7 @@ public class Main {
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Literature: ").append(soldierLiteratureArray[i][0]).append("\" .\n");
 
-				for(String instantName : instantTriples.keySet())
-				{
+				for (String instantName : instantTriples.keySet()) {
 					String instantValue = instantTriples.get(instantName);
 
 					stringBuilder.append("\n");
@@ -706,8 +702,7 @@ public class Main {
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Decoration: ").append(soldierDecorationArray[i][0]).append("\" .\n");
 
-				for(String instantName : instantTriples.keySet())
-				{
+				for (String instantName : instantTriples.keySet()) {
 					String instantValue = instantTriples.get(instantName);
 
 					stringBuilder.append("\n");
@@ -775,8 +770,7 @@ public class Main {
 				}
 				stringBuilder.append("\t").append("rdfs:label \"").append("Soldier Rank: ").append(soldierRanksArray[i][0]).append("\" .\n");
 
-				for(String instantName : instantTriples.keySet())
-				{
+				for (String instantName : instantTriples.keySet()) {
 					String instantValue = instantTriples.get(instantName);
 
 					stringBuilder.append("\n");
