@@ -1,22 +1,39 @@
 FROM maven:3.6.0-jdk-11 as builder
 
+RUN apt-get update -qq; \
+	apt-get -y install python3 python3-pip python3-setuptools
+RUN pip3 install sklearn json-tricks
+
 WORKDIR /app
 
 COPY pom.xml pom.xml
 COPY ida-ws/pom.xml ida-ws/pom.xml
-COPY librarian/pom.xml librarian/pom.xml
-COPY librarian/modules/helpers/pom.xml librarian/helpers/pom.xml
-COPY librarian/modules/model/pom.xml librarian/model/pom.xml
-COPY librarian/modules/scraper/pom.xml librarian/scraper/pom.xml
-COPY librarian/modules/generator/pom.xml librarian/generator/pom.xml
+COPY librarian/modules/helpers/pom.xml librarian/modules/helpers/pom.xml
+COPY librarian/modules/model/pom.xml librarian/modules/model/pom.xml
+COPY librarian/modules/generator/pom.xml librarian/modules/generator/pom.xml
 
-WORKDIR /app/librarian
-RUN mvn install
+ADD services/ida-ws/rewrite_poms.sh rewrite_poms.sh
+RUN bash rewrite_poms.sh
+
+WORKDIR /app/librarian/modules/helpers
+RUN mvn dependency:go-offline
+WORKDIR /app/librarian/modules/model
+RUN mvn dependency:go-offline -DexcludeGroupIds=librarian
+WORKDIR /app/librarian/modules/generator
+RUN mvn dependency:go-offline -DexcludeGroupIds=librarian
+
 WORKDIR /app
+COPY librarian librarian
+WORKDIR /app/librarian/modules/helpers
+RUN mvn install
+WORKDIR /app/librarian/modules/model
+RUN mvn install
+WORKDIR /app/librarian/modules/generator
+RUN mvn install
+
+WORKDIR /app/ida-ws
 RUN mvn dependency:go-offline
 
-COPY librarian librarian
-RUN mvn install
 COPY ida-ws ida-ws
 
 WORKDIR /app/ida-ws
