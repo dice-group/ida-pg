@@ -1,4 +1,6 @@
 <div align='center' [attr.id]="fdgid" fxFlex
      style="height: 85vh; margin: 20px;border-color: #eaeaea;border-style: solid">
   <svg [attr.id]="svgid"/>
+  <mat-spinner style="position: absolute; top:50%; left:50%;" *ngIf="this.showSpinner"></mat-spinner>
 </div>
+
