@@ -365,7 +365,7 @@ public class Main {
 			for (int i = 1; i < ssfuehrerArray.length; i++) {
 				// Using membership ID instead of PK for Soldier
 				stringBuilder.append("##\n");
-				stringBuilder.append("soldier:").append(ssfuehrerArray[i][1]).append("\n\trdf:type owl:NamedIndividual, :Soldier ;\n");
+				stringBuilder.append("soldier:").append(ssfuehrerArray[i][0]).append("\n\trdf:type owl:NamedIndividual, :Soldier ;\n");
 
 				for (int j = 0; j < ssfuehrerArray[i].length; j++) {
 					processSoldierProperty(stringBuilder, ssfuehrerArray, i, j);
