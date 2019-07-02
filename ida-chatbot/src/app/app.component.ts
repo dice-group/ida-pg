@@ -18,11 +18,12 @@ import {IdaEventService} from './service/event/ida-event.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  idCount = 1;
+  idCount = 2;
   title = 'app';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
+  public ontologySideItem = new SidebarElement(1, 'Ontology Explorer', 'ontology');
   public activeItem = 0;
-  private sidebarItems: SidebarElement[] = [this.introSideItem];
+  private sidebarItems: SidebarElement[] = [this.introSideItem, this.ontologySideItem];
   private mainViewItems: MainviewElement[] = [];
 
   @ViewChild(ChatboxComponent)

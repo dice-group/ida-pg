@@ -7,9 +7,9 @@
      
      
     <app-intro [ngClass]="{'hidden-cls': activeItem!==0 }"></app-intro>
+    <app-rdf-ontology-view [hidden]='activeItem !== 1'></app-rdf-ontology-view>
     <ng-container *ngFor="let mvw of getMainviewItems()" >
       <app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
-      <app-rdf-ontology-view ></app-rdf-ontology-view>
     </ng-container>
   </div>
   <app-chatbox id="chatBox" fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
