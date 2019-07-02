@@ -7,7 +7,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
   var expandedNodesArray = [];
   var nodeContents = [];
 
-  var width = 1060,height = 900,resourceRadius = customizeGraphArray.resourceRadius,literalRadius = customizeGraphArray.literalRadius;
+  var width = 1025,height = 1100,resourceRadius = customizeGraphArray.resourceRadius,literalRadius = customizeGraphArray.literalRadius;
 
   var g,link,linkTexts,node,circles,lables;
   var svgClear = d3.select("#"+svgId);
