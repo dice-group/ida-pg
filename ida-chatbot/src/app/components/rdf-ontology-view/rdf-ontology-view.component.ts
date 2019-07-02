@@ -101,15 +101,6 @@ export class RdfOntologyViewComponent implements OnInit {
                 }
     createV4RDFOntologyGraph(this.figId, this.svgId,this.fileName,this.languageCheked,this.classHeirarchyChecked,
       this.allPropChecked,this.allNodesInBoundClicked,this.disableZoomClicked,idVal,customizeGraphVals);
-    
-    /*if(event === "yes")
-    {
-      createV4RDFOntologyGraph(this.figId1, this.svgId1,this.fileName,"de",true,true);
-    }
-    else if(event === "no")
-    {
-      createV4RDFOntologyGraph(this.figId1, this.svgId1,this.fileName,"en",true,false);
-    }*/
   }
   graphResetChanged(event){
     this.languageCheked = false;

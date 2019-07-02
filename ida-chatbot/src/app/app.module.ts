@@ -124,7 +124,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     MatToolbarModule,
     MatTooltipModule,
     FlexLayoutModule,
- NgbModule
+    NgbModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
