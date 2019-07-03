@@ -59,8 +59,8 @@ import {RestService} from './service/rest/rest.service';
 import {DatatableDetailComponent} from './components/datatable-detail/datatable-detail.component';
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
-import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import { RdfOntologyViewComponent } from './components/rdf-ontology-view/rdf-ontology-view.component';
+import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
@@ -81,8 +81,9 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     DatatableDetailComponent,
     SsbViewComponent,
     VennViewComponent,
-    DeckglHexViewComponent,
-    RdfOntologyViewComponent
+    RdfOntologyViewComponent,
+    DeckglHexViewComponent
+    
   ],
   imports: [
     BrowserModule,
