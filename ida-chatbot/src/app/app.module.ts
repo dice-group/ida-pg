@@ -74,6 +74,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     DataViewContainerComponent,
     DatatableViewComponent,
     FdgViewComponent,
+    RdfOntologyViewComponent,
     BargraphViewComponent,
     IntroComponent,
     ClickStopPropagationDirective,
@@ -81,7 +82,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     DatatableDetailComponent,
     SsbViewComponent,
     VennViewComponent,
-    RdfOntologyViewComponent,
     DeckglHexViewComponent
     
   ],
