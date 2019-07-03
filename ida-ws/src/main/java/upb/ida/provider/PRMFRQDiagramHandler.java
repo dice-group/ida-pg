@@ -30,23 +30,28 @@ public class PRMFRQDiagramHandler implements Subroutine{
         try {
             double maxLat;
             double maxLon;
+			double altitude;
             List<Map<String, String>> data = DemoMain.convertToMap(new File(DemoMain.fetchSysFilePath(path)));
             for (Map<String, String> ele : data) {
                 HashMap<String, ArrayList<Double>> row = new HashMap<>();
-                ArrayList<Double> coordinates = new ArrayList<>(2);
+                ArrayList<Double> coordinates = new ArrayList<>(3);
                 double lat = Double.parseDouble(ele.get(args[0]));
                 double lon = Double.parseDouble(ele.get(args[1]));
-                maxLat = lat;
-                maxLon = lon;
+				double promotn_freq = Double.parseDouble(ele.get(args[2]));
+				maxLat = lat;
+				maxLon = lon;
+				altitude = promotn_freq;
 
                 coordinates.add(lon);
                 coordinates.add(lat);
+				coordinates.add(promotn_freq);
                 row.put("COORDINATES", coordinates);
                 response.add(row);
 
                 dataMap.put("label", "promotion frequency diagram data");
                 dataMap.put("lat", maxLat);
                 dataMap.put("lon", maxLon);
+				dataMap.put("promotn_freq", altitude);
                 responseBean.setActnCode(IDALiteral.UIA_PRMFRQDIAGRAM);
                 responseBean.setPayload(dataMap);
             }
