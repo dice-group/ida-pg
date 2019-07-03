@@ -64,7 +64,7 @@ public class CodeGeneratorUtil {
 				"             :placeholder true\n" + 
 				"             :namespace/_member {:type :namespace\n" + 
 				"                                 :name \"sklearn.cluster\"}\n" + 
-				"             :name \"k_means\"}\n" + 
+				"             :name \"" + algoName + "\"}\n" + 
 				"  :parameter {:type :call-parameter\n" + 
 				"              :datatype {:type :role-type\n" + 
 				"                         :id :dataset}\n" + 
