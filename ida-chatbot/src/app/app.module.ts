@@ -83,6 +83,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
+    
   ],
   imports: [
     BrowserModule,
