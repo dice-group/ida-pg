@@ -6,3 +6,5 @@ pom.xml.asc
 *.class
 .lein-*
 .nrepl-port
+
+nomis-ns-graph.png
