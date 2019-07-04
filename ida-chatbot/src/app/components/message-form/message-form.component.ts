@@ -35,6 +35,10 @@ export class MessageFormComponent implements OnInit {
     }
   }
 
+  getVoiceToMsg(msg) {
+    this.chatmsg.nativeElement.value = msg;
+  }
+
   /**
    * This will let user to iterate over messages from history like
    * Terminal

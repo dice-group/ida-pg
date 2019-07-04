@@ -61,8 +61,8 @@ import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { RdfOntologyViewComponent } from './components/rdf-ontology-view/rdf-ontology-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
+import { SpeechInputComponent } from './components/speech-input/speech-input.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -83,7 +83,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
-    
+    SpeechInputComponent
   ],
   imports: [
     BrowserModule,
