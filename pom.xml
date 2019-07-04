@@ -8,13 +8,15 @@
 	<name>ida Parent Project</name>
 	<url>http://maven.apache.org</url>
 	<version>${revision}</version>
-	
+
 	<properties>
 		<revision>0.0.1-SNAPSHOT</revision>
 	</properties>
-	
+
 	<modules>
 		<module>ida-ws</module>
-		<module>librarian</module>
+		<module>librarian/modules/helpers</module>
+		<module>librarian/modules/model</module>
+		<module>librarian/modules/generator</module>
 	</modules>
 </project>

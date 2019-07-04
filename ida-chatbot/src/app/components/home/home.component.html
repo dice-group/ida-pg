@@ -1,0 +1,17 @@
+<div *ngIf="!this.isHidden">
+  <app-topmenu></app-topmenu>
+<div fxLayout="row">
+<!--<div fxFlex="10%" style="background-color:#eaeaea; overflow: auto;">-->
+<app-sidebar fxFlex="nogrow" [items]="getSidebarItems()" (activeItmEmitter)="changeActiveItem($event)"
+[activeItem]="getActiveItem()"></app-sidebar>
+<!-- </div>-->
+<div fxFlex="100%">
+<app-intro [ngClass]="{'hidden-cls': activeItem!==0 }"></app-intro>
+<app-rdf-ontology-view [hidden]='activeItem !== 1'></app-rdf-ontology-view>
+<ng-container *ngFor="let mvw of getMainviewItems()" >
+<app-data-view-container [item]="mvw" [ngClass]="{'hidden-cls': activeItem!==mvw.id }"></app-data-view-container>
+</ng-container>
+</div>
+<app-chatbox fxFlexAlign="end" fxFlex="auto" (actnEmitter)="addNewUserMessage($event)"></app-chatbox>
+</div>
+</div>

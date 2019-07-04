@@ -9,10 +9,10 @@ services:
       - ida-net
   ida-ws:
     image: $REGISTRY/ida/ida-ws:$VERSION
-
+    environment:
+      - FUSEKI_URL=http://fuseki:3030
     networks:
       - ida-net
-
   fuseki:
     image: stain/jena-fuseki
     ports:

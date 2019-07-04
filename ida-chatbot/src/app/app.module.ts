@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
@@ -11,6 +12,11 @@ import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { LoginComponent } from './components/login/login.component';
+import { UserComponent } from './components/user/user.component';
+import { SignupComponent } from './components/signup/signup.component';
+import {DeleteDialogComponent} from './dialogs/delete/delete.dialog.component';
+import {UpdateDialogComponent} from './dialogs/update/update.dialog.component';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -61,6 +67,9 @@ import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { RdfOntologyViewComponent } from './components/rdf-ontology-view/rdf-ontology-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
+import { HomeComponent } from './components/home/home.component';
+import { TopbarComponent } from './components/topbar/topbar.component';
+import { TopmenuComponent } from './components/topmenu/topmenu.component';
 import { SpeechInputComponent } from './components/speech-input/speech-input.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
@@ -83,6 +92,14 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
+    LoginComponent,
+    UserComponent,
+    SignupComponent,
+    DeleteDialogComponent,
+    UpdateDialogComponent,
+    HomeComponent,
+    TopbarComponent,
+    TopmenuComponent,
     SpeechInputComponent
   ],
   imports: [
@@ -125,7 +142,13 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     MatToolbarModule,
     MatTooltipModule,
     FlexLayoutModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
     NgbModule
+  ],
+  entryComponents: [
+    UpdateDialogComponent,
+    DeleteDialogComponent
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
