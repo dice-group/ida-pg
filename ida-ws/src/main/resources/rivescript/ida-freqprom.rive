@@ -1,13 +1,13 @@
 + show me the promotions frequency diagram
-- what columns should I be using as longitutde and latitude?
+- what columns should I be using as longitutde, latitude and promotion frequency?
 ^ <br> (HINT: you can tell as <br> e.g. use column1 as latitude)
 + use * as latitude
 - <set x=<star>> Great! and which column should be longitude?
 + use * as longitude
 - <set y=<star>> Great! and which column is the promotions frequency?
 + use * for promotion frequency
-* <call>PRMFRQDiagramHandler "<get x>" "<get y>" "<star>"</call> == pass => All good, loading it in a moment!
+* <call> PRMFRQDiagramHandler "<get x>" "<get y>" "<star>"</call> == pass => All good, loading it in a moment!
 
-+ use * as longitude, * as latitude and * for promotion frequency
-* <call>PRMFRQDiagramHandler "<star1>" "<star2>" "<star3>"</call> == pass => All good, loading it in a moment!
++ use * as latitude * as longitude and * for promotion frequency
+* <call> PRMFRQDiagramHandler "<star1>" "<star2>" "<star3>" </call> == pass => All good, loading it in a moment!
 

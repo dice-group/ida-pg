@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
 import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
+import { d } from '@angular/core/src/render3';
 
 declare var deck;
 
@@ -72,7 +73,7 @@ export class DeckglPrmfrqHexViewComponent implements OnInit, AfterViewInit {
           extruded: true,
           radius: 10000,
           elevationScale: 200,
-          getPosition: d => d.COORDINATES,
+          getPosition: d => [d.COORDINATES[0], d.COORDINATES[1]],
           onHover: this.updateTooltip
         }),
         new IconLayer({
@@ -91,7 +92,7 @@ export class DeckglPrmfrqHexViewComponent implements OnInit, AfterViewInit {
             }
           },
           sizeScale: 0,
-          getPosition: d => d.COORDINATES,
+          getPosition: d => [d.COORDINATES[0], d.COORDINATES[1]],
           getIcon: d => 'marker',
           getColor: d => [Math.sqrt(d.exits), 140, 0],
         })
