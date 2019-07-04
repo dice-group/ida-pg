@@ -55,6 +55,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
     .force("charge", d3.forceManyBody().strength(-customizeGraphArray.graphCharge)) //Charge strength is here
     .force("center", d3.forceCenter((width / 2), (height / 2)));
   
+  var tempLabel,tepmNodeContent,tempLabelArray,tempLabelArray1;
+  
   d3.json("assets/rdfontology/historian-onlogoly.json", function(error, data) 
   {
     //START :: get english and deutsch labels values into arrays
@@ -68,26 +70,26 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
           {  
             if(eachIds["@language"] === "de")
             {
-              var tempLabel = {"id":elem["@id"],"language":"de","value":eachIds["@value"]};
+              tempLabel = {"id":elem["@id"],"language":"de","value":eachIds["@value"]};
               deLabelArray.push(tempLabel);
 
-              var tepmNodeContent = {label:eachIds["@value"], contents:elem};
+              tepmNodeContent = {label:eachIds["@value"], contents:elem};
               nodeContents.push(tepmNodeContent);
             }
             if(eachIds["@language"] === "en")
             {
-              var tempLabel1 = {"id":elem["@id"],"language":"en","value":eachIds["@value"]};
-              enLabelArray.push(tempLabel1);
+              tempLabel = {"id":elem["@id"],"language":"en","value":eachIds["@value"]};
+              enLabelArray.push(tempLabel);
 
-              var tepmNodeContent = {label:eachIds["@value"], contents:elem};
+              tepmNodeContent = {label:eachIds["@value"], contents:elem};
               nodeContents.push(tepmNodeContent);
             }
            
-            var tempLabelArray = elem["@id"].split('/');
-            var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-            var tempLabel2 = tempLabelArray1[tempLabelArray1.length -1 ];
+            tempLabelArray = elem["@id"].split('/');
+            tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+            tempLabel = tempLabelArray1[tempLabelArray1.length -1 ];
 
-            var tepmNodeContent = {label:tempLabel2, contents:elem};
+            tepmNodeContent = {label:tempLabel, contents:elem};
             nodeContents.push(tepmNodeContent);
             
 
@@ -97,36 +99,36 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
         {
           if(elem["rdfs:label"]["@language"] === "de")
           {
-            var tempLabel3 = {"id":elem["@id"],"language":"de","value":elem["rdfs:label"]["@value"]};
-            deLabelArray.push(tempLabel3);
+            tempLabel = {"id":elem["@id"],"language":"de","value":elem["rdfs:label"]["@value"]};
+            deLabelArray.push(tempLabel);
 
-            var tepmNodeContent = {label:elem["rdfs:label"]["@value"], contents:elem};
+            tepmNodeContent = {label:elem["rdfs:label"]["@value"], contents:elem};
             nodeContents.push(tepmNodeContent);
           }
           if(elem["rdfs:label"]["@language"] === "en")
           {
-            var tempLabel4 = {"id":elem["@id"],"language":"en","value":elem["rdfs:label"]["@value"]};
-            enLabelArray.push(tempLabel4);
+            tempLabel = {"id":elem["@id"],"language":"en","value":elem["rdfs:label"]["@value"]};
+            enLabelArray.push(tempLabel);
 
-            var tepmNodeContent = {label:elem["rdfs:label"]["@value"], contents:elem};
+            tepmNodeContent = {label:elem["rdfs:label"]["@value"], contents:elem};
             nodeContents.push(tepmNodeContent);
           }
           
-          var tempLabelArray = elem["@id"].split("/");
-          var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(":");
-          var tempLabel5 = tempLabelArray1[tempLabelArray1.length -1 ];
+          tempLabelArray = elem["@id"].split("/");
+          tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(":");
+          tempLabel = tempLabelArray1[tempLabelArray1.length -1 ];
 
-          var tepmNodeContent = {label:tempLabel5, contents:elem};
+          tepmNodeContent = {label:tempLabel, contents:elem};
           nodeContents.push(tepmNodeContent);
          }
       }
       else
       {
-        var tempLabelArray = elem["@id"].split("/");
-        var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
-        var tempLabel6 = tempLabelArray1[tempLabelArray1.length -1 ];
+        tempLabelArray = elem["@id"].split("/");
+        tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+        tempLabel = tempLabelArray1[tempLabelArray1.length -1 ];
 
-        var tepmNodeContent = {label:tempLabel6, contents:elem};
+        tepmNodeContent = {label:tempLabel, contents:elem};
         nodeContents.push(tepmNodeContent);
       }
       
@@ -136,13 +138,20 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
     //START :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
     var literalIndex = 0;
     var circleIdIndex = 0;
+    var tempSub ="?";
+    var tempPred ="?";
+    var tempObj ="?";
+    var pred="---subClassOf---";
+    var tempDomainArray = [];
+    var tripleValue,isLitteral,literalDataType;
+
     data["@graph"].forEach(function(element) 
     {
-        var tempSub ="?";
-        var tempPred ="?";
-        var tempObj ="?";
-        var pred="---subClassOf---";
-        var tempDomainArray = [];
+        tempSub ="?";
+        tempPred ="?";
+        tempObj ="?";
+        pred="---subClassOf---";
+        tempDomainArray = [];
         //START :: Nodes and Links creation for subClassOf
         if(displaySubclasses)
         {
@@ -151,8 +160,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               tempSub = getLabel(displayDeustch,element["@id"]);
               if(tempSub == "noLabel")
               {
-                var tempLabelArray = element["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                tempLabelArray = element["@id"].split('/');
+                tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                 tempSub = tempLabelArray1[tempLabelArray1.length -1 ];
               }
 
@@ -163,12 +172,12 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                   tempObj = getLabel(displayDeustch,eachIds["@id"]);
                   if(tempObj == "noLabel")
                   {
-                    var tempLabelArray = eachIds["@id"].split('/');
-                    var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                    tempLabelArray = eachIds["@id"].split('/');
+                    tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                     tempObj = tempLabelArray1[tempLabelArray1.length -1 ];
                   }
 
-                  var tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
+                  tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
                   linksArray.push(tripleValue);
                   
                   createNewNode(tempSub,pred,tempObj,false,'');
@@ -179,11 +188,11 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 tempObj = getLabel(displayDeustch,element["rdfs:subClassOf"]["@id"]);
                 if(tempObj == "noLabel")
                 {
-                  var tempLabelArray = element["rdfs:subClassOf"]["@id"].split("/");
-                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempLabelArray = element["rdfs:subClassOf"]["@id"].split("/");
+                  tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                   tempObj = tempLabelArray1[tempLabelArray1.length -1 ];
                 }
-                var tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
+                tripleValue = {source:tempSub, 	predicate:pred, 	target:tempObj,value: 1};
                 linksArray.push(tripleValue);
 
                 createNewNode(tempSub,pred,tempObj,false," ");
@@ -202,11 +211,11 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               {
                 element["rdfs:domain"].forEach(function(eachIds)
                 {
-                  var tempDomainLabel = getLabel(displayDeustch,eachIds["@id"]);
+                  tempDomainLabel = getLabel(displayDeustch,eachIds["@id"]);
                   if(tempDomainLabel == "noLabel")
                   {
-                    var tempLabelArray = eachIds["@id"].split('/');
-                    var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                    tempLabelArray = eachIds["@id"].split('/');
+                    tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                     tempDomainLabel = tempLabelArray1[tempLabelArray1.length -1 ];
                   }
                   tempDomainArray.push(tempDomainLabel);
@@ -217,8 +226,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 tempSub = getLabel(displayDeustch,element["rdfs:domain"]["@id"]);
                 if(tempSub == "noLabel")
                 {
-                  var tempLabelArray = element["rdfs:domain"]["@id"].split("/");
-                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempLabelArray = element["rdfs:domain"]["@id"].split("/");
+                  tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                   tempSub = tempLabelArray1[tempLabelArray1.length -1 ];
                 }
               }
@@ -230,8 +239,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               tempPred = getLabel(displayDeustch,element["@id"]);
               if(tempPred == "noLabel")
               {
-                var tempLabelArray = element["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                tempLabelArray = element["@id"].split('/');
+                tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                 tempPred = tempLabelArray1[tempLabelArray1.length -1 ];
               }
             }
@@ -245,15 +254,15 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 tempObj = getLabel(displayDeustch,element["rdfs:range"]["@id"]);
                 if(tempObj == "noLabel")
                 {
-                  var tempLabelArray = element["rdfs:range"]["@id"].split('/');
-                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempLabelArray = element["rdfs:range"]["@id"].split('/');
+                  tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                   tempObj = tempLabelArray1[tempLabelArray1.length -1 ];
                 }
               }  
             }
             
-            var isLitteral = false;
-            var literalDataType = tempObj;
+            isLitteral = false;
+            literalDataType = tempObj;
 
             if(tempObj.toLowerCase().includes("string") || tempObj.toLowerCase().includes("boolean")|| tempObj.toLowerCase().includes("integer") || tempObj.toLowerCase().includes("datetime"))
             {
@@ -270,13 +279,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 {
                   if(isLitteral)
                   {
-                    var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                    tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
                     linksArray.push(tripleValue);
                     createNewNode(el,tempPred,tempObj,isLitteral,literalDataType,element);
                   }
                   else
                   {
-                    var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                    tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
                     linksArray.push(tripleValue);
                     createNewNode(el,tempPred,tempObj,isLitteral,literalDataType);
                   }
@@ -289,13 +298,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               {
                 if(isLitteral)
                 {
-                  var tripleValue = {source:tempSub, 	predicate:' ', 	target:tempPred,value: 1};
+                  tripleValue = {source:tempSub, 	predicate:' ', 	target:tempPred,value: 1};
                   linksArray.push(tripleValue);
                   createNewNode(tempSub,'',tempPred,isLitteral,literalDataType);
                 }
                 else
                 {
-                  var tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
+                  tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
                   linksArray.push(tripleValue);
                   createNewNode(tempSub,tempPred,tempObj,isLitteral,literalDataType);
                 }
@@ -423,17 +432,22 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
           .attr('r',resourceRadius+4)
           .style("fill",customizeGraphArray.onClickNodeColor)
         
-          
+        var tempSub ="?";
+        var tempPred ="?";
+        var tempObj ="?";
+        var pred="---subClassOf---";
+        var tempDomainArray = [];
+        var includeThis,tempDomainLabel,tempLabelArray,tempLabelArray1,isLitteral,literalDataType,tripleValue;
         
         data["@graph"].forEach(function(element) 
         {
-          var tempSub ="?";
-          var tempPred ="?";
-          var tempObj ="?";
-          var pred="---subClassOf---";
-          var tempDomainArray = [];
+          tempSub ="?";
+          tempPred ="?";
+          tempObj ="?";
+          pred="---subClassOf---";
+          tempDomainArray = [];
           
-          var includeThis = false;
+          includeThis = false;
           //START :: Nodes and Links creation for all Properties
           //get the subject label  
           if(element["rdfs:domain"]!=undefined)
@@ -442,11 +456,11 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
             {
               element["rdfs:domain"].forEach(function(eachIds)
               {
-                var tempDomainLabel = getLabel(displayDeustch,eachIds["@id"]);
+                tempDomainLabel = getLabel(displayDeustch,eachIds["@id"]);
                 if(tempDomainLabel == "noLabel")
                 {
-                  var tempLabelArray = eachIds["@id"].split('/');
-                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempLabelArray = eachIds["@id"].split('/');
+                  tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                   tempDomainLabel = tempLabelArray1[tempLabelArray1.length -1 ];
                 }
                 
@@ -463,8 +477,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               tempSub = getLabel(displayDeustch,element["rdfs:domain"]["@id"]);
               if(tempSub == "noLabel")
               {
-                var tempLabelArray = element["rdfs:domain"]["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                tempLabelArray = element["rdfs:domain"]["@id"].split('/');
+                tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                 tempSub = tempLabelArray1[tempLabelArray1.length -1 ];
               }
 
@@ -483,8 +497,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               tempPred = getLabel(displayDeustch,element["@id"]);
               if(tempPred == "noLabel")
               {
-                var tempLabelArray = element["@id"].split('/');
-                var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                tempLabelArray = element["@id"].split('/');
+                tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                 tempPred = tempLabelArray1[tempLabelArray1.length -1 ];
               }
             }
@@ -497,15 +511,15 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 tempObj = getLabel(displayDeustch,element["rdfs:range"]["@id"]);
                 if(tempObj === "noLabel")
                 {
-                  var tempLabelArray = element["rdfs:range"]["@id"].split('/');
-                  var tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
+                  tempLabelArray = element["rdfs:range"]["@id"].split('/');
+                  tempLabelArray1 = tempLabelArray[tempLabelArray.length -1 ].split(':');
                   tempObj = tempLabelArray1[tempLabelArray1.length -1 ];
                 }
               }  
             }
             
-            var isLitteral = false;
-            var literalDataType = tempObj;
+            isLitteral = false;
+            literalDataType = tempObj;
 
             if(tempObj.toLowerCase().includes("string") || tempObj.toLowerCase().includes("boolean")|| tempObj.toLowerCase().includes("integer") || tempObj.toLowerCase().includes("datetime"))
             {
@@ -522,13 +536,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
                 {
                   if(isLitteral)
                   {
-                    var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                    tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
                     linksArray.push(tripleValue);
                     createNewNode(el,tempPred,tempObj,isLitteral,literalDataType,element);
                   }
                   else
                   {
-                    var tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
+                    tripleValue = {source:el, 	predicate:tempPred, 	target:tempObj,value: 1};
                     linksArray.push(tripleValue);
                     createNewNode(el,tempPred,tempObj,isLitteral,literalDataType);
                   }
@@ -541,13 +555,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName,displayDeustch,displayS
               {
                 if(isLitteral)
                 {
-                  var tripleValue = {source:tempSub, 	predicate:' ', 	target:tempPred,value: 1};
+                  tripleValue = {source:tempSub, 	predicate:' ', 	target:tempPred,value: 1};
                   linksArray.push(tripleValue);
                   createNewNode(tempSub,'',tempPred,isLitteral,literalDataType);
                 }
                 else
                 {
-                  var tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
+                  tripleValue = {source:tempSub, 	predicate:tempPred, 	target:tempObj,value: 1};
                   linksArray.push(tripleValue);
                   createNewNode(tempSub,tempPred,tempObj,isLitteral,literalDataType);
                 }
