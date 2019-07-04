@@ -97,7 +97,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     UpdateDialogComponent,
     HomeComponent,
     TopbarComponent,
-    TopmenuComponent
+    TopmenuComponent,
     SpeechInputComponent
   ],
   imports: [
