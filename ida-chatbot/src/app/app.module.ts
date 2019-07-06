@@ -66,7 +66,8 @@ import { StoryboardComponent } from './components/storyboard/storyboard.componen
 import {AppRoutingModule} from './app-routing.module';
 import {RouterModule} from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-
+import { SpeechInputComponent } from './components/speech-input/speech-input.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     AppComponent,
@@ -88,7 +89,8 @@ import { HomeComponent } from './components/home/home.component';
     DeckglHexViewComponent,
     StoryboardDialogComponent,
     StoryboardComponent,
-    HomeComponent
+    HomeComponent,
+    SpeechInputComponent
   ],
   imports: [
     BrowserModule,
