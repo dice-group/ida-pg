@@ -18,11 +18,12 @@ import {IdaEventService} from './service/event/ida-event.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  idCount = 1;
+  idCount = 2;
   title = 'app';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
+  public ontologySideItem = new SidebarElement(1, 'Ontology Explorer', 'ontology');
   public activeItem = 0;
-  private sidebarItems: SidebarElement[] = [this.introSideItem];
+  private sidebarItems: SidebarElement[] = [this.introSideItem, this.ontologySideItem];
   private mainViewItems: MainviewElement[] = [];
 
   @ViewChild(ChatboxComponent)
@@ -74,6 +75,10 @@ export class AppComponent {
     } else if (resp.actnCode === 9) {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
+      this.addNewTab(newTab, resp);
+    } else if (resp.actnCode === 10){
+      // Open new tab with DataTable
+      const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.PRMFRQ, resp.payload, true, true);
       this.addNewTab(newTab, resp);
     }
   }

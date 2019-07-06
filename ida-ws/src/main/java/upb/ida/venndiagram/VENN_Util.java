@@ -22,7 +22,7 @@ public class VENN_Util {
 
     public HashMap<String, Object> generateVennDiagram (String filePath, String[] args)
             throws IOException  {
-        System.out.println(Arrays.toString(args));
+//        System.out.println(Arrays.toString(args));
         File file = new File(dem.fetchSysFilePath(filePath));
         Map<String, String> columns = dem.convertToMap(file).get(0);
         int limit = Integer.parseInt(args[1]);

@@ -49,9 +49,9 @@ public class GetCorrectParamTypesTest {
 		paramMap.put("n_clusters", entry1);
 		paramMap.put("init", entry2);
 		paramMap.put("n_jobs", entry3);
-		String algoName = "KMeans";
+		String algoName = "k_means";
 
-		List<ClusterParam> resList = DataDumpUtil.getClusterAlgoParams("KMeans");
+		List<ClusterParam> resList = DataDumpUtil.getClusterAlgoParams("k_means");
 		List<String> type = new ArrayList<String>();
 		type.add("Int");
 		HashMap<String, Object> mMap = new HashMap<String, Object>();

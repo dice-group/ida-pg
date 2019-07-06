@@ -1,13 +1,13 @@
-import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, OnInit, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Message} from '../../models/message';
 import {ResponseBean} from '../../models/response-bean';
-import {SidebarComponent} from '../sidebar/sidebar.component';
-import {StoryboardDialogComponent} from '../../dialogs/storyboard/storyboard.dialog.component';
+import {SidebarComponent} from '../../components/sidebar/sidebar.component';
 import {MainviewElement} from '../../models/mainview-element';
 import {SidebarElement} from '../../models/sidebar-element';
-import {ChatboxComponent} from '../chatbox/chatbox.component';
+import {ChatboxComponent} from '../../components/chatbox/chatbox.component';
 import {RestService} from '../../service/rest/rest.service';
-import {DataViewContainerComponent} from '../data-view-container/data-view-container.component';
+import {DataViewContainerComponent} from '../../components/data-view-container/data-view-container.component';
+import {StoryboardDialogComponent} from '../../dialogs/storyboard/storyboard.dialog.component';
 import {TabElement} from '../../models/tab-element';
 import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
 import {TabType} from '../../enums/tab-type.enum';
@@ -15,6 +15,9 @@ import {IdaEventService} from '../../service/event/ida-event.service';
 import {MatDialog} from '@angular/material';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {environment} from '../../../environments/environment';
+import {UserService} from '../../service/user/user.service';
+import {Router} from '@angular/router';
+
 
 @Component({
   selector: 'app-home',
@@ -24,7 +27,9 @@ import {environment} from '../../../environments/environment';
 export class HomeComponent {
   idCount = 1;
   title = 'app';
+  isHidden = true;
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
+  public ontologySideItem = new SidebarElement(1, 'Ontology Explorer', 'ontology');
   public activeItem = 0;
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
@@ -36,11 +41,19 @@ export class HomeComponent {
   @ViewChild(SidebarComponent)
   private sbComp: SidebarComponent;
 
-  constructor(private restservice: RestService, private uis: UniqueIdProviderService, private ies: IdaEventService,
+  constructor(private restservice: RestService, private uis: UniqueIdProviderService,
+              private ies: IdaEventService, private userservice: UserService, private router: Router,
               public dialog: MatDialog, private sanitizer: DomSanitizer) {
     ies.dtTblEvnt.subscribe((reqTbl) => {
       this.getDataTable(reqTbl);
     });
+  }
+
+  ngOnInit() {
+    this.checkLoggedIn();
+  }
+
+  HomeComponent() {
   }
 
   public actionHandler(resp: ResponseBean) {
@@ -165,6 +178,17 @@ export class HomeComponent {
   //     }
   //   });
   // }
+
+  checkLoggedIn() {
+    this.restservice.getRequest('/auth/check-login', {}).subscribe(resp => {
+      const returnResp = this.userservice.processUserResponse(resp);
+      if (returnResp.status === true) {
+        this.isHidden = false;
+      } else {
+        this.router.navigate(['login']);
+      }
+    });
+  }
 
   public getActiveMainView(): DataViewContainerComponent {
     let activeMainDtVw = null;

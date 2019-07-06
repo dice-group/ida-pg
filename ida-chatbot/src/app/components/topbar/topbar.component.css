@@ -1,0 +1,20 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-card{
+  background: transparent;
+}
+
+mat-card-title, mat-card-subtitle{
+  margin-bottom: 0px;
+  color: #ffffff;
+}
+.mat-card-avatar{
+  margin-top: 6px;
+}
+

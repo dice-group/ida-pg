@@ -26,6 +26,8 @@ public class ClusterParam {
 	 * description of the parameter
 	 */
 	private String desc;
+	
+	private int position;
 
 	/**
 	 * @param name
@@ -35,11 +37,12 @@ public class ClusterParam {
 	 * @param optional
 	 *            - {@link ClusterParam#optional}
 	 */
-	public ClusterParam(String name, List<String> type, boolean optional) {
+	public ClusterParam(String name, List<String> type, boolean optional, int position) {
 		super();
 		this.name = name;
 		this.type = type;
 		this.optional = optional;
+		this.setPosition(position);
 	}
 
 	/**
@@ -52,11 +55,12 @@ public class ClusterParam {
 	 * @param desc
 	 *            - {@link ClusterParam#desc}
 	 */
-	public ClusterParam(String name, List<String> type, boolean optional, String desc) {
+	public ClusterParam(String name, List<String> type, boolean optional, int position, String desc) {
 		super();
 		this.name = name;
 		this.type = type;
 		this.optional = optional;
+		this.setPosition(position);
 		this.desc = desc;
 	}
 
@@ -114,6 +118,20 @@ public class ClusterParam {
 	 */
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	/**
+	 * Gets the {@link ClusterParam#position}
+	 */
+	public int getPosition() {
+		return position;
+	}
+
+	/**
+	 * Sets the {@link ClusterParam#posion}
+	 */
+	public void setPosition(int position) {
+		this.position = position;
 	}
 
 }

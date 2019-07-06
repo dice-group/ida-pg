@@ -1,0 +1,191 @@
+<mat-tab-group style="min-width: 40vw;max-height: 100vh">
+  <mat-tab label="Ontology Explorer">
+    <div [attr.id]="fdgId1" fxFlexstyle="height: 150vh; margin: 20px;border-color: #eaeaea;border-style: solid">
+
+      <div style="width: 100%; height: 20%;">
+        <h1 align='center'>Historian Ontology Graph</h1>
+      </div>
+      <div id="filtersId"
+        style="width: 99%;height: 36px;margin-left: 3px;border-radius: 8px;background-color: #5DADE2;">
+        <label class="labelClass">
+          Filters:
+
+        </label>
+        <label class="labelClass">
+          Display in Deutsch
+          <input class="checkboxClass" type="checkbox" [(ngModel)]="languageCheked"
+            (change)="checkboxValuesChanged(isChecked)" />
+        </label>
+        <label class="labelClass">
+          Include Class Hierarchy
+          <input class="checkboxClass" type="checkbox" [(ngModel)]="classHeirarchyChecked" value="1"
+            (change)="checkboxValuesChanged(isChecked)" />
+        </label>
+        <label class="labelClass">
+          Include All Properties
+          <input class="checkboxClass" type="checkbox" [(ngModel)]="allPropChecked"
+            (change)="checkboxValuesChanged(isChecked)" />
+        </label>
+        <label class="labelClass">
+          Bounded Graph
+          <input class="checkboxClass" type="checkbox" [(ngModel)]="allNodesInBoundClicked"
+            (change)="checkboxValuesChanged(isChecked)" />
+        </label>
+        <label class="labelClass">
+          Disable Zoom
+          <input class="checkboxClass" type="checkbox" [(ngModel)]="disableZoomClicked"
+            (change)="checkboxValuesChanged(isChecked)" />
+        </label>
+        <label class="labelClass">
+          <button #graphReset (click)="graphResetChanged($event)"
+            style="width: 8%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:whitesmoke;">
+            Reset Graph
+          </button>
+        </label>
+      </div>
+      <br />
+      <div id="filtersId"
+        style="display: block;float: right;width:24.5%; height: 1053px;background-color:#F2F3F4;border-radius: 8px;">
+
+        <div id="nodeInformationId"
+          style="display: block;height: 26px;background-color:#5DADE2;border-radius: 8px;padding-top: 9px;">
+          <label class="inputLabelClass">
+            Node Information:
+          </label>
+          <br />
+        </div>
+
+        <div id="nodeInfoTagesId" style=" text-align: justify;overflow: auto;display: block;background-color:#AED6F1;border-radius: 8px;
+                    padding-top: 10px;">
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Node:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeId"> </div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Label:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeLabelId"></div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Id:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeIdsId"></div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Type:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeTypeId"> </div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Description:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeDescripId"> </div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Sub Class Of:
+            </label>
+            <div class="nodeInfoDiv" style="width: 309px;" [attr.id]="nodeSubClassId"> </div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Domain:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeDomainId"> </div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Range:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeRangeId"> </div>
+            <br /><br />
+          </div>
+          <div class="nodeInfoDivClass">
+            <label class="inputLabelClass">
+              Comment:
+            </label>
+            <div class="nodeInfoDiv" [attr.id]="nodeCommentId"> </div>
+            <br /><br />
+          </div>
+        </div>
+
+        <div id="graphConfigId"
+          style="display: block;height: 26px;background-color:#5DADE2;border-radius: 8px;padding-top: 9px;">
+          <label class="inputLabelClass">
+            Customize Graph:
+          </label>
+          <br /><br />
+        </div>
+
+        <div id="graphConfigInputsId" style="display: block;background-color:#AED6F1;border-radius: 8px;height: 480px;
+                    padding-top: 10px;">
+          <label class="inputLabelClass">
+            Edge Size: <input type="text" class="inputTextClass" [(ngModel)]="edgeSize" placeholder=" 50">
+          </label><br />
+          <label class="inputLabelClass">
+            Graph Charge/Depth : <input type="text" class="inputTextClass" [(ngModel)]="graphCharge"
+              placeholder=" 1000">
+          </label><br />
+          <label class="inputLabelClass">
+            Resource Node Radius: <input type="text" class="inputTextClass" [(ngModel)]="resourceRadius"
+              placeholder=" 10">
+          </label><br />
+          <label class="inputLabelClass">
+            Literal Node Radius: <input type="text" class="inputTextClass" [(ngModel)]="literalRadius" placeholder=" 6">
+          </label><br />
+          <label class="inputLabelClass">
+            Resource Node Color: <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeColor"
+              placeholder=" #311B92">
+          </label><br />
+          <label class="inputLabelClass">
+            Resource Node Text Color: <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeTextColor"
+              placeholder=" #311B92">
+          </label><br />
+          <label class="inputLabelClass">
+            Literal Node Color: <input type="text" class="inputTextClass" [(ngModel)]="literalNodeColor"
+              placeholder=" #FF9800">
+          </label><br />
+          <label class="inputLabelClass">
+            Literal node text color: <input type="text" class="inputTextClass" [(ngModel)]="literalNodeTextColor"
+              placeholder=" #FF9800">
+          </label><br />
+          <label class="inputLabelClass">
+            Sub Class Label: <input type="text" class="inputTextClass" [(ngModel)]="subClassLabel"
+              placeholder=" --subClassOf--">
+          </label><br />
+          <label class="inputLabelClass">
+            Sub Class Label Color: <input type="text" class="inputTextClass" [(ngModel)]="subClassLabelColor"
+              placeholder=" #3498DB">
+          </label><br />
+          <label class="inputLabelClass">
+            Property Text Color: <input type="text" class="inputTextClass" [(ngModel)]="propertyTextColor"
+              placeholder=" #28B463">
+          </label><br />
+          <!--
+                <label class="inputLabelClass">
+                  On click node color: <input type="text" class="inputTextClass" [(ngModel)]="onClickNodeColor" placeholder=" red" >
+                </label>--><br /> <br /><br /> <br /> <br />
+
+          <button #applyConfigBtn (click)="applyConfigClicked($event)"
+            style="width: 33%; height: 36px;margin-left: 3px;border-radius: 8px;background-color:white;">
+            Apply Changes
+          </button>
+        </div>
+      </div>
+      <div [attr.id]="svgId" style="float: left; height: 140vh;background-color: #F8F9F9;border-radius: 8px;position: relative;left: 6px;"></div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
