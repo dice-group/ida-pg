@@ -70,10 +70,9 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
 import {StoryboardDialogComponent} from './dialogs/storyboard/storyboard.dialog.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
 import { TopmenuComponent } from './components/topmenu/topmenu.component';
-import { DeckglPrmfrqHexViewComponent } from "./components/deckgl-prmfrq-hex-view/deckgl-prmfrq-hex-view.component";
+import { DeckglPrmfrqHexViewComponent } from './components/deckgl-prmfrq-hex-view/deckgl-prmfrq-hex-view.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { StoryboardComponent } from './components/storyboard/storyboard.component';
-import {AppRoutingModule} from './app-routing.module';
 import {RouterModule} from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { SpeechInputComponent } from './components/speech-input/speech-input.component';
