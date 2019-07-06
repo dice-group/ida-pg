@@ -70,6 +70,7 @@ import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-
 import { HomeComponent } from './components/home/home.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
 import { TopmenuComponent } from './components/topmenu/topmenu.component';
+import { DeckglPrmfrqHexViewComponent } from "./components/deckgl-prmfrq-hex-view/deckgl-prmfrq-hex-view.component";
 import { SpeechInputComponent } from './components/speech-input/speech-input.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
@@ -100,6 +101,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     HomeComponent,
     TopbarComponent,
     TopmenuComponent,
+    DeckglPrmfrqHexViewComponent,
     SpeechInputComponent
   ],
   imports: [
