@@ -87,7 +87,4 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("ScHandler", scHandler);
 		return bot;
 	}
-
-	
-
 }

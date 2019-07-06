@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
@@ -11,6 +12,11 @@ import {HttpModule} from '@angular/http';
 import {CdkTableModule} from '@angular/cdk/table';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { LoginComponent } from './components/login/login.component';
+import { UserComponent } from './components/user/user.component';
+import { SignupComponent } from './components/signup/signup.component';
+import {DeleteDialogComponent} from './dialogs/delete/delete.dialog.component';
+import {UpdateDialogComponent} from './dialogs/update/update.dialog.component';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -59,8 +65,12 @@ import {RestService} from './service/rest/rest.service';
 import {DatatableDetailComponent} from './components/datatable-detail/datatable-detail.component';
 import { SsbViewComponent } from './components/ssb-view/ssb-view.component';
 import { VennViewComponent } from './components/venn-view/venn-view.component';
+import { RdfOntologyViewComponent } from './components/rdf-ontology-view/rdf-ontology-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import {StoryboardDialogComponent} from './dialogs/storyboard/storyboard.dialog.component';
+import { TopbarComponent } from './components/topbar/topbar.component';
+import { TopmenuComponent } from './components/topmenu/topmenu.component';
+import { DeckglPrmfrqHexViewComponent } from "./components/deckgl-prmfrq-hex-view/deckgl-prmfrq-hex-view.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { StoryboardComponent } from './components/storyboard/storyboard.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -79,6 +89,7 @@ import { SpeechInputComponent } from './components/speech-input/speech-input.com
     DataViewContainerComponent,
     DatatableViewComponent,
     FdgViewComponent,
+    RdfOntologyViewComponent,
     BargraphViewComponent,
     IntroComponent,
     ClickStopPropagationDirective,
@@ -90,6 +101,14 @@ import { SpeechInputComponent } from './components/speech-input/speech-input.com
     StoryboardDialogComponent,
     StoryboardComponent,
     HomeComponent,
+    LoginComponent,
+    UserComponent,
+    SignupComponent,
+    DeleteDialogComponent,
+    UpdateDialogComponent,
+    TopbarComponent,
+    TopmenuComponent,
+    DeckglPrmfrqHexViewComponent,
     SpeechInputComponent
   ],
   imports: [
@@ -132,11 +151,15 @@ import { SpeechInputComponent } from './components/speech-input/speech-input.com
     MatToolbarModule,
     MatTooltipModule,
     FlexLayoutModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
     NgbModule,
     RouterModule,
   ],
   entryComponents: [
-    StoryboardDialogComponent
+    StoryboardDialogComponent,
+    UpdateDialogComponent,
+    DeleteDialogComponent
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

@@ -13,7 +13,6 @@ services:
       - FUSEKI_URL=http://fuseki:3030
     networks:
       - ida-net
-
   fuseki:
     image: stain/jena-fuseki
     ports:
