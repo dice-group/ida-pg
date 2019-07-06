@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,12 @@ import upb.ida.util.FileUtil;
 
 public class MessageRestControllerClusterTest {
 	
-	 @Autowired
+	@Autowired
 	private FileUtil demoMain;
 	
 	@Autowired
 	private MessageRestController mrc;
+	@Ignore("Test is ignored for demo")
 	@Test
 	public void  sendmessagetestpos() throws Exception  {
 		ResponseBean responseBean;
@@ -112,8 +114,9 @@ public class MessageRestControllerClusterTest {
 		
 		
 	}
-	
-	 @Test
+
+	@Ignore("Test is ignored for demo")
+	@Test
 	public void  sendmessagetestNeg() throws Exception  {
 		ResponseBean responseBean;
 		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city", "");
