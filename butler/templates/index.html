@@ -70,6 +70,17 @@
 	</div>
 
     <script>
+        var context = null;
+
+
+        function jsonToQueryString(json) {
+            return '?' +
+                Object.keys(json).map(function(key) {
+                    return encodeURIComponent(key) + '=' +
+                        encodeURIComponent(json[key]);
+                }).join('&');
+        }
+
         function appendMsg (msg) {
 			var box = document.getElementById('c');
 			box.innerHTML += msg;
@@ -84,11 +95,29 @@
 				let msg = txt.value.trim();
 				if (msg !== "") {
 				    appendMsg('<div class="urmsg"><span>'+msg+'</span></div>');
-                    oReq.onload = function(e) {
-                        console.log(oReq.response);
-                        appendMsg('<div class="msg"><span>'+oReq.response.reply+'</span></div>');
+
+				    msg = {
+				        'msg': msg
                     };
-                    oReq.open("GET", 'http://127.0.0.1:5000/predict?msg=' + msg);
+
+                    oReq.onload = function(e) {
+                        appendMsg('<div class="msg"><span>'+oReq.response.reply+'</span></div>');
+
+                        if (! oReq.response.complete) {
+                            delete oReq.response.reply;
+                            context = oReq.response;
+                            console.log('ctx: ', context);
+                        } else if (context) {
+                            context = null;
+                        }
+                    };
+
+                    if (context) {
+                        context.msg = msg;
+                        msg = context;
+                    }
+                    console.log('msg: ', jsonToQueryString(msg));
+                    oReq.open("GET", 'http://127.0.0.1:5000/predict' + jsonToQueryString(msg));
                     oReq.responseType = 'json';
                     oReq.send();
 					txt.value = "";
