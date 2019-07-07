@@ -10,7 +10,7 @@
         body,
         textarea,
         input {
-            font-size: 13px;
+            font-size: 16px;
         }
         .chat {
             max-width: 300px;
@@ -70,6 +70,12 @@
 	</div>
 
     <script>
+        function appendMsg (msg) {
+			var box = document.getElementById('c');
+			box.innerHTML += msg;
+			box.scrollTop = box.scrollHeight;
+		}
+
         var oReq = new XMLHttpRequest();
 
         let txt = document.getElementById('t');
@@ -77,11 +83,13 @@
 			if(e.keyCode === 13) {
 				let msg = txt.value.trim();
 				if (msg !== "") {
-				    console.log(msg);
+				    appendMsg('<div class="urmsg"><span>'+msg+'</span></div>');
                     oReq.onload = function(e) {
                         console.log(oReq.response);
+                        appendMsg('<div class="msg"><span>'+oReq.response.reply+'</span></div>');
                     };
                     oReq.open("GET", 'http://127.0.0.1:5000/predict?msg=' + msg);
+                    oReq.responseType = 'json';
                     oReq.send();
 					txt.value = "";
 				}
