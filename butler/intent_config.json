@@ -7,6 +7,13 @@
       {
         "y": "OK then what is y-axis?"
       }
-    ]
+    ],
+    "response": "Kindly wait.. drawing bar chart!"
+  },
+  "greet": {
+    "response": "Hi there.. I am at your service!"
+  },
+  "help": {
+    "response": "Unfortunately I can only say Hi there <br> Or draw you a bar chart <br> Right now!"
   }
 }

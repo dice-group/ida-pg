@@ -64,21 +64,16 @@ def index():
                     response['reply'] = param.get(k)
 
                 response['complete'] = 0
+                response['intent'] = cls
             else:
                 response['complete'] = 1
-
-            response['intent'] = cls
+                response['reply'] = intent_config.get(cls).get('response')
         else:
             response['complete'] = 1
             if cls == 'greet':
-                response['reply'] = 'Hello'
+                response['reply'] = intent_config.get(cls).get('response')
             elif cls == 'help':
-                response['reply'] = 'I can load datasets for you. \n I can visualise data too.'
-            elif cls == 'dataset':
-                response['reply'] = 'Dataset loaded.'
-            elif cls == 'barchart':
-                response['reply'] = 'Barchart drawn.'
-            print('parameters missing')
+                response['reply'] = intent_config.get(cls).get('response')
 
     # returning the response object as json
     return flask.jsonify(response)
