@@ -25,13 +25,13 @@ import {Router} from '@angular/router';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  idCount = 1;
+  idCount = 2;
   title = 'app';
   isHidden = true;
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
   public ontologySideItem = new SidebarElement(1, 'Ontology Explorer', 'ontology');
   public activeItem = 0;
-  private sidebarItems: SidebarElement[] = [this.introSideItem];
+  private sidebarItems: SidebarElement[] = [this.introSideItem, this.ontologySideItem];
   private mainViewItems: MainviewElement[] = [];
 
   @ViewChild(ChatboxComponent)
@@ -168,7 +168,9 @@ export class HomeComponent {
   }
 
   cleanResponse(content) {
-    return content.replace('pass == pass => ', '');
+    content = content.replace('pass == pass => ', '');
+    content = content.replace('fail == pass => ', '');
+    return content;
   }
 
   // openPopup(url) {
