@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chatbot - UI</title>
+    <style>
+        body,
+        textarea,
+        input {
+            font-size: 13px;
+        }
+        .chat {
+            max-width: 300px;
+        }
+        .chatmes {
+            word-wrap: break-word;
+        }
+        .chatmes div{
+            padding: 4px;
+        }
+        .msg {
+            background: #ccc;
+        }
+        .msg span {
+            float: right;
+        }
+        .msg:after {
+            clear: both;
+            content: "";
+            display: table;
+        }
+        .urmsg {
+            clear: right;
+            background: #E8F3FF;
+        }
+        .status {
+            color: #ccc;
+            border-top: solid 1px #ccc;
+            border-bottom: solid 1px #ccc;
+            font-size: 12px;
+            text-align: center;
+        }
+        .chatmes,
+        .chattxt,
+        .chatnam {
+            border: 1px solid #bbb;
+        }
+        .chattxt {
+            resize:vertical;
+            overflow:auto;
+        }
+        .chatmes {
+            width: 100%;
+            height: 300px;
+            overflow-y:scroll;
+        }
+        .chattxt , .chatnam {
+            width:100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat">
+		<div class="chatmes" id="c"></div>
+		<textarea class="chattxt" placeholder="Your message" id="t"></textarea>
+	</div>
+</body>
+</html>

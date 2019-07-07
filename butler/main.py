@@ -1,7 +1,8 @@
 import fasttext
 import flask
-from flask import request
+from flask import request, render_template
 from config_loader import config_loader
+
 
 app = flask.Flask(__name__)
 
@@ -13,6 +14,11 @@ print('Initializing classifier.. ', end='')
 corpus = 'data.db'
 classifier = fasttext.supervised(corpus, 'model_chat', label_prefix='__label__')
 print('Done')
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 # Api to classify the user message.
 @app.route('/predict', methods=['GET'])
