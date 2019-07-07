@@ -35,7 +35,14 @@ def index():
     response = {}
 
     # Intent classification of message
-    cls = classifier.predict([msg])[0][0]
+    if 'complete' in request.args:
+        cls = request.args.get('intent')
+        for k in request.args:
+            if k != 'reply' and k != 'msg':
+                response[k] = request.args.get(k)
+    else:
+        cls = classifier.predict([msg])[0][0]
+
     print(cls)
 
     if cls in intent_config:
@@ -45,13 +52,21 @@ def index():
             if 'param' not in request.args:
                 response['param'] = 0
             else:
-                response['param'] += 1
+                paramN = int(request.args.get('param'))
+                param = parameters[paramN]
+                for k in param:
+                    response[k] = msg
+                response['param'] =  paramN + 1
 
-            param = parameters[response.get('param')]
-            for k in param:
-                response['reply'] = param.get(k)
+            if response['param'] <= len(parameters)-1:
+                param = parameters[response.get('param')]
+                for k in param:
+                    response['reply'] = param.get(k)
 
-            response['complete'] = 0
+                response['complete'] = 0
+            else:
+                response['complete'] = 1
+
             response['intent'] = cls
         else:
             response['complete'] = 1
