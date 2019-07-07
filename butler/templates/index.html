@@ -68,5 +68,26 @@
 		<div class="chatmes" id="c"></div>
 		<textarea class="chattxt" placeholder="Your message" id="t"></textarea>
 	</div>
+
+    <script>
+        var oReq = new XMLHttpRequest();
+
+        let txt = document.getElementById('t');
+        txt.onkeydown = function  (e) {
+			if(e.keyCode === 13) {
+				let msg = txt.value.trim();
+				if (msg !== "") {
+				    console.log(msg);
+                    oReq.onload = function(e) {
+                        console.log(oReq.response);
+                    };
+                    oReq.open("GET", 'http://127.0.0.1:5000/predict?msg=' + msg);
+                    oReq.send();
+					txt.value = "";
+				}
+			}
+		}
+
+    </script>
 </body>
 </html>
