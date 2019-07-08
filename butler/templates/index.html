@@ -61,6 +61,10 @@
             width:100%;
             margin: 0;
         }
+        #resp {
+            background: #cccccc;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -68,6 +72,7 @@
 		<div class="chatmes" id="c"></div>
 		<textarea class="chattxt" placeholder="Your message" id="t"></textarea>
 	</div>
+    <pre id="resp"></pre>
 
     <script>
         var context = null;
@@ -109,6 +114,8 @@
                             console.log('ctx: ', context);
                         } else if (context) {
                             context = null;
+                            var resp = document.getElementById('resp');
+			                resp.innerHTML = JSON.stringify(oReq.response, undefined, 2);
                         }
                     };
 
