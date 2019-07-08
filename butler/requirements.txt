@@ -1,0 +1,4 @@
+Cython==0.29.10
+fasttext==0.8.3
+future==0.17.1
+numpy==1.16.4
