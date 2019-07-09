@@ -1,10 +1,5 @@
-{:ignored-unused-namespaces [clojure.stacktrace
-                             proto-repl.saved-values
-                             hickory.select
-                             repl-tools
-                             librarian.model.io.scrape
-                             librarian.scraper.io.scrape
-                             librarian.scraper.cli
+{:if-without-else true
+ :ignored-unused-namespaces [hickory.select
                              librarian.scraper.crawler.factory]
  :known-macros [say-cheez.core/capture-build-env-to
                 librarian.helpers.spec/entity-keys

@@ -9,53 +9,47 @@
   :patterns {:name {:attribute :named/name
                     :selector [:children (tag :dt)
                                :children (class :descname)]}
-             :description-summary {:attribute :description-summary
-                                   :selector [:children (tag :dd)
-                                              [:children
-                                               :select (and (tag :p) (not (class :rubric)))
-                                               :limit 1]]}
-             :description {:attribute :description
+             :description {:concept :semantic-type
                            :selector [:children (tag :dd)
-                                      [:children
-                                       :select (and (tag :p) (not (class :rubric)))]]}
-             :parameter-info {:selector [:children (and (tag :span) (class :classifier))]}}
+                                      :children (and (tag :p) (not (class :rubric)))]
+                           :ref-from-trigger :typed/datatype
+                           :triggers :description}
+             :io-container-info {:selector [:children (and (tag :span) (class :classifier))]}}
 
   :hooks [; namespaces:
-          {:trigger :namespaced
+          {:triggered-by :namespaced
            :concept :namespace
            :selector [:children (tag :dt)
                       :children (class :descclassname)]
            :ref-to-trigger :namespace/member}
-          {:trigger :namespace
+          {:triggered-by :namespace
            :attribute :namespace/name
            :transform #".*[^.]"}
 
           ; classes:
-          {:trigger :document
+          {:triggered-by :document
            :concept :class
            :selector [:descendants (and (tag :dl) (class :class))]}
-          {:trigger :class, :pattern :name}
-          {:trigger :class, :pattern :description-summary}
-          {:trigger :class, :pattern :description}
-          {:trigger :class
+          {:triggered-by :class, :pattern :name}
+          {:triggered-by :class, :pattern :description}
+          {:triggered-by :class
            :concept :constructor
            :selector [[:descendants :select (tag :table) :limit 1]]
            :ref-from-trigger :class/constructor}
 
           ; functions and methods:
-          {:trigger :document
+          {:triggered-by :document
            :concept :function
            :selector [:descendants (and (tag :dl) (class :function))]}
-          {:trigger :class
+          {:triggered-by :class
            :concept :method
            :selector [:descendants (and (tag :dl) (class :method))]
            :ref-from-trigger :class/method}
-          {:trigger :callable, :pattern :name}
-          {:trigger :callable, :pattern :description-summary}
-          {:trigger :callable, :pattern :description}
+          {:triggered-by :callable, :pattern :name}
+          {:triggered-by :callable, :pattern :description}
 
           ; parameters:
-          {:trigger :callable
+          {:triggered-by :callable
            :concept :parameter
            :selector [[:descendants
                        :select (and (tag :th) (find-in-text #"Parameters"))
@@ -63,27 +57,90 @@
                       [:ancestors :select (tag :tr) :limit 1]
                       :descendants (tag :dt)]
            :ref-from-trigger :callable/parameter}
-          {:trigger :parameter
-           :attribute :parameter/name
-           :selector [:children (tag :strong)]}
-          {:trigger :parameter
-           :attribute :parameter/position
-           :value :trigger-index}
-          {:trigger :parameter
-           :attribute [:description-summary :description]
-           :selector [[:following-siblings :select (tag :dd) :limit 1]
-                      :children (tag :p)]}
-          {:trigger :parameter
+          {:triggered-by :parameter
            :attribute :parameter/optional
-           :pattern :parameter-info
+           :pattern :io-container-info
            :transform #(or (clojure.string/includes? % "optional")
                            (clojure.string/includes? % "default"))}
 
+          ; results:
+          {:triggered-by :callable
+           :concept :result
+           :selector [[:descendants
+                       :select (and (tag :th) (find-in-text #"Returns"))
+                       :limit 1]
+                      [:ancestors :select (tag :tr) :limit 1]
+                      :descendants (tag :dt)]
+           :ref-from-trigger :callable/result}
+
+          ; io-containers (parameters & results):
+          {:triggered-by :io-container
+           :attribute :io-container/name
+           :selector [:children (tag :strong)]}
+          {:triggered-by :io-container
+           :concept :semantic-type
+           :selector [:children (tag :strong)]
+           :ref-from-trigger :io-container/datatype
+           :triggers :name-type}
+          {:triggered-by :io-container
+           :attribute :io-container/position
+           :value :trigger-index}
+          {:triggered-by :io-container
+           :concept :semantic-type
+           :selector [[:following-siblings :select (tag :dd) :limit 1]
+                      :children (tag :p)]
+           :ref-from-trigger :io-container/datatype
+           :triggers :description}
+
           ; datatypes:
-          {:trigger :parameter
-           :concept :datatype
-           :ref-from-trigger :parameter/datatype
-           :pattern :parameter-info}
-          {:trigger :datatype
-           :attribute :datatype/name
-           :transform #"^[A-Za-z]+"}])
+          {:triggered-by :io-container
+           :concept :basetype
+           :ref-from-trigger :io-container/datatype
+           :pattern :io-container-info}
+          {:triggered-by :basetype
+           :attribute :basetype/name
+           :transform #"^[A-Za-z]+(?!.*ndarray)"}
+          {:triggered-by :io-container
+           :concept :constant
+           :ref-from-trigger :io-container/datatype
+           :pattern :io-container-info}
+          {:triggered-by :constant
+           :attribute :constant/value
+           :transform #"(?<=[‘“'\"]).*?(?=[’”'\"])"}
+
+          ; name-types:
+          {:triggered-by :name-type
+           :attribute :semantic-type/key
+           :value "name"}
+          {:triggered-by :name-type
+           :attribute :semantic-type/value
+           :value :content}
+
+          ; descriptions:
+          {:triggered-by :description
+           :attribute :semantic-type/key
+           :value "description"}
+          {:triggered-by :description
+           :attribute :semantic-type/value
+           :value :content}
+          {:triggered-by :description
+           :attribute :semantic-type/position
+           :value :trigger-index}]
+
+  :snippets [[{:type :call
+               :callable {:type :function
+                          :placeholder true
+                          :namespace/_member {:type :namespace
+                                              :name "sklearn.cluster"}}
+               :parameter {:type :call-parameter
+                           :datatype {:type :role-type
+                                      :id :dataset}
+                           :parameter {:type :parameter
+                                       :placeholder true
+                                       :name "X"}}
+               :result {:type :call-result
+                        :datatype {:type :role-type
+                                   :id :labels}
+                        :result {:type :result
+                                 :placeholder true
+                                 :name "label"}}}]])

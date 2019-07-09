@@ -37,7 +37,7 @@ public class MessageRestControllerClusterTest {
 	public void  sendmessagetestpos() throws Exception  {
 		ResponseBean responseBean;
 		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("I would like to run the k_means algorithm on the current table", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Optional parameters should be n_clusters, n_jobs and n_init", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city");
@@ -122,7 +122,7 @@ public class MessageRestControllerClusterTest {
 	public void  sendmessagetestNeg() throws Exception  {
 		ResponseBean responseBean;
 		responseBean = mrc.sendmessage("What are the available clustering algorithms?", "1", "movehubcostofliving.csv", "city");
-		responseBean = mrc.sendmessage("I would like to run the KMeans algorithm on the current table", "1", "movehubcostofliving.csv", "city");
+		responseBean = mrc.sendmessage("I would like to run the k_means algorithm on the current table", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Optional parameters should be init and n_init", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Set n_clusters as 5", "1", "movehubcostofliving.csv", "city");
 		responseBean = mrc.sendmessage("Set n_jobs as 8", "1", "movehubcostofliving.csv", "city");
