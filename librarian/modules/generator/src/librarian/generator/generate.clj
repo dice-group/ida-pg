@@ -1,4 +1,5 @@
 (ns librarian.generator.generate
+  "Implementation of the code generator's A* search."
   (:require [datascript.core :as d]
             [clojure.data.priority-map :refer [priority-map]]
             [librarian.helpers.transients :refer [into! update!]]
@@ -17,6 +18,8 @@
 (def ^:dynamic *sid (atom 0))
 
 (defn flaws
+  "Returns the flaws of a given state.
+   There are parameter flaws for parameters without a value and call flaws for calls with a placeholder callable that still needs to concretized."
   [{:keys [db]}]
   (let [global-type-finder (comp (gq/types->instances db)
                                  (remove #(gq/containing-snippet db %)))]

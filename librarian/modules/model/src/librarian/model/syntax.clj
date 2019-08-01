@@ -1,4 +1,5 @@
 (ns librarian.model.syntax
+  "Implementation of the syntatic constructs used to define models via concepts, paradigms and ecosystems."
   (:require [clojure.spec.alpha :as s]
             [clojure.set :as set]
             [datascript.core :as d]
@@ -57,7 +58,16 @@
 
 (defn instanciate*
   "Takes a concept and a map of namespaced or unnamespaced attributes and returns an instance of that concept.
-   Instances can be nested and referenced by providing an instance as a value to a reference attribute."
+   Instances can be nested and referenced by providing an instance as a value to a reference attribute.
+
+   Exampe:
+   ```
+   (def my-instance (instanciate* my-concept
+                      {:unnamespaced-attribute-name 1
+                       :foo (instanciate* foo-concept {:bar \"baz\"})}))
+
+   (instances->tx [my-instance]) ; => A datascript transaction to add the the instance and nested subinstances.
+   ```"
   ([concept vals]
    (instanciate* identity concept vals))
   ([ref-map-handler concept vals]
@@ -109,7 +119,7 @@
      (with-meta instance {:tx (conj tx (with-meta instance {:concept concept}))}))))
 
 (defn instanciate
-  "Syntactic sugar for instanciate*."
+  "Syntactic sugar for instanciate* where the `vals`-map does not need to be wrapped in curly-braces."
   [concept & {:as vals}]
   (instanciate* concept vals))
 
@@ -138,6 +148,7 @@
                    concept (transformer concept concept-desc)))))
 
 (defn- merge-concepts
+  "Merges the given `concept` with the concept collection `extends` and returns a single merged concept."
   [concept extends]
   (let [merged (apply map/merge-by-key
                       {:attributes merge
@@ -152,6 +163,7 @@
     merged))
 
 (defn- merge-paradigms
+  "Merges the given `paradigm` with the paradigm collection `extends` and returns a single merged paradigm"
   ([paradigm extends]
    (merge-paradigms (conj extends (update paradigm :builtins
                                           #(when % [(instances->tx %)])))))
@@ -162,6 +174,9 @@
           paradigms)))
 
 (defn- no-attribute-collisions?
+  "Checks whether no attribute name is used twice in the given concept and the concepts it extends.
+   E.g. it would not be ok if concept x inherits from y and both have an attribute z (:x/z and :y/z).
+   This important to guarantee that attribute aliases are unique for each concept since in the previous example :y/z would be aliased to :x/z which would create ambiguity."
   [{:keys [concept extends]}]
   (let [attr-names (->> (conj extends concept)
                         (mapcat (comp keys :attributes))
@@ -174,6 +189,7 @@
         (zipmap $ $)))
 
 (defn paradigm->ecosystem
+  "Converts a given paradigm into an ecosystem."
   [{:keys [concepts builtins generate executor]}]
   {:concepts concepts
    :builtins builtins
@@ -195,6 +211,7 @@
    :postprocessors (map/keep-kv (comp (juxt :ident :postprocess) second) concepts)})
 
 (defn merge-ecosystems
+  "Merges the given ecosystem into a single ecosystem."
   [& ecosystems]
   (->> ecosystems
        (map #(select-keys % [:concepts :builtins]))
@@ -204,6 +221,24 @@
 ; Macros:
 
 (defmacro defconcept
+  "Define a new concept with name `name` in the current namespace.
+   The concept is described by the sequence of key-value pairs `concept-desc`.
+   A concept description can contain the following pairs, all of which are optional:
+   - `:attributes`: A map describing datascript attributes, i.e. a subset of a database schema.
+   - `:spec`: A Clojure spec that should be used to check the validity of supposed instances of this concept.
+   - `:preprocess`: A map from attributes to preprocessor functions for those attributes. Useful to mirror attribute values.
+   - `:postprocess`: A function that takes a datascript database and the id of an instance of this concept. The function returns a datascript transaction that should be executed as part of the transaction that adds the given concept. Useful to compute derived attributes for concept instances.
+
+   In addition to the key-value pairs the concept description can be preceded by a vector of concepts that the newly defined concept should inherit from.
+
+   Example:
+   ```
+   (defconcept my-child-concept [parent-concept1 parent-concept2]
+     :attributes {::x {:db/doc \"A test attribute.\"}
+                  ::y {:db/valueType :db.type/ref
+                       :db/doc \"A reference to another concept.\"}}
+     :postprocess (fn [db id] [:db/add id ::x \"All instances should have the same x-attribute value.\"]))
+   ```"
   [name & concept-desc]
   `(let [concept-desc# ~(vec concept-desc)
          conformed# (s/conform ::concept-desc concept-desc#)]
@@ -223,6 +258,19 @@
          (def ~name concept#)))))
 
 (defmacro defparadigm
+  "Define a new paradigm with name `name` in the current namespace.
+   The name is followed by an optional vector of paradigms that should be included ifn the new paradigm.
+   Then a sequence of key-value pairs follows:
+   - `:concepts`: A map of unnamespaces concept alias keywords to concepts.
+   - `:builtins`: A collection of builtin concept instances in the defined paradigm. The predefined instances should be created via `instanciate`.
+
+   Example:
+   ```
+   (defparadigm my-logical-programming-oop-paradigm [object-oriented-paradigm logical-paradigm]
+     :concepts {:logical-class my-logical-class-concept
+                :predicate-method my-predicate-method-concept}
+     :builtins [(instanciate my-logical-class-concept :name \"Predicate\")])
+   ```"
   [name & paradigm]
   `(let [paradigm# ~(vec paradigm)
          conformed# (s/conform ::paradigm-desc paradigm#)]
@@ -232,6 +280,10 @@
        (def ~name conformed#))))
 
 (defmacro defecosystem
+  "Define a new ecosystem with name `name` in the current namespace.
+   Like `defparadigm` but accepts additional key-value pair types:
+   - `:generate`: A function that takes a metadata map and a database containing an executable CFG and that returns a snippet of executable code for the ecosystem.
+   - `:executor`: Similar to the generator defined above but returns a function that executes the code snippet and returns the result of the execution instead of simply returning the code snippet string."
   [name & ecosystem]
   `(let [ecosystem# ~(vec ecosystem)
          conformed# (s/conform ::ecosystem-desc ecosystem#)]

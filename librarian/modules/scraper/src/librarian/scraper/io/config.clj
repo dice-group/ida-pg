@@ -1,7 +1,9 @@
 (ns librarian.scraper.io.config
+  "Reading, parsing and validation of scrape configurations."
   (:require [clojure.spec.alpha :as s]
             [clojure.tools.logging :as log]
             [clojure.walk :as w]
+            [clojure.string :as str]
             [me.raynes.fs :as fs]
             [hickory.select]
             [librarian.helpers.zip :as hzip]
@@ -22,6 +24,7 @@
 (def ^:private ^:dynamic *full-config-parse* true)
 
 (defn index-hooks
+  "Expands pattern references used in the given hooks."
   [hooks patterns]
   (group-by :triggered-by
             (eduction (comp (map (fn [hook]
@@ -35,6 +38,8 @@
                       hooks)))
 
 (defn resolve-hook-aliases
+  "Expands concept and attribute aliases to their corresponding fully-qualified keywords for a collection of hooks.
+   An ecosystem has to be provided to exand the aliases."
   [hooks {:keys [attributes concept-aliases attribute-aliases]}]
   (let [concept-keys [:concept]
         attr-keys [:attribute :ref-from-trigger :ref-to-trigger]
@@ -71,19 +76,22 @@
                                       snippet-part))
 
 (defn snippet->tx
+  "Transforms the description of a snippet in a scrape configuration into a datascript transaction to add that snippet."
   [snippet ecosystem]
   (let [snippet-instance (msyntax/instanciate snippet/snippet)]
     (msyntax/instances->tx (map #(instanciate-snippet-part % ecosystem snippet-instance)
                                 snippet))))
 
 (defn cache-id
+  "Returns a hash for the given configuration.
+   Used to quickly detect configuration changes."
   [config conformed]
   (let [hashable-config (w/postwalk (fn [form]
                                       (cond
                                         (instance? Pattern form) (str form)
                                         (and (symbol? form)
                                              (= (last (name form)) \#)
-                                             (clojure.string/includes? (name form) "__"))
+                                             (str/includes? (name form) "__"))
                                         '_
                                         :else form))
                                     (select-keys config [:seed :max-pages :max-depth
@@ -93,6 +101,7 @@
                          (-> conformed :ecosystem :version)))))
 
 (defn parse-config
+  "Parses and validates a given scrape configuration map."
   [config]
   (let [conformed (binding [*full-config-parse* false]
                     ; don't perform full hook and snippet parsing on extended configs:
@@ -115,10 +124,13 @@
           conformed)))))
 
 (defmacro defscraper
+  "Macro to programmatically define scrape configurations.
+   Uses the same syntax as scrape configuration files."
   [name & {:as config}]
   `(def ~name ~(parse-config (assoc config :name name))))
 
 (defn read-config
+  "Reads a scrape configuration from the provided file or path."
   [path]
   (binding [*read-eval* false]
     (let [file (cond

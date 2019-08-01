@@ -1,4 +1,5 @@
 (ns librarian.model.ecosystems.python.executor
+  "Interop layer to execute Python code from Java."
   (:require [clojure.tools.logging :as log]
             [clojure.string :as str]
             [clojure.java.shell :as sh]

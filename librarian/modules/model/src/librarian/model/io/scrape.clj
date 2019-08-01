@@ -1,4 +1,7 @@
 (ns librarian.model.io.scrape
+  "IO implementation to read and write scrape files.
+   This implementation is independent from the origin of the scraped information.
+   It is used by the web library scraper to create scrape files but could also be used by another scraper that gets the scrape information from another source (e.g. directy from a libraries source code)."
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.spec.alpha :as s]
@@ -22,6 +25,7 @@
     :else (throw (Error. "Invalid scrape path."))))
 
 (defn write-scrape
+  "Writes the given `scrape` database to the given file or path `file` along with the given ecosystem."
   [file {:keys [name ecosystem meta]} scrape]
   (let [file (get-file file)
         out {:db scrape
@@ -40,6 +44,7 @@
     file))
 
 (defn read-scrape
+  "Reads a scrape from the provided file or path."
   [file]
   (let [file (get-file file)
         scrape (with-open [data (-> file

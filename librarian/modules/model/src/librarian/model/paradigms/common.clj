@@ -1,4 +1,5 @@
 (ns librarian.model.paradigms.common
+  "Definition of a universal paradigm containing commonly used concepts found in most languages."
   (:require [librarian.model.syntax :refer [defparadigm]]
             [librarian.model.concepts.named :refer [named]]
             [librarian.model.concepts.namespace :refer [namespace]]

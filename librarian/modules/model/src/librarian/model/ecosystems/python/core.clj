@@ -1,4 +1,5 @@
 (ns librarian.model.ecosystems.python.core
+  "Definition of the Python ecosystem."
   (:require [librarian.model.syntax :refer [defecosystem]]
             [librarian.model.paradigms.oo.core :refer [oo]]
             [librarian.model.paradigms.functional.core :refer [functional]]

@@ -1,4 +1,5 @@
 (ns librarian.scraper.traverser
+  "Implementation of the hook-guided page traverser and data extractor."
   (:require [datascript.core :as d]
             [flatland.ordered.set :refer [ordered-set]]
             [hickory.zip :as hzip]
@@ -12,12 +13,17 @@
   (:import (java.util.regex Pattern)))
 
 (defn- queue
+  "Create a persistent queue."
   ([] (clojure.lang.PersistentQueue/EMPTY))
   ([& s] (reduce conj clojure.lang.PersistentQueue/EMPTY s)))
 
 (defn- tempid [] (d/tempid nil))
 
 (defn- resolve-value
+  "Retrieve information from a given traversal location.
+   This is controlled by the `value` parameter:
+   If it is `:content`, the text context at the current location is transformed using the `transform` function and returned.
+   If it is `:trigger-index`, the traversal index of the current location's parent is returned."
   [value transform parent index loc]
   (let [value (case (or value :content)
                 :content (string/trim (lzip/loc-content loc))
@@ -26,6 +32,9 @@
     (if transform (transform value) value)))
 
 (defmulti trigger-hook*
+  "Multimethod to handle different types of hooks.
+   It takes a hook and a current traversal state.
+   It returns a descriptor map of the found information at that state as well as the successor states resulting from that found information."
   (fn [hook stack ecosystem index loc]
     (some (set (keys hook)) [:concept :attribute])))
 
@@ -77,6 +86,7 @@
   (log/error (str "Unknown hook type: " hook)))
 
 (defn trigger-hook
+  "Like `trigger-hook*` but with some minor post-processing applied, i.e. the user-defined hook triggers are added to the automatic triggers."
   [hook stack ecosystem index loc]
   (when-let [{:keys [itx tx type triggers id]}
              (trigger-hook* hook stack ecosystem index loc)]
@@ -87,6 +97,8 @@
                :loc loc :index index})}))
 
 (defn trigger-hooks
+  "Triggers all the hooks that are applicable at the traversal state that is on top of the `stack`.
+   Returns a collection of the trigger results returned by `trigger-hook` for each applicable hook."
   [hooks stack ecosystem]
   (let [[{:keys [triggers loc]}] stack]
     (into []
@@ -99,6 +111,9 @@
           triggers)))
 
 (defn traverse!
+  "Takes a datascript database connection, a collection of hooks, an ecosystem, an HTML document and its URL.
+   Recursively traverses the document by applying the given hooks to extract information from the page until no hooks are applicable anymore.
+   The extracted information is transacted into the given database via a single transaction afterwards."
   [conn hooks ecosystem doc url]
   (let [; index transactions:
         itx (transient [])
@@ -140,6 +155,10 @@
         (mdb/with-seq snippets))))
 
 (defn traverser
+  "Takes an ecosystem, a collection of hooks and snippets.
+   Returns a traverser and finalizer function.
+   The traverser can be used as a visitor by crawler4j, it takes HTML documents and stores the information contained in the given documents in an internal datascript database.
+   Once crawler4j is done with crawling, the information that was stored by the traverser in previous applications can be retrieved via the finalizer which cleans up temporary and incomplete information from the scrape database and then returns an immutable snapshot of the final database."
   [{:keys [ecosystem hooks snippets]}]
   (let [conn (d/create-conn (merge sattrs/attributes (:attributes ecosystem)))]
     (mdb/transact-seq! conn (:builtins ecosystem))

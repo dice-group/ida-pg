@@ -8,3 +8,4 @@ pom.xml.asc
 .nrepl-port
 
 nomis-ns-graph.png
+.clj-kondo/.cache

@@ -1,4 +1,5 @@
 (ns librarian.model.cfg
+  "Tools to extract control flow graphs (CFGs) that are stored in datascript databases."
   (:require [datascript.core :as d]
             [loom.graph :as g]
             [loom.attr :as ga]
@@ -20,6 +21,8 @@
              g ne-attr-pairs))
 
 (defn db->cfg
+  "Takes a database and a configuration map.
+   Returns a loom graph representing the control flow graph that is stored in the given database."
   [db & {:keys [snippets unused-constants semantic-constants]
          :or {snippets false, unused-constants false, semantic-constants false}}]
   (let [nodes (d/q {:find '[?node ?type]

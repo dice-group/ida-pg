@@ -27,7 +27,6 @@
                          results))]
         tx))))
 
-
 (defconcept call [typed]
   :attributes {::callable {:db/valueType :db.type/ref
                            :db/doc "The callable of this call."}

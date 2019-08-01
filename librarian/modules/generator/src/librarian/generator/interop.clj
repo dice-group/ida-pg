@@ -1,4 +1,5 @@
 (ns librarian.generator.interop
+  "A simple interop wrapper to make the generator usable from Java."
   (:require [librarian.generator.core :as gc]
             [clojure.edn :as edn])
   (:gen-class :name librarian.generator.Generator

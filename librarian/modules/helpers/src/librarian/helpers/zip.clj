@@ -1,17 +1,22 @@
 (ns librarian.helpers.zip
+  "Helpers to work with Clojure zippers."
   (:require [clojure.zip :as zip]
             [clojure.string :as string]))
 
 (defn loc-at-node?
+  "Returns whether a given location points at a given node."
   [node loc]
   (= node (zip/node loc)))
 
 (defn is-parent?
+  "Returns whether a given `parent` location is an ancestor of `loc`.
+   Also returns true if `(= parent loc)`."
   [parent loc]
   (some (partial loc-at-node? (zip/node parent))
         (take-while some? (iterate zip/up loc))))
 
 (defn loc-content
+  "Returns the concatenated string content found in the HTML node pointed at by `loc`."
   [loc]
   (let [node (zip/node loc)]
     (if (string? node)
@@ -42,6 +47,7 @@
               (iterate next (init loc)))))
 
 (defn select-locs
+  "Takes a selector sequence and a starting location and returns a sequence of selected locations."
   [selectors loc]
   (loop [[selector & selectors] (if (seqable? selectors) selectors [selectors])
          locs [loc]]
