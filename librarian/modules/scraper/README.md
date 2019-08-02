@@ -3,6 +3,7 @@
 Crawls through the documentation of software libraries and transforms them into a standardized format.
 librarian-scraper is a tool that uses a scrape configuration to crawl the documentation of a software library.
 The scraped information will be automatically linked, sanitized, validated and then written to a scrape database file.
+An introduction to the working principle of the scraper can be found [here](./docs/architecture.md).
 
 ## 1. Scraping a library
 
