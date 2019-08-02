@@ -1,4 +1,5 @@
 (ns librarian.generator.actions.receive
+  "Definition of the class of parameter value receival actions."
   (:require [librarian.generator.query :as gq]
             [librarian.generator.cost :as gc]
             [librarian.generator.commutation :as gcomm]

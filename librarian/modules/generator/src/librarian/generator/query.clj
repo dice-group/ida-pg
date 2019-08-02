@@ -227,24 +227,29 @@
    `:placeholder` is the id of the placeholder that should be replaced and `:match` the id of the concept it should be replaced with.
    Since some placeholder replacements might entail the replacement of other placeholders that are associated to the replaced placeholder, the match map might additionally contain other keys (e.g. a match for a callable placeholder might have a `::callable/parameter` entry).
    Each of those additional keys is a reference attribute of the replaced placeholder.
-   They are associated to a collection of matches for referenced placeholder concepts resulting in a recursive placeholder replacement tree.
+   They are associated to a collection of collections of matches for referenced placeholder concepts resulting in a recursive placeholder replacement tree.
 
    Example result for a given placeholder callable with id `1`:
    ```
    [{:placeholder 1
      :match 101
-     ::callable/parameter [{:placeholder 2, :match 102}
-                           {:placeholder 2, :match 103}]
-     ::callable/result [{:placeholder 3, :match 104}]}
+     ::callable/parameter [[{:placeholder 2, :match 102}
+                            {:placeholder 2, :match 103}]
+                           [{:placeholder 3, :match 104}]]
+     ::callable/result [{:placeholder 4, :match 105}]}
     {:placeholder 1
      :match 201
-     ::callable/parameter [{:placeholder 2, :match 202}]
-     ::callable/result [{:placeholder 3, :match 203}]}]
+     ::callable/parameter [[{:placeholder 2, :match 202}]
+                           [{:placeholder 3, :match 203}]]
+     ::callable/result [{:placeholder 4, :match 204}]}]
    ```
    Two candidate callables were found to replace the given placeholder.
-   Both candidate matches would require the placeholder parameter and result of the placeholder callable to also be replaced.
-   For the first candidate match, two potential replacements for the placeholder parameter were found.
-   This matching tree encodes a total of three different replacements that might be performed."
+   Both candidate matches would require the placeholder parameters and result of the placeholder callable to also be replaced.
+   For the first candidate match, two potential replacements for the first placeholder parameter were found and one replacement for the second placeholder parameter was found.
+   This matching tree encodes a total of three different replacements that might be performed:
+   1. `1 => 101 + 2 => 102 + 3 => 104 + 4 => 105`
+   2. `1 => 101 + 2 => 103 + 3 => 104 + 4 => 105`
+   3. `1 => 201 + 2 => 202 + 3 => 203 + 4 => 204`"
   [db placeholder]
   (let [e (d/entity db placeholder)]
     (if (:placeholder e)
