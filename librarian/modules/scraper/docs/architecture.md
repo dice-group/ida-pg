@@ -4,15 +4,15 @@ The configurable scraper requires a scrape configuration file as input.
 Additionally it uses an [*ecosystem model*](../../model) which gives it knowledge about specific programming languages and also a general understanding of paradigms like object orientation or functional programming.
 Using a scrape configuration and the ecosystem model the scraper then goes through three phases:
 1. **Scraping:** First it crawls through the documentation pages of the target library and extracts relevant information from the DOM trees of those pages.
-		This phase yields an initial concept graph where concepts like `class` or `method` are nodes and attributes like `class/method` or `method/name` are edges.
-		The set of available concept and attribute types is provided by the ecosystem model.
+	This phase yields an initial concept graph where concepts like `class` or `method` are nodes and attributes like `class/method` or `method/name` are edges.
+	The set of available concept and attribute types is provided by the ecosystem model.
 1. **Inference:** The initial concept graph is then refined via basic inference.
 	Using the ecosystem model the scraper will infer basic facts like $\mathit{method}(C, M) \land \mathit{name}(M, \texttt{\_\_init\_\_}) \rightarrow \mathit{constructor}(C, M)$ if a Python library is scraped.
 1. **Model Checking:** After refining the concept graph in the inference phase, the scraper then validates all scraped concepts using the ecosystem model.
 	Invalid concepts, e.g. a method without a name, will be removed automatically to guarantee consistency and correctness of the scrape to a certain extent.
 	This final phase is important to compensate for errors and inconsistencies in documentations.
-	
-<img src="lib-scraper-overview.svg" width="100%">
+
+<center><img src="lib-scraper-overview.svg" width="90%"></center>
 
 Now follows a short overview of the technologies and tools used.
 The page crawling itself is done using the [Crawler4j](https://github.com/yasserg/crawler4j}) library.

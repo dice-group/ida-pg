@@ -21,8 +21,10 @@ To keep the complexity of those programs manageable the search space was restric
 Since many libraries can be used by performing a fixed sequence of calls, the resulting generator is still sufficiently useful for our use case despite this restriction. 
 This is an exemplary generated CFG next to its equivalent Python code representation:
 
-<img src="./kmeansFinalCFG.png" style="width: 50%; float: left; margin-right: 1em;">
-```python
+<table border=0>
+	<tr>
+		<td width="50%"><img src="./kmeansFinalCFG.png"></td>
+		<td><pre>
 import sklearn.cluster
 
 def f(v1748, v1747):
@@ -34,8 +36,10 @@ def f(v1748, v1747):
 	precompute_distances=v968
   )
   v1752 = v1754[1]
-  return v1752
-```
+  return v1752</pre></td>
+	</tr>
+</table>
+
 <div style="clear: left; margin-bottom: 1em;"></div>
 
 1. The yellow nodes are so called `call-result` nodes.
@@ -86,7 +90,7 @@ In order to find a valid CFG efficiently, a cost model had to be developed.
 To make the this model consistent, understandable and tractable some notion of cost had to be defined for the action model.
 The generator uses a cost measure based on the probability that a given incomplete CFG will lead to a complete CFG that satisfies the requirements of the user.
 For a given CFG $S$ and an action $a$ the probability of $P(a(S))$ is defined to be $P(S) \cdot P(a | S)$, with $P(I) = 1$ for the initial state $I$.
-To transform this notion into an additive cost measure, the cost $c_{a,S}$ of $a$ is defined to be its information content $ -\log P(a | S)$.
+To transform this notion into an additive cost measure, the cost $c_{a,S}$ of $a$ is defined to be its information content $-\log P(a | S)$.
 Thus the sum of action costs that lead to some state are always lowest for the most probable state.
 
 To calculate the probabilities $P(a_i | S)$ of the set of actions $A_S := \{a_1, \dots, a_n\}$ that are applicable to some state $S$, a weight $w_i \in [0, 1]$ is assigned to each action.
