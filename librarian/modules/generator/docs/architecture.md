@@ -25,30 +25,27 @@ This is an exemplary generated CFG next to its equivalent Python code representa
 	<tr>
 		<td width="50%"><img src="./kmeansFinalCFG.png"></td>
 		<td><pre>
-import sklearn.cluster
-
+import sklearn.cluster<br>
 def f(v1748, v1747):
   v968 = "auto"
   v1777 = int(x=v1748)
   v1754 = sklearn.cluster.k_means(
     X=v1747,
-	n_clusters=v1777,
-	precompute_distances=v968
+    n_clusters=v1777,
+    precompute_distances=v968
   )
   v1752 = v1754[1]
   return v1752</pre></td>
 	</tr>
 </table>
 
-<div style="clear: left; margin-bottom: 1em;"></div>
-
-1. The yellow nodes are so called `call-result` nodes.
+1.  The yellow nodes are so called `call-result` nodes.
 	They represent the return values of callables, like functions, methods or constructors.
 	They are also used to represent externally provided inputs to the program, e.g. the dataset.
-1. The so called `call-parameter` nodes are shown in green.
+1.  The so called `call-parameter` nodes are shown in green.
 	They represent the parameter values of callables and the final outputs of the generated program.
-1. The red `call` nodes represent an invokation of some callable.
-1. Blue `constant` nodes represent literal or enum values.
+1.  The red `call` nodes represent an invokation of some callable.
+1.  Blue `constant` nodes represent literal or enum values.
 
 A given CFG repesents a valid program if all `call-parameter` nodes receive a value from some `call-result` or `constant` node.
 Parameters that do not receive a value are considered to be flaws; they make the CFG invalid.
@@ -89,24 +86,24 @@ All actions were chosen to be irreversible to guarantee that the the search spac
 In order to find a valid CFG efficiently, a cost model had to be developed.
 To make the this model consistent, understandable and tractable some notion of cost had to be defined for the action model.
 The generator uses a cost measure based on the probability that a given incomplete CFG will lead to a complete CFG that satisfies the requirements of the user.
-For a given CFG $S$ and an action $a$ the probability of $P(a(S))$ is defined to be $P(S) \cdot P(a | S)$, with $P(I) = 1$ for the initial state $I$.
-To transform this notion into an additive cost measure, the cost $c_{a,S}$ of $a$ is defined to be its information content $-\log P(a | S)$.
+For a given CFG <img src="https://latex.codecogs.com/svg.latex?\inline&space;S"> and an action <img src="https://latex.codecogs.com/svg.latex?\inline&space;a"> the probability of <img src="https://latex.codecogs.com/svg.latex?\inline&space;P(a(S))"> is defined to be <img src="https://latex.codecogs.com/svg.latex?\inline&space;P(S)&space;\cdot&space;P(a&space;|&space;S)">, with <img src="https://latex.codecogs.com/svg.latex?\inline&space;P(I)&space;=&space;1"> for the initial state <img src="https://latex.codecogs.com/svg.latex?\inline&space;I">.
+To transform this notion into an additive cost measure, the cost <img src="https://latex.codecogs.com/svg.latex?\inline&space;c_{a,S}"> of <img src="https://latex.codecogs.com/svg.latex?\inline&space;a"> is defined to be its information content <img src="https://latex.codecogs.com/svg.latex?\inline&space;-\log&space;P(a&space;|&space;S)">.
 Thus the sum of action costs that lead to some state are always lowest for the most probable state.
 
-To calculate the probabilities $P(a_i | S)$ of the set of actions $A_S := \{a_1, \dots, a_n\}$ that are applicable to some state $S$, a weight $w_i \in [0, 1]$ is assigned to each action.
-Using those weights the action probabilities are defined as $P(a_i |S) := \frac{w_i}{1 + \sum_{j = 1}^{n} w_j}$.
-When there is no information about the relevance of the actions, all weights $w_i$ are equal (typically $1$) and the probability distribution reduces to a uniform prior.
+To calculate the probabilities <img src="https://latex.codecogs.com/svg.latex?\inline&space;P(a_i&space;|&space;S)"> of the set of actions <img src="https://latex.codecogs.com/svg.latex?\inline&space;A_S&space;:=&space;\{a_1,&space;\dots,&space;a_n\}"> that are applicable to some state <img src="https://latex.codecogs.com/svg.latex?\inline&space;S">, a weight <img src="https://latex.codecogs.com/svg.latex?\inline&space;w_i&space;\in&space;[0,&space;1]"> is assigned to each action.
+Using those weights the action probabilities are defined as <img src="https://latex.codecogs.com/svg.latex?\inline&space;P(a_i&space;|S)&space;:=&space;\frac{w_i}{1&space;+&space;\sum_{j&space;=&space;1}^{n}&space;w_j}">.
+When there is no information about the relevance of the actions, all weights <img src="https://latex.codecogs.com/svg.latex?\inline&space;w_i"> are equal (typically <img src="https://latex.codecogs.com/svg.latex?\inline&space;1">) and the probability distribution reduces to a uniform prior.
 The constant 1 is added to the denominator to naively smooth the distribution by giving all actions that are not part of the action model a non-zero weight.
-Smoothing is required to guarantee the existence of a positive lower bound on the action costs ($c_{a_i,S} \geq \log 2$).
+Smoothing is required to guarantee the existence of a positive lower bound on the action costs (<img src="https://latex.codecogs.com/svg.latex?\inline&space;c_{a_i,S}&space;\geq&space;\log&space;2">).
 
-To differentiate between the weights $w_i$ of actions, the generator uses a semantic compatibility measure.
+To differentiate between the weights <img src="https://latex.codecogs.com/svg.latex?\inline&space;w_i"> of actions, the generator uses a semantic compatibility measure.
 The details of this measure are left out for brevity but the basic idea is to consider how an action affects the data flow through the CFG.\
 Each node of the CFG has a set of strict and semantic types attached to it;
 a strict type typically is a program datatype like `float`, a semantic type on the other hand encodes a certain meaning or interpretation of its instances.
 Strict types are used to determine which actions are admissible, semantic types are used to determine their weights.
 Actions that cause values to flow into parameters to which they are semantically incompatible will get a lower weight than more compatible actions.
 
-To steer the A* search into promising directions a heuristic function $h$ is used that returns an optimistic estimate of the probability that a solution will be found, given a certain CFG.
+To steer the A* search into promising directions a heuristic function <img src="https://latex.codecogs.com/svg.latex?\inline&space;h"> is used that returns an optimistic estimate of the probability that a solution will be found, given a certain CFG.
 Formally the used heuristic itself is admissible in most cases and would thus yield optimal results according to the cost measure presented above.
-For performance reasons the heuristic is weighted with $w_h > 1$ since the unweighted version was too slow in practice.
+For performance reasons the heuristic is weighted with <img src="https://latex.codecogs.com/svg.latex?\inline&space;w_h&space;>&space;1"> since the unweighted version was too slow in practice.
 Once user feedback is incorporated into the search loop as part of the interactive code generation implementation, the search space might become small enough to consider dropping the weight on the heuristic function again.
