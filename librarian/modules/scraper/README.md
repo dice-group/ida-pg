@@ -43,7 +43,7 @@ java -jar target/librarian.jar print-schema python
 # => Prints the attributes and concept types of python library scrapes.
 ```
 
-Alternatively the CLI also supports so called [pull queries](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
+Alternatively the CLI also supports so-called [pull queries](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
 ```shell
 java -jar target/librarian.jar pull libs/scikit-learn \
 	'[*]' '[:class/id "sklearn.cluster.KMeans"]'
@@ -203,33 +203,51 @@ The hooks that produce this overlayed concept graph might look like this:
   :value :content}]
 ```
 
-#### 3.1.1. Hook Properties
+#### 3.1.1. Hook Keys
 
-##### 3.1.1.1. Properties of Concept and Attribute Hooks
+##### 3.1.1.1. Keys of Concept and Attribute Hooks
 
-| Property | Value | Description |
-| :------  | :---- | :--------- |
+All hooks share a set of common keys.
+
+| Key | Value | Description |
+| :-  | :---- | :---------- |
 | `:triggered-by` | A trigger, i.e. a keyword. | Each hook is activated by a certain trigger type. Usually those are the aliases of concept types or concept attributes. Whenever a concept or attribute is created, the associated hooks are triggered. Additionally for each crawled page the trigger `:document` is emitted at the root of the DOM tree. Lastly a custom trigger type can also be used to react to hooks that emit custom triggers (see `:triggers` in this table). |
 | `:pattern` *(optional)* | Name of a pattern, a keyword. | Hooks can inherit parts of their definition from the defined patterns. All properties of the patterns will be copied to the hook. |
 | `:selector` *(optional)* | A selector vector. | Every hook is triggered with the context of some location in the DOM tree that is traversed. For the initial `:document` trigger, the context is the root of the document. Every hook needs to describe where to find the DOM nodes that are relevant for it relative to its context. To do so a *selector vector* is used which is similar to XPath or CSS selectors. The selector can select an arbitrary amount of DOM nodes which are used to fetch textual values for attributes or they are used as the new contexts of triggered hooks. A description of the selector vector DSL is provided below. If no selector is provided, the current DOM context remains unchanged and is used for value retrieval and as the context of triggered dependent hooks. |
 | `:triggers` *(optional)* | A custom trigger or a collection of custom triggers, i.e. a keyword or collection of keywords.  | Hooks can trigger custom trigger types. By default every hook only triggers the hooks that are triggered by the concept or by the attribute that was created. For more control and contextual hook activation, hooks can also trigger custom trigger types. |
 
-##### 3.1.1.2. Properties of Concept Hooks
+##### 3.1.1.2. Keys of Concept Hooks
 
-| Property | Value | Description |
-| :------  | :---- | :--------- |
+Concept hooks are used to create new concepts and reference attributes between them.
+They create the vertices and edges in the concept graph described by the scrape database.
+
+| Key | Value | Description |
+| :-  | :---- | :---------- |
 | `:concept` | The alias of a concept that should be created, a keyword. | When a concept hook is triggered, a new instance of the declared concept type will be created for each DOM node that was selected by `:selector`. |
 | `:ref-from-trigger` *(optional)* | The alias of a concept reference attribute, a keyword. | Declares that a reference attribute should be created from the concept instance created by the "parent" hook that triggered the current hook to the concept instance created by the current hook. Thus the used attribute should be an attribute of the triggering hook's concept. |
 | `:ref-to-trigger` *(optional)* | The alias of a concept reference attribute, a keyword. | Like `:ref-from-trigger` but with the edge direction inversed. Thus the used attribute should be an attribute of the hook's concept, defined in `:concept`. |
 
-##### 3.1.1.3. Properties of Attribute Hooks
+##### 3.1.1.3. Keys of Attribute Hooks
 
-| Property | Value | Description |
-| :------  | :---- | :--------- |
+Attribute hooks are used to create non-reference attributes for existing concepts.
+They create the literal-value attributes/edges attached to vertices and store the actual data extracted from the crawled pages (strings, numbers etc.).
+
+| Key | Value | Description |
+| :-  | :---- | :---------- |
 | `:attribute` | The alias of a attribute that should be created, a keyword. | When an attribute hook is triggered, a new  `:selector`. |
-| `:value` *(optional, default: `:content`)* | `:content` or `:trigger-index` or a string or a number | Which value should be used. |
-| `:transform` *(optional, default: `identity`)* |   |   |
+| `:value` *(optional, default: `:content`)* | `:content` or `:trigger-index` or a string or a number | Which value should be used. `:content` uses the text content of the selected DOM nodes as the attribute value. `:trigger-index` ignores the contents of the selected nodes and instead uses the ordinal position of the trigger context in the parent's selection result; this is useful to number created concepts, e.g. if `n` instances of a concept `:C` were created for a corresponding `n`-element HTML list, the created concepts can be enumerated by letting `:C` trigger an attribute hook with `:value :trigger-index` for some attribute `:C/position`. If a string or numeric literal is provided, the hook always uses this constant as the attribute value. |
+| `:transform` *(optional, default: `identity`)* | A regex or a 1-arity function | Used to transform the selected values before they are written to the database. If a regex is provided, the selected raw value is matched with that regex and only the substring match is written. If there is no match, no attribute will be created. If a function is provided, any arbitrary transformation can be performed. All Clojure builtin functions can be used, everything outside of `clojure.core` has to be fully-qualified though (e.g. `clojure.string/trim`). Custom functions can be defined via the `#()` or `(fn [x])` [syntax](https://clojure.org/guides/learn/functions#_anonymous_functions). If the custom transform function returns `nil`, no attribute will be created. |
 
 #### 3.1.2. The DOM Selector DSL
 
-Concept hooks are used to create concepts.
+The previously described `:selector` key requires a *selector vector* which is an instance of the scraper's selector DSL.
+This DSL is similar to the tree selection paradigms in CSS or XPath.
+
+As the name suggests, a selector vector is just a vector of so-called *selectors*: `[selector1 selector2 ...]`.
+Every selection starts with a set of initial DOM nodes (typically there is just one initial node).
+This initial node set forms the first stage of the selection.
+The selectors in a selector vector are then applied in sequence, left-to-right:
+1. Apply the current selector to every DOM node in the current stage.
+	This maps every node to a set of successor nodes.
+2. Merge all the successor sets obtained in the previous step to form the next stage's set of DOM nodes.
+3. Goto 1 with the next selector or return the newly created DOM node set if no further selectors have to be applied.
