@@ -80,6 +80,9 @@ A scraper is configured via a `scraper.clj` file which has the following [EDN](h
 	
 	:ref-from-trigger :some-trigger/my-concept
 	; Used to add a reference attribute from the triggering concept to the created concepts.
+	
+	:allow-incomplete false | true
+	; Whether concepts created via this hook should be validated only after scraping all pages.
     }
    
    ;; 2. Attribute hooks to attach information to concepts: 
@@ -226,6 +229,7 @@ They create the vertices and edges in the concept graph described by the scrape 
 | `:concept` | The alias of a concept that should be created, a keyword. | When a concept hook is triggered, a new instance of the declared concept type will be created for each DOM node that was selected by `:selector`. |
 | `:ref-from-trigger` *(optional)* | The alias of a concept reference attribute, a keyword. | Declares that a reference attribute should be created from the concept instance created by the "parent" hook that triggered the current hook to the concept instance created by the current hook. Thus the used attribute should be an attribute of the triggering hook's concept. |
 | `:ref-to-trigger` *(optional)* | The alias of a concept reference attribute, a keyword. | Like `:ref-from-trigger` but with the edge direction inversed. Thus the used attribute should be an attribute of the hook's concept, defined in `:concept`. |
+| `:allow-incomplete` *(optional, default: `false`)* | A boolean, `true` or `false`. | If `false`, all concepts found in a crawled page are validated right after the page was traversed. This means that all mandatory information of those concepts has to be found on a single page, which is usually the case. If the flag is set to `true`, the validation of concepts created via such a hook will be delayed to the end of the page traversal phase, after all pages were crawled. This allows combining information about a single concept from multiple pages where each page only contains a part of that concept, that would be invalid by themselves. This added flexibility has a performance and memory usage penalty, so it should only be enabled if necessary. |
 
 ##### 3.1.1.3. Keys of Attribute Hooks
 
@@ -251,3 +255,65 @@ The selectors in a selector vector are then applied in sequence, left-to-right:
 	This maps every node to a set of successor nodes.
 2. Merge all the successor sets obtained in the previous step to form the next stage's set of DOM nodes.
 3. Goto 1 with the next selector or return the newly created DOM node set if no further selectors have to be applied.
+
+There are two types of selectors:
+Traversers and filters.
+A traverser performs some simple tree traversal operation on the nodes it gets and outputs all the nodes that were reached.
+A filter on the other hand either outputs a node it got or no node at all.
+By combining both types of selectors, complex node selection patterns can be described.
+
+##### 3.1.2.1. Traversing Selectors
+
+Librarian comes with the following traversers:
+
+| Traverser | Description |
+| :-------- | :---------- |
+| `:children` | Maps nodes to their direct child nodes in the same order as they are in the DOM tree. |
+| `:descendants` | Maps nodes to their direct and indirect descendant nodes. The descendants are returned in depth-first order. |
+| `:ancestors` | Maps nodes to their direct and indirect ancestor/parent nodes. The nodes are ordered from start node to the tree root. First the start node is returned (i.e. it's its returned as its own ancestors), lastly the DOM's root node is returned. |
+| `:siblings` | Maps nodes to their sibling nodes in the order they appear in the DOM. The initial node is returned as its own sibling. |
+| `:following-siblings` | Maps nodes to the sibling nodes coming after it in the same order they appear in the DOM. The result includes the initial node. Useful to get to the next sibling of a node. |
+| `:preceding-siblings` | Maps nodes to the sibling nodes coming before it in the reverse order they appear in the DOM. The result includes the initial node. Useful to get to the previous sibling of a node. |
+| `:following` | This is the least intuitive traverser. It interprets each start node as the current state of a depth-first tree traversal and continues the traversal independently for each state node until the "rest" of the tree was traversed. In practice this means, that at first the descendants are returned, similar to `:descendants`, then the DFS-search jumps to the next sibling of the inital node and traverses the descendants of the sibling, after finally traversing all the siblings and parent's siblings, etc. the search will end at the root node of the tree. |
+
+Each traverser can be used directly via its keyword, e.g. `[:siblings :children]` selects all the child nodes of all the siblings of the current node, including the children of the current node itself.
+Alternatively a traverser can be configured with additional options by providing a *traverser vector* of the form:
+```clojure
+[:traverser
+ :select some-boolean-function ; default (constantly true)
+ :while some-boolean-function ; default (constantly true)
+ :skip some-integer ; default 0
+ :limit some-integer] ; default ##Inf
+```
+Each of those configuration parameters is optional.
+-   `:select`: The result of the traverser will be filtered by the given predicate.
+-   `:while`: The traverser will return nodes until it reaches some node that does not satisfy the given predicate. 
+	If both `:select` and `:while` are provided, `:while` is always applied first.
+-   `:skip`: Skips the first `n` result nodes after applying `:while` and/or `:select`, i.e. if `:select` filtered out the first node and `:skip` is `1`, then the first two nodes will be skipped effectively.
+-   `:limit`: Limits the number of nodes that are returned by the traverser.
+	The limit is applied after all the other options.
+	This option is the reason why there is no traverser for `:parent` or `:next-sibling`, since those can be represented by `[:ancestors :limit 1]` and `[:next-siblings :limit 1]`.
+
+Using traverser configuration options, more specific traversal operations can be described:
+```clojure
+[[:ancestors :skip 1 :limit 1]
+ [:preceding-siblings :select (tag :h1) :limit 1]]
+;; => Selects the first h1 heading-element that is a preceding sibling of the grandparent of the current node.
+```
+
+##### 3.1.2.2. Filtering Selectors
+
+Filters are just boolean predicates to reduce the node set of a selection stage.
+They can be used directly as a selector in a selector vector, or as predicates in `:select` or `:while` configurations of traversers.
+
+Librarian uses the selectors that are provided by the [Hickory](https://github.com/davidsantiago/hickory#selectors) library.
+Refer to the linked documentation for a full list of predicates.
+The most important ones are:
+-   `and`, `or`, `not` to compose predicates, e.g. `(and (not (tag :h1)) (or (class :foo) (class :bar)))`
+-   `(tag :tag-name)`: Selects only nodes of the given tag.
+-   `(class :class-name)`: Selects only nodes of the given class.
+-   `(id :id)`: Selects only nodes with the given id.
+
+### 3.2. Snippets
+
+The `:snippets` section in a scraper configuration is used to define code patterns for the scraped library to speed up code generation.
