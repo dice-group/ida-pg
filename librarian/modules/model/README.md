@@ -158,380 +158,396 @@ For each concept the list of its attributes and parent concepts is given.
 <table>
 	<!-- Names -->
 	<!----------->
-	<tr><th colspan=4>Names & Positions</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- named -->
-	<tr>
-		<td colspan=3>
-			<code>named</code>
-		</td>
-		<td>
-			A named entity.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>name</code></td>
-		<td>String, indexed</td>
-		<td>Name of the entity.</td>
-	</tr>
-	<!-- namespace -->
-	<tr>
-		<td colspan=3>
-			<code>namespace</code> extends <code>named</code>
-		</td>
-		<td>
-			A namespace.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>id</code></td>
-		<td>Derived from <code>name</code>, unique</td>
-		<td>Unique id of the namespace.</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>member</code></td>
-		<td>Ref to <code>namespaced</code>, multiple (0..n), indexed</td>
-		<td>A member of the namespace.</td>
-	</tr>
-	<!-- namespaced -->
-	<tr>
-		<td colspan=3>
-			<code>namespaced</code> extends <code>named</code>
-		</td>
-		<td>
-			A namespace member.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>id</code></td>
-		<td>Derived vector, unique</td>
-		<td>Fully-qualified name of the member: <code>[namespace-name member-name]</code></td>
-	</tr>
-	<!-- positionable -->
-	<tr>
-		<td colspan=3>
-			<code>positionable</code>
-		</td>
-		<td>
-			Something with an ordinal position.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>position</code></td>
-		<td>Integer, optional (0..1)</td>
-		<td>Ordinal position of the entity.</td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>Names & Positions</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- named -->
+		<tr>
+			<td colspan=3>
+				<code>named</code>
+			</td>
+			<td>
+				A named entity.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>name</code></td>
+			<td>String, indexed</td>
+			<td>Name of the entity.</td>
+		</tr>
+		<!-- namespace -->
+		<tr>
+			<td colspan=3>
+				<code>namespace</code> extends <code>named</code>
+			</td>
+			<td>
+				A namespace.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>id</code></td>
+			<td>Derived from <code>name</code>, unique</td>
+			<td>Unique id of the namespace.</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>member</code></td>
+			<td>Ref to <code>namespaced</code>, multiple (0..n), indexed</td>
+			<td>A member of the namespace.</td>
+		</tr>
+		<!-- namespaced -->
+		<tr>
+			<td colspan=3>
+				<code>namespaced</code> extends <code>named</code>
+			</td>
+			<td>
+				A namespace member.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>id</code></td>
+			<td>Derived vector, unique</td>
+			<td>Fully-qualified name of the member: <code>[namespace-name member-name]</code></td>
+		</tr>
+		<!-- positionable -->
+		<tr>
+			<td colspan=3>
+				<code>positionable</code>
+			</td>
+			<td>
+				Something with an ordinal position.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>position</code></td>
+			<td>Integer, optional (0..1)</td>
+			<td>Ordinal position of the entity.</td>
+		</tr>
+	</tbody>
 	<!-- Types -->
 	<!----------->
-	<tr><th colspan=4>Datatypes</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- datatype -->
-	<tr>
-		<td colspan=3>
-			<code>datatype</code>
-		</td>
-		<td>
-			A datatype.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>datatype</code></td>
-		<td>Ref to <code>datatype</code>, multiple (0..n), indexed</td>
-		<td>A supertype of the datatype.</td>
-	</tr>
-	<!-- basetype -->
-	<tr>
-		<td colspan=3>
-			<code>basetype</code> extends <code>named</code>, <code>datatype</code>
-		</td>
-		<td>
-			A basic type (like <code>int</code> or <code>boolean</code>).
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>id</code></td>
-		<td>Derived from <code>name</code>, unique</td>
-		<td>Unique id of the basetype.</td>
-	</tr>
-	<!-- semantic-type -->
-	<tr>
-		<td colspan=3>
-			<code>semantic-type</code> extends <code>positionable</code>, <code>datatype</code>
-		</td>
-		<td>
-			A datatype representing all values that have a certain semantic.
-			Semantic types are fuzzy since their semantic is described via natural language.
-			They can be ordered via <code>position</code> if the semantic <code>value</code>s for a <code>key</code> represent some sequence, e.g. a sequence of paragraphs.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>key</code></td>
-		<td>String, optional (0..1)</td>
-		<td>A context for the semantic <code>value</code>, e.g. <i>"description"</i> or <i>"unit"</i></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>value</code></td>
-		<td>String</td>
-		<td>A string describing the semantics of the type.</td>
-	</tr>
-	<!-- role-type -->
-	<tr>
-		<td colspan=3>
-			<code>role-type</code> extends <code>datatype</code>
-		</td>
-		<td>
-			Role types represent the set of values that can take a certain role.
-			The role type with id <code>:dataset</code> for example could represent all training dataset arrays.
-			While role types describe some kind of semantic, similar to <code>semantic-type</code>, they are not fuzzy and are assumed to have a clearly defined meaning. 
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>id</code></td>
-		<td>Keyword, unique</td>
-		<td>Unique id of the role type.</td>
-	</tr>
-	<!-- typed -->
-	<tr>
-		<td colspan=3>
-			<code>typed</code>
-		</td>
-		<td>
-			A concept with datatypes.
-			The datatype of an entity with multiple types is the union type of those types.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>datatype</code></td>
-		<td>Ref to <code>datatype</code>, multiple (0..n), indexed</td>
-		<td>A datatype of the concept.</td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>Datatypes</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- datatype -->
+		<tr>
+			<td colspan=3>
+				<code>datatype</code>
+			</td>
+			<td>
+				A datatype.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>datatype</code></td>
+			<td>Ref to <code>datatype</code>, multiple (0..n), indexed</td>
+			<td>A supertype of the datatype.</td>
+		</tr>
+		<!-- basetype -->
+		<tr>
+			<td colspan=3>
+				<code>basetype</code> extends <code>named</code>, <code>datatype</code>
+			</td>
+			<td>
+				A basic type (like <code>int</code> or <code>boolean</code>).
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>id</code></td>
+			<td>Derived from <code>name</code>, unique</td>
+			<td>Unique id of the basetype.</td>
+		</tr>
+		<!-- semantic-type -->
+		<tr>
+			<td colspan=3>
+				<code>semantic-type</code> extends <code>positionable</code>, <code>datatype</code>
+			</td>
+			<td>
+				A datatype representing all values that have a certain semantic.
+				Semantic types are fuzzy since their semantic is described via natural language.
+				They can be ordered via <code>position</code> if the semantic <code>value</code>s for a <code>key</code> represent some sequence, e.g. a sequence of paragraphs.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>key</code></td>
+			<td>String, optional (0..1)</td>
+			<td>A context for the semantic <code>value</code>, e.g. <i>"description"</i> or <i>"unit"</i></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>value</code></td>
+			<td>String</td>
+			<td>A string describing the semantics of the type.</td>
+		</tr>
+		<!-- role-type -->
+		<tr>
+			<td colspan=3>
+				<code>role-type</code> extends <code>datatype</code>
+			</td>
+			<td>
+				Role types represent the set of values that can take a certain role.
+				The role type with id <code>:dataset</code> for example could represent all training dataset arrays.
+				While role types describe some kind of semantic, similar to <code>semantic-type</code>, they are not fuzzy and are assumed to have a clearly defined meaning. 
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>id</code></td>
+			<td>Keyword, unique</td>
+			<td>Unique id of the role type.</td>
+		</tr>
+		<!-- typed -->
+		<tr>
+			<td colspan=3>
+				<code>typed</code>
+			</td>
+			<td>
+				A concept with datatypes.
+				The datatype of an entity with multiple types is the union type of those types.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>datatype</code></td>
+			<td>Ref to <code>datatype</code>, multiple (0..n), indexed</td>
+			<td>A datatype of the concept.</td>
+		</tr>
+	</tbody>
 	<!-- Callables -->
 	<!----------->
-	<tr><th colspan=4>Callables</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- callable -->
-	<tr>
-		<td colspan=3>
-			<code>callable</code> extends <code>typed</code>
-		</td>
-		<td>
-			Represents something that can be called with parameters and returns results.
-			It is typed so that semantic and role information can be attached to it.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>parameter</code></td>
-		<td>Ref to <code>parameter</code>, multiple (0..n), indexed</td>
-		<td>A parameter of the callable.</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>result</code></td>
-		<td>Ref to <code>result</code>, multiple (0..n), indexed</td>
-		<td>A returned result of the callable.</td>
-	</tr>
-	<!-- io-container -->
-	<tr>
-		<td colspan=3>
-			<code>io-container</code> extends <code>named</code>, <code>typed</code>, <code>positionable</code>
-		</td>
-		<td>
-			Represents an input or output (parameter or result) of a callable.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
-	<!-- parameter -->
-	<tr>
-		<td colspan=3>
-			<code>parameter</code> extends <code>io-container</code>, <code>data-receiver</code>
-		</td>
-		<td>
-			Represents a parameter of a callable.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>optional</code></td>
-		<td>Boolean, optional (<i>default: <code>false</code></i>)</td>
-		<td>Denotes whether this parameter is optional.</td>
-	</tr>
-	<!-- result -->
-	<tr>
-		<td colspan=3>
-			<code>result</code> extends <code>io-container</code>, <code>data-receiver</code>
-		</td>
-		<td>
-			Represents a returned result of a callable.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>Callables</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- callable -->
+		<tr>
+			<td colspan=3>
+				<code>callable</code> extends <code>typed</code>
+			</td>
+			<td>
+				Represents something that can be called with parameters and returns results.
+				It is typed so that semantic and role information can be attached to it.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>parameter</code></td>
+			<td>Ref to <code>parameter</code>, multiple (0..n), indexed</td>
+			<td>A parameter of the callable.</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>result</code></td>
+			<td>Ref to <code>result</code>, multiple (0..n), indexed</td>
+			<td>A returned result of the callable.</td>
+		</tr>
+		<!-- io-container -->
+		<tr>
+			<td colspan=3>
+				<code>io-container</code> extends <code>named</code>, <code>typed</code>, <code>positionable</code>
+			</td>
+			<td>
+				Represents an input or output (parameter or result) of a callable.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+		<!-- parameter -->
+		<tr>
+			<td colspan=3>
+				<code>parameter</code> extends <code>io-container</code>, <code>data-receiver</code>
+			</td>
+			<td>
+				Represents a parameter of a callable.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>optional</code></td>
+			<td>Boolean, optional (<i>default: <code>false</code></i>)</td>
+			<td>Denotes whether this parameter is optional.</td>
+		</tr>
+		<!-- result -->
+		<tr>
+			<td colspan=3>
+				<code>result</code> extends <code>io-container</code>, <code>data-receiver</code>
+			</td>
+			<td>
+				Represents a returned result of a callable.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+	</tbody>
 	<!-- Calls -->
 	<!----------->
-	<tr><th colspan=4>Control Flow Graph Nodes</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- call -->
-	<tr>
-		<td colspan=3>
-			<code>call</code> extends <code>typed</code>
-		</td>
-		<td>
-			Represents a call to some <code>callable</code>.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>callable</code></td>
-		<td>Ref to <code>callable</code></td>
-		<td>The callable of this call.</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>parameter</code></td>
-		<td>Ref to <code>call-parameter</code>, multiple (0..n), indexed</td>
-		<td>A parameter of this call.</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>result</code></td>
-		<td>Ref to <code>call-result</code>, multiple (0..n), indexed</td>
-		<td>A result of this call.</td>
-	</tr>
-	<!-- data-receivable -->
-	<tr>
-		<td colspan=3>
-			<code>data-receivable</code>
-		</td>
-		<td>
-			Something that can be received by a <code>data-receiver</code>.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
-	<!-- data-receiver -->
-	<tr>
-		<td colspan=3>
-			<code>data-receiver</code> extends <code>data-receivable</code>
-		</td>
-		<td>
-			A concept that can receive a value from some <code>data-receivable</code>.
-			A receiver either has or receives some value to which it can optionally also get some additional semantic information from the outside.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>receives</code></td>
-		<td>Ref to <code>data-receivable</code>, multiple (0..n), indexed</td>
-		<td>A receivable from which this receiver gets its value and thus has to be able to accept the datatype of the received value.</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>receives-semantic</code></td>
-		<td>Ref to <code>data-receivable</code>, multiple (0..n), indexed</td>
-		<td>A receivable from which this receiver gets the <code>semantic-type</code>s of the value it holds.</td>
-	</tr>
-	<!-- call-parameter -->
-	<tr>
-		<td colspan=3>
-			<code>call-parameter</code> extends <code>typed</code>, <code>positionable</code>, <code>data-receiver</code>
-		</td>
-		<td>
-			Represents a parameter of a <code>call</code>.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>parameter</code></td>
-		<td>Ref to <code>parameter</code></td>
-		<td>The <code>parameter</code> for which this <code>call-parameter</code> provides a value.</td>
-	</tr>
-	<!-- call-result -->
-	<tr>
-		<td colspan=3>
-			<code>call-result</code> extends <code>typed</code>, <code>positionable</code>, <code>data-receiver</code>
-		</td>
-		<td>
-			Represents a result of a <code>call</code>.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>result</code></td>
-		<td>Ref to <code>result</code></td>
-		<td>The <code>result</code> that provides the value for this <code>call-result</code>.</td>
-	</tr>
-	<!-- constant -->
-	<tr>
-		<td colspan=3>
-			<code>constant</code> extends <code>typed</code>, <code>datatype</code>, <code>data-receivable</code>
-		</td>
-		<td>
-			Represents a constant value that can be received by <code>call-parameters</code>.
-			The constant concept is implemented as a typed datatype, where a constant is its own instance.
-			This was done to be able to represent enum types as disjunctions of constants <i>(disjunctions are however not yet supported)</i>.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>value</code></td>
-		<td>String or integer or boolean</td>
-		<td>The value of the constant.</td>
-	</tr>
-	<!-- snippet -->
-	<tr>
-		<td colspan=3>
-			<code>snippet</code>
-		</td>
-		<td>
-			Represents a code snippet/template as a partial CFG.
-			A snippet is a concept that points to the CFG nodes that make up its partial CFG.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>value</code></td>
-		<td>Ref to a CFG-node or any concept with a truthy <code>:placeholder</code> attribute</td>
-		<td>A control-flow concept that is part of the snippet.</td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>Control Flow Graph Nodes</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- call -->
+		<tr>
+			<td colspan=3>
+				<code>call</code> extends <code>typed</code>
+			</td>
+			<td>
+				Represents a call to some <code>callable</code>.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>callable</code></td>
+			<td>Ref to <code>callable</code></td>
+			<td>The callable of this call.</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>parameter</code></td>
+			<td>Ref to <code>call-parameter</code>, multiple (0..n), indexed</td>
+			<td>A parameter of this call.</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>result</code></td>
+			<td>Ref to <code>call-result</code>, multiple (0..n), indexed</td>
+			<td>A result of this call.</td>
+		</tr>
+		<!-- data-receivable -->
+		<tr>
+			<td colspan=3>
+				<code>data-receivable</code>
+			</td>
+			<td>
+				Something that can be received by a <code>data-receiver</code>.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+		<!-- data-receiver -->
+		<tr>
+			<td colspan=3>
+				<code>data-receiver</code> extends <code>data-receivable</code>
+			</td>
+			<td>
+				A concept that can receive a value from some <code>data-receivable</code>.
+				A receiver either has or receives some value to which it can optionally also get some additional semantic information from the outside.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>receives</code></td>
+			<td>Ref to <code>data-receivable</code>, multiple (0..n), indexed</td>
+			<td>A receivable from which this receiver gets its value and thus has to be able to accept the datatype of the received value.</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>receives-semantic</code></td>
+			<td>Ref to <code>data-receivable</code>, multiple (0..n), indexed</td>
+			<td>A receivable from which this receiver gets the <code>semantic-type</code>s of the value it holds.</td>
+		</tr>
+		<!-- call-parameter -->
+		<tr>
+			<td colspan=3>
+				<code>call-parameter</code> extends <code>typed</code>, <code>positionable</code>, <code>data-receiver</code>
+			</td>
+			<td>
+				Represents a parameter of a <code>call</code>.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>parameter</code></td>
+			<td>Ref to <code>parameter</code></td>
+			<td>The <code>parameter</code> for which this <code>call-parameter</code> provides a value.</td>
+		</tr>
+		<!-- call-result -->
+		<tr>
+			<td colspan=3>
+				<code>call-result</code> extends <code>typed</code>, <code>positionable</code>, <code>data-receiver</code>
+			</td>
+			<td>
+				Represents a result of a <code>call</code>.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>result</code></td>
+			<td>Ref to <code>result</code></td>
+			<td>The <code>result</code> that provides the value for this <code>call-result</code>.</td>
+		</tr>
+		<!-- constant -->
+		<tr>
+			<td colspan=3>
+				<code>constant</code> extends <code>typed</code>, <code>datatype</code>, <code>data-receivable</code>
+			</td>
+			<td>
+				Represents a constant value that can be received by <code>call-parameters</code>.
+				The constant concept is implemented as a typed datatype, where a constant is its own instance.
+				This was done to be able to represent enum types as disjunctions of constants <i>(disjunctions are however not yet supported)</i>.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>value</code></td>
+			<td>String or integer or boolean</td>
+			<td>The value of the constant.</td>
+		</tr>
+		<!-- snippet -->
+		<tr>
+			<td colspan=3>
+				<code>snippet</code>
+			</td>
+			<td>
+				Represents a code snippet/template as a partial CFG.
+				A snippet is a concept that points to the CFG nodes that make up its partial CFG.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>value</code></td>
+			<td>Ref to a CFG-node or any concept with a truthy <code>:placeholder</code> attribute</td>
+			<td>A control-flow concept that is part of the snippet.</td>
+		</tr>
+	</tbody>
 </table>
 
 ### 2.2. Builtin Paradigms
@@ -572,26 +588,30 @@ A paradigm for functional languages.
 -   `:function`: `function`
 
 <table>
-	<tr><th colspan=4>Functional Concepts</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- function -->
-	<tr>
-		<td colspan=3>
-			<code>function</code> extends <code>namespaced</code>, <code>callable</code>
-		</td>
-		<td>
-			A function.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>Functional Concepts</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- function -->
+		<tr>
+			<td colspan=3>
+				<code>function</code> extends <code>namespaced</code>, <code>callable</code>
+			</td>
+			<td>
+				A function.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+	</tbody>
 </table>
 
 No builtin instances are defined.
@@ -606,60 +626,64 @@ A paradigm for object oriented languages.
 -   `:method`: `method`
 
 <table>
-	<tr><th colspan=4>OOP Concepts</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- class -->
-	<tr>
-		<td colspan=3>
-		<code>class</code> extends <code>typed</code>, <code>namespaced</code>, <code>datatype</code>
-		</td>
-		<td>
-			A class.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>constructor</code></td>
-		<td>Ref to <code>constructor</code>, multiple (1..n), indexed</td>
-		<td>Constructor of the class.</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>method</code></td>
-		<td>Ref to <code>method</code>, multiple (0..n), indexed</td>
-		<td>Method of the class.</td>
-	</tr>
-	<!-- constructor -->
-	<tr>
-		<td colspan=3>
-		<code>constructor</code> extends <code>callable</code>
-		</td>
-		<td>
-			A constructor of a class.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
-	<!-- method -->
-	<tr>
-		<td colspan=3>
-		<code>method</code> extends <code>named</code>, <code>callable</code>
-		</td>
-		<td>
-			A method of a class.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>OOP Concepts</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- class -->
+		<tr>
+			<td colspan=3>
+			<code>class</code> extends <code>typed</code>, <code>namespaced</code>, <code>datatype</code>
+			</td>
+			<td>
+				A class.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>constructor</code></td>
+			<td>Ref to <code>constructor</code>, multiple (1..n), indexed</td>
+			<td>Constructor of the class.</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>method</code></td>
+			<td>Ref to <code>method</code>, multiple (0..n), indexed</td>
+			<td>Method of the class.</td>
+		</tr>
+		<!-- constructor -->
+		<tr>
+			<td colspan=3>
+			<code>constructor</code> extends <code>callable</code>
+			</td>
+			<td>
+				A constructor of a class.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+		<!-- method -->
+		<tr>
+			<td colspan=3>
+			<code>method</code> extends <code>named</code>, <code>callable</code>
+			</td>
+			<td>
+				A method of a class.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+	</tbody>
 </table>
 
 No builtin instances are defined.
@@ -684,56 +708,60 @@ An ecosystem for Python.
 -   `:basetype`: `python/basetype` (overrides `basetype`)
 
 <table>
-	<tr><th colspan=4>Python Concepts</th></tr>
-	<tr>
-		<th>Concept</th>
-		<th>Attribute</th>
-		<th>Type / Cardinality / Index</th>
-		<th>Description</th>
-	</tr>
-	<!-- class -->
-	<tr>
-		<td colspan=3>
-		<code>python/class</code> extends <code>class</code>
-		</td>
-		<td>
-			A Python class.
-			Like <code>class</code> but can only have a single constructor and automatically recognizes methods named <code>__init__</code> as its constructor.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
-	<!-- constructor -->
-	<tr>
-		<td colspan=3>
-		<code>python/constructor</code> extends <code>constructor</code>
-		</td>
-		<td>
-			Like <code>constructor</code> but with a unique reference to its class.
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><code>class</code></td>
-		<td>Derived ref to <code>python/class</code>, unique</td>
-		<td>A reference to the constructor's class. In Python this uniquely identifies a constructor.</td>
-	</tr>
-	<!-- basetype -->
-	<tr>
-		<td colspan=3>
-		<code>python/basetype</code> extends <code>basetype</code>
-		</td>
-		<td>
-			Like <code>basetype</code> but only allows the Python basetype names:
-			<i>"object", "int", "float", "complex", "string", "boolean"</i>.
-		</td>
-	</tr>
-	<tr>
-		<td colspan=3></td>
-		<td colspan=2><i>No attributes.</i></td>
-	</tr>
+	<thead>
+		<tr><th colspan=4>Python Concepts</th></tr>  
+		<tr>
+			<th>Concept</th>
+			<th>Attribute</th>
+			<th>Type / Cardinality / Index</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- class -->
+		<tr>
+			<td colspan=3>
+			<code>python/class</code> extends <code>class</code>
+			</td>
+			<td>
+				A Python class.
+				Like <code>class</code> but can only have a single constructor and automatically recognizes methods named <code>__init__</code> as its constructor.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+		<!-- constructor -->
+		<tr>
+			<td colspan=3>
+			<code>python/constructor</code> extends <code>constructor</code>
+			</td>
+			<td>
+				Like <code>constructor</code> but with a unique reference to its class.
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><code>class</code></td>
+			<td>Derived ref to <code>python/class</code>, unique</td>
+			<td>A reference to the constructor's class. In Python this uniquely identifies a constructor.</td>
+		</tr>
+		<!-- basetype -->
+		<tr>
+			<td colspan=3>
+			<code>python/basetype</code> extends <code>basetype</code>
+			</td>
+			<td>
+				Like <code>basetype</code> but only allows the Python basetype names:
+				<i>"object", "int", "float", "complex", "string", "boolean"</i>.
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3></td>
+			<td colspan=2><i>No attributes.</i></td>
+		</tr>
+	</tbody>
 </table>
 
 **Builtin Instances:**
