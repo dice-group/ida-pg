@@ -46,7 +46,7 @@ java -jar target/librarian.jar print-schema python
 Alternatively the CLI also supports so-called [pull queries](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
 ```shell
 java -jar target/librarian.jar pull libs/scikit-learn \
-	'[*]' '[:class/id "sklearn.cluster.KMeans"]'
+  '[*]' '[:class/id "sklearn.cluster.KMeans"]'
 # => Prints all attributes and subattributes of the KMeans class.
 ```
 
@@ -55,10 +55,13 @@ java -jar target/librarian.jar pull libs/scikit-learn \
 A scraper is configured via a `scraper.clj` file which has the following [EDN](https://github.com/edn-format/edn)-like structure:
 ```clojure
 (defscraper my-library
+  :extends "path to parent configuration" ; Configurations can be based on another one.
+  
   :ecosystem :python ; Currently only python support is provided.
 
   :seed "URL" ; Initial page for the library crawling.
   :should-visit #"URL regex" ; A regular expression matching the URLs that should be crawled.
+  :max-pages some-integer ; Optionally the number of crawled pages can be limited.
   
   ;; Patterns: A map from pattern names to patterns, i.e. hook templates.
   :patterns
@@ -68,49 +71,49 @@ A scraper is configured via a `scraper.clj` file which has the following [EDN](h
   :hooks
   [;; 1. Concept hooks for creating concepts:
    {:triggered-by :some-trigger ; All hooks need a trigger.
-	
-	:concept :some-concept
-	; Alias of the concept that should be created.
-	
-	:selector [ ... selector definition ... ]
-	; Selector to find all instances of the concept relative to the trigger.
-	
-	:ref-to-trigger :some-concept/my-trigger
-	; Used to add a reference attribute from concepts created by this hook to their triggering concept.
-	
-	:ref-from-trigger :some-trigger/my-concept
-	; Used to add a reference attribute from the triggering concept to the created concepts.
-	
-	:allow-incomplete false | true
-	; Whether concepts created via this hook should be validated only after scraping all pages.
+    
+    :concept :some-concept
+    ; Alias of the concept that should be created.
+    
+    :selector [ ... selector definition ... ]
+    ; Selector to find all instances of the concept relative to the trigger.
+    
+    :ref-to-trigger :some-concept/my-trigger
+    ; Used to add a reference attribute from concepts created by this hook to their triggering concept.
+    
+    :ref-from-trigger :some-trigger/my-concept
+    ; Used to add a reference attribute from the triggering concept to the created concepts.
+    
+    :allow-incomplete false | true
+    ; Whether concepts created via this hook should be validated only after scraping all pages.
     }
    
    ;; 2. Attribute hooks to attach information to concepts: 
    {:triggered-by :some-trigger
 
-	:attribute :some-trigger/some-attribute 
-	; Alias of the attribute that should be added to the triggering concept.
+    :attribute :some-trigger/some-attribute 
+    ; Alias of the attribute that should be added to the triggering concept.
 
-	:selector [ ... selector definition ... ] 
-	; Selector to find the values for the created attributes relative to the triggering concept.
+    :selector [ ... selector definition ... ] 
+    ; Selector to find the values for the created attributes relative to the triggering concept.
 
-	:value :content | :trigger-index | "some string" | 42
-	; Controls which value is used for the created attribute.
+    :value :content | :trigger-index | "some string" | 42
+    ; Controls which value is used for the created attribute.
 
-	:transform #"value regex" | some-function 
-	; A regex or function to transform the selected attribute value or to select parts of it.
-	}
+    :transform #"value regex" | some-function 
+    ; A regex or function to transform the selected attribute value or to select parts of it.
+    }
    
    ;; 3. General properties of hooks:
    {:triggered-by :document 
-	; There needs to be at least one initial hook, that is triggered by the :document root.
+    ; There needs to be at least one initial hook, that is triggered by the :document root.
 
- 	:pattern :my-pattern
-	; Hooks can inherit parts of their definition from the defined patterns.
-	
-	:triggers [:my-custom-trigger1 :my-custom-trigger2]
-	; Hooks can also trigger custom trigger types.
-	}]
+    :pattern :my-pattern
+    ; Hooks can inherit parts of their definition from the defined patterns.
+    
+    :triggers [:my-custom-trigger1 :my-custom-trigger2]
+    ; Hooks can also trigger custom trigger types.
+    }]
   
   ;; Snippets: Predefined code patterns for the scraped library to speed up code generation.
   :snippets
@@ -119,37 +122,39 @@ A scraper is configured via a `scraper.clj` file which has the following [EDN](h
     {:type :call ; A call node describes the call to some callable (function, method, etc.).
 
      ; Next we describe that the call should go to some arbitrary callable in a specified namespace.
-	 ; Setting :placeholder to true marks the CFG node as a proxy for a multitude 
-	 ; of specific concepts that it should be replaced with:
-	 :callable {:type :function
+     ; Setting :placeholder to true marks the CFG node as a proxy for a multitude 
+     ; of specific concepts that it should be replaced with:
+     :callable {:type :function
                 :placeholder true
-				; The underscore in the attribute name means, that a reverse reference is required 
-				; between the placeholder function and namespace, i.e. the specified namespace should 
-				; have a membership reference to the concept:
+                ; The underscore in the attribute name means, that a reverse reference is required 
+                ; between the placeholder function and namespace, i.e. the specified namespace should 
+                ; have a membership reference to the concept:
                 :namespace/_member {:type :namespace
                                     :name "some namespace name"}}
 
-	 ; We also require that the call accepts a parameter with a certain name:
+     ; We also require that the call accepts a parameter with a certain name:
      :parameter {:type :call-parameter
-		         :parameter {:type :parameter
-					         :placeholder true
-							 :name "some parameter name"}}
+                 :parameter {:type :parameter
+                             :placeholder true
+                             :name "some parameter name"}}
 
-	 ; Finally we declare that whatever the specified family of calls returns, has the
-	 ; role-type :my-role. This is useful to manually state which functions return values
-	 ; that can be interpreted and used in a certain way:
-	 :result {:type :call-result
-		      :result {:type :result
-				       :placeholder true}
-		      :datatype {:type :role-type
-				         :id :my-role}}}
+     ; Finally we declare that whatever the specified family of calls returns, has the
+     ; role-type :my-role. This is useful to manually state which functions return values
+     ; that can be interpreted and used in a certain way:
+     :result {:type :call-result
+              :result {:type :result
+                       :placeholder true}
+              :datatype {:type :role-type
+                         :id :my-role}}}
     { ... another CFG node ... }]
    [ ... another snippet ... ]])
 ```
 
 A complete example configuration with this structure can be found at [`libs/scikit-learn/scraper.clj`](../../libs/scikit-learn/scraper.clj).
 
-### 3.1. Hooks
+Now the configuration options `:hooks` and `:snippets` are described in more detail the following two sections. 
+
+### 3.1. Hooks (`:hooks`)
 
 Hooks control how content is extracted from a page.
 For a formal perspective on how they work, see the [architecture description](./docs/architecture.md).
@@ -201,7 +206,7 @@ The hooks that produce this overlayed concept graph might look like this:
   ; the first <span> with class "desc":
   :selector [[:following-siblings 
               :select (and (tag :span) (class :desc))
-			  :limit 1]]
+              :limit 1]]
 
   :value :content}]
 ```
@@ -252,7 +257,7 @@ Every selection starts with a set of initial DOM nodes (typically there is just 
 This initial node set forms the first stage of the selection.
 The selectors in a selector vector are then applied in sequence, left-to-right:
 1. Apply the current selector to every DOM node in the current stage.
-	This maps every node to a set of successor nodes.
+    This maps every node to a set of successor nodes.
 2. Merge all the successor sets obtained in the previous step to form the next stage's set of DOM nodes.
 3. Goto 1 with the next selector or return the newly created DOM node set if no further selectors have to be applied.
 
@@ -288,17 +293,18 @@ Alternatively a traverser can be configured with additional options by providing
 Each of those configuration parameters is optional.
 -   `:select`: The result of the traverser will be filtered by the given predicate.
 -   `:while`: The traverser will return nodes until it reaches some node that does not satisfy the given predicate. 
-	If both `:select` and `:while` are provided, `:while` is always applied first.
+    If both `:select` and `:while` are provided, `:while` is always applied first.
 -   `:skip`: Skips the first `n` result nodes after applying `:while` and/or `:select`, i.e. if `:select` filtered out the first node and `:skip` is `1`, then the first two nodes will be skipped effectively.
 -   `:limit`: Limits the number of nodes that are returned by the traverser.
-	The limit is applied after all the other options.
-	This option is the reason why there is no traverser for `:parent` or `:next-sibling`, since those can be represented by `[:ancestors :limit 1]` and `[:next-siblings :limit 1]`.
+    The limit is applied after all the other options.
+    This option is the reason why there is no traverser for `:parent` or `:next-sibling`, since those can be represented by `[:ancestors :limit 1]` and `[:next-siblings :limit 1]`.
 
 Using traverser configuration options, more specific traversal operations can be described:
 ```clojure
 [[:ancestors :skip 1 :limit 1]
  [:preceding-siblings :select (tag :h1) :limit 1]]
-;; => Selects the first h1 heading-element that is a preceding sibling of the grandparent of the current node.
+;; => Selects the first h1 heading-element that is a preceding sibling
+;;    of the grandparent of the current node.
 ```
 
 ##### 3.1.2.2. Filtering Selectors
@@ -309,11 +315,166 @@ They can be used directly as a selector in a selector vector, or as predicates i
 Librarian uses the selectors that are provided by the [Hickory](https://github.com/davidsantiago/hickory#selectors) library.
 Refer to the linked documentation for a full list of predicates.
 The most important ones are:
--   `and`, `or`, `not` to compose predicates, e.g. `(and (not (tag :h1)) (or (class :foo) (class :bar)))`
+-   `and`, `or`, `not` to compose predicates, e.g. `(and (not (tag :h1)) (or (class :foo) (class :bar)))`.
 -   `(tag :tag-name)`: Selects only nodes of the given tag.
 -   `(class :class-name)`: Selects only nodes of the given class.
 -   `(id :id)`: Selects only nodes with the given id.
 
-### 3.2. Snippets
+By combining traversers and filters, complex tree traversal operations can be described:
+```clojure
+[:descendants
+ (tag :h1)
+ [:following-siblings :limit 1]
+ (tag :div)
+ :children
+ (not (class :baz))]
+;; => This selector vector is equivalent to the following CSS selector:
+;;    h1 + div > *:not(.baz)
+```
+
+This example selector would work as follows for an example HTML document:
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Head 1</h1>
+        <div>
+            <span class="foo">foo1</span> <!-- Selected -->
+            <span class="bar">bar1</span> <!-- Selected -->
+            <span class="baz">baz1</span>
+        </div>
+        <div>
+            <span class="bar">bar2</span>
+            <span class="foo">foo2</span>
+            <span class="baz">baz2</span>
+        </div>
+
+        <h1>Head 2</h1>
+        <div>
+            <span class="foo">foo3</span> <!-- Selected -->
+            <span class="baz">baz3</span>
+            <span class="bar">bar3</span> <!-- Selected -->
+        </div>
+        <div>
+            <span class="baz">baz4</span>
+            <span class="foo">foo4</span>
+            <span class="bar">bar4</span>
+        </div>
+    </body>
+</html>
+```
+
+### 3.2. Snippets (`:snippets`)
 
 The `:snippets` section in a scraper configuration is used to define code patterns for the scraped library to speed up code generation.
+The snippets are provided as a vector of *snippet vectors*, where each snippet vector describes a snippet as a sequence of *control flow graph* (CFG) nodes:
+```clojure
+[; Snippet 1:
+ [node1 node2 ...]
+ ; Snippet 2:
+ [node1 node2 ...]
+ ...]
+```
+
+#### 3.2.1. Snippet maps
+
+CFG nodes are described as maps.
+Each node map needs a `:type` key with a concept alias keyword as its value.
+The other entries in the node map assign attribute values to the node.
+Each attribute is given via its alias `:concept-alias/attribute-name`.
+The concept alias is optional for attributes of the concept specified in `:type`.
+Example concept map:
+```clojure
+{:type :parameter
+ :name "X"}
+; equivalent to
+{:type :parameter
+ :parameter/name "X"}
+```
+
+Reference attributes can be specified in two ways:
+1.  By specifying all nodes in the snippet vector and add references between them via the `:db/id` attribute.
+    The ids to refer to other concepts need to be negative integers.
+    Example snippet:
+    ```clojure
+    [{:type :call
+      :parameter [-1 -2]
+      :result -3}
+     {:type :call-parameter
+      :db/id -1
+      ...}
+     {:type :call-parameter
+      :db/id -2
+      ...}
+     {:type :call-result
+      :db/id -3
+      ...}]
+    ```
+2.  If only a single reference to a node needs to be created, the specification maps can alternatively be nested.
+    Example snippet:
+    ```clojure
+    [{:type :call
+      :parameter [{:type :call-parameter, ...}
+                  {:type :call-parameter, ...}]
+      :result {:type :call-result, ...}}]
+    ```
+
+As shown in the examples above, attributes with a cardinality of `:db.cardinality/many` can be created by providing a vector of values.
+
+It is also possible to create reverse attributes from some concept to the specified concept by prepending a `_` to the attribute name.
+Example snippet:
+```clojure
+[{:type :function
+  :namespace/_member {:type :namespace
+                      :name "my.example.namespace"}
+  ...}]
+; equivalent to
+[{:type :function
+  :db/id -1 
+  ...}
+ {:type :namespace
+  :name "my.example.namespace"
+  :member -1}]
+```
+In this example a new function is specified and registered as a member of the `my.example.namespace` namespace by adding a `:namespace/member` attribute to the namespace referencing the created function.
+
+#### 3.2.2. Placeholder concepts
+
+Using the syntax we defined so far, new concepts can be created and preexisting concepts can be referenced (e.g. the namespace in the previous example which was referenced via its unique name will be unified with a preexisting namespace).
+That way the concepts that were scraped via the `:hooks` can be used in snippets.
+
+There is still one restriction however.
+The previously defined syntax only allows us to describe snippets that represent a single CFG subgraph, i.e. it only allows us to specify a static code snippet that can be used by the code generator by inserting/copying it as-is.
+This is not flexible and does not allow for the specification of *code templates* that represent related variants of a base snippet.
+
+To handle this requirement, librarian offers so-called *placeholder concepts*.
+A placeholder concept is a concept which is only partially specified, i.e. no unique id is specified in the concept map, and which has the attribute `:placeholder true`.
+If those conditions are met, the concept map is understood as the intensional description of a set of concepts instead of the description of just a single concept.
+Example snippet:
+```clojure
+[{:type :call
+
+  :callable {:type :function
+             :placeholder true ; Placeholder 1
+             :namespace/_member {:type :namespace
+                                 :name "my.example.namespace"}}
+
+  :parameter {:type :call-parameter
+              :parameter {:type :parameter
+                          :placeholder true ; Placeholder 2
+                          :name "myParameter"}}
+
+  :result {:type :call-result
+           :result {:type :result
+                    :placeholder true} ; Placeholder 3
+                    :datatype {:type :role-type
+                               :id :my-role}}}]
+```
+-   **Placeholder 1** refers to the set of all scraped functions in the namespace `my.example.namespace`.
+-   **Placeholder 2** refers to the set of parameters of those functions with name `myParameter`.
+-   **Placeholder 3** refers to the set return values of the matching functions.
+
+The previous example represents a call to any function in the namespace `my.example.namespace` that takes a parameter with name `myParameter` and returns some value.
+It additionally specifies that the result of such a call should be tagged with the role type `:my-role`.
+This manual addition of information about the results of functions is useful to extend the scrape with knowledge that cannot be extracted from the crawled webpages.
+One use case for this is to specify which functions return a value that can be used in a certain way, e.g. which functions return a class labeling of an input dataset so that a suitable visualization for such a result can be chosen automatically.
