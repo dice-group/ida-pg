@@ -32,7 +32,6 @@
    :semantic-type semantic-type
    :role-type role-type
    :typed typed
-   :data-receiver data-receiver
 
    :callable callable
    :io-container io-container
@@ -40,6 +39,7 @@
    :result result
 
    :call call
+   :data-receiver data-receiver
    :call-parameter call-parameter
    :call-result call-result
    :constant constant

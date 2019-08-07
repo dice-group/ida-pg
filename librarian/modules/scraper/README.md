@@ -52,6 +52,12 @@ java -jar target/librarian.jar pull libs/scikit-learn \
 
 ## 3. Writing your own scrape configurations
 
+This section describes how to configure the scraper for arbitrary libraries.
+Before reading the configuration guide, it is recommended to first have a look at the [Librarian model](../model).
+The scrape configuration essentially describes where to find which information about which type of concept on the documentation pages of a library.
+To describe this, one first needs to know which concepts exist and which attributes they have.
+The concepts and their attributes are part of the model.
+
 A scraper is configured via a `scraper.clj` file which has the following [EDN](https://github.com/edn-format/edn)-like structure:
 ```clojure
 (defscraper my-library
@@ -297,14 +303,15 @@ Each of those configuration parameters is optional.
 -   `:skip`: Skips the first `n` result nodes after applying `:while` and/or `:select`, i.e. if `:select` filtered out the first node and `:skip` is `1`, then the first two nodes will be skipped effectively.
 -   `:limit`: Limits the number of nodes that are returned by the traverser.
     The limit is applied after all the other options.
-    This option is the reason why there is no traverser for `:parent` or `:next-sibling`, since those can be represented by `[:ancestors :limit 1]` and `[:next-siblings :limit 1]`.
+    This option is the reason why there is no traverser for `:parent` or `:next-sibling`, since those can be represented by `[:ancestors :skip 1 :limit 1]` and `[:next-siblings :skip 1 :limit 1]`.
+    It can be considered to add a shorthand syntax for such common traversers in the future.
 
 Using traverser configuration options, more specific traversal operations can be described:
 ```clojure
-[[:ancestors :skip 1 :limit 1]
+[[:ancestors :skip 1 :limit 1] ; (skip the current node itself)
  [:preceding-siblings :select (tag :h1) :limit 1]]
 ;; => Selects the first h1 heading-element that is a preceding sibling
-;;    of the grandparent of the current node.
+;;    of the parent of the current node.
 ```
 
 ##### 3.1.2.2. Filtering Selectors
@@ -393,7 +400,7 @@ Example concept map:
 ```
 
 Reference attributes can be specified in two ways:
-1.  By specifying all nodes in the snippet vector and add references between them via the `:db/id` attribute.
+1.  By specifying all nodes at the top level in the snippet vector and adding references between them via the `:db/id` attribute.
     The ids to refer to other concepts need to be negative integers.
     Example snippet:
     ```clojure
@@ -447,7 +454,7 @@ There is still one restriction however.
 The previously defined syntax only allows us to describe snippets that represent a single CFG subgraph, i.e. it only allows us to specify a static code snippet that can be used by the code generator by inserting/copying it as-is.
 This is not flexible and does not allow for the specification of *code templates* that represent related variants of a base snippet.
 
-To handle this requirement, librarian offers so-called *placeholder concepts*.
+To handle this requirement, Librarian offers so-called *placeholder concepts*.
 A placeholder concept is a concept which is only partially specified, i.e. no unique id is specified in the concept map, and which has the attribute `:placeholder true`.
 If those conditions are met, the concept map is understood as the intensional description of a set of concepts instead of the description of just a single concept.
 Example snippet:

@@ -221,7 +221,7 @@
 ; Macros:
 
 (defmacro defconcept
-  "Define a new concept with name `name` in the current namespace.
+  "Defines a new concept with name `name` in the current namespace.
    The concept is described by the sequence of key-value pairs `concept-desc`.
    A concept description can contain the following pairs, all of which are optional:
    - `:attributes`: A map describing datascript attributes, i.e. a subset of a database schema.
@@ -258,10 +258,10 @@
          (def ~name concept#)))))
 
 (defmacro defparadigm
-  "Define a new paradigm with name `name` in the current namespace.
-   The name is followed by an optional vector of paradigms that should be included ifn the new paradigm.
+  "Defines a new paradigm with name `name` in the current namespace.
+   The name is followed by an optional vector of paradigms that should be included in the new paradigm.
    Then a sequence of key-value pairs follows:
-   - `:concepts`: A map of unnamespaces concept alias keywords to concepts.
+   - `:concepts`: A map of unnamespaced concept alias keywords to concepts.
    - `:builtins`: A collection of builtin concept instances in the defined paradigm. The predefined instances should be created via `instanciate`.
 
    Example:
@@ -280,7 +280,7 @@
        (def ~name conformed#))))
 
 (defmacro defecosystem
-  "Define a new ecosystem with name `name` in the current namespace.
+  "Defines a new ecosystem with name `name` in the current namespace.
    Like `defparadigm` but accepts additional key-value pair types:
    - `:generate`: A function that takes a metadata map and a database containing an executable CFG and that returns a snippet of executable code for the ecosystem.
    - `:executor`: Similar to the generator defined above but returns a function that executes the code snippet and returns the result of the execution instead of simply returning the code snippet string."
