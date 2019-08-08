@@ -43,14 +43,50 @@ java -jar target/librarian.jar print-schema python
 # => Prints the attributes and concept types of python library scrapes.
 ```
 
-Alternatively the CLI also supports so-called [pull queries](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
+Alternatively the CLI also supports so-called [pull selections](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
 ```shell
 java -jar target/librarian.jar pull libs/scikit-learn \
-  '[*]' '[:class/id "sklearn.cluster.KMeans"]'
+  '[*]' '[:class/id ["sklearn.cluster" "KMeans"]]'
 # => Prints all attributes and subattributes of the KMeans class.
 ```
 
-## 3. Writing your own scrape configurations
+## 3. Development REPL
+
+In the first two sections the Librarian-CLI was described, with which scrapes can be created and queried easily by the end-user.
+During the development of the scraper however, it is easier to test the scraper in a REPL.
+For this Librarian comes with a couple of helper functions that are part of the default [`user`](../../dev/user.clj) namespace:
+-   `(create-scrape config-file)`: Creates a scrape using the given configuration file path.
+-   `(show-scrape config-file)`: Like `create-scrape` but returns the created scrape map afterwards. Should only be used for small test configurations that don't produce huge scrapes.
+-   `(read-scrape path)`: Deserializes an existing scrape from disk and returns it.
+-   `(query-scrape scrape query & args)`: Executes a [Datalog query](https://cljdoc.org/d/datascript/datascript/0.18.4/api/datascript.core#q) on the given scrape. The query can reference concepts and attributes either via their fully-qualified names or via their ecosystem aliases (see the [model documentation](../model) for an explanation of aliases).
+-   `(query-file file query & args)`: Like `query-scrape` but takes the path to a scrape instead of an in-memory scrape object.
+-   `(pull-scrape scraper selector eid)`: Performs a [pull selection](https://cljdoc.org/d/datascript/datascript/0.18.4/api/datascript.core#pull) on the given scrape. The selector can reference concepts and attribtues either via their fully-qualified names or via their ecosystem aliases (see the [model documentation](../model) for an explanation of aliases).
+-   `(pull-file path selector eid)`: Like `pull-scrape` but takes the path to a scrape instead of an in-memory scrape object.
+
+**Example REPL interaction:**
+```clojure
+(show-scrape "libs/scikit-learn-class-test")
+;; => Creates a scrape and then returns it.
+;;    The class-test scrape only contains the KMeans class for testing.
+
+(pull-file "libs/scikit-learn-class-test"
+           [{:class/method [:method/name]}]
+           [:class/id ["sklearn.cluster" "KMeans"]])
+;; => Returns the method names of the KMeans class:
+;;    {:librarian.model.paradigms.oo.class/method
+;;     [{:librarian.model.concepts.named/name "__init__"}
+;;      {:librarian.model.concepts.named/name "fit"}
+;;      {:librarian.model.concepts.named/name "fit_predict"}
+;;      {:librarian.model.concepts.named/name "fit_transform"}
+;;      {:librarian.model.concepts.named/name "get_params"}
+;;      {:librarian.model.concepts.named/name "predict"}
+;;      {:librarian.model.concepts.named/name "score"}
+;;      {:librarian.model.concepts.named/name "set_params"}
+;;      {:librarian.model.concepts.named/name "transform"}]}
+```
+Note how attribute aliases are expanded by the `pull-file` function.
+
+## 4. Writing your own scrape configurations
 
 This section describes how to configure the scraper for arbitrary libraries.
 Before reading the configuration guide, it is recommended to first have a look at the [Librarian model](../model).
@@ -160,7 +196,7 @@ A complete example configuration with this structure can be found at [`libs/scik
 
 Now the configuration options `:hooks` and `:snippets` are described in more detail the following two sections. 
 
-### 3.1. Hooks (`:hooks`)
+### 4.1. Hooks (`:hooks`)
 
 Hooks control how content is extracted from a page.
 For a formal perspective on how they work, see the [architecture description](./docs/architecture.md).
@@ -217,9 +253,9 @@ The hooks that produce this overlayed concept graph might look like this:
   :value :content}]
 ```
 
-#### 3.1.1. Hook Keys
+#### 4.1.1. Hook Keys
 
-##### 3.1.1.1. Keys of Concept and Attribute Hooks
+##### 4.1.1.1. Keys of Concept and Attribute Hooks
 
 All hooks share a set of common keys.
 
@@ -230,7 +266,7 @@ All hooks share a set of common keys.
 | `:selector` *(optional)* | A selector vector. | Every hook is triggered with the context of some location in the DOM tree that is traversed. For the initial `:document` trigger, the context is the root of the document. Every hook needs to describe where to find the DOM nodes that are relevant for it relative to its context. To do so a *selector vector* is used which is similar to XPath or CSS selectors. The selector can select an arbitrary amount of DOM nodes which are used to fetch textual values for attributes or they are used as the new contexts of triggered hooks. A description of the selector vector DSL is provided below. If no selector is provided, the current DOM context remains unchanged and is used for value retrieval and as the context of triggered dependent hooks. |
 | `:triggers` *(optional)* | A custom trigger or a collection of custom triggers, i.e. a keyword or collection of keywords.  | Hooks can trigger custom trigger types. By default every hook only triggers the hooks that are triggered by the concept or by the attribute that was created. For more control and contextual hook activation, hooks can also trigger custom trigger types. |
 
-##### 3.1.1.2. Keys of Concept Hooks
+##### 4.1.1.2. Keys of Concept Hooks
 
 Concept hooks are used to create new concepts and reference attributes between them.
 They create the vertices and edges in the concept graph described by the scrape database.
@@ -242,7 +278,7 @@ They create the vertices and edges in the concept graph described by the scrape 
 | `:ref-to-trigger` *(optional)* | The alias of a concept reference attribute, a keyword. | Like `:ref-from-trigger` but with the edge direction inversed. Thus the used attribute should be an attribute of the hook's concept, defined in `:concept`. |
 | `:allow-incomplete` *(optional, default: `false`)* | A boolean, `true` or `false`. | If `false`, all concepts found in a crawled page are validated right after the page was traversed. This means that all mandatory information of those concepts has to be found on a single page, which is usually the case. If the flag is set to `true`, the validation of concepts created via such a hook will be delayed to the end of the page traversal phase, after all pages were crawled. This allows combining information about a single concept from multiple pages where each page only contains a part of that concept, that would be invalid by themselves. This added flexibility has a performance and memory usage penalty, so it should only be enabled if necessary. |
 
-##### 3.1.1.3. Keys of Attribute Hooks
+##### 4.1.1.3. Keys of Attribute Hooks
 
 Attribute hooks are used to create non-reference attributes for existing concepts.
 They create the literal-value attributes/edges attached to vertices and store the actual data extracted from the crawled pages (strings, numbers etc.).
@@ -253,7 +289,7 @@ They create the literal-value attributes/edges attached to vertices and store th
 | `:value` *(optional, default: `:content`)* | `:content` or `:trigger-index` or a string or a number | Which value should be used. `:content` uses the text content of the selected DOM nodes as the attribute value. `:trigger-index` ignores the contents of the selected nodes and instead uses the ordinal position of the trigger context in the parent's selection result; this is useful to number created concepts, e.g. if `n` instances of a concept `:C` were created for a corresponding `n`-element HTML list, the created concepts can be enumerated by letting `:C` trigger an attribute hook with `:value :trigger-index` for some attribute `:C/position`. If a string or numeric literal is provided, the hook always uses this constant as the attribute value. |
 | `:transform` *(optional, default: `identity`)* | A regex or a 1-arity function | Used to transform the selected values before they are written to the database. If a regex is provided, the selected raw value is matched with that regex and only the substring match is written. If there is no match, no attribute will be created. If a function is provided, any arbitrary transformation can be performed. All Clojure builtin functions can be used, everything outside of `clojure.core` has to be fully-qualified though (e.g. `clojure.string/trim`). Custom functions can be defined via the `#()` or `(fn [x])` [syntax](https://clojure.org/guides/learn/functions#_anonymous_functions). If the custom transform function returns `nil`, no attribute will be created. |
 
-#### 3.1.2. The DOM Selector DSL
+#### 4.1.2. The DOM Selector DSL
 
 The previously described `:selector` key requires a *selector vector* which is an instance of the scraper's selector DSL.
 This DSL is similar to the tree selection paradigms in CSS or XPath.
@@ -273,7 +309,7 @@ A traverser performs some simple tree traversal operation on the nodes it gets a
 A filter on the other hand either outputs a node it got or no node at all.
 By combining both types of selectors, complex node selection patterns can be described.
 
-##### 3.1.2.1. Traversing Selectors
+##### 4.1.2.1. Traversing Selectors
 
 Librarian comes with the following traversers:
 
@@ -314,7 +350,7 @@ Using traverser configuration options, more specific traversal operations can be
 ;;    of the parent of the current node.
 ```
 
-##### 3.1.2.2. Filtering Selectors
+##### 4.1.2.2. Filtering Selectors
 
 Filters are just boolean predicates to reduce the node set of a selection stage.
 They can be used directly as a selector in a selector vector, or as predicates in `:select` or `:while` configurations of traversers.
@@ -371,7 +407,7 @@ This example selector would work as follows for an example HTML document:
 </html>
 ```
 
-### 3.2. Snippets (`:snippets`)
+### 4.2. Snippets (`:snippets`)
 
 The `:snippets` section in a scraper configuration is used to define code patterns for the scraped library to speed up code generation.
 The snippets are provided as a vector of *snippet vectors*, where each snippet vector describes a snippet as a sequence of *control flow graph* (CFG) nodes:
@@ -383,7 +419,7 @@ The snippets are provided as a vector of *snippet vectors*, where each snippet v
  ...]
 ```
 
-#### 3.2.1. Snippet maps
+#### 4.2.1. Snippet maps
 
 CFG nodes are described as maps.
 Each node map needs a `:type` key with a concept alias keyword as its value.
@@ -445,7 +481,7 @@ Example snippet:
 ```
 In this example a new function is specified and registered as a member of the `my.example.namespace` namespace by adding a `:namespace/member` attribute to the namespace referencing the created function.
 
-#### 3.2.2. Placeholder concepts
+#### 4.2.2. Placeholder concepts
 
 Using the syntax we defined so far, new concepts can be created and preexisting concepts can be referenced (e.g. the namespace in the previous example which was referenced via its unique name will be unified with a preexisting namespace).
 That way the concepts that were scraped via the `:hooks` can be used in snippets.
