@@ -1,6 +1,4 @@
 # The librarian/generator Architecture
-<!--lint disable no-shortcut-reference-link-->
-<!--lint disable no-undefined-references-->
 
 The core idea of the generator is to use weighted A* to heuristically search through the space of programs that might satisfy the users requirements.
 For this approach three problems had to be solved:
@@ -42,10 +40,10 @@ def f(v1748, v1747):
 1.  The yellow nodes are so called `call-result` nodes.
 	They represent the return values of callables, like functions, methods or constructors.
 	They are also used to represent externally provided inputs to the program, e.g. the dataset.
-1.  The so called `call-parameter` nodes are shown in green.
+2.  The so called `call-parameter` nodes are shown in green.
 	They represent the parameter values of callables and the final outputs of the generated program.
-1.  The red `call` nodes represent an invokation of some callable.
-1.  Blue `constant` nodes represent literal or enum values.
+3.  The red `call` nodes represent an invokation of some callable.
+4.  Blue `constant` nodes represent literal or enum values.
 
 A given CFG repesents a valid program if all `call-parameter` nodes receive a value from some `call-result` or `constant` node.
 Parameters that do not receive a value are considered to be flaws; they make the CFG invalid.
@@ -58,18 +56,18 @@ A trade-off had to be made between the simplicity and the expressiveness of the 
 Five action classes were chosen:
 1. **Parameter filling:**
 	Adds a `flow` edge from some value-providing node to a `call-parameter` node.
-1. **Parameter removal:**
+2. **Parameter removal:**
 	Removes an optional `call-parameter` node.
-1. **Call insertion:**
+3. **Call insertion:**
 	Inserts a new `call` node which represents a call to some callable.
 	For all para\-meters and return values of the callable, including the optional ones, new `call-parameter` and `call-result` nodes respectively are attached to the added `call`.
-1. **Snippet insertion:**
+4. **Snippet insertion:**
 	Inserts an entire CFG subgraph, called a snippet graph, into the current CFG.
 	Those snippet graphs represent common coding patterns in a given library and are part of the library scrape that is given to the generator as an input.
 	By inserting common coding patterns via a single action, the search can be sped up significantly.
 	The inserted snippets can contain partially specified `call` nodes, e.g. where only the namespace and a subset of required parameters are given.
 	That way classes of multiple specific CFGs can be represented by a single snippet.
-1. **Call completion:**
+5. **Call completion:**
 	Completes a partially specified `call` node by replacing it with a call to a specific compatible callable.
 	Partially specified `call` nodes are always the result of previously applied snippet actions or are given as part of the initial search state CFG.
 	
