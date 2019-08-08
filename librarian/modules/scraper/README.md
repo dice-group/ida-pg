@@ -100,6 +100,11 @@ A scraper is configured via a `scraper.clj` file which has the following [EDN](h
   :extends "path to parent configuration" ; Configurations can be based on another one.
   
   :ecosystem :python ; Currently only python support is provided.
+  
+  :meta { ... additional metadata ... }
+  ; A general purpose map for additional metadata about the library. It has no inherent meaning.
+  ; Might be used to configure code execution (e.g. which language version to use)
+  ; or to specify the required dependencies to get the library to run.
 
   :seed "URL" ; Initial page for the library crawling.
   :should-visit #"URL regex" ; A regular expression matching the URLs that should be crawled.
