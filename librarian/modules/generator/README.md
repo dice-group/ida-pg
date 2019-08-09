@@ -4,7 +4,7 @@
 
 A tools that automatically generates source code from a given library scrape and a user request. 
 
-<center><img src="docs/generator-overview.svg"></center>
+<p align=center><img src="docs/generator-overview.svg"></p>
 
 **Architecture Overview:**
 An introduction to the basic working principle of the generator can be found [here](docs/architecture.md).
@@ -266,3 +266,13 @@ The following helpers are provided:
 -   `(successors state)`: Returns the set of successor state candidates of a given state. **Note:** Usually one should not print the successors set directly, since each successor holds a reference to some version of the entire scrape database, which can result in very large serializations.
 -   `(last-code)`: Returns the executable code snippet corresponding to the state that was visualized last.
 -   `(last-solver)`: Returns a callable function that executes the solution encoded in the state that was visualized last.
+
+**Example REPL interaction:**
+```clojure
+(gen-test :goal)
+;; => Searches for a CFG that calls a clustering algorithm.
+;;    The found CFG is shown via proto-repl-charts when using Atom.
+
+(println (last-code))
+;; => Should print the Python code corresponding the found CFG.
+```

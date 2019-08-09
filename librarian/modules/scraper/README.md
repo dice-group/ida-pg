@@ -13,7 +13,7 @@ The scraped information will be automatically linked, sanitized, validated and t
 The scraper can be used via the unified [Librarian-CLI](../..).
 To create a scrape you can run:
 ```shell
-java -jar target/librarian.jar scrape libs/scikit-learn
+java -jar bin/librarian.jar scrape libs/scikit-learn
 ```
 The `scrape` command requires the path to a scrape configuration.
 Librarian comes with a scrape configuration for scikit-learn at [`libs/scikit-learn/scraper.clj`](../../libs/scikit-learn/scraper.clj).
@@ -31,7 +31,7 @@ Despite the fact that scrapes are meant to be used programmatically via the libr
 librarian-scraper stores scrapes as gzipped serializations of [Datascript](https://github.com/tonsky/datascript) databases.
 Those scrape databases can be queries using [Datalog](https://docs.datomic.com/on-prem/query.html) queries:
 ```shell
-java -jar target/librarian.jar query libs/scikit-learn \
+java -jar bin/librarian.jar query libs/scikit-learn \
   '[:find ?name :where [?p :type :namespace] [?p :namespace/name ?name]]'
 # => Prints the names of all the namespaces of scikit-learn.
 ```
@@ -39,13 +39,13 @@ A good introduction to Datalog can be found [here](http://www.learndatalogtoday.
 
 To see which attributes and types are available for queries, you can use the `print-schema` command:
 ```shell
-java -jar target/librarian.jar print-schema python
+java -jar bin/librarian.jar print-schema python
 # => Prints the attributes and concept types of python library scrapes.
 ```
 
 Alternatively the CLI also supports so-called [pull selections](https://docs.datomic.com/on-prem/pull.html) that make it easy to perform recursive traversals through the attribute graph:
 ```shell
-java -jar target/librarian.jar pull libs/scikit-learn \
+java -jar bin/librarian.jar pull libs/scikit-learn \
   '[*]' '[:class/id ["sklearn.cluster" "KMeans"]]'
 # => Prints all attributes and subattributes of the KMeans class.
 ```
@@ -58,9 +58,9 @@ For this Librarian comes with a couple of helper functions that are part of the 
 -   `(create-scrape config-file)`: Creates a scrape using the given configuration file path.
 -   `(show-scrape config-file)`: Like `create-scrape` but returns the created scrape map afterwards. Should only be used for small test configurations that don't produce huge scrapes.
 -   `(read-scrape path)`: Deserializes an existing scrape from disk and returns it.
--   `(query-scrape scrape query & args)`: Executes a [Datalog query](https://cljdoc.org/d/datascript/datascript/0.18.4/api/datascript.core#q) on the given scrape. The query can reference concepts and attributes either via their fully-qualified names or via their ecosystem aliases (see the [model documentation](../model) for an explanation of aliases).
+-   `(query-scrape scrape query & args)`: Executes a [Datalog query](https://cljdoc.org/d/datascript/datascript/0.18.4/api/datascript.core#q) on the given scrape. The query can reference concepts and attributes either via their fully-qualified names or via their ecosystem aliases (see the [model documentation](../model/README.md#12-defining-paradigms) for an explanation of aliases).
 -   `(query-file file query & args)`: Like `query-scrape` but takes the path to a scrape instead of an in-memory scrape object.
--   `(pull-scrape scraper selector eid)`: Performs a [pull selection](https://cljdoc.org/d/datascript/datascript/0.18.4/api/datascript.core#pull) on the given scrape. The selector can reference concepts and attribtues either via their fully-qualified names or via their ecosystem aliases (see the [model documentation](../model) for an explanation of aliases).
+-   `(pull-scrape scraper selector eid)`: Performs a [pull selection](https://cljdoc.org/d/datascript/datascript/0.18.4/api/datascript.core#pull) on the given scrape. The selector can reference concepts and attribtues either via their fully-qualified names or via their ecosystem aliases (see the [model documentation](../model/README.md#12-defining-paradigms) for an explanation of aliases).
 -   `(pull-file path selector eid)`: Like `pull-scrape` but takes the path to a scrape instead of an in-memory scrape object.
 
 **Example REPL interaction:**

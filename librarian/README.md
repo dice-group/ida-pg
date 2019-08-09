@@ -4,6 +4,9 @@ Librarian is a modular toolkit to programmatically work with software libraries.
 This is main entrypoint module for the librarian project.
 It offers a unified CLI for all the features of the librarian project and contains a unified REPL environment for development purposes.
 Librarian consists of the following submodules:
+
+<p align=center><img src="docs/librarian-modules.svg"></p>
+
 *   [`librarian/model`](./modules/model): A tool to build abstract models of language ecosystems. It comes with a model for Python but can also be used to describe other ecosystems. It additionally offers a uniform interface to read, write and query facts about a given ecosystem (e.g. the names of the classes in a particular Python namespace). Such collections of model facts are called *scrapes*.
 *   [`librarian/scraper`](./modules/scraper): A tool that crawls the documentation of software libraries and produces library scrapes. The scraped information is validated and categorized using a `librarian/model` ecosystem.
 *   [`librarian/generator`](./modules/generator): A tools that automatically generates source code from a given library scrape and a user request. 
@@ -13,8 +16,33 @@ Librarian also comes with a prebuilt scrape for scikit-learn in [`libs/scikit-le
 
 ## 1. Getting Started
 
-
-
+1.  To work on the Librarian modules, at least basic knowledge of [Clojure](https://clojure.org/) is required.
+2.  To setup your development environment for Clojure, the following tools are required:
+	-   [Leiningen (2.8)](https://leiningen.org/) as the build tool.
+	-   An editor or IDE that works well with Clojure, e.g.:
+		-   **Atom** with [proto-repl](https://github.com/jasongilman/proto-repl), [Paredit](https://github.com/jonspalding/lisp-paredit), [Parinfer](https://github.com/oakmac/atom-parinfer) and the [joker linter](https://github.com/candid82/joker).
+			See [this setup guide](https://gist.github.com/jasongilman/d1f70507bed021b48625).
+			*Note:*
+			Librarian comes with some convenience helpers to [visualize](https://github.com/jasongilman/proto-repl-charts) results that currently only work on Atom.
+		-   **VS Code** with [Calva](https://github.com/BetterThanTomorrow/calva).
+		-   [**Cursive IDE**](https://cursive-ide.com/)
+		-   Obviously [vim](https://github.com/tpope/vim-fireplace) and [emacs](https://cider.mx/) are also well supported.
+3.  The Librarian modules were built around [Datascript](https://github.com/tonsky/datascript), a lightweight in-memory database, that is used to store and access the scraped facts about libraries.
+	It is recommended to get a basic understanding of Datascript before continuing.
+4.  To understand how the Librarian modules work and interact with each other, take a look at the module documentation.
+	The recommended reading order is:
+	1.  [`librarian/model`](./modules/model/README.md):
+		The introduction and section 1 are most relevant in the first step.
+	2.  [`librarian/scraper`](./modules/scraper/README.md):
+		To get a basic idea of how the scraper works, the [architecture overview](./modules/scraper/docs/architecture.md) should be read first.
+		For a guide on how to actually use and work on the scraper in practice, the main [README](./modules/scraper/README.md) can be consulted afterwards.
+	3.  [`librarian/generator`](./modules/generator/README.md):
+		Similar to the scraper, the [architecture overview](./modules/generator/docs/architecture.md) should be read first.
+		The main [README](./modules/generator/README.md) then describes how to actually use the generator.
+5.  To work on the Librarian modules, see [section 4](#4-starting-a-development-repl) for instructions on how to start an interactive REPL environment.
+6.  To play around with the Librarian modules, you can use the builtin REPL helpers for the [scraper](./modules/scraper/README.md#3-development-repl) and the [generator](./modules/generator/README.md#23-development-repl).
+	Start by reproducing the example REPL interactions and continue from there.
+		
 ## 2. Installation
 
 Librarian is written in Clojure but it also offers a [Java interface](./modules/generator/README.md#22-java-applications).
@@ -27,17 +55,18 @@ mvn install
 
 To build the librarian CLI simply run:
 ```shell
-lein uberjar # Creates an executable jar at target/librarian.jar
+lein uberjar # Creates an executable jar at bin/librarian.jar
 ```
 
 The resulting JAR can be used via the comamnd line.
 It is an interface to the [scraper](./modules/scraper) and to some parts of the [model](./modules/model).
-To see all available commands run `java -jar target/librarian.jar -?`.
-To get more information about a specific command run `java -jar target/librarian.jar [cmd] -?`.
 
-The CLI commands are documented in more detail in the README of the [scraper](./modules/scraper).
+To see all available commands run `java -jar bin/librarian.jar -?`.
+To get more information about a specific command run `java -jar bin/librarian.jar [cmd] -?`.
 
-## 4. Development Setup
+The CLI commands are documented in more detail in the [README of the scraper](./modules/scraper/README.md#2-querying-a-scraped-library-via-the-cli).
+
+## 4. Starting a development REPL
 
 If you want to work on Librarian you will need [Leiningen 2.8](https://leiningen.org/).
 Librarian is structured as a [multimodule](https://github.com/jcrossley3/lein-modules) project.
@@ -51,12 +80,14 @@ lein prepare-repl
 ```
 Using [checkouts](https://github.com/technomancy/leiningen/blob/stable/doc/TUTORIAL.md#checkout-dependencies) you can test changes across multiple modules without having to reinstall them to your local repo after each change.
 The cleaning step is required for hot-code reloading via [clojure.tools.namespace](https://github.com/clojure/tools.namespace) in the REPL.
+
 To get a REPL, just run `lein repl`.
 Module specific details are described in the READMEs of the individual modules (linked above).
 
 For simple interoperability with Maven all the Librarian modules also come with an automatically generated pom file.
 Those pom files are shipped with Librarian to allow users to integrate Librarian into pure Maven projects without having to install Leiningen or other Clojure specific tooling. 
 Please remember to run `lein modules pom` after adding, removing or updating a dependency of a module to update the generated pom files.
+Only the `project.clj` files should be edited manually, the pom files should always be auto-generated to guarantee consistency between Maven and Leiningen.
 
 ## 4. Future tasks
 
