@@ -53,7 +53,7 @@ mvn install
 
 ## 3. Build
 
-To build the librarian CLI simply run:
+To build the Librarian-CLI simply run:
 ```shell
 lein uberjar # Creates an executable jar at bin/librarian.jar
 ```
@@ -89,7 +89,7 @@ Those pom files are shipped with Librarian to allow users to integrate Librarian
 Please remember to run `lein modules pom` after adding, removing or updating a dependency of a module to update the generated pom files.
 Only the `project.clj` files should be edited manually, the pom files should always be auto-generated to guarantee consistency between Maven and Leiningen.
 
-## 4. Future tasks
+## 5. Future tasks
 
 -   [x] Develop a universal model to represent software libraries.
 -   [x] Develop a tool to automatically build models of libraries from their online documentation.
