@@ -1,7 +1,7 @@
 # Librarian
 
 Librarian is a modular toolkit to programmatically work with software libraries.
-This is main entrypoint module for the librarian project.
+This is the main entrypoint module for the librarian project.
 It offers a unified CLI for all the features of the librarian project and contains a unified REPL environment for development purposes.
 Librarian consists of the following submodules:
 
@@ -91,6 +91,9 @@ Only the `project.clj` files should be edited manually, the pom files should alw
 
 ## 5. Future tasks
 
+The following tasks should be considered in the future.
+They are categorized by their importance for the long-term goals of IDA.
+
 -   [x] Develop a universal model to represent software libraries.
 -   [x] Develop a tool to automatically build models of libraries from their online documentation.
 -   [x] Develop an uninteractive code generator that takes user requirements and a library model and finds source code that satisfies the user's requirements.
@@ -98,5 +101,8 @@ Only the `project.clj` files should be edited manually, the pom files should alw
 -   [ ] **HIGH** The code executor provided by the `:python` ecosystem model is currently very rudimentary and not capable of handling big loads and of playing nicely in a distributed micro-service architecture, since code is currently just executed in a Python child process of the calling process. Ideally Librarian should be able to automatically generate *"executor" Docker containers* from scrape configurations which would accept code, execute it and respond with the execution result. Those automatically generated containers would allow code execution to be **scaled and distributed**. The container configuration could be done via the currently unused `:meta` attribute of [scrape configurations](modules/scraper/README.md#4-writing-your-own-scrape-configurations) which was added for exactly such use cases.
 -   [ ] **HIGH** Improve the **cost model** of the generator. Currently the compatibility between two semantic types is binary. A more fuzzy similarity-based compatibility measure for the semantics of values should be implemented. See [`librarian.generator.cost`](modules/generator/src/librarian/generator/cost.clj).
 -   [ ] **HIGH** Improve the **heuristic function** of the generator. The current heuristic is fairly conservative in order to stay admissible. Without a relatively high weight to make the WA* search more depth-first like, this conservative heuristic would often consider fruitless paths. More research is necessary in order to get more accurate heuristic.
+-   [ ] **MEDIUM** Find a way to deal with optional return values (e.g. the [`best_n_iter` return value of `sklearn.cluster.k_means`](https://scikit-learn.org/0.21/modules/generated/sklearn.cluster.k_means.html#sklearn.cluster.k_means)). Currently the WA* approach can cause the generation of unnecessary return value accesses. This can cause problems if a non-existing return value is accessed in dynamic languages. Possible mitigation strategies:
+	-   *Simple approach:* Apply a simple CFG simplification step before producing source code by pruning unreturned processing paths. This only works under the assumption that the user does not request a value that is derived from an optional return value.
+	-   *Complex approach:* Properly model optional return values in the model with the flexibility to describe the condition on which the value's optionality depends. This would involve an analysis of common scenarios for optional returns as well as an extension of the scrapers capabilities to detect those scenarios. Most likely some kind of NLP would have to be integrated into the scraping phase for this.
 -   [ ] **MEDIUM** Consider ways to further improve the **performance of the generator**. The generator already caches multiple types of query results and tries to reuse previous computations if possible. However there are still many opportunities to further reduce redundant computations. It needs to be analyzed which remaining optimizations are feasible. A major candidate to improve performance would be to make the A* search loop multithreaded or possible even parallelize individual search steps (it is however not yet clear whether the resulting overhead would outweigh the benefits).
 -   [ ] **LOW** The **CFG visualizations** that are part of the dev tooling for the generator currently only support the Atom editor via [proto-repl](https://github.com/jasongilman/proto-repl). Support for other visualization backends should be added so that other editors and IDEs are usable equally well.

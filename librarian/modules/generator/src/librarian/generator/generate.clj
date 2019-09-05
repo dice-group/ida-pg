@@ -153,6 +153,7 @@
   (apply-action {:cost 0
                  :db (:db scrape)}
                 {:cost 0, :tx tx, :add true, :type-changes :all}))
+
 (defn actions
   "Takes a state and returns a collection of candidate actions that can be applied to that state."
   [state]

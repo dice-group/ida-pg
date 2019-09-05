@@ -26,7 +26,7 @@
   [^double n]
   (- (* n (Math/log n)) n))
 
-(defn sematic-compatibility
+(defn semantic-compatibility
   "The semantic compatibility of `from` to `to`.
    Only a mock implementation for now."
   [to-value from-value]
@@ -40,7 +40,7 @@
   [to-value from-values]
   (if (< (count to-value) 2)
     1
-    (apply max 0 (map #(sematic-compatibility to-value %) from-values))))
+    (apply max 0 (map #(semantic-compatibility to-value %) from-values))))
 
 (defn semantic-compatibility-evaluator
   "Takes a database and the ids of semantic datatypes of some receiver.
