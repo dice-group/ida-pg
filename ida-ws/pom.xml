@@ -60,14 +60,14 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- IDA modules: -->
 		<dependency>
 			<groupId>librarian</groupId>
 			<artifactId>model</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- jsr303 validation -->
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -109,7 +109,7 @@
 		</dependency>
 
 		<!-- Jackson JSON Processor -->
-		<!-- <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId> 
+		<!-- <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId>
 			<version>2.4.1</version> </dependency> -->
 
 		<dependency>
@@ -153,7 +153,7 @@
 			<version>1.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io added by 
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io added by
 			Faisal -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -161,9 +161,9 @@
 			<version>2.6</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind 
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 			added by faisal -->
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson added 
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson added
 			by faisal -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -220,14 +220,14 @@
 		    <version>2.1.0.RELEASE</version>
 		    <scope>test</scope>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
 		    <groupId>javax.mail</groupId>
 		    <artifactId>mail</artifactId>
 		    <version>1.4</version>
 		</dependency>
-		
+
 		<!-- ... spring security dependency ... -->
 	  	<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -237,12 +237,20 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
 			<artifactId>jena-sparql-api-core</artifactId>
 			<version>3.9.0-1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>5.2.0.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 	<build>
@@ -271,7 +279,7 @@
 				    <useDefaultDelimiters>false</useDefaultDelimiters>
 				</configuration>
             </plugin>
-            
+
             <plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
