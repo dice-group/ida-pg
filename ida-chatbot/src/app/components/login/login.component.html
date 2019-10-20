@@ -5,14 +5,14 @@
       <mat-card-subtitle>Chatbot</mat-card-subtitle>
       <img mat-card-avatar src="/assets/chatbot.PNG">
     </mat-card-header>
-    <h1 align="center" class="mat-display-2">Login</h1>
+    <h1 class="mat-display-2 text-center">Login</h1>
     <form [formGroup]="loginForm" autocomplete="off" novalidate (ngSubmit)="loginUser(loginForm.value)" fxLayout="column wrap"
           fxLayoutAlign="center center" fxLayoutGap="10px">
       <mat-card-content>
 
         <mat-form-field>
-          <input matInput type="email" placeholder="Username" formControlName="username" id="username">
-          <mat-error *ngIf="hasError('username', 'required')">Username is required</mat-error>
+          <input matInput type="email" placeholder="Email" formControlName="username" id="username">
+          <mat-error *ngIf="hasError('username', 'required')">Email is required</mat-error>
           <mat-error *ngIf="hasError('username', 'email')">Incorrect format</mat-error>
         </mat-form-field>
 
@@ -26,7 +26,7 @@
         <button mat-raised-button color="primary" align="end" [disabled]="!loginForm.valid">Login</button>
       </mat-card-actions>
     </form>
-    <p align="right">Don't have an account ? Signup <a routerLink="/signup">here</a></p>
+    <p class="text-right">Don't have an account ? Signup <a routerLink="/signup">here</a></p>
     <mat-spinner style="margin:0 auto;" mode="indeterminate" [style.display]="this.showSpinner ? 'block' : 'none'"></mat-spinner>
   </mat-card>
 </section>

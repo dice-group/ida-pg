@@ -37,17 +37,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.domains.User;
-import upb.ida.service.UserService;
+import upb.ida.service.UserServiceUtil;
 
 @Controller
 @CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/user")
 public class UserController {
-	
+
 	private static String dbhost = System.getenv("FUSEKI_URL");
-	private static String datasetName = "/user";	
+	private static String datasetName = "/user";
 	private static String dbUrl = dbhost + datasetName;
-	
+
 	@Autowired
 	private ResponseBean responseBean;
 
@@ -58,7 +58,7 @@ public class UserController {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 		RDFConnectionFuseki conn = null;
 		QueryExecution qExec = null;
-		
+
 		try {
 			conn = (RDFConnectionFuseki) builder.build();
 			qExec = conn.query("prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
@@ -70,11 +70,11 @@ public class UserController {
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ResultSetFormatter.outputAsJSON(outputStream, results);
 			String jsonOutput = new String(outputStream.toByteArray());
-			
+
 			Map<String, Object> returnMap = new HashMap<String, Object>();
 			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
-			
+
 		} finally {
 			qExec.close();
 			conn.close();
@@ -92,20 +92,20 @@ public class UserController {
 			responseBean.setErrCode(IDALiteral.FAILURE_UPDATEUSER);
 			return responseBean;
 		} else {
-			
-			User oldRecord = UserService.getByUsername(updatedrecord.getUsername());
+
+			User oldRecord = UserServiceUtil.getByUsername(updatedrecord.getUsername());
 
 			if (oldRecord == null) {
 				responseBean.setErrMsg("user not found");
 				return responseBean;
 			}
-		
+
 				RDFConnectionFuseki conn = null;
-			
+
 				try {
 					conn = (RDFConnectionFuseki) builder.build();
 					UpdateRequest request = UpdateFactory.create();
-				
+
 					// The idea is SPARQL is not for relational data! Its for graph data
 					// So here we are just deleting the old recorded
 
@@ -119,7 +119,7 @@ public class UserController {
 					request.add(query1);
 					conn.update(request);
 
-				
+
 					// inserting updated record..
 					String query2 = " PREFIX dc: <http://www.w3.org/2001/vcard-rdf/3.0#> "
 							+ " PREFIX ab: <http://userdata/#" + oldRecord.getUsername() + "> " + " INSERT DATA "
@@ -155,7 +155,7 @@ public class UserController {
 			return responseBean;
 		}
 
-		if (UserService.getByUsername(record.getUsername()) != null) {
+		if (UserServiceUtil.getByUsername(record.getUsername()) != null) {
 			responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 			return responseBean;
 		}
@@ -191,14 +191,14 @@ public class UserController {
 	@ResponseBody
 	public ResponseBean deleteUser(@PathVariable String usernames) {
 		RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
-		User record = UserService.getByUsername(usernames);
+		User record = UserServiceUtil.getByUsername(usernames);
 		if (record == null) {
-		
+
 			responseBean.setErrMsg("user not found");
 			return responseBean;
 		} else {
 			RDFConnectionFuseki conn = null;
-			
+
 			try {
 				conn = (RDFConnectionFuseki) builder.build();
 				UpdateRequest request = UpdateFactory.create();
@@ -224,7 +224,7 @@ public class UserController {
 	public static User list(String clientUserName) {
 		String userName = clientUserName;
 		String serviceURI = dbUrl;
-		
+
 		String query1 = " PREFIX ab: <http://userdata/#" + userName + "> "
 				+ "prefix dc: <http://www.w3.org/2001/vcard-rdf/3.0#>select ?firstname ?lastname ?username ?password  ?userrole where {ab: dc:firstname ?firstname ;dc:lastname ?lastname; dc:password ?password ; dc:userrole ?userrole; dc:username ?username .}";
 
@@ -236,7 +236,7 @@ public class UserController {
 			results = q.execSelect();
 			while (results.hasNext()) {
 				QuerySolution soln = results.nextSolution();
-		
+
 				RDFNode x = soln.get("username");
 				RDFNode y = soln.get("firstname");
 				RDFNode w = soln.get("lastname");
@@ -252,8 +252,8 @@ public class UserController {
 				obj = new User(fetchedUserName, fetchedPassword, fetchedFirstName, fetchedLastName, fetchedUserRole);
 
 			}
-		 
-		} 
+
+		}
 		finally {
 			if (q != null)
 				q.close();
@@ -261,14 +261,14 @@ public class UserController {
 
 		return obj;
 	}
-	
+
 
 	// password hashing and salting using Bcrypt library
-	
+
 	public static String hashPassword(String Pass) throws NoSuchAlgorithmException {
-	    
+
 	        String  originalPassword = Pass;
-	        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));	        
+	        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
 			return generatedSecuredPasswordHash;
 	    }
 	public static boolean checkPassword(String dbPass, String userInputPassword) throws NoSuchAlgorithmException {

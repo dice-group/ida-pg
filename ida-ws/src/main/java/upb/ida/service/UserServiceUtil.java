@@ -8,12 +8,12 @@ import upb.ida.rest.UserController;
 
 
 @Service
-public class UserService{
+public class UserServiceUtil {
 
 
     public static User getByUsername(String username) {
-		return (User) UserController.list(username);	
+		return (User) UserController.list(username);
 
     }
-	
+
 }

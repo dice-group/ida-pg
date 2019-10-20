@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.domains.User;
-import upb.ida.service.UserService;
+import upb.ida.service.UserServiceUtil;
 
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
@@ -27,7 +27,7 @@ public class LoginController {
 
     @Autowired
 	private ResponseBean responseBean;
-    
+
     @RequestMapping(value = "/response", method = {RequestMethod.GET,RequestMethod.POST})
     public ResponseBean login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
@@ -37,7 +37,7 @@ public class LoginController {
             responseBean.setErrMsg("Username/Password Incorrect");
         } else if (success != null) {
             responseBean.setErrMsg("Login Successful");
-            User loggedInuser = UserService.getByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+            User loggedInuser = UserServiceUtil.getByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
             Map<String, Object> returnMap = new HashMap<String, Object>();
             returnMap.put("loggedInUser", loggedInuser);
             responseBean.setPayload(returnMap);
@@ -49,7 +49,7 @@ public class LoginController {
         }
         return responseBean;
     }
-	
+
 	@RequestMapping(value = "/check-login", method = RequestMethod.GET)
     public ResponseBean checkLogin() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

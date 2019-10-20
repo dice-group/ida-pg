@@ -14,21 +14,21 @@ import org.springframework.stereotype.Component;
 
 import upb.ida.domains.User;
 import upb.ida.rest.UserController;
-import upb.ida.service.UserService;
+import upb.ida.service.UserServiceUtil;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-	
+
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
 		// name is username here i.e user input
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
-		User currentUser = UserService.getByUsername(name);
+		User currentUser = UserServiceUtil.getByUsername(name);
 		Boolean PasswordCheck =null;
-		if (currentUser == null) 
+		if (currentUser == null)
 		{
 			return null;
 		}
@@ -36,7 +36,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		try {
 			String dbPassword = currentUser.getPassword();
 			PasswordCheck = UserController.checkPassword(dbPassword , password);
-		} catch (NoSuchAlgorithmException e) {			
+		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 
