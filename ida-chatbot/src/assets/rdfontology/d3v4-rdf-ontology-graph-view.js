@@ -7,7 +7,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
   var expandedNodesArray = [];
   var nodeContents = [];
 
-  var width = 1025,
+  var width = 1175,
       height = 1100,
       resourceRadius = customizeGraphArray.resourceRadius,
       literalRadius = customizeGraphArray.literalRadius;
@@ -454,7 +454,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
 
       
 
-      function clickFunctionality(d) {
+      function doubleClickFunctionality(d) {
           var idVal = "#" + d.nodeId;
           var clickedNodeLabel = d.id;
           if (expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal)) {
@@ -465,7 +465,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                   .attr("r", resourceRadius + 4)
                   .style("fill", customizeGraphArray.onClickNodeColor);
 
-              var tempSub = "?";
+              var tempSub = "?"; 
               var tempPred = "?";
               var tempObj = "?";
               var pred = "---subClassOf---";
@@ -764,13 +764,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                   return returnValue;
               });
 
-          //START :: on click
-          node.on("dblclick", clickFunctionality);
-          //END :: on click    
-
           //START :: on double click
-          node.on("click", doubleClickFuntionality);
-          //END :: on double click
+          node.on("dblclick", doubleClickFunctionality);
+          //END :: on double click    
+
+          //START :: on  click
+          node.on("click", clickFuntionality);
+          //END :: on  click
 
 
           if (!disableZoom) {
@@ -789,7 +789,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
       }
 
 
-      function doubleClickFuntionality(d) {
+      function clickFuntionality(d) {
           var nodeIdVal = d.id;
           var tempNodeContains = [];
           nodeContents.forEach(function(val) {
