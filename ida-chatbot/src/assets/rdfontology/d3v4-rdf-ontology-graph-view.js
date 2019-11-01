@@ -6,6 +6,10 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
   var deLabelArray = [];
   var expandedNodesArray = [];
   var nodeContents = [];
+  var onDoubleClickedNewlyCreatedNodes = [];
+  var onDoubleClickedNewlyCreatedLinks = [];
+  var onDoubleClickCreatingNodes = false;
+  var nodeDoubleClicked = "";
 
   var width = 1175,
       height = 1100,
@@ -198,6 +202,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
         //START :: Node creation
         var subNodeAdded = false;
         var objNodeAdded = false;
+        var onDoubleClickNodesCreated = ""; 
 
         if (nodesArray !== undefined) {
             nodesArray.forEach(function(elem) {
@@ -221,6 +226,12 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                 group: 1
             };
             nodesArray.push(nodeValue);
+
+            if(onDoubleClickCreatingNodes)
+            { 
+                onDoubleClickNodesCreated = {nodeClicked:nodeDoubleClicked,nodeCreated:nodeValue};
+                onDoubleClickedNewlyCreatedNodes.push(onDoubleClickNodesCreated);
+            }
         }
         if (objNodeAdded === false) {
             circleIdIndex = circleIdIndex + 1;
@@ -233,6 +244,11 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                 group: 1
             };
             nodesArray.push(nodeValue);
+            if(onDoubleClickCreatingNodes)
+            {
+                onDoubleClickNodesCreated = {nodeClicked:nodeDoubleClicked,nodeCreated:nodeValue};
+                onDoubleClickedNewlyCreatedNodes.push(onDoubleClickNodesCreated);
+            }
         }
         //END :: Node creation
     }
@@ -271,7 +287,6 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                               value: 1
                           };
                           linksArray.push(tripleValue);
-
                           createNewNode(tempSub, pred, tempObj, false, "");
                       });
                   } else {
@@ -403,9 +418,6 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
       });
       //END :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
 
-
-
-
       function ticked() {
           lables
               .attr("x2", function(d) {
@@ -452,11 +464,11 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
       update();
 
 
-      
-
       function doubleClickFunctionality(d) {
           var idVal = "#" + d.nodeId;
           var clickedNodeLabel = d.id;
+          var newlyCreatingLinkData = "";
+
           if (expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal)) {
               expandedNodesArray.push(idVal);
 
@@ -470,7 +482,10 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
               var tempObj = "?";
               var pred = "---subClassOf---";
               var tempDomainArray = [];
-              var includeThis, tempDomainLabel, tempLabelArray, tempLabelArray1, isLitteral, literalDataType, tripleValue;
+              var includeThis, tempDomainLabel, tempLabelArray, tempLabelArray1, isLitteral, literalDataType, tripleValue,removeClikedNode;
+              
+              onDoubleClickCreatingNodes = true;
+              nodeDoubleClicked = idVal;
 
               data["@graph"].forEach(function(element) {
                   tempSub = "?";
@@ -555,6 +570,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                                           value: 1
                                       };
                                       linksArray.push(tripleValue);
+                                      newlyCreatingLinkData = {nodeClicked:idVal,link:tripleValue};
+                                      onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
                                       createNewNode(el, tempPred, tempObj, isLitteral, literalDataType, element);
                                   } else {
                                       tripleValue = {
@@ -564,6 +581,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                                           value: 1
                                       };
                                       linksArray.push(tripleValue);
+                                      newlyCreatingLinkData = {nodeClicked:idVal,link:tripleValue};
+                                      onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
                                       createNewNode(el, tempPred, tempObj, isLitteral, literalDataType);
                                   }
                               }
@@ -578,6 +597,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                                       value: 1
                                   };
                                   linksArray.push(tripleValue);
+                                  newlyCreatingLinkData = {nodeClicked:idVal,link:tripleValue};
+                                  onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
                                   createNewNode(tempSub, "", tempPred, isLitteral, literalDataType);
                               } else {
                                   tripleValue = {
@@ -587,6 +608,8 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                                       value: 1
                                   };
                                   linksArray.push(tripleValue);
+                                  newlyCreatingLinkData = {nodeClicked:idVal,link:tripleValue};
+                                  onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
                                   createNewNode(tempSub, tempPred, tempObj, isLitteral, literalDataType);
                               }
                           }
@@ -594,24 +617,95 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                   }
                   //END :: Nodes and Links creation for all Properties
               });
+              
 
+              onDoubleClickCreatingNodes = false;
 
               var allClear = d3.selectAll(".everything");
               allClear.selectAll("*").remove();
 
               update();
               simulation.restart();
-          } else {
-              d3.select(idVal)
-                  .attr("r", resourceRadius)
-                  .style("fill", "#311B92");
 
-              expandedNodesArray.pop(idVal);
-          }
-      }
+              
+          } 
+          else if (expandedNodesArray.includes(idVal)) 
+          {  
+                removeClikedNode = "";
+                onDoubleClickedNewlyCreatedLinks.forEach(function(val) 
+                {
+                    if (val.nodeClicked === idVal) {
+                        for(var i=0;i<linksArray.length;i++)
+                        {
+                            if (linksArray[i].source === val.link.source && linksArray[i].predicate === val.link.predicate && linksArray[i].target === val.link.target) 
+                            {
+                                linksArray.splice(i, 1); 
+                                i--;
+                            }
+                        }
+                        removeClikedNode = val.nodeClicked;
 
-      function update() {
+                    }
+                });
+                
+                for(var i=0;i<onDoubleClickedNewlyCreatedLinks.length;i++)
+                {
+                    if (onDoubleClickedNewlyCreatedLinks[i].nodeClicked === removeClikedNode) 
+                    {
+                        onDoubleClickedNewlyCreatedLinks.splice(i, 1); 
+                        i--;
+                    }
+                }
+
+                
+                removeClikedNode = "";
+                onDoubleClickedNewlyCreatedNodes.forEach(function(val) 
+                {
+                    if (val.nodeClicked === idVal) 
+                    {
+                        for(var i=0;i<nodesArray.length;i++)
+                        {
+                            if (nodesArray[i].id === val.nodeCreated.id) 
+                            {
+                                nodesArray.splice(i, 1); 
+                                i--;
+                            }
+                        }
+                        removeClikedNode = val.nodeClicked;
+                    }
+                });
+
+                for(var i=0;i<onDoubleClickedNewlyCreatedNodes.length;i++)
+                {
+                    if (onDoubleClickedNewlyCreatedNodes[i].nodeClicked === removeClikedNode) 
+                    {
+                        onDoubleClickedNewlyCreatedNodes.splice(i, 1); 
+                        i--;
+                    }
+                }
+
+                for(var i=0;i<expandedNodesArray.length;i++)
+                {
+                    if (expandedNodesArray[i] === idVal) 
+                    {
+                        expandedNodesArray.splice(i, 1); 
+                        break;
+                    }
+                }
+                var allClear = d3.selectAll(".everything");
+                allClear.selectAll("*").remove();
+
+                update();
+                simulation.restart();
+           
+            }
+        }
+
+        function update() 
+        {
+
           simulation.restart();
+
           simulation
               .nodes(nodesArray)
               .on("tick", ticked);
