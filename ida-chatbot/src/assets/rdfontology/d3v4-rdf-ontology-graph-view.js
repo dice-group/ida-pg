@@ -772,10 +772,12 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
               .text(function(d) {
                   var labelStr = d.predicate;
                   var returnValue;
+                  
                   if (labelStr.includes("subClassOf")) {
-                      returnValue = "Source : " + d.source + "\nProperty : " + customizeGraphArray.subClassLabel + "\nObject : " + d.target;
+                    
+                      returnValue = "Source : " + d.source.id+ "\nProperty : " + customizeGraphArray.subClassLabel + "\nObject : " + d.target.id;
                   } else {
-                      returnValue = "Source : " + d.source + "\nProperty : " + d.predicate + "\nObject : " + d.target;
+                      returnValue = "Source : " + d.source.id + "\nProperty : " + labelStr + "\nObject : " + d.target.id;
                   }
 
                   return returnValue;
@@ -802,7 +804,25 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
               })
               .style("fill", function(d) {
                   var labelStr = d.id;
-                  if (d.isLitteral) {
+                  var expandedNode = false;
+                  
+                  if(!dispalyAllprop)
+                  {
+                    expandedNodesArray.forEach(function(val)
+                    {
+                        if(val === "#"+d.nodeId)
+                        {
+                            expandedNode = true;
+                        }
+                    });
+                  }
+                  
+                  if(expandedNode)
+                  {
+                     return "#8E44AD";
+                  }
+                  if (d.isLitteral) 
+                  {
                       return customizeGraphArray.literalNodeColor;
                   }
                   return customizeGraphArray.resourceNodeColor;
