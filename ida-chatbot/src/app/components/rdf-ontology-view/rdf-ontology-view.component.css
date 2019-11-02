@@ -1,10 +1,17 @@
-.labelClass {
-    
+.rightSideContainer{
+  width: 30%;
+}
+.mat-toolbar.mat-primary {
+  background: #f7f7f8;
+  color: #0b0b0b;
+}
+.labelClass { 
     padding-left: 20px;
     text-indent: -15px;
     padding-top: 7px;
     font-size: 19px;
-  }
+    padding-right: 5px;
+}
 .checkboxClass {
     width: 20px; 
     height: 20px;
@@ -15,6 +22,9 @@
     top: -8px;
     *overflow: hidden;
   }
+
+
+  
   .inputLabelClass {
     padding-left: 10px;
     font-size: 15px;
@@ -36,3 +46,4 @@
     font-size: 18px;
     width:275px;
   }
+

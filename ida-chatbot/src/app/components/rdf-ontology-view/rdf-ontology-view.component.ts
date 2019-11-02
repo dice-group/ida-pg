@@ -22,6 +22,7 @@ export class RdfOntologyViewComponent implements OnInit {
   public nodeRangeId: string;
   public nodeCommentId: string;
 
+  expandNodeInfoCard = false;
   languageCheked = false;
   classHeirarchyChecked = true;
   allPropChecked = false;
