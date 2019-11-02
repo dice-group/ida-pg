@@ -22,7 +22,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
 
   var svg = d3.select("#" + svgId)
       .append("svg")
-      .attr("width", width)
+      .attr("width", "100%")
       .attr("height", height);
 
   svg.append("svg:defs").selectAll("marker")

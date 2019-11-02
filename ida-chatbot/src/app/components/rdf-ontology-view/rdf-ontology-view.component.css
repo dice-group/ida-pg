@@ -6,44 +6,38 @@
   color: #0b0b0b;
 }
 .labelClass { 
-    padding-left: 20px;
-    text-indent: -15px;
-    padding-top: 7px;
-    font-size: 19px;
-    padding-right: 5px;
+  padding-left: 20px;
+  text-indent: -15px;
+  padding-top: 7px;
+  font-size: 19px;
+  padding-right: 5px;
 }
 .checkboxClass {
-    width: 20px; 
-    height: 20px;
-    padding-top: 10px;
-    margin:0;
-    vertical-align: bottom;
-    position: relative;
-    top: -8px;
-    *overflow: hidden;
-  }
+  width: 20px; 
+  height: 20px;
+  padding-top: 10px;
+  margin:0;
+  vertical-align: bottom;
+  position: relative;
+  top: -8px;
+  *overflow: hidden;
+}
 
+.inputTextClass {
+  border-radius: 8px;
+  width: 33%;
+  padding-left: 3px;
+}
 
-  
-  .inputLabelClass {
-    padding-left: 10px;
-    font-size: 15px;
-    float: left;
-  }
-  
-  .inputTextClass {
-    border-radius: 8px;
-    width: 33%;
-    padding-left: 3px;
-  }
+.nodeInfoDivClass {
+  float: left;
+}
 
-  .nodeInfoDivClass {
-    float: left;
-  }
-  
-  .nodeInfoDiv {
-    padding-left: 35px;
-    font-size: 18px;
-    width:275px;
-  }
+.nodeInfoDiv {
+  position: relative;
+  bottom: 34px;
+  left: 80px;
+  font-size: 18px;
+  width:275px;
+}
 

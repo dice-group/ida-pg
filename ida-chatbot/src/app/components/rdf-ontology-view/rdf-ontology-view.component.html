@@ -3,7 +3,7 @@
     
     <mat-toolbar color="primary">
       <mat-toolbar-row>
-        <div fxflex style="width: 100%; height: 20%;">
+        <div style="width: 100%; height: 20%;">
           <h1 align='center'>Historian Ontology Graph</h1>
         </div>
       </mat-toolbar-row>
@@ -48,9 +48,123 @@
     <!--START :: main container grid -->
     <mat-drawer-container class="ontologyMainContainer" autosize>
       <mat-drawer #drawer class="rightSideContainer" mode="side" position="end">
-        <p>Auto-resizing sidenav</p>
-        <p *ngIf="expandNodeInfoCard">extra text.</p>
-        <button (click)="expandNodeInfoCard = !expandNodeInfoCard" mat-raised-button> Toggle extra text</button>
+        <mat-card>
+
+          <div id="nodeInformationId" style="border-radius: 8px;padding-top: 9px;">
+            <mat-card-title>Node Information</mat-card-title> 
+          </div>
+
+          
+          <div id="nodeInfoTagesId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Node:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeId"> </div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Label:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeLabelId"></div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>ID:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeIdsId"></div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Type:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeTypeId"> </div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Description:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeDescripId"> </div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>SubClassOf:</mat-card-subtitle>
+              <div class="nodeInfoDiv" style="width: 309px;" [attr.id]="nodeSubClassId"> </div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Domain:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeDomainId"> </div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Range:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeRangeId"> </div>
+            </div>
+
+            <div class="nodeInfoDivClass">
+              <mat-card-subtitle>Comment:</mat-card-subtitle>
+              <div class="nodeInfoDiv" [attr.id]="nodeCommentId"> </div>
+            </div>
+        
+          </div>
+        </mat-card>
+
+        <mat-card>
+          <div id="graphConfigId" style="border-radius: 8px;padding-top: 9px;">
+           
+            <mat-card-title>Customize Graph</mat-card-title>
+          </div>
+  
+          <div id="graphConfigInputsId" style="border-radius: 8px; padding-top: 10px;">
+            
+            <mat-card-subtitle>Edge Size:
+              <input type="text" class="inputTextClass" [(ngModel)]="edgeSize" placeholder=" 50">
+            </mat-card-subtitle>
+            
+            <mat-card-subtitle> Graph Charge/Depth : 
+              <input type="text" class="inputTextClass" [(ngModel)]="graphCharge" placeholder=" 1000">
+            </mat-card-subtitle>
+
+            <mat-card-subtitle> Resource Node Radius: 
+              <input type="text" class="inputTextClass" [(ngModel)]="resourceRadius" placeholder=" 10">
+            </mat-card-subtitle>
+
+            <mat-card-subtitle> Literal Node Radius: 
+              <input type="text" class="inputTextClass" [(ngModel)]="literalRadius" placeholder=" 6">
+            </mat-card-subtitle>
+
+            <mat-card-subtitle>Resource Node Color: 
+              <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeColor" placeholder=" #311B92">
+            </mat-card-subtitle>
+
+              <mat-card-subtitle>Resource Node Text Color: 
+                <input type="text" class="inputTextClass" [(ngModel)]="resourceNodeTextColor" placeholder=" #311B92">
+              </mat-card-subtitle>
+
+              <mat-card-subtitle>Literal Node Color:
+                 <input type="text" class="inputTextClass" [(ngModel)]="literalNodeColor" placeholder=" #FF9800">
+              </mat-card-subtitle>
+
+              <mat-card-subtitle>Literal node text color: 
+                <input type="text" class="inputTextClass" [(ngModel)]="literalNodeTextColor" placeholder=" #FF9800">
+              </mat-card-subtitle>
+
+            <mat-card-subtitle> Sub Class Label: 
+              <input type="text" class="inputTextClass" [(ngModel)]="subClassLabel" placeholder=" --subClassOf--">
+              </mat-card-subtitle>
+
+              <mat-card-subtitle>Sub Class Label Color: 
+                <input type="text" class="inputTextClass" [(ngModel)]="subClassLabelColor" placeholder=" #3498DB">
+              </mat-card-subtitle>
+
+              <mat-card-subtitle> Property Text Color:
+                <input type="text" class="inputTextClass" [(ngModel)]="propertyTextColor"placeholder=" #28B463">
+              </mat-card-subtitle>
+
+              <mat-card-actions>
+                  <button mat-raised-button #applyConfigBtn (click)="applyConfigClicked($event)">
+                  Apply Changes
+                </button>
+              </mat-card-actions>
+             
+          </div>
+        </mat-card>
       </mat-drawer>
     
       <div class="leftSideContainer">
