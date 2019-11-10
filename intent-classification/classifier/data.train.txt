@@ -1,0 +1,156 @@
+__label__greeting hey
+__label__greeting hi
+__label__greeting hello
+__label__greeting hallo
+__label__greeting hey there
+__label__greeting good afternoon
+__label__greeting good evening
+__label__greeting good morning
+__label__greeting morning
+__label__greeting yo
+__label__greeting hello ida
+__label__greeting howdy
+__label__greeting hello
+__label__greeting ida
+__label__greeting hey there
+__label__greeting are there
+__label__greeting ay
+__label__greeting hey
+__label__greeting how can help
+__label__greeting good morning
+__label__greeting how are
+__label__greeting hi
+__label__greeting can help
+__label__greeting good evening
+__label__greeting hallo
+__label__greeting good afternoon
+__label__load-dataset could load dataset
+__label__load-dataset want see dataset
+__label__load-dataset show dataset
+__label__load-dataset load dataset
+__label__load-dataset can see datset
+__label__load-dataset check dataset
+__label__load-dataset may we see dataset
+__label__load-dataset open dataset table
+__label__load-dataset show dataset
+__label__load-dataset open dataset
+__label__load-dataset display data set
+__label__load-dataset display data
+__label__load-dataset load data new tab
+__label__load-dataset load dataset
+__label__load-dataset load data from dataset
+__label__load-dataset show data set
+__label__load-dataset load my dataset
+__label__load-dataset load dataset
+__label__load-dataset can load data set
+__label__load-dataset load data data set
+__label__load-dataset display data set
+__label__load-dataset want load dataset
+__label__load-dataset would like load dataset
+__label__load-dataset can load data set
+__label__load-dataset load data set
+__label__load-dataset show data set
+__label__load-dataset display data set
+__label__load-entity could load entity
+__label__load-entity check entity
+__label__load-entity show entity
+__label__load-entity load entity
+__label__load-entity may see entity
+__label__bar draw barchart
+__label__bar load barchart
+__label__bar sketch barchart
+__label__bar barchart
+__label__bar bring barchart
+__label__bar want see barchart
+__label__bar could load barchart
+__label__bar barchart visualisation
+__label__bar draw bar
+__label__bar show bar chart using
+__label__bar open bargraph
+__label__bar load barchart
+__label__bar can load bar chart
+__label__bar need bar graph diagram
+__label__bar make bar chart
+__label__bar lets make barchart
+__label__bar draw bar chart
+__label__bar can draw barchart
+__label__bar want bar chart
+__label__bar bring up bar graph
+__label__bar prepare bar graph
+__label__bar can make bargraph
+__label__bar show bar graph visualization
+__label__bar show barchart
+__label__geo-spatial display geo s
+__label__geo-spatial draw geospatial using
+__label__geo-spatial open geo with
+__label__geo-spatial use open geospatial graph
+__label__geo-spatial geospatial graph
+__label__geo-spatial load geo spatial graph
+__label__geo-spatial can load geo spatial
+__label__geo-spatial need geo spatial visualization
+__label__geo-spatial make geo spatial graph
+__label__geo-spatial lets make geo spatial visualization
+__label__geo-spatial draw geo diagram visualization
+__label__geo-spatial can draw geo spatial graph
+__label__geo-spatial want geo spatial diagram
+__label__geo-spatial bring up geospatial diagram
+__label__geo-spatial prepare geospatial diagram
+__label__geo-spatial can make geo spatial
+__label__geo-spatial show geo spatial visualization
+__label__sun-burst load sequence sun burst graph
+__label__sun-burst can load sun burst
+__label__sun-burst need sequence sun burst visualization
+__label__sun-burst make sun burst graph
+__label__sun-burst lets make sequence sun burst visualization
+__label__sun-burst draw sun burst visualization
+__label__sun-burst can draw sequence sun burst graph
+__label__sun-burst want sun burst diagram
+__label__sun-burst bring up sunburst diagram
+__label__sun-burst prepare sequence sunburst diagram
+__label__sun-burst can make sun burst
+__label__sun-burst show sequence sun burst visualization
+__label__venn load venn graph
+__label__venn can load ven diagram
+__label__venn need venn visualization
+__label__venn make ven graph
+__label__venn lets make venn diagram visualization
+__label__venn draw venn visualization
+__label__venn can draw wen graph
+__label__venn want venn diagram
+__label__venn bring up ven diagram
+__label__venn prepare wen diagram
+__label__venn can make wen diagram
+__label__venn show wenn diagram visualization
+__label__cluster perform clustering
+__label__cluster make clusters
+__label__cluster do clustering
+__label__cluster want do clustering
+__label__cluster apply clustering
+__label__help dont understand
+__label__help how
+__label__help how can do this
+__label__help help
+__label__help how does ida work
+__label__help how does chatbot works
+__label__help how does it work
+__label__help how select data visualisation
+__label__help don t understand visualisation
+__label__help advice data selection
+__label__help what all visualisations are offered
+__label__help how read graph
+__label__help can help
+__label__restart this is not right
+__label__restart wrong selection
+__label__restart not what wanted
+__label__restart can restart
+__label__restart missed something
+__label__restart dont understand visualisation
+__label__restart wrong visualisation
+__label__restart rerun ida
+__label__restart refresh
+__label__restart restart ida
+__label__restart close start ida again
+__label__restart go back
+__label__restart restart
+__label__restart dont want this
+__label__restart return previous
