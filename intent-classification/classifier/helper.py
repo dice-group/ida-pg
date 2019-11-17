@@ -27,7 +27,7 @@ def preprocess_text(text: str):
     lemmatized = lemma_wordnet(tagged)
     no_stopwords = [w for w in lemmatized if w not in stopwords]
 
-    return no_stopwords
+    return " ".join(no_stopwords)
 
 
 def lemma_wordnet(tagged_text):
