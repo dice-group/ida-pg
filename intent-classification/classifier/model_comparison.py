@@ -92,3 +92,14 @@ pd.set_option('display.width', 1000)
 print('')
 for i in range(6):
 	print(model_names[i] + ": " + str(accuracies[i]))
+
+
+txt = "show me ven"
+multi = tfidf_vectorizer.transform([helper.preprocess_text(txt)]).toarray()
+
+pred = sgd_model.predict_proba(multi)
+
+print("\n\nprediction scores for: " + txt)
+# for i in range
+print(pred)
+print(LE.classes_)
