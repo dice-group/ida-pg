@@ -16,9 +16,14 @@ def hello_world():
 @flask_app.route('/classify')
 def classify():
 	text = str(request.args.get('text'))
+	n = request.args.get('n')
 
 	if text:
-		predictions = classifier.predict(text, n=3)
+		if n:
+			predictions = classifier.predict(text, n=int(n))
+		else:
+			predictions = classifier.predict(text)
+
 		return jsonify(predictions)
 	else:
 		return "Please supply text as a url param e.g. http://127.0.0.1:5000/classify?text=Hello"
