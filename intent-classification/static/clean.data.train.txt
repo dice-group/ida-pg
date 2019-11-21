@@ -1,0 +1,157 @@
+class;text
+greeting;hey
+greeting;hi
+greeting;hello
+greeting;hallo
+greeting;hey there
+greeting;good afternoon
+greeting;good evening
+greeting;good morning
+greeting;morning
+greeting;yo
+greeting;hello ida
+greeting;howdy
+greeting;hello
+greeting;ida
+greeting;hey there
+greeting;are there
+greeting;ay
+greeting;hey
+greeting;how can help
+greeting;good morning
+greeting;how are
+greeting;hi
+greeting;can help
+greeting;good evening
+greeting;hallo
+greeting;good afternoon
+load-dataset;could load dataset
+load-dataset;want see dataset
+load-dataset;show dataset
+load-dataset;load dataset
+load-dataset;can see datset
+load-dataset;check dataset
+load-dataset;may we see dataset
+load-dataset;open dataset table
+load-dataset;show dataset
+load-dataset;open dataset
+load-dataset;display data set
+load-dataset;display data
+load-dataset;load data new tab
+load-dataset;load dataset
+load-dataset;load data from dataset
+load-dataset;show data set
+load-dataset;load my dataset
+load-dataset;load dataset
+load-dataset;can load data set
+load-dataset;load data data set
+load-dataset;display data set
+load-dataset;want load dataset
+load-dataset;would like load dataset
+load-dataset;can load data set
+load-dataset;load data set
+load-dataset;show data set
+load-dataset;display data set
+load-entity;could load entity
+load-entity;check entity
+load-entity;show entity
+load-entity;load entity
+load-entity;may see entity
+bar;draw barchart
+bar;load barchart
+bar;sketch barchart
+bar;barchart
+bar;bring barchart
+bar;want see barchart
+bar;could load barchart
+bar;barchart visualisation
+bar;draw bar
+bar;show bar chart using
+bar;open bargraph
+bar;load barchart
+bar;can load bar chart
+bar;need bar graph diagram
+bar;make bar chart
+bar;lets make barchart
+bar;draw bar chart
+bar;can draw barchart
+bar;want bar chart
+bar;bring up bar graph
+bar;prepare bar graph
+bar;can make bargraph
+bar;show bar graph visualization
+bar;show barchart
+geo-spatial;display geo s
+geo-spatial;draw geospatial using
+geo-spatial;open geo with
+geo-spatial;use open geospatial graph
+geo-spatial;geospatial graph
+geo-spatial;load geo spatial graph
+geo-spatial;can load geo spatial
+geo-spatial;need geo spatial visualization
+geo-spatial;make geo spatial graph
+geo-spatial;lets make geo spatial visualization
+geo-spatial;draw geo diagram visualization
+geo-spatial;can draw geo spatial graph
+geo-spatial;want geo spatial diagram
+geo-spatial;bring up geospatial diagram
+geo-spatial;prepare geospatial diagram
+geo-spatial;can make geo spatial
+geo-spatial;show geo spatial visualization
+sun-burst;load sequence sun burst graph
+sun-burst;can load sun burst
+sun-burst;need sequence sun burst visualization
+sun-burst;make sun burst graph
+sun-burst;lets make sequence sun burst visualization
+sun-burst;draw sun burst visualization
+sun-burst;can draw sequence sun burst graph
+sun-burst;want sun burst diagram
+sun-burst;bring up sunburst diagram
+sun-burst;prepare sequence sunburst diagram
+sun-burst;can make sun burst
+sun-burst;show sequence sun burst visualization
+venn;load venn graph
+venn;can load ven diagram
+venn;need venn visualization
+venn;make ven graph
+venn;lets make venn diagram visualization
+venn;draw venn visualization
+venn;can draw wen graph
+venn;want venn diagram
+venn;bring up ven diagram
+venn;prepare wen diagram
+venn;can make wen diagram
+venn;show wenn diagram visualization
+cluster;perform clustering
+cluster;make clusters
+cluster;do clustering
+cluster;want do clustering
+cluster;apply clustering
+help;dont understand
+help;how
+help;how can do this
+help;help
+help;how does ida work
+help;how does chatbot works
+help;how does it work
+help;how select data visualisation
+help;don t understand visualisation
+help;advice data selection
+help;what all visualisations are offered
+help;how read graph
+help;can help
+restart;this is not right
+restart;wrong selection
+restart;not what wanted
+restart;can restart
+restart;missed something
+restart;dont understand visualisation
+restart;wrong visualisation
+restart;rerun ida
+restart;refresh
+restart;restart ida
+restart;close start ida again
+restart;go back
+restart;restart
+restart;dont want this
+restart;return previous

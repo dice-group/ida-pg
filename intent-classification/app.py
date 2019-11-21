@@ -1,19 +1,24 @@
 from flask import Flask
+from flask import jsonify
 from flask import request
 
-app = Flask(__name__)
+from classifier.classifier import ChatIntentClassifier
+
+flask_app = Flask(__name__)
+classifier = ChatIntentClassifier("clean.data.train.txt", "text", "class", ";")
 
 
-@app.route('/')
+@flask_app.route('/')
 def hello_world():
-    return 'Hello World!'
+	return 'Hello World!'
 
 
-@app.route('/classify')
+@flask_app.route('/classify')
 def classify():
-    text = str(request.args.get('text'))
-    return 'Hello World! - ' + text
+	text = str(request.args.get('text'))
+	predictions = classifier.predict(text, n=3)
+	return jsonify(predictions)
 
 
 if __name__ == '__main__':
-    app.run()
+	flask_app.run()
