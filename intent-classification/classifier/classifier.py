@@ -59,9 +59,6 @@ class ChatIntentClassifier:
 		to_predict = self.tfidf_vectorizer.transform([helper.preprocess_text(text)]).toarray()
 		predictions = list(self.classifier.predict_proba(to_predict)[0])
 		sorted_predictions = sorted(predictions, reverse=True)
-		print(self.label_encoder.classes_)
-		print(predictions)
-		print(sorted_predictions)
 
 		intent_scores = []
 		for i in range(n):
@@ -69,5 +66,4 @@ class ChatIntentClassifier:
 				intent_scores.append({'intent': self.label_encoder.classes_[predictions.index(sorted_predictions[i])],
 									  'score': sorted_predictions[i]})
 
-		print(intent_scores)
 		return intent_scores
