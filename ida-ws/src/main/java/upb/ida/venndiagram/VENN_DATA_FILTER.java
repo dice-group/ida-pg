@@ -1,41 +1,20 @@
 package upb.ida.venndiagram;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import org.dice_research.topicmodeling.commons.sort.AssociativeSort;
-
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
+import upb.ida.dao.DataRepository;
 
 public class VENN_DATA_FILTER {
 	public Map<Integer, Set<Integer>> dataMap = new HashMap<>();
 
-	public void createDataMap(File inputFile, int labelColIndx, int dataColIndx) throws IOException {
-		// create csvreaderbuilder for dnstTbl
-		CSVReaderBuilder rBuilder = new CSVReaderBuilder(new FileReader(inputFile));
-		// build the reader
-		CSVReader csvReader = rBuilder.build();
-		try {
-			// read first line
-			csvReader.readNext();
-			for (String[] line; (line = csvReader.readNext()) != null;) {
-				int ordenId = Integer.parseInt(line[labelColIndx]);
-				int fhrId = Integer.parseInt(line[dataColIndx]);
-				Set<Integer> fhrSet = dataMap.get(ordenId);
-				if (fhrSet == null) {
-					fhrSet = new HashSet<>();
-					dataMap.put(ordenId, fhrSet);
-				}
-				fhrSet.add(fhrId);
-			}
-		} finally {
-			csvReader.close();
+	public void createDataMap(String actvTbl, String labelCol, String dataCol, String actvDs) throws NumberFormatException {
+		DataRepository dataRepository = new DataRepository(actvDs, false);
+		List<Map<String, String>> data = dataRepository.getData(actvTbl);
+		for (Map<String, String> entry : data) {
+			int ordenId = Integer.parseInt(entry.get(labelCol));
+			int fhrId = Integer.parseInt(entry.get(dataCol));
+			Set<Integer> fhrSet = dataMap.computeIfAbsent(ordenId, k -> new HashSet<>());
+			fhrSet.add(fhrId);
 		}
 	}
 

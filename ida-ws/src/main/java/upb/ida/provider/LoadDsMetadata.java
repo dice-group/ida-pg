@@ -37,7 +37,11 @@ public class LoadDsMetadata implements Subroutine {
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", message);
 			dataMap.put("dsName", message);
-			dataMap.put("dsMd", dataRepository.getSSDataSetMD());
+			if("ssfuehrer".equals(message)){
+				dataMap.put("dsMd", dataRepository.getSSDataSetMD());
+			}else{
+				dataMap.put("dsMd", fileUtil.getDatasetMetaData(message));
+			}
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_LOADDS);
 			return IDALiteral.RESP_PASS_ROUTINE;

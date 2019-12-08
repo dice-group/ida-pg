@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
+import upb.ida.dao.DataRepository;
 import upb.ida.util.FileUtil;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -24,14 +22,14 @@ public class GeoDiagramHandler implements Subroutine {
 	private FileUtil DemoMain;
 	@Autowired
 	private ResponseBean responseBean;
-	
+
 	/**
 	 * Method to create response for Geo Spatial Diagram visualization
 	 * @param args
-	 *            - {@link call#args}
+	 *
 	 * @return  String - pass or fail
 	 */
-	
+
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 
 		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
@@ -43,7 +41,8 @@ public class GeoDiagramHandler implements Subroutine {
 		try {
 			double maxLat;
 			double maxLon;
-			List<Map<String, String>> data = DemoMain.convertToMap(new File(DemoMain.fetchSysFilePath(path)));
+			DataRepository dataRepository = new DataRepository(actvDs, false);
+			List<Map<String, String>> data = dataRepository.getData(actvTbl);
 			for (Map<String, String> ele : data) {
 				HashMap<String, ArrayList<Double>> row = new HashMap<>();
 				ArrayList<Double> coordinates = new ArrayList<>(2);
@@ -64,7 +63,7 @@ public class GeoDiagramHandler implements Subroutine {
 				responseBean.setPayload(dataMap);
 			}
 			dataMap.put("gsDiagramData", response);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "pass";

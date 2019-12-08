@@ -1,6 +1,5 @@
 package upb.ida.fdg;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -9,21 +8,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.math3.stat.StatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import upb.ida.dao.DataRepository;
 import upb.ida.util.FileUtil;
 
 /**
  * Exposes util methods to perform FDG related operations
- * 
+ *
  * @author Nikit
  *
  */
@@ -36,7 +33,7 @@ public class FDG_Util {
 	/**
 	 * Method to convert a list of triples into formatted json data for FDG
 	 * Visualization
-	 * 
+	 *
 	 * @param triples
 	 *            - list of triples
 	 * @return jsonobject of data
@@ -89,7 +86,7 @@ public class FDG_Util {
 
 	/**
 	 * Method to generate a Json object representing a Force Directed Graph
-	 * 
+	 *
 	 * @param filePath
 	 *            - path of the data file
 	 * @param srcNodeFtr
@@ -103,16 +100,16 @@ public class FDG_Util {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public ObjectNode generateFDG(String filePath, String srcNodeFtr, String trgtNodeFtr, String strngthFtr)
+	public ObjectNode generateFDG(String actvTbl, String srcNodeFtr, String trgtNodeFtr, String strngthFtr, String actvDs)
 			throws JsonProcessingException, IOException, ParseException {
 		ObjectNode res = null;
 		int ndUniqueId = 1;
 		int tripUniqueId = 1;
-		File file = new File(dem.fetchSysFilePath(filePath));
+		DataRepository dataRepository = new DataRepository(actvDs, false);
 		List<FDG_Triple> tripleList = new ArrayList<>();
 
 		// Fetch the map for the file
-		List<Map<String, String>> dataMapList = dem.convertToMap(file);
+		List<Map<String, String>> dataMapList = dataRepository.getData(actvTbl); // dem.convertToMap(file);
 		double[] strngthValArr = new double[dataMapList.size()];
 		int sindx = 0;
 		// Create node map
@@ -147,7 +144,7 @@ public class FDG_Util {
 
 	/**
 	 * Method to calculate a custom normal value for a given number
-	 * 
+	 *
 	 * @param num
 	 *            - number to normalize
 	 * @param max
