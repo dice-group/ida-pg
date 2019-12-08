@@ -10,7 +10,7 @@ from settings import APP_STATIC
 
 
 class ChatIntentClassifier:
-	__threshold = 0.7
+	__threshold = 0.6
 	__training_data_file = None
 	__df = None
 	classifier = None

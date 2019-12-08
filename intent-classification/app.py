@@ -24,7 +24,7 @@ def classify():
 		else:
 			predictions = classifier.predict(text)
 
-		return jsonify(predictions)
+		return jsonify(dict(text=text, intents=predictions))
 	else:
 		return "Please supply text as a url param e.g. http://127.0.0.1:5000/classify?text=Hello"
 
