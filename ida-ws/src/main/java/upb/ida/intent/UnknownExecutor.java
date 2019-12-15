@@ -1,28 +1,27 @@
 package upb.ida.intent;
 
-import java.util.Map;
-
 public class UnknownExecutor extends AbstractIntentExecutor implements IntentExecutor {
 
+	public UnknownExecutor() {
+		super(null);
+	}
+
 	@Override
-	public Question getNextQuestion(Map<String, Object> context) {
+	public Question getNextQuestion(ChatbotContext context) {
 		return null;
 	}
 
 	@Override
-	public void execute() {
+	public void execute(ChatbotContext context) {
 
 	}
 
 	@Override
-	public boolean needsMoreInformation(Map<String, Object> context) {
+	public boolean needsMoreInformation(ChatbotContext context) {
 		return false;
 	}
 
 	@Override
-	public String getNextResponse(Map<String, Object> context) {
-		return "How can I help you?";
+	public void processResponse(ChatbotContext context) {
 	}
-
-
 }

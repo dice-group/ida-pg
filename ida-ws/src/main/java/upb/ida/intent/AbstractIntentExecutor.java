@@ -2,9 +2,20 @@ package upb.ida.intent;
 
 import org.apache.commons.text.StringSubstitutor;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 abstract class AbstractIntentExecutor implements IntentExecutor {
+
+	protected List<Question> questions;
+
+	public AbstractIntentExecutor(List<Question> questions) {
+		this.questions = questions;
+	}
+
+	@Override
+	public abstract void execute(ChatbotContext context) throws IOException, ParseException;
 
 	@Override
 	public boolean isExecutable() {
@@ -12,55 +23,58 @@ abstract class AbstractIntentExecutor implements IntentExecutor {
 	}
 
 	@Override
-	public abstract void execute();
-
-	@Override
-	public void processResponse(String originalMessage, Map<String, Object> context) {
-		Map<String, String> savedAnswers = (Map<String, String>) context.get("savedAnswers");
-		if (savedAnswers == null) {
-			savedAnswers = new HashMap<>();
-			context.put("savedAnswers", savedAnswers);
-		}
-
-		Question activeQuestion = (Question) context.get("activeQuestion");
+	public void processResponse(ChatbotContext context) {
+		Map<String, String> savedAnswers = context.getSavedAnswers();
+		Question activeQuestion = context.getActiveQuestion();
 
 		if (activeQuestion != null) {
-			savedAnswers.put(activeQuestion.getQuestionKey(), originalMessage);
+			// Extract
+			List<String> answers = activeQuestion.getStrategy().extractAnswer(context);
+
+			if (answers == null || answers.isEmpty()) {
+				System.out.println("could not process answer");
+				return;
+			}
+
+			System.out.println(answers);
+
+			Map<String, String> feedbackMap = new HashMap<>();
+			for (int i = 0; i < answers.size(); i++) {
+				savedAnswers.put(activeQuestion.getAnswerKeys().get(i), answers.get(i));
+				feedbackMap.put(activeQuestion.getAnswerKeys().get(i), answers.get(i));
+			}
+
+			// Transfer logic to question
 			String feedbackTemplate = activeQuestion.getFeedbackText();
-			StringSubstitutor sub = new StringSubstitutor(Collections.singletonMap(activeQuestion.getQuestionKey(), originalMessage));
+			StringSubstitutor sub = new StringSubstitutor(feedbackMap);
 			String feedback = sub.replace(feedbackTemplate);
-			this.addChatbotResponse(feedback, context);
+			if (feedback != null) {
+				context.addChatbotResponse(feedback);
+			}
 		}
 	}
 
-	protected boolean needsMoreInformation(List<Question> questions, Map<String, Object> context) {
-		Map<String, String> savedAnswers = (Map<String, String>) context.get("savedAnswers");
+	@Override
+	public boolean needsMoreInformation(ChatbotContext context) {
+		Map<String, String> savedAnswers = context.getSavedAnswers();
 		for (Question q : questions) {
-			if (!savedAnswers.containsKey(q.getQuestionKey())) {
+			boolean allAnswerKeysSaved = q.getAnswerKeys().stream().allMatch(savedAnswers::containsKey);
+			if (!allAnswerKeysSaved)
 				return true;
-			}
 		}
 		return false;
 	}
 
-	protected Question getNextQuestion(List<Question> questions, Map<String, Object> context) {
-		Map<String, String> savedAnswers = (Map<String, String>) context.get("savedAnswers");
+	@Override
+	public Question getNextQuestion(ChatbotContext context) {
+		Map<String, String> savedAnswers = context.getSavedAnswers();
 		for (Question q : questions) {
-			if (!savedAnswers.containsKey(q.getQuestionKey())) {
+			boolean allAnswerKeysSaved = q.getAnswerKeys().stream().allMatch(savedAnswers::containsKey);
+			if (!allAnswerKeysSaved) {
 				return q;
 			}
 		}
 		return null;
 	}
 
-
-	// TODO Move to refactored context class
-	private void addChatbotResponse(String response, Map<String, Object> context) {
-		List<String> chatbotResponses = (List<String>) context.get("chatbotResponses");
-		if (chatbotResponses == null) {
-			chatbotResponses = new ArrayList<>();
-			context.put("chatbotResponses", chatbotResponses);
-		}
-		chatbotResponses.add(response);
-	}
 }

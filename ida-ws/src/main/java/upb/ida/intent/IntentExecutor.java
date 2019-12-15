@@ -1,18 +1,17 @@
 package upb.ida.intent;
 
-import java.util.Map;
+import java.io.IOException;
+import java.text.ParseException;
 
 public interface IntentExecutor {
 
 	boolean isExecutable();
 
-	Question getNextQuestion(Map<String, Object> context);
+	Question getNextQuestion(ChatbotContext context);
 
-	void execute();
+	void execute(ChatbotContext context) throws IOException, ParseException;
 
-	boolean needsMoreInformation(Map<String, Object> context);
+	boolean needsMoreInformation(ChatbotContext context);
 
-	String getNextResponse(Map<String, Object> context);
-
-	void processResponse(String originalMessage, Map<String, Object> context);
+	void processResponse(ChatbotContext context);
 }

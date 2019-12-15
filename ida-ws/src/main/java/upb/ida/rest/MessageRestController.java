@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import upb.ida.bean.ResponseBean;
+import upb.ida.intent.ChatbotContext;
+import upb.ida.intent.Orchestrator;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot
- * 
+ *
  * @author Nikit
  *
  */
@@ -27,8 +29,11 @@ public class MessageRestController {
 	private ResponseBean response;
 	@Autowired
 	private RiveScriptService rsService;
-	@Autowired 
+	@Autowired
 	private DataService dataService;
+	@Autowired
+	private Orchestrator orchestrator;
+
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
@@ -52,12 +57,18 @@ public class MessageRestController {
 		dataMap.put("actvTbl", actvTbl);
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
-		String reply = rsService.getRSResponse(msg);
 
+		ChatbotContext chatbotContext = orchestrator.processMessage(msg);
+		String reply;
+		if(chatbotContext == null)
+			reply = rsService.getRSResponse(msg);
+		else {
+			 reply = String.join(" ", chatbotContext.getChatbotResponses());
+		}
 		response.setChatmsg(reply);
 		return response;
 	}
-	
+
 	@RequestMapping("/getdatatable")
 	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {

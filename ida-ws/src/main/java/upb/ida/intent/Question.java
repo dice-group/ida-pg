@@ -1,21 +1,30 @@
 package upb.ida.intent;
 
+import java.util.List;
+
 public class Question {
 	private String question;
-	private String questionKey;
+	private List<String> answerKeys;
 	private String feedbackText;
-	private HandlingStrategy strategy;
-	private String answer;
+	private String helpText;
+	private AnswerHandlingStrategy strategy;
+	private boolean optional;
 
-	public enum HandlingStrategy {
-		ACTIVE_TABLE_COLUMNS, FIXED_SET
+	public Question(String question, List<String> answerKeys, String feedbackText, String helpText, AnswerHandlingStrategy strategy, boolean optional) {
+		this.question = question;
+		this.answerKeys = answerKeys;
+		this.feedbackText = feedbackText;
+		this.helpText = helpText;
+		this.strategy = strategy;
+		this.optional = optional;
 	}
 
-	public Question(String question, String questionKey, String feedbackText, HandlingStrategy strategy) {
+	public Question(String question, List<String> answerKeys, String feedbackText, AnswerHandlingStrategy strategy, boolean optional) {
 		this.question = question;
-		this.questionKey = questionKey;
+		this.answerKeys = answerKeys;
 		this.feedbackText = feedbackText;
 		this.strategy = strategy;
+		this.optional = optional;
 	}
 
 	public String getQuestion() {
@@ -26,12 +35,12 @@ public class Question {
 		this.question = question;
 	}
 
-	public String getQuestionKey() {
-		return questionKey;
+	public List<String> getAnswerKeys() {
+		return answerKeys;
 	}
 
-	public void setQuestionKey(String questionKey) {
-		this.questionKey = questionKey;
+	public void setAnswerKeys(List<String> answerKeys) {
+		this.answerKeys = answerKeys;
 	}
 
 	public String getFeedbackText() {
@@ -42,16 +51,27 @@ public class Question {
 		this.feedbackText = feedbackText;
 	}
 
-	public void setStrategy(HandlingStrategy strategy) {
+	public void setStrategy(AnswerHandlingStrategy strategy) {
 		this.strategy = strategy;
 	}
 
-	public String getAnswer() {
-		return answer;
+	public String getHelpText() {
+		return helpText;
 	}
 
-	public void setAnswer(String answer) {
-		this.answer = answer;
+	public void setHelpText(String helpText) {
+		this.helpText = helpText;
 	}
 
+	public AnswerHandlingStrategy getStrategy() {
+		return strategy;
+	}
+
+	public boolean isOptional() {
+		return optional;
+	}
+
+	public void setOptional(boolean optional) {
+		this.optional = optional;
+	}
 }
