@@ -2,10 +2,10 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 
-from classifier.classifier import ChatIntentClassifier
+from classifier import helper
 
 flask_app = Flask(__name__)
-classifier = ChatIntentClassifier("clean.data.train.txt", "text", "class", ";")
+classifier = helper.load_model()
 
 
 @flask_app.route('/')
@@ -26,7 +26,7 @@ def classify():
 
 		return jsonify(dict(text=text, intents=predictions))
 	else:
-		return "Please supply text as a url param e.g. http://127.0.0.1:5000/classify?text=Hello"
+		return "Please supply text as a url param e.g. /classify?text=Hello"
 
 
 if __name__ == '__main__':

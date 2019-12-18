@@ -22,7 +22,6 @@ class ChatIntentClassifier:
 		self.label_encoder = LabelEncoder()
 		self.tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 2), max_df=.95)
 		self.__training_data_file = os.path.join(APP_STATIC, training_data_file)
-		# self.__training_data_file = training_data_file
 		self.__read_file(self.__training_data_file, text_column_name, label_column_name, delimiter)
 		self.__train()
 
