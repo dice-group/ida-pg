@@ -1,6 +1,8 @@
 package upb.ida.provider;
 
 import java.util.Map;
+
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
@@ -37,14 +39,17 @@ public class LoadDsMetadata implements Subroutine {
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", message);
 			dataMap.put("dsName", message);
-			if("ssfuehrer".equals(message)){
-				dataMap.put("dsMd", dataRepository.getSSDataSetMD());
+			Map<String, Object> metaData = dataRepository.getDataSetMD(message);
+			if(metaData == null){
+				responseBean.setActnCode(IDALiteral.UIA_NOACTION);
+				responseBean.setPayload(null);
+				return IDALiteral.RESP_FAIL_ROUTINE;
 			}else{
-				dataMap.put("dsMd", fileUtil.getDatasetMetaData(message));
+				dataMap.put("dsMd", metaData);
+				responseBean.setPayload(dataMap);
+				responseBean.setActnCode(IDALiteral.UIA_LOADDS);
+				return IDALiteral.RESP_PASS_ROUTINE;
 			}
-			responseBean.setPayload(dataMap);
-			responseBean.setActnCode(IDALiteral.UIA_LOADDS);
-			return IDALiteral.RESP_PASS_ROUTINE;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

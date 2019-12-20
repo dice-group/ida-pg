@@ -87,8 +87,8 @@ public class FDG_Util {
 	/**
 	 * Method to generate a Json object representing a Force Directed Graph
 	 *
-	 * @param filePath
-	 *            - path of the data file
+	 * @param actvTbl
+	 *            - name of the current table
 	 * @param srcNodeFtr
 	 *            - feature name of the source node
 	 * @param trgtNodeFtr
@@ -109,7 +109,7 @@ public class FDG_Util {
 		List<FDG_Triple> tripleList = new ArrayList<>();
 
 		// Fetch the map for the file
-		List<Map<String, String>> dataMapList = dataRepository.getData(actvTbl); // dem.convertToMap(file);
+		List<Map<String, String>> dataMapList = dataRepository.getData(actvTbl, actvDs); // dem.convertToMap(file);
 		double[] strngthValArr = new double[dataMapList.size()];
 		int sindx = 0;
 		// Create node map

@@ -8,13 +8,13 @@ import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import java.util.*;
 
 /**
  * Class to make fuseki database calls.
  *
  * @author Nandeesh
- *
  */
 public class DataRepository {
 	private static String dbhost = System.getenv("FUSEKI_URL");
@@ -24,50 +24,53 @@ public class DataRepository {
 	private boolean isTest;
 
 	public DataRepository(String dataset, boolean isTest) {
-		if (dbhost == null) {
-			dbhost = "http://127.0.0.1:3030/";
-		}
 		dbUrl = dbhost + dataset;
 		this.isTest = isTest;
-		if (isTest) {
-			try {
-				model = ModelFactory.createDefaultModel();
-				String path = Objects.requireNonNull(getClass().getClassLoader().getResource("test.ttl")).getFile();
-				model.read(path);
-			} catch (NullPointerException ex) {
-				System.out.println(ex.getMessage());
-			}
-		} else {
-			try {
-				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
-				conn = (RDFConnectionFuseki) builder.build();
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
-		}
 	}
 
 	/**
 	 * @param queryString the SPARQL query to be executed on the RDF dataset
 	 * @return It takes query string as its parameter and returns the result set after executing the query.
 	 */
-	public ResultSet getResultFromQuery(String queryString) {
+	public ResultSet getResultFromQuery(String dataset, String queryString) {
 		QueryExecution queryExecution = null;
+		ResultSet resultSet = null;
+		Query query = QueryFactory.create(queryString);
+
 		if (model == null) {
-			try {
-				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
-				conn = (RDFConnectionFuseki) builder.build();
-				Query query = QueryFactory.create(queryString);
-				queryExecution = conn.query(query);
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
+			if (isTest || "test-data".equals(dataset) || "test-ontology".equals(dataset)) {
+				try {
+					model = ModelFactory.createDefaultModel();
+					String path = Objects.requireNonNull(getClass().getClassLoader().getResource("dataset/test.ttl")).getFile();
+					model.read(path);
+					queryExecution = QueryExecutionFactory.create(query, model);
+				} catch (NullPointerException ex) {
+					System.out.println(ex.getMessage());
+					return null;
+				}
+			} else {
+				try {
+					RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + dataset);
+					conn = (RDFConnectionFuseki) builder.build();
+					queryExecution = conn.query(query);
+				} catch (Exception ex) {
+					System.out.println(ex.getMessage());
+					return null;
+				} finally {
+					conn.close();
+				}
 			}
 		} else {
-			Query query = QueryFactory.create(queryString);
 			queryExecution = QueryExecutionFactory.create(query, model);
 		}
-		if(queryExecution != null) {
-			return queryExecution.execSelect();
+		if (queryExecution != null) {
+			try {
+				resultSet = ResultSetFactory.copyResults(queryExecution.execSelect());
+				queryExecution.close();
+				return resultSet;
+			} catch (Exception e) {
+				return null;
+			}
 		}
 		return null;
 	}
@@ -76,13 +79,14 @@ public class DataRepository {
 	/**
 	 * @return - Metadata of SSFuehrer dataset.
 	 */
-	public JSONObject getSSDataSetMD() {
+	public Map<String, Object> getDataSetMD(String dataset) {
 		Map<String, Integer> classCountMap = new HashMap<>();
 		Set<String> distinctColumns = new TreeSet<>();
 		Map<String, ArrayList<String>> columnMap = new HashMap<>();
 		Map<String, String> columnCommentMap = new HashMap<>();
 		Map<String, String> columnTypeMap = new HashMap<>();
 		Map<String, String> columnLabelMap = new HashMap<>();
+		Map<String, String> classBaseUrlMap = new HashMap<>();
 		String className;
 		String columnName;
 		int rowCount;
@@ -90,40 +94,47 @@ public class DataRepository {
 		int index;
 		String filterPrefix = "?s = ";
 		StringBuilder filterCondition = new StringBuilder();
-		String baseUrl = "http://127.0.0.1:3030/ssfuehrer";
 		String queryString = RepoConstants.PREFIXES +
-				"prefix datagraph: <" + baseUrl + "/data/data>\n" +
 				"SELECT ?class (count(?class) as ?count)\n" +
-				"FROM datagraph:\n" +
 				"WHERE {\n" +
 				"  \t?s rdf:type ?class;\n" +
 				"    FILTER (?class != owl:NamedIndividual)\n" +
 				"}\n" +
 				"GROUP BY ?class";
-		ResultSet resultSet = getResultFromQuery(queryString);
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		if (resultSet == null) {
+			return null;
+		}
 		while (resultSet.hasNext()) {
 			resource = resultSet.next();
 			className = resource.get("class").asNode().getURI();
-			index = className.lastIndexOf("/");
+			if(className.contains("#")){
+				index = className.lastIndexOf("#");
+			}else{
+				index = className.lastIndexOf("/");
+			}
 			className = className.substring(index + 1);
 			rowCount = Integer.parseInt(resource.get("count").asNode().getLiteralValue().toString());
 			classCountMap.put(className, rowCount);
+			classBaseUrlMap.put(className, resource.get("class").asNode().getURI());
 		}
 		queryString = RepoConstants.PREFIXES +
-				"prefix datagraph: <" + baseUrl + "/data/data>\n" +
 				"SELECT DISTINCT ?class ?pred\n" +
-				"FROM datagraph:\n" +
 				"WHERE {\n" +
 				"  \t?s ?pred ?o;\n" +
 				"    ?pred [];\n" +
 				"    rdf:type ?class;\n" +
 				"    FILTER ( ?class != owl:NamedIndividual && (?pred != rdf:type))\n" +
 				"}";
-		resultSet = getResultFromQuery(queryString);
+		resultSet = getResultFromQuery(dataset + "-data", queryString);
 		while (resultSet != null && resultSet.hasNext()) {
 			resource = resultSet.next();
 			className = resource.get("class").asNode().getURI();
-			index = className.lastIndexOf("/");
+			if(className.contains("#")){
+				index = className.lastIndexOf("#");
+			}else{
+				index = className.lastIndexOf("/");
+			}
 			className = className.substring(index + 1);
 			columnName = resource.get("pred").asNode().getURI();
 			distinctColumns.add(columnName);
@@ -142,9 +153,7 @@ public class DataRepository {
 		}
 		if (!"".contentEquals(filterCondition)) {
 			queryString = RepoConstants.PREFIXES +
-					"prefix ontologygraph: <" + baseUrl + "/data/ontology>\n" +
 					"SELECT DISTINCT (?s as ?column) ?comment ?type ?label\n" +
-					"FROM ontologygraph:\n" +
 					"WHERE { \n" +
 					"  ?s\n" +
 					"  rdfs:range ?type;\n" +
@@ -154,7 +163,8 @@ public class DataRepository {
 					"  }" +
 					" 	FILTER (" + filterCondition + ")" +
 					"}";
-			resultSet = getResultFromQuery(queryString);
+			model = null;
+			resultSet = getResultFromQuery(dataset + "-ontology", queryString);
 			String columnType;
 			String comment;
 			String label;
@@ -187,32 +197,42 @@ public class DataRepository {
 				} else {
 					label = "";
 				}
-				columnName = resource.get("column").asNode().getURI().replaceAll("ssdal/ontology", "ssdal/data");
+				columnName = resource.get("column").asNode().getURI().replaceAll("/ontology/", "/data/");
 				columnCommentMap.put(columnName, comment);
 				columnTypeMap.put(columnName, columnType);
 				columnLabelMap.put(columnName, label);
 			}
 		}
-		JSONObject datasetInfo = new JSONObject();
-		datasetInfo.put("dsName", "SSFuehrer");
-		datasetInfo.put("dsDesc", "This dataset contains the data of SS from the historians.");
-		JSONArray tables = new JSONArray();
-		JSONArray columns;
-		JSONObject table;
-		JSONObject column;
+//		JSONObject datasetInfo = new JSONObject();
+		Map<String, Object> dsInfo = new HashMap<>();
+		dsInfo.put("dsName", dataset);
+		dsInfo.put("dsDesc", "");
+//		datasetInfo.put("dsName", dataset);
+//		datasetInfo.put("dsDesc", "");
+//		JSONArray tables = new JSONArray();
+//		JSONArray columns;
+		List<Map<String, Object>> columns;
+		List<Map<String, Object>> tables = new ArrayList<>();
+//		JSONObject table;
+		Map<String, Object> table = new HashMap<>();
+		Map<String, Object> column = new HashMap<>();
+//		JSONObject column;
 		String classKey;
 		for (String cls : classCountMap.keySet()) {
 			classKey = cls.replaceAll(" ", "");
 			if (columnMap.get(classKey) != null) {
-				table = new JSONObject();
-				columns = new JSONArray();
+//				table = new JSONObject();
+//				columns = new JSONArray();
+				table = new HashMap<>();
+				columns = new ArrayList<>();
 				index = 1;
 				table.put("displayName", cls);
 				table.put("fileName", cls);
 				table.put("colCount", columnMap.get(classKey).size());
 				table.put("rowCount", classCountMap.get(cls));
+				table.put("baseUrl", classBaseUrlMap.get(cls));
 				for (String col : columnMap.get(classKey)) {
-					column = new JSONObject();
+					column = new HashMap<>();
 					column.put("colIndex", index++);
 					if (columnLabelMap.get(col) != null) {
 						columnName = columnLabelMap.get(col);
@@ -226,7 +246,7 @@ public class DataRepository {
 						column.put("colDesc", columnCommentMap.get(col));
 					} else {
 						if ("label".equals(columnName)) {
-							column.put("colDesc", "Label of a SSClass resource");
+							column.put("colDesc", "Label of a " + dataset + " resource");
 						}
 					}
 					if (columnTypeMap.get(col) != null) {
@@ -242,17 +262,20 @@ public class DataRepository {
 				tables.add(table);
 			}
 		}
-		datasetInfo.put("filesMd", tables);
-
-		return datasetInfo;
+//		datasetInfo.put("filesMd", tables);
+		dsInfo.put("filesMd", tables);
+		if (conn != null) {
+			conn.close();
+		}
+		return dsInfo;
 	}
 
 	/**
-	 *
 	 * @param className - Name of the table.
 	 * @return - list of rows in the table in JSON format.
 	 */
-	public List<Map<String, String>> getData(String className) {
+	public List<Map<String, String>> getData(String className, String dataset) {
+		dataset = dataset + "-data";
 		List<Map<String, String>> rows = new ArrayList<>();
 		Map<String, Map<String, String>> rowsMap = new HashMap<>();
 		Map<String, String> incomingEdge;
@@ -260,8 +283,13 @@ public class DataRepository {
 		String id;
 		String key;
 		String value;
-		String qString = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\nSELECT ?subject ?predicate ?object \n FROM datagraph: \n WHERE { ?subject ?predicate ?object }";
-		ResultSet resultSet = getResultFromQuery(qString);
+		String classUrl = "";
+		int index;
+		String qString = "SELECT ?subject ?predicate ?object \n " +
+				"WHERE { " +
+				"?subject ?predicate ?object " +
+				"}";
+		ResultSet resultSet = getResultFromQuery(dataset, qString);
 		List<Triple> triples = new ArrayList<>();
 		model = ModelFactory.createDefaultModel();
 		while (resultSet.hasNext()) {
@@ -272,21 +300,43 @@ public class DataRepository {
 		for (Triple t : triples) {
 			model.add(model.asStatement(t));
 		}
-		Set<String> duplicateColumnLst = new TreeSet<>();
-		String dataGraph = "http://127.0.0.1:3030/ssfuehrer";
 		String queryString = RepoConstants.PREFIXES +
-				"prefix datagraph: <" + dataGraph + "/data/data>\n" +
+				"SELECT ?class (count(?class) as ?count)\n" +
+				"WHERE {\n" +
+				"  \t?s rdf:type ?class;\n" +
+				"    FILTER (?class != owl:NamedIndividual)\n" +
+				"}\n" +
+				"GROUP BY ?class";
+		resultSet = getResultFromQuery(dataset , queryString);
+		if (resultSet == null) {
+			return null;
+		}
+		while (resultSet.hasNext()) {
+			QuerySolution resource = resultSet.next();
+			String clsName = resource.get("class").asNode().getURI();
+			if(clsName.contains("#")){
+				index = clsName.lastIndexOf("#");
+			}else{
+				index = clsName.lastIndexOf("/");
+			}
+			if (className.equals(clsName.substring(index + 1))) {
+				classUrl = clsName;
+				break;
+			}
+		}
+		Set<String> duplicateColumnLst = new TreeSet<>();
+		queryString = RepoConstants.PREFIXES +
 				"SELECT *\n" +
 				"WHERE {\n" +
-				"	?s a data:" + className + "; \n" +
+				"	?s a <" + classUrl + ">; \n" +
 				"	?p ?o;\n" +
 				"   FILTER ( ?p != rdf:type)\n" +
 				"}";
-		resultSet = getResultFromQuery(queryString);
+		resultSet = getResultFromQuery(dataset, queryString);
 		while (resultSet.hasNext()) {
 			QuerySolution resource = resultSet.next();
-			id = resource.get("s").asNode().getURI();
-			key = resource.get("p").asNode().getURI();
+			id = resource.get("s").asNode().toString();
+			key = resource.get("p").asNode().toString();
 			if (key.contains("#")) {
 				key = key.substring(key.lastIndexOf("#") + 1);
 			} else {
@@ -299,11 +349,18 @@ public class DataRepository {
 			}
 			if (resource.get("o").isLiteral()) {
 				value = resource.get("o").asLiteral().getString();
-			} else {
+			} else if (resource.get("o").isURIResource()) {
 				value = resource.get("o").asNode().getURI();
-				value = getForeignReference(value);
+				value = getForeignReference(value, dataset);
+			} else {
+				continue;
 			}
 			if (rowObject.get(key) == null) {
+				if (value.contains("#")) {
+					value = value.substring(value.lastIndexOf("#") + 1);
+				} else {
+					value = value.substring(value.lastIndexOf("/") + 1);
+				}
 				rowObject.put(key.toLowerCase(), value);
 			} else {
 				rowObject.put(key.toLowerCase(), "");
@@ -315,34 +372,35 @@ public class DataRepository {
 			for (String col : duplicateColumnLst) {
 				rowsMap.get(rowId).remove(col);
 			}
-			incomingEdge = getIncomingEdge(rowId);
+			incomingEdge = getIncomingEdge(rowId, dataset);
 			if (incomingEdge != null) {
-				rowsMap.get(rowId).putAll(getIncomingEdge(rowId));
+				rowsMap.get(rowId).putAll(getIncomingEdge(rowId, dataset));
 			}
 			rows.add(rowsMap.get(rowId));
+		}
+		if (conn != null) {
+			conn.close();
 		}
 		model = null;
 		return rows;
 	}
 
-	public String getForeignReference(String sub) {
+	public String getForeignReference(String sub, String dataset) {
 		String value = "";
 		String key;
 		String val;
 		Map<String, String> resourceMap = new HashMap<>();
 		QuerySolution resource;
-		String baseUrl = "http://127.0.0.1:3030/ssfuehrer";
 		String queryString = RepoConstants.PREFIXES +
-				"prefix datagraph: <" + baseUrl + "/data/data>\n" +
 				"SELECT *\n" +
 				"WHERE {\n" +
 				"	<" + sub + "> ?p ?o;\n" +
 				" FILTER( ?o != owl:NamedIndividual)" +
 				"}";
-		ResultSet resultSet = getResultFromQuery(queryString);
+		ResultSet resultSet = getResultFromQuery(dataset, queryString);
 		while (resultSet.hasNext()) {
 			resource = resultSet.next();
-			key = resource.get("p").asNode().getURI();
+			key = resource.get("p").asNode().toString();
 			if (key.contains("#")) {
 				key = key.substring(key.lastIndexOf("#") + 1);
 			} else {
@@ -350,42 +408,51 @@ public class DataRepository {
 			}
 			if (resource.get("o").isLiteral()) {
 				resourceMap.put(key, resource.get("o").asLiteral().getString());
-			} else {
+			} else if (resource.get("o").isURIResource()) {
 				val = resource.get("o").asNode().getURI();
 				val = val.substring(value.lastIndexOf("/") + 1);
 				resourceMap.put(key, val);
+			} else {
+				continue;
 			}
 		}
-		if (resourceMap.get("type") != null) {
-			if (resourceMap.get("type").contains("ssdal/data")) {
-				value = resourceMap.get("label") == null ? sub.substring(sub.lastIndexOf("/") + 1) : resourceMap.get("label");
-			} else {
-				value = resourceMap.get("inXSDDate");
-			}
+		if (resourceMap.get("type") != null && resourceMap.get("type") == "Instant") {
+			value = resourceMap.get("inXSDDate");
+		} else {
+			value = resourceMap.get("label") == null ? sub.substring(sub.lastIndexOf("/") + 1) : resourceMap.get("label");
 		}
 		return value;
 	}
 
-	public Map<String, String> getIncomingEdge(String obj) {
+	public Map<String, String> getIncomingEdge(String obj, String dataset) {
 		Map<String, String> edge = null;
 		String key;
 		String val;
 		String subject;
+		int index;
 		QuerySolution resource;
-		String baseUrl = "http://127.0.0.1:3030/ssfuehrer";
 		String queryString = RepoConstants.PREFIXES +
-				"prefix datagraph: <" + baseUrl + "/data/data>\n" +
 				"SELECT *\n" +
 				"WHERE {\n" +
 				"?s ?p <" + obj + ">\n" +
 				"}";
-		ResultSet resultSet = getResultFromQuery(queryString);
+		ResultSet resultSet = getResultFromQuery(dataset, queryString);
 		if (resultSet.hasNext()) {
 			resource = resultSet.next();
-			subject = resource.get("s").asNode().getURI();
-			val = subject.substring(subject.lastIndexOf("/") + 1);
-			subject = subject.substring(0, subject.lastIndexOf("/"));
-			key = subject.substring(subject.lastIndexOf("/") + 1);
+			subject = resource.get("s").asNode().toString();
+			if (subject.contains("#")) {
+				index = subject.lastIndexOf("#");
+			} else {
+				index = subject.lastIndexOf("/");
+			}
+			val = subject.substring(index + 1);
+			subject = subject.substring(0, index);
+			if (subject.contains("#")) {
+				index = subject.lastIndexOf("#");
+			} else {
+				index = subject.lastIndexOf("/");
+			}
+			key = subject.substring(index + 1);
 			edge = new HashMap<>();
 			edge.put(key.toLowerCase(), val);
 		}

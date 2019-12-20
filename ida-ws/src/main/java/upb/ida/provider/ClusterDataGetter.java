@@ -58,7 +58,7 @@ public class ClusterDataGetter implements Subroutine {
 			Map<String, Object> dataMap = responseBean.getPayload();
 			DataRepository dataRepository = new DataRepository(actvDs, false);
 
-			List<Map<String, String>> lstt = dataRepository.getData(actvTbl);
+			List<Map<String, String>> lstt = dataRepository.getData(actvTbl, actvDs);
 			List<String> keys = new ArrayList<String>();
 			for (int i = 0; i < columnsForCluster.size(); i++) {
 				keys.add(getMatchingKey(columnsForCluster.get(i), lstt.get(0)));
@@ -165,7 +165,7 @@ public class ClusterDataGetter implements Subroutine {
 	 * Method to create response for user's request of clustering
 	 *
 	 * @param columnsForResponse - all columns for clustering.
-	 * @param path               - path of file.
+	 * @param actvTbl               - name of the current table.
 	 * @param clusterResult      - result that returned from jupyter server.
 	 * @param dataMap            - map to put data i  responseBean.
 	 * @param actvTbl            - gives the active table name.
@@ -180,7 +180,7 @@ public class ClusterDataGetter implements Subroutine {
 //		File responseReader = new File(demoMain.fetchSysFilePath(path));
 		DataRepository dataRepository = new DataRepository(actvDs, false);
 //		List<Map<String, String>> responseFileContent = demoMain.convertToMap(responseReader);
-		List<Map<String, String>> responseFileContent = dataRepository.getData(actvTbl);
+		List<Map<String, String>> responseFileContent = dataRepository.getData(actvTbl, actvDs);
 		List<String> responseColumnsKeyValue = new ArrayList<String>();
 		for (int i = 0; i < columnsForResponse.size(); i++) {
 			responseColumnsKeyValue.add(getMatchingKey(columnsForResponse.get(i), responseFileContent.get(0)));
@@ -194,7 +194,11 @@ public class ClusterDataGetter implements Subroutine {
 					innerMap.put(columnsForResponse.get(x), responseFileContent.get(i).get(responseColumnsKeyValue.get(x)));
 
 				} else {
-					innerMap.put(columnsForResponse.get(x), Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
+					if(responseFileContent.get(i).get(responseColumnsKeyValue.get(x)) == null) {
+						innerMap.put(columnsForResponse.get(x), 0.0);
+					}else {
+						innerMap.put(columnsForResponse.get(x), Double.parseDouble(NumberFormat.getNumberInstance(java.util.Locale.US).parse(responseFileContent.get(i).get(responseColumnsKeyValue.get(x))).toString()));
+					}
 				}
 			}
 			innerMap.put("clusterLabel", clusterResult.get(i));

@@ -106,7 +106,10 @@ public class BarGraphUtil {
 	public void getJsonData(String filepath, String x, String y, Map<String, Object> dataMap, String[] args, String actvDs)
 			throws IOException, NumberFormatException, ParseException {
 		DataRepository dataRepository = new DataRepository(actvDs, false);
-		List<Map<String, String>> lstt = dataRepository.getData(filepath);
+		System.out.println(filepath);
+		System.out.println(actvDs);
+		List<Map<String, String>> lstt = dataRepository.getData(filepath, actvDs);
+		System.out.println("**********length of data**********" + lstt.size());
 		// Filter data
 		lstt = fetchFilteredData(lstt, args);
 		newJsonObjct(x, y, lstt, dataMap);
