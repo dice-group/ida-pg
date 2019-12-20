@@ -8,7 +8,7 @@ public class VENN_DATA_FILTER {
 	public Map<Integer, Set<Integer>> dataMap = new HashMap<>();
 
 	public void createDataMap(String actvTbl, String labelCol, String dataCol, String actvDs) throws NumberFormatException {
-		DataRepository dataRepository = new DataRepository(actvDs, false);
+		DataRepository dataRepository = new DataRepository(false);
 		List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
 		for (Map<String, String> entry : data) {
 			int ordenId = Integer.parseInt(entry.get(labelCol));

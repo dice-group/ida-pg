@@ -44,7 +44,7 @@ public class SSBDiagramHandler implements Subroutine {
 		ArrayList<ArrayList<String>> response = new ArrayList<>();
 
 		try {
-			DataRepository dataRepository = new DataRepository(actvDs, false);
+			DataRepository dataRepository = new DataRepository(false);
 			List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
 			generateSsbFile(actvTbl, args[0], args[1], actvDs);
 			dataMap.put("label", "sequence sun burst diagram data");
@@ -66,7 +66,7 @@ public class SSBDiagramHandler implements Subroutine {
 	}
 
 	private void extractRangeData(String actvTbl, String col1, String col2, String actvDs) throws IOException {
-		DataRepository dataRepository = new DataRepository(actvDs, false);
+		DataRepository dataRepository = new DataRepository(false);
 		List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
 		for (Map<String, String> entry : data) {
 			int col1ID = Integer.parseInt(entry.get(col1));

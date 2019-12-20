@@ -12,7 +12,7 @@ public class DataService {
 	private ResponseBean responseBean;
 
 	public void getDataTable(String actvDs, String actvTbl) throws Exception {
-		DataRepository dataRepository = new DataRepository(actvDs, false);
+		DataRepository dataRepository = new DataRepository(false);
 		responseBean.getPayload().put("dataTable", dataRepository.getData(actvTbl, actvDs));
 		// Set action code
 		responseBean.setActnCode(IDALiteral.UIA_DTTABLE);

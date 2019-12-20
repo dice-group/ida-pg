@@ -56,7 +56,7 @@ public class ClusterDataGetter implements Subroutine {
 			String actvDs = (String) responseBean.getPayload().get("actvDs");
 			//String actvScrId = (String) responseBean.getPayload().get("actvScrId");
 			Map<String, Object> dataMap = responseBean.getPayload();
-			DataRepository dataRepository = new DataRepository(actvDs, false);
+			DataRepository dataRepository = new DataRepository(false);
 
 			List<Map<String, String>> lstt = dataRepository.getData(actvTbl, actvDs);
 			List<String> keys = new ArrayList<String>();
@@ -178,7 +178,7 @@ public class ClusterDataGetter implements Subroutine {
 
 		List<Map<String, Object>> responseList = new ArrayList<>();
 //		File responseReader = new File(demoMain.fetchSysFilePath(path));
-		DataRepository dataRepository = new DataRepository(actvDs, false);
+		DataRepository dataRepository = new DataRepository(false);
 //		List<Map<String, String>> responseFileContent = demoMain.convertToMap(responseReader);
 		List<Map<String, String>> responseFileContent = dataRepository.getData(actvTbl, actvDs);
 		List<String> responseColumnsKeyValue = new ArrayList<String>();

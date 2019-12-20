@@ -20,7 +20,7 @@ public class VENN_Util {
     public HashMap<String, Object> generateVennDiagram (String actvTbl, String[] args, String actvDs)
             throws NumberFormatException  {
         System.out.println(Arrays.toString(args));
-		DataRepository dataRepository = new DataRepository(actvDs, false);
+		DataRepository dataRepository = new DataRepository(false);
 		List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
 		Map<String, String> columns = data.get(0);
         int limit = Integer.parseInt(args[1]);

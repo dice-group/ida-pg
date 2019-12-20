@@ -6,8 +6,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.*;
 
@@ -20,24 +18,29 @@ public class DataRepository {
 	private static String dbhost = System.getenv("FUSEKI_URL");
 	private Model model = null;
 	private RDFConnectionFuseki conn = null;
-	private String dbUrl = "";
 	private boolean isTest;
 
-	public DataRepository(String dataset, boolean isTest) {
-		dbUrl = dbhost + dataset;
+	public DataRepository(boolean isTest) {
 		this.isTest = isTest;
 	}
 
 	/**
 	 * @param queryString the SPARQL query to be executed on the RDF dataset
+	 * @param dataset     the active dataset on which the query has to be executed
 	 * @return It takes query string as its parameter and returns the result set after executing the query.
 	 */
 	public ResultSet getResultFromQuery(String dataset, String queryString) {
-		QueryExecution queryExecution = null;
-		ResultSet resultSet = null;
+		QueryExecution queryExecution;
+		ResultSet resultSet;
 		Query query = QueryFactory.create(queryString);
 
+		/*
+		 * No need to create a model from file or make database connection if the query is being run on already existing model. ( multiple queries are run on same model from getData function.)
+		 */
 		if (model == null) {
+			/*
+			 *	Create a fuseki model from the file and run the query on that model for test cases.
+			 */
 			if (isTest || "test-data".equals(dataset) || "test-ontology".equals(dataset)) {
 				try {
 					model = ModelFactory.createDefaultModel();
@@ -108,9 +111,9 @@ public class DataRepository {
 		while (resultSet.hasNext()) {
 			resource = resultSet.next();
 			className = resource.get("class").asNode().getURI();
-			if(className.contains("#")){
+			if (className.contains("#")) {
 				index = className.lastIndexOf("#");
-			}else{
+			} else {
 				index = className.lastIndexOf("/");
 			}
 			className = className.substring(index + 1);
@@ -130,9 +133,9 @@ public class DataRepository {
 		while (resultSet != null && resultSet.hasNext()) {
 			resource = resultSet.next();
 			className = resource.get("class").asNode().getURI();
-			if(className.contains("#")){
+			if (className.contains("#")) {
 				index = className.lastIndexOf("#");
-			}else{
+			} else {
 				index = className.lastIndexOf("/");
 			}
 			className = className.substring(index + 1);
@@ -144,12 +147,14 @@ public class DataRepository {
 				columnMap.put(className, new ArrayList<>(Collections.singletonList(columnName)));
 			}
 		}
-		Iterator columnsIterator = distinctColumns.iterator();
-		while (columnsIterator.hasNext()) {
-			filterCondition.append(filterPrefix).append("<").append(columnsIterator.next().toString().replace("/data/", "/ontology/")).append(">");
-			if (columnsIterator.hasNext()) {
+		boolean isFirst = true;
+		for (String col : distinctColumns) {
+			if (!isFirst) {
 				filterCondition.append(" || ");
+			} else {
+				isFirst = false;
 			}
+			filterCondition.append(filterPrefix).append("<").append(col.replace("/data/", "/ontology/")).append(">");
 		}
 		if (!"".contentEquals(filterCondition)) {
 			queryString = RepoConstants.PREFIXES +
@@ -203,26 +208,17 @@ public class DataRepository {
 				columnLabelMap.put(columnName, label);
 			}
 		}
-//		JSONObject datasetInfo = new JSONObject();
 		Map<String, Object> dsInfo = new HashMap<>();
 		dsInfo.put("dsName", dataset);
 		dsInfo.put("dsDesc", "");
-//		datasetInfo.put("dsName", dataset);
-//		datasetInfo.put("dsDesc", "");
-//		JSONArray tables = new JSONArray();
-//		JSONArray columns;
 		List<Map<String, Object>> columns;
 		List<Map<String, Object>> tables = new ArrayList<>();
-//		JSONObject table;
-		Map<String, Object> table = new HashMap<>();
-		Map<String, Object> column = new HashMap<>();
-//		JSONObject column;
+		Map<String, Object> table;
+		Map<String, Object> column;
 		String classKey;
 		for (String cls : classCountMap.keySet()) {
 			classKey = cls.replaceAll(" ", "");
 			if (columnMap.get(classKey) != null) {
-//				table = new JSONObject();
-//				columns = new JSONArray();
 				table = new HashMap<>();
 				columns = new ArrayList<>();
 				index = 1;
@@ -262,7 +258,6 @@ public class DataRepository {
 				tables.add(table);
 			}
 		}
-//		datasetInfo.put("filesMd", tables);
 		dsInfo.put("filesMd", tables);
 		if (conn != null) {
 			conn.close();
@@ -275,7 +270,6 @@ public class DataRepository {
 	 * @return - list of rows in the table in JSON format.
 	 */
 	public List<Map<String, String>> getData(String className, String dataset) {
-		dataset = dataset + "-data";
 		List<Map<String, String>> rows = new ArrayList<>();
 		Map<String, Map<String, String>> rowsMap = new HashMap<>();
 		Map<String, String> incomingEdge;
@@ -283,13 +277,15 @@ public class DataRepository {
 		String id;
 		String key;
 		String value;
-		String classUrl = "";
-		int index;
+		String classUrl;
+		/*
+		 *	Create a fuseki model by fetching all triples in the database as multiple queries has to be run on the same dataset.
+		 */
 		String qString = "SELECT ?subject ?predicate ?object \n " +
 				"WHERE { " +
 				"?subject ?predicate ?object " +
 				"}";
-		ResultSet resultSet = getResultFromQuery(dataset, qString);
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", qString);
 		List<Triple> triples = new ArrayList<>();
 		model = ModelFactory.createDefaultModel();
 		while (resultSet.hasNext()) {
@@ -300,39 +296,22 @@ public class DataRepository {
 		for (Triple t : triples) {
 			model.add(model.asStatement(t));
 		}
-		String queryString = RepoConstants.PREFIXES +
-				"SELECT ?class (count(?class) as ?count)\n" +
-				"WHERE {\n" +
-				"  \t?s rdf:type ?class;\n" +
-				"    FILTER (?class != owl:NamedIndividual)\n" +
-				"}\n" +
-				"GROUP BY ?class";
-		resultSet = getResultFromQuery(dataset , queryString);
-		if (resultSet == null) {
+		classUrl = getClassUrl(className, dataset);
+		if (classUrl == null) {
 			return null;
 		}
-		while (resultSet.hasNext()) {
-			QuerySolution resource = resultSet.next();
-			String clsName = resource.get("class").asNode().getURI();
-			if(clsName.contains("#")){
-				index = clsName.lastIndexOf("#");
-			}else{
-				index = clsName.lastIndexOf("/");
-			}
-			if (className.equals(clsName.substring(index + 1))) {
-				classUrl = clsName;
-				break;
-			}
-		}
 		Set<String> duplicateColumnLst = new TreeSet<>();
-		queryString = RepoConstants.PREFIXES +
+		/*
+		 * Get all triples of the class and all other related triples.
+		 */
+		String queryString = RepoConstants.PREFIXES +
 				"SELECT *\n" +
 				"WHERE {\n" +
 				"	?s a <" + classUrl + ">; \n" +
 				"	?p ?o;\n" +
 				"   FILTER ( ?p != rdf:type)\n" +
 				"}";
-		resultSet = getResultFromQuery(dataset, queryString);
+		resultSet = getResultFromQuery(dataset + "-data", queryString);
 		while (resultSet.hasNext()) {
 			QuerySolution resource = resultSet.next();
 			id = resource.get("s").asNode().toString();
@@ -351,7 +330,7 @@ public class DataRepository {
 				value = resource.get("o").asLiteral().getString();
 			} else if (resource.get("o").isURIResource()) {
 				value = resource.get("o").asNode().getURI();
-				value = getForeignReference(value, dataset);
+				value = getForeignReference(value, dataset + "-data");
 			} else {
 				continue;
 			}
@@ -372,7 +351,7 @@ public class DataRepository {
 			for (String col : duplicateColumnLst) {
 				rowsMap.get(rowId).remove(col);
 			}
-			incomingEdge = getIncomingEdge(rowId, dataset);
+			incomingEdge = getIncomingEdge(rowId, dataset + "-data");
 			if (incomingEdge != null) {
 				rowsMap.get(rowId).putAll(getIncomingEdge(rowId, dataset));
 			}
@@ -385,6 +364,13 @@ public class DataRepository {
 		return rows;
 	}
 
+	/**
+	 * @param sub     - subject of the resource of which the date/label has to be fetched.
+	 * @param dataset - active dataset from which the triple has to be fetched
+	 * @return returns a) Date if the type of resource is date.
+	 * b) Label if not a date and has a label.
+	 * c) Id of the resource otherwise.
+	 */
 	public String getForeignReference(String sub, String dataset) {
 		String value = "";
 		String key;
@@ -412,11 +398,9 @@ public class DataRepository {
 				val = resource.get("o").asNode().getURI();
 				val = val.substring(value.lastIndexOf("/") + 1);
 				resourceMap.put(key, val);
-			} else {
-				continue;
 			}
 		}
-		if (resourceMap.get("type") != null && resourceMap.get("type") == "Instant") {
+		if (resourceMap.get("type") != null && "Instant".equals(resourceMap.get("type"))) {
 			value = resourceMap.get("inXSDDate");
 		} else {
 			value = resourceMap.get("label") == null ? sub.substring(sub.lastIndexOf("/") + 1) : resourceMap.get("label");
@@ -424,6 +408,11 @@ public class DataRepository {
 		return value;
 	}
 
+	/**
+	 * @param obj     - string which has to be the object of a triple(Incoming edge).
+	 * @param dataset - active dataset from which the triple has to be fetched
+	 * @return - returns a < predicate, object > pair with object value equal to value of obj if only one such pair exists and null otherwise.
+	 */
 	public Map<String, String> getIncomingEdge(String obj, String dataset) {
 		Map<String, String> edge = null;
 		String key;
@@ -461,6 +450,61 @@ public class DataRepository {
 		}
 		return edge;
 	}
+
+	public Set<String> getColumnsList(String className, String dataset) {
+		String columnName;
+		QuerySolution resource;
+		Set<String> distinctColumns = new TreeSet<>();
+		String classUrl = getClassUrl(className, dataset);
+		String queryString = RepoConstants.PREFIXES +
+				"SELECT DISTINCT ?class ?pred" +
+				" WHERE {" +
+				"  ?s ?pred ?o;" +
+				"  ?pred [];" +
+				"  rdf:type ?class;" +
+				"  FILTER( ?class != owl:NamedIndividual && (?pred != rdf:type) && ?class = <" + classUrl + "> )" +
+				" }";
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		while (resultSet != null && resultSet.hasNext()) {
+			resource = resultSet.next();
+			columnName = resource.get("pred").asNode().getURI();
+			if (columnName.contains("#")) {
+				columnName = columnName.substring(columnName.lastIndexOf("#") + 1);
+			} else {
+				columnName = columnName.substring(columnName.lastIndexOf("/") + 1);
+			}
+			distinctColumns.add(columnName);
+		}
+		return distinctColumns;
+	}
+
+	public String getClassUrl(String className, String dataset) {
+		dataset = dataset + "-data";
+		int index;
+		String queryString = RepoConstants.PREFIXES +
+				"SELECT ?class\n" +
+				"WHERE {\n" +
+				"  \t?s rdf:type ?class;\n" +
+				"    FILTER (?class != owl:NamedIndividual)\n" +
+				"}\n" +
+				"GROUP BY ?class";
+		ResultSet resultSet = getResultFromQuery(dataset, queryString);
+		if (resultSet == null) {
+			return null;
+		}
+		while (resultSet.hasNext()) {
+			QuerySolution resource = resultSet.next();
+			String clsName = resource.get("class").asNode().getURI();
+			if (clsName.contains("#")) {
+				index = clsName.lastIndexOf("#");
+			} else {
+				index = clsName.lastIndexOf("/");
+			}
+			if (className.equals(clsName.substring(index + 1))) {
+				return clsName;
+			}
+		}
+		return null;
+	}
+
 }
-
-

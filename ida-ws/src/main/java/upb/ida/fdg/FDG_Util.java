@@ -105,7 +105,7 @@ public class FDG_Util {
 		ObjectNode res = null;
 		int ndUniqueId = 1;
 		int tripUniqueId = 1;
-		DataRepository dataRepository = new DataRepository(actvDs, false);
+		DataRepository dataRepository = new DataRepository(false);
 		List<FDG_Triple> tripleList = new ArrayList<>();
 
 		// Fetch the map for the file

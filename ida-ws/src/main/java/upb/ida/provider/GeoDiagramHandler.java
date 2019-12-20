@@ -41,7 +41,7 @@ public class GeoDiagramHandler implements Subroutine {
 		try {
 			double maxLat;
 			double maxLon;
-			DataRepository dataRepository = new DataRepository(actvDs, false);
+			DataRepository dataRepository = new DataRepository(false);
 			List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
 			for (Map<String, String> ele : data) {
 				HashMap<String, ArrayList<Double>> row = new HashMap<>();

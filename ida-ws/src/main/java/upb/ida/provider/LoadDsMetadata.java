@@ -35,7 +35,7 @@ public class LoadDsMetadata implements Subroutine {
 	public String call(com.rivescript.RiveScript rs, String[] args) {
 		String message = StringUtils.join(args, " ").trim();
 		try {
-			DataRepository dataRepository = new DataRepository(message, false);
+			DataRepository dataRepository = new DataRepository(false);
 			Map<String, Object> dataMap = responseBean.getPayload();
 			dataMap.put("label", message);
 			dataMap.put("dsName", message);

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,12 @@ import upb.ida.util.BarGraphUtil;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = { Application.class })
+@ContextConfiguration(classes = {Application.class})
 
 public class BgMsgRestControllerTest {
 
 	@Autowired
 	private MessageRestController msgRstCntrl;
-
-	@Autowired
-	private BarGraphUtil barGraphUtil;
 
 	@Test
 	public void sendmessagetestPos() throws Exception {
@@ -41,62 +39,27 @@ public class BgMsgRestControllerTest {
 		responseBean = msgRstCntrl.sendmessage("y-axis is population", "1", "Continent", "test");
 		responseBean = msgRstCntrl.sendmessage("Top 2 records, sorted descending on population", "1", "Continent", "test");
 
-		//System.out.println(responseBean.getPayload().get("bgData"));
-		/*Map<String, Object> dataMap = new HashMap<>();
-		dataMap.put("actvTbl", "Continent");
-		dataMap.put("actvDs", "test");
-		responseBean.setPayload(dataMap);
-		String args[] = {"name", "population", "TOPN", "2", "population", "descending"};
-
-		barGraphUtil.generateBarGraphData(args, responseBean);*/
-
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode jArray = mapper.createArrayNode();
-
 		ObjectNode user1 = mapper.createObjectNode();
 		user1.put("name", "Africa");
 		user1.put("population", Double.valueOf(922011000));
-
 		ObjectNode user2 = mapper.createObjectNode();
 		user2.put("name", "Europe");
 		user2.put("population", Double.valueOf(731000000));
-
 		jArray.add(user1);
 		jArray.add(user2);
-
-		//System.out.print(jArray);
-		// Object keys = "city";
 		List<String> keys = new ArrayList<String>();
-
 		keys.add("name");
-
 		Map<String, Object> expected = new HashMap<String, Object>();
-
 		expected.put("xaxisname", "name");
 		expected.put("keys", keys);
-		 expected.put("baritems", jArray);
-		 expected.put("yaxisname", "population");
-
-
-
-		// String xKey = "City";
-		// String yKey = "wine";
-
-		//
-		// dataMap.put("xaxisname", xKey);
-		// dataMap.put("yaxisname", yKey);
-		// dataMap.put("keys", keys);
-		// dataMap.put("barItems", inputList);
-		// System.out.println(dataMap);
-
-		// barGraph.newJsonObjct("city", "wine", );("city", "wine", expected);
+		expected.put("baritems", jArray);
+		expected.put("yaxisname", "population");
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> actual = (Map<String, Object>) responseBean.getPayload().get("bgData");
-		// System.out.println(expected);
-		 //System.out.println(actual);
 		assertEquals(expected, actual);
-
 	}
 
 }
