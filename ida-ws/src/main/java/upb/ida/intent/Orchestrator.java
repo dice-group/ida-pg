@@ -3,9 +3,11 @@ package upb.ida.intent;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
+import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.executor.IntentExecutor;
+import upb.ida.intent.model.*;
 
-import java.io.IOException;
-import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,51 +25,50 @@ public class Orchestrator {
 	public Orchestrator() {
 	}
 
-	private void prepareContext(String userMessage)
-	{
-		context.setCurrentUserMessage(userMessage);
+	private void prepareContext(String userMessage) {
+		context.setCurrentMessage(userMessage);
 		context.clearChatbotResponses();
 		context.clearTips();
 	}
 
-	public ChatbotContext processMessage(String message) throws IOException, ParseException {
-		System.out.println("IC: message = " + message);
+	public ChatbotContext processMessage(String message) throws IntentExecutorException {
+		if (context.isResetOnNextRequest()) {
+			context.resetContext();
+		}
+
 		this.prepareContext(message);
 		Intent messageIntent = getMessageIntent(message);
-		System.out.println("IC: message intent = " + messageIntent.toString());
-
 
 		if (messageIntent.equals(Intent.RESTART)) {
 			context.resetContext();
+			context.addChatbotResponse("Hello! How may I help you?");
 			return context;
 		}
 
-		if (context.getCurrentIntent().equals(Intent.UNKNOWN) || messageIntent.equals(Intent.BAR)) {
+		if (context.getCurrentIntent().equals(Intent.UNKNOWN)) {
 			System.out.println("IC: new intent = " + messageIntent);
 			context.setCurrentIntent(messageIntent);
 			context.setCurrentExecutor(IntentExecutorFactory.getExecutorFor(messageIntent));
 		}
 
-		System.out.println("IC: current intent = " + context.getCurrentIntent());
-		if(!context.getCurrentIntent().equals(Intent.BAR))
+		System.out.println("IC: new intent = " + context.getCurrentIntent());
+
+		// TODO remove this later when all implementations are working
+		if (!Arrays.asList(Intent.BAR, Intent.FORCE_DIRECTED_GRAPH).contains(context.getCurrentIntent()))
 			return null;
 
-		if (context.getCurrentIntent().equals(Intent.UNKNOWN)) {
+		IntentExecutor executor = context.getCurrentExecutor();
+		executor.processResponse(context);
 
-
+		if (executor.needsMoreInformation(context)) {
+			Question nextQuestion = executor.getNextQuestion(context);
+			context.addChatbotResponse(nextQuestion.getQuestion());
+			context.setActiveQuestion(nextQuestion);
 		} else {
-			IntentExecutor executor = context.getCurrentExecutor();
-			executor.processResponse(context);
-
-			if (executor.needsMoreInformation(context)) {
-				Question nextQuestion = executor.getNextQuestion(context);
-				context.addChatbotResponse(nextQuestion.getQuestion());
-				context.setActiveQuestion(nextQuestion);
-			} else {
-				// Perform final action
-				context.addChatbotResponse("All information processed.");
-				executor.execute(context);
-			}
+			// Perform final action
+//			context.addChatbotResponse("All information processed.");
+			executor.execute(context);
+//			context.setResetOnNextRequest(true);
 		}
 
 		System.out.println("IC: responses = " + context.getChatbotResponses());
@@ -76,7 +77,7 @@ public class Orchestrator {
 
 	private Intent getMessageIntent(String message) {
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("text", message);
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -93,31 +94,44 @@ public class Orchestrator {
 		return Intent.getForKey(classifiedIntents.get(0).getIntent());
 	}
 
-	public static void main(String[] args) throws IOException, ParseException {
-//		Orchestrator o = new Orchestrator();
+	public static void main(String[] args) throws IntentExecutorException {
+		Orchestrator o = new Orchestrator();
+//		"Cappuccino", "Cinema"
+		o.processMessage("kem chho");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
 
-//		o.processMessage("bar graph");
-//		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-//
-//		o.processMessage("soldier");
-//		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-//
-//		o.processMessage("regiment");
-//		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-//
-//		o.processMessage("last 6");
-//		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+		o.processMessage("bar graph");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
+		o.processMessage("Cappuccino");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
+		o.processMessage("Cinema");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
+		o.processMessage("last 6");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
+		o.processMessage("force directed");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
+		o.processMessage("force directed");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
+		o.processMessage("go back");
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
 
 //		ChatbotContext ctx = new ChatbotContext();
-//		ctx.setCurrentUserMessage("last 60");
+//		ctx.setCurrentMessage("last 60");
 //		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentUserMessage("I want the last 60");
+//		ctx.setCurrentMessage("I want the last 60");
 //		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentUserMessage("first 60 rows");
+//		ctx.setCurrentMessage("first 60 rows");
 //		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentUserMessage("gimme first 60rows");
+//		ctx.setCurrentMessage("gimme first 60rows");
 //		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentUserMessage("gimme first 60 rows");
+//		ctx.setCurrentMessage("gimme first 60 rows");
 //		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
 
 

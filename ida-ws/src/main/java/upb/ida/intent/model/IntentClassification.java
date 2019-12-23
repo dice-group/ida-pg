@@ -1,4 +1,4 @@
-package upb.ida.intent;
+package upb.ida.intent.model;
 
 public class IntentClassification {
 

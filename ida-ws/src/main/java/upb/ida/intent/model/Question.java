@@ -1,4 +1,6 @@
-package upb.ida.intent;
+package upb.ida.intent.model;
+
+import upb.ida.intent.AnswerHandlingStrategy;
 
 import java.util.List;
 

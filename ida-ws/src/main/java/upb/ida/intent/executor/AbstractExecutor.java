@@ -1,21 +1,24 @@
-package upb.ida.intent;
+package upb.ida.intent.executor;
 
 import org.apache.commons.text.StringSubstitutor;
+import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.model.ChatbotContext;
+import upb.ida.intent.model.Question;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-abstract class AbstractIntentExecutor implements IntentExecutor {
+public abstract class AbstractExecutor implements IntentExecutor {
 
 	protected List<Question> questions;
 
-	public AbstractIntentExecutor(List<Question> questions) {
+	public AbstractExecutor(List<Question> questions) {
 		this.questions = questions;
 	}
 
 	@Override
-	public abstract void execute(ChatbotContext context) throws IOException, ParseException;
+	public abstract void execute(ChatbotContext context) throws IntentExecutorException;
 
 	@Override
 	public boolean isExecutable() {
@@ -32,6 +35,7 @@ abstract class AbstractIntentExecutor implements IntentExecutor {
 			List<String> answers = activeQuestion.getStrategy().extractAnswer(context);
 
 			if (answers == null || answers.isEmpty()) {
+				context.addChatbotResponse("Sorry, your answer could not be processed. Please try again.");
 				System.out.println("could not process answer");
 				return;
 			}
@@ -44,7 +48,7 @@ abstract class AbstractIntentExecutor implements IntentExecutor {
 				feedbackMap.put(activeQuestion.getAnswerKeys().get(i), answers.get(i));
 			}
 
-			// Transfer logic to question
+			// TODO transfer logic to Question
 			String feedbackTemplate = activeQuestion.getFeedbackText();
 			StringSubstitutor sub = new StringSubstitutor(feedbackMap);
 			String feedback = sub.replace(feedbackTemplate);

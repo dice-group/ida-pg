@@ -1,19 +1,18 @@
 package upb.ida.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import upb.ida.bean.ResponseBean;
-import upb.ida.intent.ChatbotContext;
 import upb.ida.intent.Orchestrator;
+import upb.ida.intent.model.ChatbotContext;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot

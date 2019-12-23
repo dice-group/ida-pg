@@ -1,5 +1,6 @@
 package upb.ida.intent;
 
+import upb.ida.intent.model.ChatbotContext;
 import upb.ida.util.BarGraphUtil;
 
 import java.util.ArrayList;

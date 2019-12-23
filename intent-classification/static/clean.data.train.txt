@@ -155,3 +155,27 @@ restart;go back
 restart;restart
 restart;dont want this
 restart;return previous
+force-directed;draw force directed graph
+force-directed;load force-directed
+force-directed;sketch force directed
+force-directed;force directed graph
+force-directed;bring fdg
+force-directed;want see fdg
+force-directed;could load fdg
+force-directed;fdg visualisation
+force-directed;draw force directed
+force-directed;show force directed chart using
+force-directed;open force directed graph
+force-directed;load forcedirected
+force-directed;can load forcedirected
+force-directed;need force directed diagram
+force-directed;make force-directed
+force-directed;lets make force-directed chart
+force-directed;draw force directed chart
+force-directed;can draw force directed
+force-directed;want forcedirected graph
+force-directed;bring up forcedirected graph
+force-directed;prepare fdg
+force-directed;can make fdg
+force-directed;show fdg visualization
+force-directed;show fdg
