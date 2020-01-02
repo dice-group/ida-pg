@@ -13,8 +13,8 @@ import java.util.*;
 
 public class SoldierTimeLine {
 	private static String dbhost = System.getenv("FUSEKI_URL");
-	//	private String dbhost = "http://fuseki:8082/";
-	private String datasetName = "";
+	//private String dbhost = "http://fuseki:8082/";
+	//private String datasetName = "";
 	private String dbUrl = "";
 	private Model model = null;
 	private RDFConnectionFuseki conn = null;
@@ -26,7 +26,7 @@ public class SoldierTimeLine {
 			"PREFIX soldierData: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier/>";
 
 	public SoldierTimeLine(String dataset, boolean isTest) {
-		datasetName = dataset;
+		//datasetName = dataset;
 		if (dbhost == null) {
 			dbhost = "http://127.0.0.1:3030/";
 		}

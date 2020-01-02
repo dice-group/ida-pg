@@ -240,6 +240,8 @@ public class MessageRestControllerTest {
 		try{
 			ResponseBean responseBean;
 			responseBean = mrc.getSoldierData("47540");
+			assertNotEquals(responseBean.getPayload(),null);
+
 		}
 		catch(Exception e)
 		{
