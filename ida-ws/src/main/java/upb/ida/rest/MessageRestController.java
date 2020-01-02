@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import upb.ida.bean.ResponseBean;
+import upb.ida.dao.SoldierTimeLine;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot
- * 
+ *
  * @author Nikit
  *
  */
@@ -27,7 +28,7 @@ public class MessageRestController {
 	private ResponseBean response;
 	@Autowired
 	private RiveScriptService rsService;
-	@Autowired 
+	@Autowired
 	private DataService dataService;
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
@@ -57,7 +58,7 @@ public class MessageRestController {
 		response.setChatmsg(reply);
 		return response;
 	}
-	
+
 	@RequestMapping("/getdatatable")
 	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
@@ -68,6 +69,19 @@ public class MessageRestController {
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
 		dataService.getDataTable(actvDs, actvTbl);
+		return response;
+	}
+
+	@RequestMapping("/getSoldierData")
+	public ResponseBean getSoldierData(@RequestParam(value = "soldierId") String soldierId) throws Exception {
+
+		Map<String, Object> dataMap = new HashMap<>();
+		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer", false);
+		dataMap.put("actvScrId", "");
+		dataMap.put("actvTbl", "");
+		dataMap.put("actvDs", "");
+		dataMap.put("soldier", soldierTimeLine.getData(soldierId));
+		response.setPayload(dataMap);
 		return response;
 	}
 
