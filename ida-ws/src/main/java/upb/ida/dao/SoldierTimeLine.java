@@ -80,7 +80,8 @@ public class SoldierTimeLine {
 		return returnVaule;
 	}
 
-	public Map<String,Map<String,String>> getData(String soldierId) throws Exception {
+	public Map<String,Map<String,String>> getData(String soldierId)
+	{
 		JSONArray rows = new JSONArray();
 		Map<String, JSONObject> rowsMap = new HashMap<>();
 		Map<String, String> foreignRef;
@@ -217,7 +218,8 @@ public class SoldierTimeLine {
 		return map;
 	}
 
-	public Map<String,Map<String,String>> preProcessSoldierData(JSONArray soldierData) throws Exception {
+	public Map<String,Map<String,String>> preProcessSoldierData(JSONArray soldierData)
+	{
 		Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
 		Map<String,String> tempStringVsStringMap;
 		Map<String,String> soldierDatesMap = new TreeMap<String,String>();
