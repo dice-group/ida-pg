@@ -1,7 +1,13 @@
 package upb.ida.dao;
 
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.*;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
@@ -11,8 +17,9 @@ import org.json.simple.JSONObject;
 
 import java.util.*;
 
-public class SoldierTimeLine {
-	private static String dbhost = System.getenv("FUSEKI_URL");
+public class SoldierTimeLine
+{
+	private static String dbhost = "http://127.0.0.1:3030/";
 	//private String dbhost = "http://fuseki:8082/";
 	//private String datasetName = "";
 	private String dbUrl = "";
@@ -25,29 +32,41 @@ public class SoldierTimeLine {
 			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 			"PREFIX soldierData: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier/>";
 
-	public SoldierTimeLine(String dataset, boolean isTest) {
+	public SoldierTimeLine(String dataset, boolean isTest)
+	{
 		//datasetName = dataset;
-		if (dbhost == null) {
-			dbhost = "http://127.0.0.1:3030/";
+		if (System.getenv("FUSEKI_URL") != null)
+		{
+			dbhost = System.getenv("FUSEKI_URL");
 		}
+
 		dbUrl = dbhost + dataset;
 		/*System.out.println("**********************");
 		System.out.println(dbUrl);
 		System.out.println("**********************");
 		*/
-		if (isTest) {
-			try {
+		if (isTest)
+		{
+			try
+			{
 				model = ModelFactory.createDefaultModel();
 				String path = getClass().getClassLoader().getResource("test.ttl").getFile();
 				model.read(path);
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				System.out.println(ex.getMessage());
 			}
-		} else {
-			try {
+		}
+		else
+		{
+			try
+			{
 				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 				conn = (RDFConnectionFuseki) builder.build();
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -57,23 +76,32 @@ public class SoldierTimeLine {
 	 * @param queryString the SPARQL query to be executed on the RDF dataset
 	 * @return It takes query string as its parameter and returns the result set after executing the query.
 	 */
-	public ResultSet getResultFromQuery(String queryString) {
+	public ResultSet getResultFromQuery(String queryString)
+	{
 		ResultSet returnVaule;
 		QueryExecution queryExecution = null;
-		if (model == null) {
-			try {
+
+		if (model == null)
+		{
+			try
+			{
 				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 				conn = (RDFConnectionFuseki) builder.build();
 				Query query = QueryFactory.create(queryString);
 				queryExecution = conn.query(query);
 				conn.close();
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				System.out.println(ex.getMessage());
 			}
-		} else {
+		}
+		else
+		{
 			Query query = QueryFactory.create(queryString);
 			queryExecution = QueryExecutionFactory.create(query, model);
 		}
+
 		returnVaule = ResultSetFactory.copyResults(queryExecution.execSelect());
 		queryExecution.close();
 
@@ -91,19 +119,30 @@ public class SoldierTimeLine {
 		String value = "";
 		Set<String> duplicateColumnLst = new TreeSet<>();
 		Set<String> nestedColLst = new TreeSet<>();
+
 		dbUrl = "http://127.0.0.1:3030/ssfuehrer";
+
 		String qString = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\nSELECT ?subject ?predicate ?object \n FROM datagraph: \n WHERE { ?subject ?predicate ?object }";
+
 		ResultSet resultSet = getResultFromQuery(qString);
 		List<Triple> triples = new ArrayList<>();
+
 		model = ModelFactory.createDefaultModel();
-		while (resultSet.hasNext()) {
-			QuerySolution s = resultSet.nextSolution();
-			Triple t = Triple.create(s.get("subject").asNode(), s.get("predicate").asNode(), s.get("object").asNode());
+		QuerySolution s;
+		Triple t;
+
+		while (resultSet.hasNext())
+		{
+			s = resultSet.nextSolution();
+			t = Triple.create(s.get("subject").asNode(), s.get("predicate").asNode(), s.get("object").asNode());
 			triples.add(t);
 		}
-		for (Triple t : triples) {
-			model.add(model.asStatement(t));
+
+		for (Triple tri : triples)
+		{
+			model.add(model.asStatement(tri));
 		}
+
 		String queryString = PREFIXES +
 				"SELECT ?s ?p ?o\n" +
 //				"FROM datagraph:\n" +
@@ -111,115 +150,101 @@ public class SoldierTimeLine {
 				"  ?s ?p ?o\n" +
 				"  FILTER( ?s = soldierData:" + soldierId + " && ?p != rdf:type)\n" +
 				"}";
+
 		resultSet = getResultFromQuery(queryString);
-		while (resultSet.hasNext()) {
-			QuerySolution resource = resultSet.next();
+		QuerySolution resource;
+		JSONObject childObj = new JSONObject();
+		JSONArray childLst = new JSONArray();
+
+		while (resultSet.hasNext())
+		{
+			resource = resultSet.next();
 			id = resource.get("s").asNode().getURI();
 			id = id.substring(id.lastIndexOf("/") + 1);
 			key = resource.get("p").asNode().getURI();
-			if (key.contains("#")) {
+
+			if (key.contains("#"))
+			{
 				key = key.substring(key.lastIndexOf("#") + 1);
-			} else {
+			}
+			else
+			{
 				key = key.substring(key.lastIndexOf("/") + 1);
 			}
-			if (rowsMap.get(id) == null) {
+
+			if (rowsMap.get(id) == null)
+			{
 				rowObject = new JSONObject();
-			} else {
+			}
+			else
+			{
 				rowObject = rowsMap.get(id);
 			}
-			if (resource.get("o").isLiteral()) {
+
+			if (resource.get("o").isLiteral())
+			{
 				value = resource.get("o").asLiteral().getString();
-				if (rowObject.get(key) == null) {
+
+				if (rowObject.get(key) == null)
+				{
 					rowObject.put(key, value);
-				} else {
+				}
+				else
+				{
 					rowObject.put(key, "");
 					duplicateColumnLst.add(key);
 				}
-			} else {
+			}
+			else
+			{
 				value = resource.get("o").asNode().getURI();
-				if (nestedColLst.contains(key)) {
-					if (rowObject.get(key) == null) {
+				if (nestedColLst.contains(key))
+				{
+					if (rowObject.get(key) == null)
+					{
 						rowObject.put(key, value);
-					} else {
+					}
+					else
+					{
 						rowObject.put(key, "");
 						duplicateColumnLst.add(key);
 					}
-				} else {
+				}
+				else
+				{
 					foreignRef = getResource(value);
-					JSONObject childObj = new JSONObject();
-					JSONArray childLst = new JSONArray();
-					for (String k : foreignRef.keySet()) {
+
+					for (String k : foreignRef.keySet())
+					{
 						childObj.put(k, foreignRef.get(k));
 					}
-					if (rowObject.get(key) != null) {
+
+					if (rowObject.get(key) != null)
+					{
 						childLst = (JSONArray) rowObject.get(key);
 					}
 					childLst.add(childObj);
 					rowObject.put(key, childLst);
+
+					childObj = new JSONObject();
+					childLst = new JSONArray();
 				}
 			}
 			rowsMap.put(id, rowObject);
 		}
-		for (String rowId : rowsMap.keySet()) {
-			for (String col : duplicateColumnLst) {
+
+		for (String rowId : rowsMap.keySet())
+		{
+			for (String col : duplicateColumnLst)
+			{
 				rowsMap.get(rowId).remove(col);
 			}
+
 			rows.add(rowsMap.get(rowId));
 		}
 
 		//Map<String,Map<String,String>> returingData =  preProcessSoldierData(rows);
 
-		return preProcessSoldierData(rows);
-	}
-
-	public Map<String, String> getResource(String sub) {
-		Map<String, String> map = new HashMap<>();
-		Map<String, String> childRef = new HashMap<>();
-		String key = "";
-		String value = "";
-		QuerySolution resource;
-		dbUrl = "http://127.0.0.1:3030/ssfuehrer";
-		String queryString = PREFIXES +
-				"prefix datagraph: <" + dbUrl + "/data/data>\n" +
-				"SELECT *\n" +
-//				"FROM datagraph:\n" +
-				"WHERE {\n" +
-				"	<" + sub + "> ?p ?o;\n" +
-				"   FILTER ( ?p != rdf:type)\n" +
-				"}";
-		ResultSet resultSet = getResultFromQuery(queryString);
-		while (resultSet.hasNext()) {
-			resource = resultSet.next();
-			key = resource.get("p").asNode().getURI();
-			if (key.contains("#")) {
-				key = key.substring(key.lastIndexOf("#") + 1);
-			} else {
-				key = key.substring(key.lastIndexOf("/") + 1);
-			}
-			if (resource.get("o").isLiteral()) {
-				value = resource.get("o").asLiteral().getString();
-				map.put(key, value);
-			} else {
-				value = resource.get("o").asNode().getURI();
-				childRef = getResource(value);
-				for (String k : childRef.keySet())
-				{
-					map.put(key + "_" + k, childRef.get(k));
-				}
-				/*JSONObject childObj = new JSONObject();
-				JSONArray childLst = new JSONArray();
-				for (String k : childRef.keySet()) {
-					childObj.put(k, childRef.get(k));
-				}
-				childLst.add(childObj);
-				map.put(key, childLst.toString());*/
-			}
-		}
-		return map;
-	}
-
-	public Map<String,Map<String,String>> preProcessSoldierData(JSONArray soldierData)
-	{
 		Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
 		Map<String,String> tempStringVsStringMap;
 		Map<String,String> soldierDatesMap = new TreeMap<String,String>();
@@ -230,10 +255,12 @@ public class SoldierTimeLine {
 		Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
 
 		int datesFlag = 0;
+		JSONObject eachSoldierData,decorationInfoObject,regimentInfoObject,rankInfoObject;
+		JSONArray decorationInformation,regimentInformation,rankInformation;
 
-		for (int i = 0; i < soldierData.size(); i++)
+		for (int i = 0; i < rows.size(); i++)
 		{
-			JSONObject eachSoldierData = (JSONObject) soldierData.get(i);
+			eachSoldierData = (JSONObject) rows.get(i);
 
 			tempStringVsStringMap = new HashMap<String,String>();
 			tempStringVsStringMap.put("membershipNumber",eachSoldierData.get("membershipNumber").toString());
@@ -251,12 +278,13 @@ public class SoldierTimeLine {
 			datesFlag ++;
 			soldierDataMap.put("basicInfo__"+String.valueOf(i),new HashMap<String, String>());
 			soldierDataMap.put("basicInfo__"+String.valueOf(i),tempStringVsStringMap);
-			//tempStringVsStringMap.clear();
 
-			JSONArray decorationInformation = (JSONArray) eachSoldierData.get("decorationInfo");
+
+			decorationInformation = (JSONArray) eachSoldierData.get("decorationInfo");
+
 			for(int j=0;j < decorationInformation.size();j++)
 			{
-				JSONObject decorationInfoObject = (JSONObject) decorationInformation.get(j);
+				decorationInfoObject = (JSONObject) decorationInformation.get(j);
 				tempStringVsStringMap = new HashMap<String,String>();
 
 				tempStringVsStringMap.put("label",decorationInfoObject.get("label").toString());
@@ -277,10 +305,10 @@ public class SoldierTimeLine {
 				//tempStringVsStringMap.clear();
 			}
 
-			JSONArray regimentInformation = (JSONArray) eachSoldierData.get("hasRegiment");
+			regimentInformation = (JSONArray) eachSoldierData.get("hasRegiment");
 			for(int j=0;j < regimentInformation.size();j++)
 			{
-				JSONObject regimentInfoObject = (JSONObject) regimentInformation.get(j);
+				regimentInfoObject = (JSONObject) regimentInformation.get(j);
 
 				tempStringVsStringMap = new HashMap<String,String>();
 				tempStringVsStringMap.put("label",regimentInfoObject.get("label").toString());
@@ -324,10 +352,10 @@ public class SoldierTimeLine {
 			}
 			*/
 
-			JSONArray rankInformation = (JSONArray) eachSoldierData.get("rankInfo");
+			rankInformation = (JSONArray) eachSoldierData.get("rankInfo");
 			for(int j=0;j < rankInformation.size();j++)
 			{
-				JSONObject rankInfoObject = (JSONObject) rankInformation.get(j);
+				rankInfoObject = (JSONObject) rankInformation.get(j);
 				tempStringVsStringMap = new HashMap<String,String>();
 
 				tempStringVsStringMap.put("label",rankInfoObject.get("label").toString());
@@ -369,16 +397,63 @@ public class SoldierTimeLine {
 		soldierDataMap.put("allRegiment",new HashMap<String, String>());
 		soldierDataMap.put("allRegiment",soldierAllRegimentsMap);
 
-		/*for(String k:soldierDataMap.keySet())
-		{
-			Map<String,String> abc = soldierDataMap.get(k);
-			for(String l:abc.keySet())
-			{
-				System.out.println(k+ " => "+l+ " => "+abc.get(l));
-			}
-		}*/
-
 		return soldierDataMap;
+	}
+
+	public Map<String, String> getResource(String sub)
+	{
+		Map<String, String> map = new HashMap<>();
+		Map<String, String> childRef = new HashMap<>();
+		String key = "";
+		String value = "";
+		QuerySolution resource;
+		dbUrl = "http://127.0.0.1:3030/ssfuehrer";
+		String queryString = PREFIXES +
+				"prefix datagraph: <" + dbUrl + "/data/data>\n" +
+				"SELECT *\n" +
+//				"FROM datagraph:\n" +
+				"WHERE {\n" +
+				"	<" + sub + "> ?p ?o;\n" +
+				"   FILTER ( ?p != rdf:type)\n" +
+				"}";
+		ResultSet resultSet = getResultFromQuery(queryString);
+		while (resultSet.hasNext())
+		{
+			resource = resultSet.next();
+			key = resource.get("p").asNode().getURI();
+
+			if (key.contains("#"))
+			{
+				key = key.substring(key.lastIndexOf("#") + 1);
+			}
+			else
+			{
+				key = key.substring(key.lastIndexOf("/") + 1);
+			}
+
+			if (resource.get("o").isLiteral())
+			{
+				value = resource.get("o").asLiteral().getString();
+				map.put(key, value);
+			}
+			else
+			{
+				value = resource.get("o").asNode().getURI();
+				childRef = getResource(value);
+				for (String k : childRef.keySet())
+				{
+					map.put(key + "_" + k, childRef.get(k));
+				}
+				/*JSONObject childObj = new JSONObject();
+				JSONArray childLst = new JSONArray();
+				for (String k : childRef.keySet()) {
+					childObj.put(k, childRef.get(k));
+				}
+				childLst.add(childObj);
+				map.put(key, childLst.toString());*/
+			}
+		}
+		return map;
 	}
 }
 
