@@ -19,7 +19,7 @@ import java.util.*;
 
 public class SoldierTimeLine
 {
-	private static String dbhost = "http://127.0.0.1:3030/";
+	private String dbhost = "http://127.0.0.1:3030/";
 	//private String dbhost = "http://fuseki:8082/";
 	//private String datasetName = "";
 	private String dbUrl = "";
@@ -121,12 +121,9 @@ public class SoldierTimeLine
 		Set<String> nestedColLst = new TreeSet<>();
 
 		dbUrl = "http://127.0.0.1:3030/ssfuehrer";
-
 		String qString = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\nSELECT ?subject ?predicate ?object \n FROM datagraph: \n WHERE { ?subject ?predicate ?object }";
 
 		ResultSet resultSet = getResultFromQuery(qString);
-		List<Triple> triples = new ArrayList<>();
-
 		model = ModelFactory.createDefaultModel();
 		QuerySolution s;
 		Triple t;
@@ -135,21 +132,10 @@ public class SoldierTimeLine
 		{
 			s = resultSet.nextSolution();
 			t = Triple.create(s.get("subject").asNode(), s.get("predicate").asNode(), s.get("object").asNode());
-			triples.add(t);
+			model.add(model.asStatement(t));
 		}
 
-		for (Triple tri : triples)
-		{
-			model.add(model.asStatement(tri));
-		}
-
-		String queryString = PREFIXES +
-				"SELECT ?s ?p ?o\n" +
-//				"FROM datagraph:\n" +
-				"WHERE {\n" +
-				"  ?s ?p ?o\n" +
-				"  FILTER( ?s = soldierData:" + soldierId + " && ?p != rdf:type)\n" +
-				"}";
+		String queryString = PREFIXES + "SELECT ?s ?p ?o\n" + "WHERE {\n" + "  ?s ?p ?o\n" + "  FILTER( ?s = soldierData:" + soldierId + " && ?p != rdf:type)\n" + "}";
 
 		resultSet = getResultFromQuery(queryString);
 		QuerySolution resource;
@@ -245,6 +231,11 @@ public class SoldierTimeLine
 
 		//Map<String,Map<String,String>> returingData =  preProcessSoldierData(rows);
 
+		return preProcessSoldierData(rows);
+	}
+
+	public Map<String,Map<String,String>> preProcessSoldierData(JSONArray rows)
+	{
 		Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
 		Map<String,String> tempStringVsStringMap;
 		Map<String,String> soldierDatesMap = new TreeMap<String,String>();
@@ -255,8 +246,13 @@ public class SoldierTimeLine
 		Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
 
 		int datesFlag = 0;
-		JSONObject eachSoldierData,decorationInfoObject,regimentInfoObject,rankInfoObject;
-		JSONArray decorationInformation,regimentInformation,rankInformation;
+		JSONObject eachSoldierData;
+		JSONObject decorationInfoObject;
+		JSONObject regimentInfoObject;
+		JSONObject rankInfoObject;
+		JSONArray decorationInformation;
+		JSONArray regimentInformation;
+		JSONArray rankInformation;
 
 		for (int i = 0; i < rows.size(); i++)
 		{
@@ -330,28 +326,6 @@ public class SoldierTimeLine
 
 			}
 
-			/*JSONArray literatureInformation = (JSONArray) eachSoldierData.get("literatureInfo");
-			for(int j=0;j < literatureInformation.size();j++)
-			{
-				JSONObject literatureInfoObject = (JSONObject) literatureInformation.get(j);
-
-				tempStringVsStringMap.put("label",literatureInfoObject.get("label").toString());
-				tempStringVsStringMap.put("id",literatureInfoObject.get("id").toString());
-				tempStringVsStringMap.put("hasLiterature_citaviId",literatureInfoObject.get("hasLiterature_citaviId").toString());
-				tempStringVsStringMap.put("regimentInfo_abbreviation",literatureInfoObject.get("regimentInfo_abbreviation").toString());
-				tempStringVsStringMap.put("regimentInfo_id",literatureInfoObject.get("regimentInfo_id").toString());
-				tempStringVsStringMap.put("regimentInfo_label",literatureInfoObject.get("regimentInfo_label").toString());
-				tempStringVsStringMap.put("regimentInfo_name",literatureInfoObject.get("regimentInfo_name").toString());
-
-				soldierDatesMap.put(literatureInfoObject.get("applicableFrom_inXSDDate").toString(),"regimentInfo"+j);
-
-				soldierDataMap.put("regimentInfo"+j,new HashMap<String, String>());
-				soldierDataMap.put("regimentInfo"+j,tempStringVsStringMap);
-				tempStringVsStringMap.clear();
-
-			}
-			*/
-
 			rankInformation = (JSONArray) eachSoldierData.get("rankInfo");
 			for(int j=0;j < rankInformation.size();j++)
 			{
@@ -399,6 +373,7 @@ public class SoldierTimeLine
 
 		return soldierDataMap;
 	}
+
 
 	public Map<String, String> getResource(String sub)
 	{
