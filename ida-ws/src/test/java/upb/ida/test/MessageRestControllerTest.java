@@ -26,10 +26,10 @@ import upb.ida.rest.MessageRestController;
 @WebAppConfiguration
 @ContextConfiguration(classes = {Application.class})
 public class MessageRestControllerTest {
-	
+
 	@Autowired
 	private MessageRestController mrc;
-	
+
 	@Test
 	public void  sendmessagetestPos() throws Exception  {
 		ResponseBean responseBean;
@@ -37,9 +37,9 @@ public class MessageRestControllerTest {
 		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city");
 		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city");
 		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city");
-		
+
 		System.out.println(responseBean.getPayload().get("fdgData"));
-		
+
 		Map<String, String> row0= new HashMap<String, String> ();
 		row0.put("city1","Berlin");
 		row0.put("city2","Buenos Aires");
@@ -52,13 +52,13 @@ public class MessageRestControllerTest {
 		row2.put("city1","Buenos Aires");
 		row2.put("city2","Cairo");
 		row2.put("distance","7345");
-		
+
 		List<Map<String, String>> dataMapList = new ArrayList<>();
-		
+
 		dataMapList.add(row0);
 		dataMapList.add(row1);
 		dataMapList.add(row2);
-		
+
 		double[] strngthValArr = new double[dataMapList.size()];
 		int sindx = 0;
 		int ndUniqueId = 1;
@@ -94,11 +94,11 @@ public class MessageRestControllerTest {
 				ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 				System.out.println(res);
 				assertEquals(actualNode,res);
-		
-		
-		
+
+
+
 	}
-	
+
 	@Test
 	public void  sendmessagetestNeg() throws Exception  {
 		ResponseBean responseBean;
@@ -106,9 +106,9 @@ public class MessageRestControllerTest {
 		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city");
 		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city");
 		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city");
-		
+
 		System.out.println(responseBean.getPayload().get("fdgData"));
-		
+
 		Map<String, String> row0= new HashMap<String, String> ();
 		row0.put("city1","Berlin");
 		row0.put("city2","Buenos Aires");
@@ -117,14 +117,14 @@ public class MessageRestControllerTest {
 		row1.put("city1","Berlin");
 		row1.put("city2","Cairo");
 		row1.put("distance","1795");
-		
-		
+
+
 		List<Map<String, String>> dataMapList = new ArrayList<>();
-		
+
 		dataMapList.add(row0);
 		dataMapList.add(row1);
-		
-		
+
+
 		double[] strngthValArr = new double[dataMapList.size()];
 		int sindx = 0;
 		int ndUniqueId = 1;
@@ -160,12 +160,12 @@ public class MessageRestControllerTest {
 				ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 				System.out.println(res);
 				assertNotEquals(actualNode,res);
-				
-		
-		
-		
+
+
+
+
 	}
-	
+
 	@Test
 	public void  sendmessagetestExt() throws Exception  {
 		ResponseBean responseBean;
@@ -173,9 +173,9 @@ public class MessageRestControllerTest {
 		responseBean = mrc.sendmessage("Source node is city1", "1", "citydistancetest.csv", "city");
 		responseBean = mrc.sendmessage("Target node is city2", "1", "citydistancetest.csv", "city");
 		responseBean = mrc.sendmessage("Strength between the nodes should be represented by distance", "1", "citydistancetest.csv", "city");
-		
+
 		System.out.println(responseBean.getPayload().get("fdgData"));
-		
+
 		Map<String, String> row0= new HashMap<String, String> ();
 		row0.put("city1","Berlin");
 		row0.put("city2","Buenos Aires");
@@ -188,13 +188,13 @@ public class MessageRestControllerTest {
 		row2.put("city1","Buenos Aires");
 		row2.put("city2","Delhi");
 		row2.put("distance","7345");
-		
+
 		List<Map<String, String>> dataMapList = new ArrayList<>();
-		
+
 		dataMapList.add(row0);
 		dataMapList.add(row1);
 		dataMapList.add(row2);
-		
+
 		double[] strngthValArr = new double[dataMapList.size()];
 		int sindx = 0;
 		int ndUniqueId = 1;
@@ -230,8 +230,20 @@ public class MessageRestControllerTest {
 				ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 				System.out.println(res);
 				assertNotEquals(actualNode,res);
-		
-		
-		
+
+
+
+	}
+
+	@Test
+	public void  getSoldierDataTest() throws Exception  {
+		try{
+			ResponseBean responseBean;
+			responseBean = mrc.getSoldierData("47540");
+		}
+		catch(Exception e)
+		{
+			System.out.println("error in getSoldierDataTest(): "+e);
+		}
 	}
 }
