@@ -22,6 +22,7 @@ export class RdfOntologyViewComponent implements OnInit {
   public nodeRangeId: string;
   public nodeCommentId: string;
 
+  expandNodeInfoCard = false;
   languageCheked = false;
   classHeirarchyChecked = true;
   allPropChecked = false;
@@ -39,7 +40,7 @@ export class RdfOntologyViewComponent implements OnInit {
   subClassLabelColor ="#3498DB";
   propertyTextColor ="#28B463";
   onClickNodeColor ="red";
-  
+ 
   constructor(public uip: UniqueIdProviderService) {
     this.figId = 'fig' + this.uip.getUniqueId();
     this.ontologyId = 'ontologyId' + this.uip.getUniqueId();
@@ -57,7 +58,7 @@ export class RdfOntologyViewComponent implements OnInit {
   ngOnInit() {
   }
 
-  ngAfterViewInit() 
+  ngAfterViewInit()
   {
     this.fileName = "";
     var idVal = {nodeId:this.nodeId,nodeLabelId:this.nodeLabelId,nodeIdsId:this.nodeIdsId,nodeTypeId:this.nodeTypeId,nodeDescripId:this.nodeDescripId,
@@ -130,7 +131,7 @@ export class RdfOntologyViewComponent implements OnInit {
     var customizeGraphVals = {edgeSize:this.edgeSize,
                               graphCharge:this.graphCharge,
                               resourceRadius:this.resourceRadius,
-                              literalRadius:this.literalRadius, 
+                              literalRadius:this.literalRadius,
                               resourceNodeColor:this.resourceNodeColor,
                               resourceNodeTextColor:this.resourceNodeTextColor,
                               literalNodeColor:this.literalNodeColor,
@@ -146,7 +147,7 @@ export class RdfOntologyViewComponent implements OnInit {
   }
 
   applyConfigClicked(event){
-    
+   
     var idVal = {nodeId:this.nodeId,nodeLabelId:this.nodeLabelId,nodeIdsId:this.nodeIdsId,nodeTypeId:this.nodeTypeId,nodeDescripId:this.nodeDescripId,
                 nodeSubClassId:this.nodeSubClassId,nodeDomainId:this.nodeDomainId,nodeRangeId:this.nodeRangeId,
                 nodeCommentId:this.nodeCommentId
