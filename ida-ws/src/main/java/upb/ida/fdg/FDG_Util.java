@@ -23,7 +23,7 @@ import upb.ida.util.FileUtil;
 
 /**
  * Exposes util methods to perform FDG related operations
- * 
+ *
  * @author Nikit
  *
  */
@@ -36,7 +36,7 @@ public class FDG_Util {
 	/**
 	 * Method to convert a list of triples into formatted json data for FDG
 	 * Visualization
-	 * 
+	 *
 	 * @param triples
 	 *            - list of triples
 	 * @return jsonobject of data
@@ -89,7 +89,7 @@ public class FDG_Util {
 
 	/**
 	 * Method to generate a Json object representing a Force Directed Graph
-	 * 
+	 *
 	 * @param filePath
 	 *            - path of the data file
 	 * @param srcNodeFtr
@@ -147,7 +147,7 @@ public class FDG_Util {
 
 	/**
 	 * Method to calculate a custom normal value for a given number
-	 * 
+	 *
 	 * @param num
 	 *            - number to normalize
 	 * @param max

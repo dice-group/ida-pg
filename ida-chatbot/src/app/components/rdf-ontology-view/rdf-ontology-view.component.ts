@@ -22,7 +22,6 @@ export class RdfOntologyViewComponent implements OnInit {
   public nodeRangeId: string;
   public nodeCommentId: string;
 
-  expandNodeInfoCard = false;
   languageCheked = false;
   classHeirarchyChecked = true;
   allPropChecked = false;
@@ -131,7 +130,7 @@ export class RdfOntologyViewComponent implements OnInit {
     var customizeGraphVals = {edgeSize:this.edgeSize,
                               graphCharge:this.graphCharge,
                               resourceRadius:this.resourceRadius,
-                              literalRadius:this.literalRadius,
+                              literalRadius:this.literalRadius, 
                               resourceNodeColor:this.resourceNodeColor,
                               resourceNodeTextColor:this.resourceNodeTextColor,
                               literalNodeColor:this.literalNodeColor,
