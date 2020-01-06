@@ -1,4 +1,5 @@
 (ns librarian.model.interop
+  "Interop layer to enable a comfortable usage of the librarian model from Java and other similar JVM languages."
   (:require [librarian.model.io.scrape :as scrape]
             [clojure.edn :as edn])
   (:gen-class :name librarian.model.Scrape
