@@ -18,7 +18,7 @@ import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
 import upb.ida.fdg.FDG_Node;
 import upb.ida.fdg.FDG_Triple;
-import upb.ida.fdg.FDG_Util;
+import upb.ida.fdg.FdgUtil;
 import upb.ida.rest.MessageRestController;
 
 @RunWith(SpringRunner.class)
@@ -82,7 +82,7 @@ public class MessageRestControllerTest {
 			FDG_Triple triple = new FDG_Triple(tripUniqueId++, srcNd, trgtNd, strngthValD);
 			tripleList.add(triple);
 		}
-		res = FDG_Util.getFDGData(tripleList, strngthValArr);
+		res = FdgUtil.getFDGData(tripleList, strngthValArr);
 		ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 		System.out.println(res);
 		assertEquals(actualNode, res);
@@ -142,7 +142,7 @@ public class MessageRestControllerTest {
 			FDG_Triple triple = new FDG_Triple(tripUniqueId++, srcNd, trgtNd, strngthValD);
 			tripleList.add(triple);
 		}
-		res = FDG_Util.getFDGData(tripleList, strngthValArr);
+		res = FdgUtil.getFDGData(tripleList, strngthValArr);
 		ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 		System.out.println(res);
 		assertNotEquals(actualNode, res);
@@ -201,7 +201,7 @@ public class MessageRestControllerTest {
 			FDG_Triple triple = new FDG_Triple(tripUniqueId++, srcNd, trgtNd, strngthValD);
 			tripleList.add(triple);
 		}
-		res = FDG_Util.getFDGData(tripleList, strngthValArr);
+		res = FdgUtil.getFDGData(tripleList, strngthValArr);
 		ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 		System.out.println(res);
 		assertNotEquals(actualNode, res);

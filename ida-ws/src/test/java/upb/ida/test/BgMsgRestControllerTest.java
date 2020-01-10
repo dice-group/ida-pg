@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
 import upb.ida.rest.MessageRestController;
-import upb.ida.util.BarGraphUtil;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration

@@ -1,8 +1,6 @@
 package upb.ida.provider;
 
 import java.util.Map;
-
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
@@ -20,8 +18,7 @@ import upb.ida.util.FileUtil;
  */
 @Component
 public class LoadDsMetadata implements Subroutine {
-	@Autowired
-	private FileUtil fileUtil;
+
 	@Autowired
 	private ResponseBean responseBean;
 

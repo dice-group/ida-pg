@@ -16,14 +16,14 @@ import com.rivescript.macro.Subroutine;
 
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import upb.ida.venndiagram.VENN_Util;
+import upb.ida.venndiagram.VennUtil;
 import upb.ida.util.FileUtil;
 @Component
 public class VennDiagramHandler implements Subroutine {
 	@Autowired
 	private FileUtil DemoMain;
 	@Autowired
-	private VENN_Util VENN_Util;
+	private VennUtil VENN_Util;
 	@Autowired
 	private ResponseBean responseBean;
 

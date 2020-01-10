@@ -38,5 +38,14 @@ public interface IDALiteral {
 	public static final String CSV_FILE_PATTERN = ".*[cC][sS][vV]$";
 	//Metadata File name Pattern
 	public static final String DSMD_FILE_PATTERN = ".*_dsmd\\.[jJ][sS][oO][nN]$";
-
+	public static final String PREFIXES = "prefix owl: <http://www.w3.org/2002/07/owl#>\n" +
+			"prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+			"prefix xml: <http://www.w3.org/XML/1998/namespace>\n" +
+			"prefix foaf: <http://xmlns.com/foaf/0.1/>\n" +
+			"prefix xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+			"prefix dbo: <http://dbpedia.org/ontology/>\n" +
+			"prefix time: <http://www.w3.org/2006/time#>\n" +
+			"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+			"prefix dbr: <http://dbpedia.org/resource/>\n" +
+			"prefix dc: <http://purl.org/dc/elements/1.1/>\n";
 }

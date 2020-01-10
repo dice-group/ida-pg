@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
 import upb.ida.dao.DataRepository;
-import upb.ida.util.FileUtil;
 import upb.ida.util.StringLengthComparator;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -21,8 +19,6 @@ import java.util.*;
 
 @Component
 public class SSBDiagramHandler implements Subroutine {
-	@Autowired
-	private FileUtil fileUtil;
 	@Autowired
 	private ResponseBean responseBean;
 	private Map<Integer, TreeSet<Integer>> rangeMap = new HashMap<>();
@@ -44,8 +40,6 @@ public class SSBDiagramHandler implements Subroutine {
 		ArrayList<ArrayList<String>> response = new ArrayList<>();
 
 		try {
-			DataRepository dataRepository = new DataRepository(false);
-			List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
 			generateSsbFile(actvTbl, args[0], args[1], actvDs);
 			dataMap.put("label", "sequence sun burst diagram data");
 			responseBean.setActnCode(IDALiteral.UIA_SSBDIAGRAM);

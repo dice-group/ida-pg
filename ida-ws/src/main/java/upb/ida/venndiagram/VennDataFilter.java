@@ -4,7 +4,7 @@ import java.util.*;
 import org.dice_research.topicmodeling.commons.sort.AssociativeSort;
 import upb.ida.dao.DataRepository;
 
-public class VENN_DATA_FILTER {
+public class VennDataFilter {
 	public Map<Integer, Set<Integer>> dataMap = new HashMap<>();
 
 	public void createDataMap(String actvTbl, String labelCol, String dataCol, String actvDs) throws NumberFormatException {

@@ -25,9 +25,8 @@ import upb.ida.util.FileUtil;
  *
  */
 @Component
-public class FDG_Util {
-	@Autowired
-	private FileUtil dem;
+public class FdgUtil {
+
 	public static final int MAX_STR = 10;
 
 	/**

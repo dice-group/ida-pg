@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 
 @RunWith(SpringRunner.class)

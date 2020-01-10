@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import upb.ida.constant.IDALiteral;
 
 import java.util.*;
 
@@ -97,7 +98,7 @@ public class DataRepository {
 		int index;
 		String filterPrefix = "?s = ";
 		StringBuilder filterCondition = new StringBuilder();
-		String queryString = RepoConstants.PREFIXES +
+		String queryString = IDALiteral.PREFIXES +
 				"SELECT ?class (count(?class) as ?count)\n" +
 				"WHERE {\n" +
 				"  \t?s rdf:type ?class;\n" +
@@ -121,7 +122,7 @@ public class DataRepository {
 			classCountMap.put(className, rowCount);
 			classBaseUrlMap.put(className, resource.get("class").asNode().getURI());
 		}
-		queryString = RepoConstants.PREFIXES +
+		queryString = IDALiteral.PREFIXES +
 				"SELECT DISTINCT ?class ?pred\n" +
 				"WHERE {\n" +
 				"  \t?s ?pred ?o;\n" +
@@ -157,7 +158,7 @@ public class DataRepository {
 			filterCondition.append(filterPrefix).append("<").append(col.replace("/data/", "/ontology/")).append(">");
 		}
 		if (!"".contentEquals(filterCondition)) {
-			queryString = RepoConstants.PREFIXES +
+			queryString = IDALiteral.PREFIXES +
 					"SELECT DISTINCT (?s as ?column) ?comment ?type ?label\n" +
 					"WHERE { \n" +
 					"  ?s\n" +
@@ -270,32 +271,13 @@ public class DataRepository {
 	 * @return - list of rows in the table in JSON format.
 	 */
 	public List<Map<String, String>> getData(String className, String dataset) {
-		List<Map<String, String>> rows = new ArrayList<>();
 		Map<String, Map<String, String>> rowsMap = new HashMap<>();
-		Map<String, String> incomingEdge;
 		Map<String, String> rowObject;
 		String id;
 		String key;
 		String value;
 		String classUrl;
-		/*
-		 *	Create a fuseki model by fetching all triples in the database as multiple queries has to be run on the same dataset.
-		 */
-		String qString = "SELECT ?subject ?predicate ?object \n " +
-				"WHERE { " +
-				"?subject ?predicate ?object " +
-				"}";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", qString);
-		List<Triple> triples = new ArrayList<>();
-		model = ModelFactory.createDefaultModel();
-		while (resultSet.hasNext()) {
-			QuerySolution s = resultSet.nextSolution();
-			Triple t = Triple.create(s.get("subject").asNode(), s.get("predicate").asNode(), s.get("object").asNode());
-			triples.add(t);
-		}
-		for (Triple t : triples) {
-			model.add(model.asStatement(t));
-		}
+		setupDataSetModel(dataset);
 		classUrl = getClassUrl(className, dataset);
 		if (classUrl == null) {
 			return null;
@@ -304,14 +286,14 @@ public class DataRepository {
 		/*
 		 * Get all triples of the class and all other related triples.
 		 */
-		String queryString = RepoConstants.PREFIXES +
+		String queryString = IDALiteral.PREFIXES +
 				"SELECT *\n" +
 				"WHERE {\n" +
 				"	?s a <" + classUrl + ">; \n" +
 				"	?p ?o;\n" +
 				"   FILTER ( ?p != rdf:type)\n" +
 				"}";
-		resultSet = getResultFromQuery(dataset + "-data", queryString);
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
 		while (resultSet.hasNext()) {
 			QuerySolution resource = resultSet.next();
 			id = resource.get("s").asNode().toString();
@@ -326,12 +308,8 @@ public class DataRepository {
 			} else {
 				rowObject = rowsMap.get(id);
 			}
-			if (resource.get("o").isLiteral()) {
-				value = resource.get("o").asLiteral().getString();
-			} else if (resource.get("o").isURIResource()) {
-				value = resource.get("o").asNode().getURI();
-				value = getForeignReference(value, dataset + "-data");
-			} else {
+			value = getObjectValueOfResource(resource, dataset);
+			if(value == null){
 				continue;
 			}
 			if (rowObject.get(key) == null) {
@@ -347,16 +325,7 @@ public class DataRepository {
 			}
 			rowsMap.put(id, rowObject);
 		}
-		for (String rowId : rowsMap.keySet()) {
-			for (String col : duplicateColumnLst) {
-				rowsMap.get(rowId).remove(col);
-			}
-			incomingEdge = getIncomingEdge(rowId, dataset + "-data");
-			if (incomingEdge != null) {
-				rowsMap.get(rowId).putAll(getIncomingEdge(rowId, dataset));
-			}
-			rows.add(rowsMap.get(rowId));
-		}
+		List<Map<String, String>> rows = createRowsForClass(rowsMap, duplicateColumnLst, dataset);
 		if (conn != null) {
 			conn.close();
 		}
@@ -377,7 +346,7 @@ public class DataRepository {
 		String val;
 		Map<String, String> resourceMap = new HashMap<>();
 		QuerySolution resource;
-		String queryString = RepoConstants.PREFIXES +
+		String queryString = IDALiteral.PREFIXES +
 				"SELECT *\n" +
 				"WHERE {\n" +
 				"	<" + sub + "> ?p ?o;\n" +
@@ -420,7 +389,7 @@ public class DataRepository {
 		String subject;
 		int index;
 		QuerySolution resource;
-		String queryString = RepoConstants.PREFIXES +
+		String queryString = IDALiteral.PREFIXES +
 				"SELECT *\n" +
 				"WHERE {\n" +
 				"?s ?p <" + obj + ">\n" +
@@ -456,7 +425,7 @@ public class DataRepository {
 		QuerySolution resource;
 		Set<String> distinctColumns = new TreeSet<>();
 		String classUrl = getClassUrl(className, dataset);
-		String queryString = RepoConstants.PREFIXES +
+		String queryString = IDALiteral.PREFIXES +
 				"SELECT DISTINCT ?class ?pred" +
 				" WHERE {" +
 				"  ?s ?pred ?o;" +
@@ -479,16 +448,15 @@ public class DataRepository {
 	}
 
 	public String getClassUrl(String className, String dataset) {
-		dataset = dataset + "-data";
 		int index;
-		String queryString = RepoConstants.PREFIXES +
+		String queryString = IDALiteral.PREFIXES +
 				"SELECT ?class\n" +
 				"WHERE {\n" +
 				"  \t?s rdf:type ?class;\n" +
 				"    FILTER (?class != owl:NamedIndividual)\n" +
 				"}\n" +
 				"GROUP BY ?class";
-		ResultSet resultSet = getResultFromQuery(dataset, queryString);
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
 		if (resultSet == null) {
 			return null;
 		}
@@ -507,4 +475,58 @@ public class DataRepository {
 		return null;
 	}
 
+	/**
+	 *
+	 * @param dataset - Name of the dataset for which the apache jena model has to created and assigned to class variable.
+	 */
+	private void setupDataSetModel(String dataset) {
+		String qString = "SELECT ?subject ?predicate ?object \n " +
+				"WHERE { " +
+				"?subject ?predicate ?object " +
+				"}";
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", qString);
+		List<Triple> triples = new ArrayList<>();
+		model = ModelFactory.createDefaultModel();
+		while (resultSet.hasNext()) {
+			QuerySolution s = resultSet.nextSolution();
+			Triple t = Triple.create(s.get("subject").asNode(), s.get("predicate").asNode(), s.get("object").asNode());
+			triples.add(t);
+		}
+		for (Triple t : triples) {
+			model.add(model.asStatement(t));
+		}
+	}
+
+	/**
+	 *
+	 * @param resource - Resource of which, value of the object has to be fetched.
+	 * @param dataset - Name of the dataset
+	 * @return - Returns a string containing the object value of a resource.
+	 */
+	private String getObjectValueOfResource(QuerySolution resource, String dataset) {
+		String value = null;
+		if (resource.get("o").isLiteral()) {
+			value = resource.get("o").asLiteral().getString();
+		} else if (resource.get("o").isURIResource()) {
+			value = resource.get("o").asNode().getURI();
+			value = getForeignReference(value, dataset + "-data");
+		}
+		return value;
+	}
+
+	private List<Map<String, String>> createRowsForClass(Map<String, Map<String, String>> rowsMap, Set<String> duplicateColumnLst, String dataset) {
+		List<Map<String, String>> rows = new ArrayList<>();
+		Map<String, String> incomingEdge;
+		for (String rowId : rowsMap.keySet()) {
+			for (String col : duplicateColumnLst) {
+				rowsMap.get(rowId).remove(col);
+			}
+			incomingEdge = getIncomingEdge(rowId, dataset + "-data");
+			if (incomingEdge != null) {
+				rowsMap.get(rowId).putAll(getIncomingEdge(rowId, dataset));
+			}
+			rows.add(rowsMap.get(rowId));
+		}
+		return rows;
+	}
 }

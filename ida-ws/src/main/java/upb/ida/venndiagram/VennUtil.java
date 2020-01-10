@@ -1,10 +1,8 @@
 package upb.ida.venndiagram;
 
 import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import upb.ida.dao.DataRepository;
-import upb.ida.util.FileUtil;
 
 /**
  * Exposes util methods to perform FDG related operations
@@ -13,19 +11,14 @@ import upb.ida.util.FileUtil;
  *
  */
 @Component
-public class VENN_Util {
-    @Autowired
-    private FileUtil dem;
+public class VennUtil {
 
     public HashMap<String, Object> generateVennDiagram (String actvTbl, String[] args, String actvDs)
             throws NumberFormatException  {
         System.out.println(Arrays.toString(args));
-		DataRepository dataRepository = new DataRepository(false);
-		List<Map<String, String>> data = dataRepository.getData(actvTbl, actvDs);
-		Map<String, String> columns = data.get(0);
         int limit = Integer.parseInt(args[1]);
 
-        VENN_DATA_FILTER vennGenerator = new VENN_DATA_FILTER();
+        VennDataFilter vennGenerator = new VennDataFilter();
         vennGenerator.createDataMap(actvTbl, args[0], args[2], actvDs);
 		vennGenerator.filterDataMap(limit);
 
