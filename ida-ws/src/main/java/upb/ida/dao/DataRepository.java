@@ -13,14 +13,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import upb.ida.constant.IDALiteral;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+
+import java.util.*;
 
 /**
  * Class to make fuseki database calls.
@@ -100,7 +94,7 @@ public class DataRepository {
 	public Map<String, Object> getDataSetMD(String dataset) {
 		Map<String, Integer> classCountMap = new HashMap<>();
 		Set<String> distinctColumns = new TreeSet<>();
-		Map<String, ArrayList<String>> columnMap = new HashMap<>();
+		Map<String, ArrayList<String>> columnMap;
 		Map<String, String> columnCommentMap = new HashMap<>();
 		Map<String, String> columnTypeMap = new HashMap<>();
 		Map<String, String> columnLabelMap = new HashMap<>();
@@ -135,7 +129,14 @@ public class DataRepository {
 			classBaseUrlMap.put(className, resource.get("class").asNode().getURI());
 		}
 		columnMap = getClassColumnMap(dataset, distinctColumns);
-		getColumnsInformation(dataset, columnCommentMap, columnTypeMap, columnLabelMap, distinctColumns);
+		Map<String, ArrayList<String>> columnInfoMap = getColumnsInformation(dataset, distinctColumns);
+		ArrayList<String> columnInfo;
+		for(String colName: columnInfoMap.keySet()){
+			columnInfo = columnInfoMap.get(colName);
+			columnCommentMap.put(colName, columnInfo.get(0));
+			columnTypeMap.put(colName, columnInfo.get(1));
+			columnLabelMap.put(colName, columnInfo.get(2));
+		}
 		Map<String, Object> dsInfo = new HashMap<>();
 		dsInfo.put("dsName", dataset);
 		dsInfo.put("dsDesc", "");
@@ -501,13 +502,13 @@ public class DataRepository {
 
 	/**
 	 *
-	 * @param dataset - Name of the dataset.
-	 * @param columnCommentMap - A map to store column name and its comment.
-	 * @param columnTypeMap - A map to store column name and its data type.
-	 * @param columnLabelMap - A map to store column name and its label.
-	 * @param distinctColumns - A set of columns whose details has to be fetched.
+	 * @param dataset - Name of the dataset. test
+	 * @param distinctColumns - Set of column names.
+	 * @return - Map of column name as a key and its info (comment, data type & label) as value.
 	 */
-	private void getColumnsInformation(String dataset, Map<String, String> columnCommentMap, Map<String, String> columnTypeMap, Map<String, String> columnLabelMap, Set<String> distinctColumns) {
+	private Map<String, ArrayList<String>> getColumnsInformation(String dataset, Set<String> distinctColumns) {
+		Map<String, ArrayList<String>> columnsInfoMap = new HashMap<>();
+		ArrayList<String> columnInfo;
 		boolean isFirst = true;
 		String filterPrefix = "?s = ";
 		StringBuilder filterCondition = new StringBuilder();
@@ -569,10 +570,13 @@ public class DataRepository {
 					label = "";
 				}
 				columnName = resource.get("column").asNode().getURI().replaceAll("/ontology/", "/data/");
-				columnCommentMap.put(columnName, comment);
-				columnTypeMap.put(columnName, columnType);
-				columnLabelMap.put(columnName, label);
+				columnInfo = new ArrayList<>();
+				columnInfo.add(comment);
+				columnInfo.add(columnType);
+				columnInfo.add(label);
+				columnsInfoMap.put(columnName, columnInfo);
 			}
 		}
+		return columnsInfoMap;
 	}
 }
