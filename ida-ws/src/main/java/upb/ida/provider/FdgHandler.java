@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.rivescript.macro.Subroutine;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import upb.ida.fdg.FDG_Util;
+import upb.ida.fdg.FdgUtil;
 import upb.ida.util.FileUtil;
 
 @Component
@@ -23,7 +23,7 @@ public class FdgHandler implements Subroutine {
 	@Autowired
 	private FileUtil DemoMain;
 	@Autowired
-	private FDG_Util FDG_Util;
+	private FdgUtil FDG_Util;
 	@Autowired
 	private ResponseBean responseBean;
 
