@@ -13,8 +13,14 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import upb.ida.constant.IDALiteral;
-
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Class to make fuseki database calls.
@@ -100,7 +106,6 @@ public class DataRepository {
 		Map<String, String> columnLabelMap = new HashMap<>();
 		Map<String, String> classBaseUrlMap = new HashMap<>();
 		String className;
-		String columnName;
 		int rowCount;
 		QuerySolution resource;
 		int index;
@@ -140,50 +145,19 @@ public class DataRepository {
 		Map<String, Object> dsInfo = new HashMap<>();
 		dsInfo.put("dsName", dataset);
 		dsInfo.put("dsDesc", "");
-		List<Map<String, Object>> columns;
 		List<Map<String, Object>> tables = new ArrayList<>();
 		Map<String, Object> table;
-		Map<String, Object> column;
 		String classKey;
 		for (String cls : classCountMap.keySet()) {
 			classKey = cls.replaceAll(" ", "");
 			if (columnMap.get(classKey) != null) {
 				table = new HashMap<>();
-				columns = new ArrayList<>();
-				index = 1;
 				table.put("displayName", cls);
 				table.put("fileName", cls);
 				table.put("colCount", columnMap.get(classKey).size());
 				table.put("rowCount", classCountMap.get(cls));
 				table.put("baseUrl", classBaseUrlMap.get(cls));
-				for (String col : columnMap.get(classKey)) {
-					column = new HashMap<>();
-					column.put("colIndex", index++);
-					if (columnLabelMap.get(col) != null) {
-						columnName = columnLabelMap.get(col);
-					} else if (col.contains("#")) {
-						columnName = col.substring(col.lastIndexOf("#") + 1);
-					} else {
-						columnName = col.substring(col.lastIndexOf("/") + 1);
-					}
-					column.put("colName", columnName);
-					if (columnCommentMap.get(col) != null) {
-						column.put("colDesc", columnCommentMap.get(col));
-					} else {
-						if ("label".equals(columnName)) {
-							column.put("colDesc", "Label of a " + dataset + " resource");
-						}
-					}
-					if (columnTypeMap.get(col) != null) {
-						column.put("colType", columnTypeMap.get(col));
-					} else {
-						if ("label".equals(columnName)) {
-							column.put("colType", "string");
-						}
-					}
-					columns.add(column);
-				}
-				table.put("fileColMd", columns);
+				table.put("fileColMd", createColumnsMetadata(columnMap, classKey, dataset, columnCommentMap, columnLabelMap, columnTypeMap));
 				tables.add(table);
 			}
 		}
@@ -578,5 +552,40 @@ public class DataRepository {
 			}
 		}
 		return columnsInfoMap;
+	}
+
+	private List<Map<String, Object>> createColumnsMetadata(Map<String, ArrayList<String>> columnMap, String classKey, String dataset, Map<String, String> columnCommentMap, Map<String, String> columnLabelMap, Map<String, String> columnTypeMap){
+		List<Map<String, Object>> columns = new ArrayList<>();
+		Map<String, Object> column;
+		int index = 1;
+		String columnName;
+		for (String col : columnMap.get(classKey)) {
+			column = new HashMap<>();
+			column.put("colIndex", index++);
+			if (columnLabelMap.get(col) != null) {
+				columnName = columnLabelMap.get(col);
+			} else if (col.contains("#")) {
+				columnName = col.substring(col.lastIndexOf("#") + 1);
+			} else {
+				columnName = col.substring(col.lastIndexOf("/") + 1);
+			}
+			column.put("colName", columnName);
+			if (columnCommentMap.get(col) != null) {
+				column.put("colDesc", columnCommentMap.get(col));
+			} else {
+				if ("label".equals(columnName)) {
+					column.put("colDesc", "Label of a " + dataset + " resource");
+				}
+			}
+			if (columnTypeMap.get(col) != null) {
+				column.put("colType", columnTypeMap.get(col));
+			} else {
+				if ("label".equals(columnName)) {
+					column.put("colType", "string");
+				}
+			}
+			columns.add(column);
+		}
+		return columns;
 	}
 }
