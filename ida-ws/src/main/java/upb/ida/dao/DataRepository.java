@@ -1,14 +1,26 @@
 package upb.ida.dao;
 
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.*;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import upb.ida.constant.IDALiteral;
-
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Class to make fuseki database calls.
@@ -81,7 +93,9 @@ public class DataRepository {
 
 
 	/**
-	 * @return - Metadata of SSFuehrer dataset.
+	 *
+	 * @param dataset - Name of the dataset
+	 * @return - Metadata of the dataset as a map.
 	 */
 	public Map<String, Object> getDataSetMD(String dataset) {
 		Map<String, Integer> classCountMap = new HashMap<>();
@@ -96,8 +110,6 @@ public class DataRepository {
 		int rowCount;
 		QuerySolution resource;
 		int index;
-		String filterPrefix = "?s = ";
-		StringBuilder filterCondition = new StringBuilder();
 		String queryString = IDALiteral.PREFIXES +
 				"SELECT ?class (count(?class) as ?count)\n" +
 				"WHERE {\n" +
@@ -122,93 +134,8 @@ public class DataRepository {
 			classCountMap.put(className, rowCount);
 			classBaseUrlMap.put(className, resource.get("class").asNode().getURI());
 		}
-		queryString = IDALiteral.PREFIXES +
-				"SELECT DISTINCT ?class ?pred\n" +
-				"WHERE {\n" +
-				"  \t?s ?pred ?o;\n" +
-				"    ?pred [];\n" +
-				"    rdf:type ?class;\n" +
-				"    FILTER ( ?class != owl:NamedIndividual && (?pred != rdf:type))\n" +
-				"}";
-		resultSet = getResultFromQuery(dataset + "-data", queryString);
-		while (resultSet != null && resultSet.hasNext()) {
-			resource = resultSet.next();
-			className = resource.get("class").asNode().getURI();
-			if (className.contains("#")) {
-				index = className.lastIndexOf("#");
-			} else {
-				index = className.lastIndexOf("/");
-			}
-			className = className.substring(index + 1);
-			columnName = resource.get("pred").asNode().getURI();
-			distinctColumns.add(columnName);
-			if (columnMap.get(className) != null) {
-				columnMap.get(className).add(columnName);
-			} else {
-				columnMap.put(className, new ArrayList<>(Collections.singletonList(columnName)));
-			}
-		}
-		boolean isFirst = true;
-		for (String col : distinctColumns) {
-			if (!isFirst) {
-				filterCondition.append(" || ");
-			} else {
-				isFirst = false;
-			}
-			filterCondition.append(filterPrefix).append("<").append(col.replace("/data/", "/ontology/")).append(">");
-		}
-		if (!"".contentEquals(filterCondition)) {
-			queryString = IDALiteral.PREFIXES +
-					"SELECT DISTINCT (?s as ?column) ?comment ?type ?label\n" +
-					"WHERE { \n" +
-					"  ?s\n" +
-					"  rdfs:range ?type;\n" +
-					"  rdfs:label ?label;\n" +
-					"  OPTIONAL {\n" +
-					"  \t?s rdfs:comment ?comment;\n" +
-					"  }" +
-					" 	FILTER (" + filterCondition + ")" +
-					"}";
-			model = null;
-			resultSet = getResultFromQuery(dataset + "-ontology", queryString);
-			String columnType;
-			String comment;
-			String label;
-			while (resultSet != null && resultSet.hasNext()) {
-				resource = resultSet.next();
-				if (resource.get("type") != null) {
-					columnType = resource.get("type").asNode().getURI();
-					if (columnType.contains("#")) {
-						index = columnType.lastIndexOf("#");
-					} else {
-						index = columnType.lastIndexOf("/");
-					}
-					columnType = columnType.substring(index + 1);
-				} else {
-					columnType = "";
-				}
-				if (resource.get("comment") != null) {
-					comment = resource.get("comment").asNode().getLiteralValue().toString();
-				} else {
-					comment = "";
-				}
-				if (resource.get("column") != null) {
-					label = resource.get("column").asNode().getURI();
-					if (label.contains("#")) {
-						index = label.lastIndexOf("#");
-					} else {
-						index = label.lastIndexOf("/");
-					}
-					label = label.substring(index + 1);
-				} else {
-					label = "";
-				}
-				columnName = resource.get("column").asNode().getURI().replaceAll("/ontology/", "/data/");
-				columnCommentMap.put(columnName, comment);
-				columnTypeMap.put(columnName, columnType);
-				columnLabelMap.put(columnName, label);
-			}
-		}
+		columnMap = getClassColumnMap(dataset, distinctColumns);
+		getColumnsInformation(dataset, columnCommentMap, columnTypeMap, columnLabelMap, distinctColumns);
 		Map<String, Object> dsInfo = new HashMap<>();
 		dsInfo.put("dsName", dataset);
 		dsInfo.put("dsDesc", "");
@@ -528,5 +455,124 @@ public class DataRepository {
 			rows.add(rowsMap.get(rowId));
 		}
 		return rows;
+	}
+
+	/**
+	 *
+	 * @param dataset Name of the dataset
+	 * @param distinctColumns - Empty set to have the list of distinct columns in the dataset.
+	 * @return - Map of class name and the list of columns of the class.
+	 */
+	private Map<String, ArrayList<String>> getClassColumnMap(String dataset, Set<String> distinctColumns){
+		Map<String, ArrayList<String>> columnMap = new HashMap<>();
+		String queryString = IDALiteral.PREFIXES +
+				"SELECT DISTINCT ?class ?pred\n" +
+				"WHERE {\n" +
+				"  \t?s ?pred ?o;\n" +
+				"    ?pred [];\n" +
+				"    rdf:type ?class;\n" +
+				"    FILTER ( ?class != owl:NamedIndividual && (?pred != rdf:type))\n" +
+				"}";
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		QuerySolution resource;
+		String className;
+		int index;
+		String columnName;
+
+		while (resultSet != null && resultSet.hasNext()) {
+			resource = resultSet.next();
+			className = resource.get("class").asNode().getURI();
+			if (className.contains("#")) {
+				index = className.lastIndexOf("#");
+			} else {
+				index = className.lastIndexOf("/");
+			}
+			className = className.substring(index + 1);
+			columnName = resource.get("pred").asNode().getURI();
+			distinctColumns.add(columnName);
+			if (columnMap.get(className) != null) {
+				columnMap.get(className).add(columnName);
+			} else {
+				columnMap.put(className, new ArrayList<>(Collections.singletonList(columnName)));
+			}
+		}
+		return columnMap;
+	}
+
+	/**
+	 *
+	 * @param dataset - Name of the dataset.
+	 * @param columnCommentMap - A map to store column name and its comment.
+	 * @param columnTypeMap - A map to store column name and its data type.
+	 * @param columnLabelMap - A map to store column name and its label.
+	 * @param distinctColumns - A set of columns whose details has to be fetched.
+	 */
+	private void getColumnsInformation(String dataset, Map<String, String> columnCommentMap, Map<String, String> columnTypeMap, Map<String, String> columnLabelMap, Set<String> distinctColumns) {
+		boolean isFirst = true;
+		String filterPrefix = "?s = ";
+		StringBuilder filterCondition = new StringBuilder();
+		QuerySolution resource;
+		int index;
+		String columnName;
+		for (String col : distinctColumns) {
+			if (!isFirst) {
+				filterCondition.append(" || ");
+			} else {
+				isFirst = false;
+			}
+			filterCondition.append(filterPrefix).append("<").append(col.replace("/data/", "/ontology/")).append(">");
+		}
+		if (!"".contentEquals(filterCondition)) {
+			String queryString = IDALiteral.PREFIXES +
+					"SELECT DISTINCT (?s as ?column) ?comment ?type ?label\n" +
+					"WHERE { \n" +
+					"  ?s\n" +
+					"  rdfs:range ?type;\n" +
+					"  rdfs:label ?label;\n" +
+					"  OPTIONAL {\n" +
+					"  \t?s rdfs:comment ?comment;\n" +
+					"  }" +
+					" 	FILTER (" + filterCondition + ")" +
+					"}";
+			model = null;
+			ResultSet resultSet = getResultFromQuery(dataset + "-ontology", queryString);
+			String columnType;
+			String comment;
+			String label;
+			while (resultSet != null && resultSet.hasNext()) {
+				resource = resultSet.next();
+				if (resource.get("type") != null) {
+					columnType = resource.get("type").asNode().getURI();
+					if (columnType.contains("#")) {
+						index = columnType.lastIndexOf("#");
+					} else {
+						index = columnType.lastIndexOf("/");
+					}
+					columnType = columnType.substring(index + 1);
+				} else {
+					columnType = "";
+				}
+				if (resource.get("comment") != null) {
+					comment = resource.get("comment").asNode().getLiteralValue().toString();
+				} else {
+					comment = "";
+				}
+				if (resource.get("column") != null) {
+					label = resource.get("column").asNode().getURI();
+					if (label.contains("#")) {
+						index = label.lastIndexOf("#");
+					} else {
+						index = label.lastIndexOf("/");
+					}
+					label = label.substring(index + 1);
+				} else {
+					label = "";
+				}
+				columnName = resource.get("column").asNode().getURI().replaceAll("/ontology/", "/data/");
+				columnCommentMap.put(columnName, comment);
+				columnTypeMap.put(columnName, columnType);
+				columnLabelMap.put(columnName, label);
+			}
+		}
 	}
 }

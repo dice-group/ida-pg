@@ -2,7 +2,6 @@ package upb.ida.venndiagram;
 
 import java.util.*;
 import org.springframework.stereotype.Component;
-import upb.ida.dao.DataRepository;
 
 /**
  * Exposes util methods to perform FDG related operations
