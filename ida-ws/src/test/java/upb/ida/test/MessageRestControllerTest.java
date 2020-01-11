@@ -13,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.json.simple.JSONArray;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
-import upb.ida.dao.SoldierTimeLine;
 import upb.ida.fdg.FDG_Node;
 import upb.ida.fdg.FDG_Triple;
 import upb.ida.fdg.FDG_Util;
@@ -232,9 +230,6 @@ public class MessageRestControllerTest {
 				ObjectNode actualNode = (ObjectNode) responseBean.getPayload().get("fdgData");
 				System.out.println(res);
 				assertNotEquals(actualNode,res);
-
-
-
 	}
 
 	@Test
@@ -243,13 +238,5 @@ public class MessageRestControllerTest {
 		ResponseBean responseBean;
 		responseBean = mrc.getSoldierData("47540");
 		assertNotEquals(responseBean.getPayload(),null);
-
-		SoldierTimeLine stl = new SoldierTimeLine("ssfuehrer");
-		JSONArray rows = new JSONArray();
-		rows.add("{\"membershipNumber\":\"279583\",\"hasRegiment\":[{\"applicableFrom_inXSDDate\":\"1938-12-01\",\"regimentInfo_abbreviation\":\"J. Sch. Braunschweig\",\"regimentInfo_label\":\"Junkerschule Braunschweig\",\"regimentInfo_id\":\"131\",\"label\":\"Soldier Regiment: 6138\",\"id\":\"6138\",\"regimentInfo_name\":\"Junkerschule Braunschweig\"}],\"lastName\":\"Nagel\",\"firstName\":\"August\",\"rankInfo\":[{\"applicableFrom_inXSDDate\":\"1937-05-01\",\"hasRank_sortation\":\"12\",\"hasRank_name\":\"Untersturmführer\",\"hasRank_id\":\"12\",\"hasRank_label\":\"Untersturmführer\",\"label\":\"Soldier Rank: 16002\",\"id\":\"16002\"},{\"applicableFrom_inXSDDate\":\"1938-09-11\",\"hasRank_sortation\":\"11\",\"hasRank_name\":\"Obersturmführer\",\"hasRank_id\":\"11\",\"hasRank_label\":\"Obersturmführer\",\"label\":\"Soldier Rank: 16003\",\"id\":\"16003\"}],\"DALVerified\":\"true\",\"literatureInfo\":[{\"hasLiterature_id\":\"1087\",\"hasLiterature_name\":\"5 \\/ DAL 1938-12-01\",\"originalDALPage\":\"266\",\"hasLiterature_label\":\"5 \\/ DAL 1938-12-01\",\"originalDALId\":\"6394\",\"hasLiterature_publicationYear\":\"1938\",\"hasLiterature_citaviId\":\"11920\",\"label\":\"Soldier Literature: 6132\",\"id\":\"6132\"}],\"decorationInfo\":[{\"applicableFrom_inXSDDate\":\"1938-12-01\",\"hasDecoration_name\":\"22 \\/ Lebensborn\",\"hasDecoration_abbreviation\":\"Lebensborn\",\"hasDecoration_label\":\"22 \\/ Lebensborn\",\"label\":\"Soldier Decoration: 24078\",\"id\":\"24078\",\"hasDecoration_id\":\"319\"},{\"applicableFrom_inXSDDate\":\"1938-12-01\",\"hasDecoration_name\":\"14 \\/ Ehrendegen des RFSS\",\"hasDecoration_abbreviation\":\"SS-Degen\",\"hasDecoration_label\":\"14 \\/ Ehrendegen des RFSS\",\"label\":\"Soldier Decoration: 24077\",\"id\":\"24077\",\"hasDecoration_id\":\"311\"}],\"id\":\"47540\",\"label\":\"August, Nagel\",\"birthDate\":\"1901-01-04\",\"NSDAPNumber\":\"4377736\"}");
-		stl.preProcessSoldierData(rows);
 	}
-
-
-
 }
