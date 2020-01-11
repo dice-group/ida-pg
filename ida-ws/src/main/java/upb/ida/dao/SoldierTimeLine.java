@@ -32,43 +32,24 @@ public class SoldierTimeLine
 			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 			"PREFIX soldierData: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier/>";
 
-	public SoldierTimeLine(String dataset, boolean isTest)
+	public SoldierTimeLine(String dataset)
 	{
 		//datasetName = dataset;
-		if (System.getenv("FUSEKI_URL") != null)
+		try
 		{
-			dbhost = System.getenv("FUSEKI_URL");
-		}
+			if (System.getenv("FUSEKI_URL") != null)
+			{
+				dbhost = System.getenv("FUSEKI_URL");
+			}
 
-		dbUrl = dbhost + dataset;
-		/*System.out.println("**********************");
-		System.out.println(dbUrl);
-		System.out.println("**********************");
-		*/
-		if (isTest)
-		{
-			try
-			{
-				model = ModelFactory.createDefaultModel();
-				String path = getClass().getClassLoader().getResource("test.ttl").getFile();
-				model.read(path);
-			}
-			catch (Exception ex)
-			{
-				System.out.println(ex.getMessage());
-			}
+			dbUrl = dbhost + dataset;
+
+			RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
+			conn = (RDFConnectionFuseki) builder.build();
 		}
-		else
+		catch (Exception ex)
 		{
-			try
-			{
-				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
-				conn = (RDFConnectionFuseki) builder.build();
-			}
-			catch (Exception ex)
-			{
-				System.out.println(ex.getMessage());
-			}
+			System.out.println(ex.getMessage());
 		}
 	}
 
@@ -110,16 +91,6 @@ public class SoldierTimeLine
 
 	public Map<String,Map<String,String>> getData(String soldierId)
 	{
-		JSONArray rows = new JSONArray();
-		Map<String, JSONObject> rowsMap = new HashMap<>();
-		Map<String, String> foreignRef;
-		JSONObject rowObject;
-		String id = "";
-		String key = "";
-		String value = "";
-		Set<String> duplicateColumnLst = new TreeSet<>();
-		Set<String> nestedColLst = new TreeSet<>();
-
 		dbUrl = "http://127.0.0.1:3030/ssfuehrer";
 		String qString = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\nSELECT ?subject ?predicate ?object \n FROM datagraph: \n WHERE { ?subject ?predicate ?object }";
 
@@ -137,8 +108,24 @@ public class SoldierTimeLine
 
 		String queryString = PREFIXES + "SELECT ?s ?p ?o\n" + "WHERE {\n" + "  ?s ?p ?o\n" + "  FILTER( ?s = soldierData:" + soldierId + " && ?p != rdf:type)\n" + "}";
 
-		resultSet = getResultFromQuery(queryString);
+		//Map<String,Map<String,String>> returingData =  preProcessSoldierData(rows);
+		JSONArray rows = queryData(queryString);
+		return preProcessSoldierData(rows);
+	}
+
+	public JSONArray queryData(String queryString)
+	{
+		ResultSet resultSet = getResultFromQuery(queryString);
 		QuerySolution resource;
+		JSONArray rows = new JSONArray();
+		Map<String, JSONObject> rowsMap = new HashMap<>();
+		Map<String, String> foreignRef;
+		JSONObject rowObject;
+		String id = "";
+		String key = "";
+		String value = "";
+		Set<String> duplicateColumnLst = new TreeSet<>();
+		Set<String> nestedColLst = new TreeSet<>();
 		JSONObject childObj = new JSONObject();
 		JSONArray childLst = new JSONArray();
 
@@ -149,64 +136,43 @@ public class SoldierTimeLine
 			id = id.substring(id.lastIndexOf("/") + 1);
 			key = resource.get("p").asNode().getURI();
 
-			if (key.contains("#"))
-			{
+			if (key.contains("#")) {
 				key = key.substring(key.lastIndexOf("#") + 1);
-			}
-			else
-			{
+			} else {
 				key = key.substring(key.lastIndexOf("/") + 1);
 			}
 
-			if (rowsMap.get(id) == null)
-			{
+			if (rowsMap.get(id) == null) {
 				rowObject = new JSONObject();
-			}
-			else
-			{
+			} else {
 				rowObject = rowsMap.get(id);
 			}
 
-			if (resource.get("o").isLiteral())
-			{
+			if (resource.get("o").isLiteral()) {
 				value = resource.get("o").asLiteral().getString();
-
-				if (rowObject.get(key) == null)
-				{
+				if (rowObject.get(key) == null) {
 					rowObject.put(key, value);
-				}
-				else
-				{
+				} else {
 					rowObject.put(key, "");
 					duplicateColumnLst.add(key);
 				}
-			}
-			else
-			{
+			} else {
 				value = resource.get("o").asNode().getURI();
-				if (nestedColLst.contains(key))
-				{
-					if (rowObject.get(key) == null)
-					{
+				if (nestedColLst.contains(key)) {
+					if (rowObject.get(key) == null) {
 						rowObject.put(key, value);
-					}
-					else
-					{
+					} else {
 						rowObject.put(key, "");
 						duplicateColumnLst.add(key);
 					}
-				}
-				else
-				{
+				} else {
 					foreignRef = getResource(value);
 
-					for (String k : foreignRef.keySet())
-					{
+					for (String k : foreignRef.keySet()) {
 						childObj.put(k, foreignRef.get(k));
 					}
 
-					if (rowObject.get(key) != null)
-					{
+					if (rowObject.get(key) != null) {
 						childLst = (JSONArray) rowObject.get(key);
 					}
 					childLst.add(childObj);
@@ -219,40 +185,28 @@ public class SoldierTimeLine
 			rowsMap.put(id, rowObject);
 		}
 
-		for (String rowId : rowsMap.keySet())
-		{
-			for (String col : duplicateColumnLst)
-			{
+		for (String rowId : rowsMap.keySet()) {
+			for (String col : duplicateColumnLst) {
 				rowsMap.get(rowId).remove(col);
 			}
-
 			rows.add(rowsMap.get(rowId));
 		}
-
-		//Map<String,Map<String,String>> returingData =  preProcessSoldierData(rows);
-
-		return preProcessSoldierData(rows);
+		return rows;
 	}
+
+	Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
+	Map<String,String> soldierDatesMap = new TreeMap<String,String>();
+	Map<String,String> soldierCorrectDatesMap = new HashMap<String,String>();
+	Map<String,String> soldierAllDOBMap = new HashMap<String,String>();
+	Map<String,String> soldierAllRanksMap = new HashMap<String,String>();
+	Map<String,String> soldierAllRegimentsMap = new HashMap<String,String>();
+	Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
+	int datesFlag = 0;
 
 	public Map<String,Map<String,String>> preProcessSoldierData(JSONArray rows)
 	{
-		Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
 		Map<String,String> tempStringVsStringMap;
-		Map<String,String> soldierDatesMap = new TreeMap<String,String>();
-		Map<String,String> soldierCorrectDatesMap = new HashMap<String,String>();
-		Map<String,String> soldierAllDOBMap = new HashMap<String,String>();
-		Map<String,String> soldierAllRanksMap = new HashMap<String,String>();
-		Map<String,String> soldierAllRegimentsMap = new HashMap<String,String>();
-		Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
-
-		int datesFlag = 0;
 		JSONObject eachSoldierData;
-		JSONObject decorationInfoObject;
-		JSONObject regimentInfoObject;
-		JSONObject rankInfoObject;
-		JSONArray decorationInformation;
-		JSONArray regimentInformation;
-		JSONArray rankInformation;
 
 		for (int i = 0; i < rows.size(); i++)
 		{
@@ -276,80 +230,10 @@ public class SoldierTimeLine
 			soldierDataMap.put("basicInfo__"+String.valueOf(i),tempStringVsStringMap);
 
 
-			decorationInformation = (JSONArray) eachSoldierData.get("decorationInfo");
 
-			for(int j=0;j < decorationInformation.size();j++)
-			{
-				decorationInfoObject = (JSONObject) decorationInformation.get(j);
-				tempStringVsStringMap = new HashMap<String,String>();
-
-				tempStringVsStringMap.put("label",decorationInfoObject.get("label").toString());
-				tempStringVsStringMap.put("id",decorationInfoObject.get("id").toString());
-				tempStringVsStringMap.put("applicableFrom_inXSDDate",decorationInfoObject.get("applicableFrom_inXSDDate").toString());
-				tempStringVsStringMap.put("hasDecoration_name",decorationInfoObject.get("hasDecoration_name").toString());
-				tempStringVsStringMap.put("hasDecoration_abbreviation",decorationInfoObject.get("hasDecoration_abbreviation").toString());
-				tempStringVsStringMap.put("hasDecoration_label",decorationInfoObject.get("hasDecoration_label").toString());
-				tempStringVsStringMap.put("hasDecoration_id",decorationInfoObject.get("id").toString());
-
-				soldierAllDecorationsMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag)," ");
-
-				soldierDatesMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),"decorationInfo__"+String.valueOf(j));
-				soldierCorrectDatesMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),decorationInfoObject.get("applicableFrom_inXSDDate").toString());
-				datesFlag ++;
-				soldierDataMap.put("decorationInfo__"+String.valueOf(j),new HashMap<String, String>());
-				soldierDataMap.put("decorationInfo__"+String.valueOf(j),tempStringVsStringMap);
-				//tempStringVsStringMap.clear();
-			}
-
-			regimentInformation = (JSONArray) eachSoldierData.get("hasRegiment");
-			for(int j=0;j < regimentInformation.size();j++)
-			{
-				regimentInfoObject = (JSONObject) regimentInformation.get(j);
-
-				tempStringVsStringMap = new HashMap<String,String>();
-				tempStringVsStringMap.put("label",regimentInfoObject.get("label").toString());
-				tempStringVsStringMap.put("id",regimentInfoObject.get("id").toString());
-				tempStringVsStringMap.put("applicableFrom_inXSDDate",regimentInfoObject.get("applicableFrom_inXSDDate").toString());
-				tempStringVsStringMap.put("regimentInfo_abbreviation",regimentInfoObject.get("regimentInfo_abbreviation").toString());
-				tempStringVsStringMap.put("regimentInfo_id",regimentInfoObject.get("regimentInfo_id").toString());
-				tempStringVsStringMap.put("regimentInfo_label",regimentInfoObject.get("regimentInfo_label").toString());
-				tempStringVsStringMap.put("regimentInfo_name",regimentInfoObject.get("regimentInfo_name").toString());
-
-				soldierAllRegimentsMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag)," ");
-
-				soldierDatesMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),"regimentInfo__"+j);
-				soldierCorrectDatesMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),regimentInfoObject.get("applicableFrom_inXSDDate").toString());
-				datesFlag ++;
-				soldierDataMap.put("regimentInfo__"+j,new HashMap<String, String>());
-				soldierDataMap.put("regimentInfo__"+j,tempStringVsStringMap);
-				//tempStringVsStringMap.clear();
-
-			}
-
-			rankInformation = (JSONArray) eachSoldierData.get("rankInfo");
-			for(int j=0;j < rankInformation.size();j++)
-			{
-				rankInfoObject = (JSONObject) rankInformation.get(j);
-				tempStringVsStringMap = new HashMap<String,String>();
-
-				tempStringVsStringMap.put("label",rankInfoObject.get("label").toString());
-				tempStringVsStringMap.put("id",rankInfoObject.get("id").toString());
-				tempStringVsStringMap.put("applicableFrom_inXSDDate",rankInfoObject.get("applicableFrom_inXSDDate").toString());
-				tempStringVsStringMap.put("hasRank_id",rankInfoObject.get("hasRank_id").toString());
-				tempStringVsStringMap.put("hasRank_label",rankInfoObject.get("hasRank_label").toString());
-				tempStringVsStringMap.put("hasRank_name",rankInfoObject.get("hasRank_name").toString());
-				tempStringVsStringMap.put("hasRank_sortation",rankInfoObject.get("hasRank_sortation").toString());
-
-				soldierAllRanksMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag)," ");
-
-				soldierDatesMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),"rankInfo__"+String.valueOf(j));
-				soldierCorrectDatesMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),rankInfoObject.get("applicableFrom_inXSDDate").toString());
-
-				datesFlag ++;
-				soldierDataMap.put("rankInfo__"+String.valueOf(j),new HashMap<String, String>());
-				soldierDataMap.put("rankInfo__"+String.valueOf(j),tempStringVsStringMap);
-				//tempStringVsStringMap.clear();
-			}
+			extractDecorationData(eachSoldierData);
+			extractRegimentData(eachSoldierData);
+			extractRankData(eachSoldierData);
 		}
 
 		soldierDataMap.put("dates",new TreeMap<String, String>());
@@ -374,6 +258,102 @@ public class SoldierTimeLine
 		return soldierDataMap;
 	}
 
+
+	public void extractDecorationData(JSONObject eachSoldierData)
+	{
+		JSONObject decorationInfoObject;
+		JSONArray decorationInformation;
+		Map<String,String> tempStringVsStringMap;
+
+		decorationInformation = (JSONArray) eachSoldierData.get("decorationInfo");
+
+		for(int j=0;j < decorationInformation.size();j++)
+		{
+			decorationInfoObject = (JSONObject) decorationInformation.get(j);
+			tempStringVsStringMap = new HashMap<String,String>();
+
+			tempStringVsStringMap.put("label",decorationInfoObject.get("label").toString());
+			tempStringVsStringMap.put("id",decorationInfoObject.get("id").toString());
+			tempStringVsStringMap.put("applicableFrom_inXSDDate",decorationInfoObject.get("applicableFrom_inXSDDate").toString());
+			tempStringVsStringMap.put("hasDecoration_name",decorationInfoObject.get("hasDecoration_name").toString());
+			tempStringVsStringMap.put("hasDecoration_abbreviation",decorationInfoObject.get("hasDecoration_abbreviation").toString());
+			tempStringVsStringMap.put("hasDecoration_label",decorationInfoObject.get("hasDecoration_label").toString());
+			tempStringVsStringMap.put("hasDecoration_id",decorationInfoObject.get("id").toString());
+
+			soldierAllDecorationsMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag)," ");
+
+			soldierDatesMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),"decorationInfo__"+String.valueOf(j));
+			soldierCorrectDatesMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),decorationInfoObject.get("applicableFrom_inXSDDate").toString());
+			datesFlag ++;
+			soldierDataMap.put("decorationInfo__"+String.valueOf(j),new HashMap<String, String>());
+			soldierDataMap.put("decorationInfo__"+String.valueOf(j),tempStringVsStringMap);
+			//tempStringVsStringMap.clear();
+		}
+
+	}
+
+	public void extractRegimentData(JSONObject eachSoldierData)
+	{
+		JSONObject regimentInfoObject;
+		JSONArray regimentInformation;
+		Map<String,String> tempStringVsStringMap;
+
+		regimentInformation = (JSONArray) eachSoldierData.get("hasRegiment");
+		for(int j=0;j < regimentInformation.size();j++)
+		{
+			regimentInfoObject = (JSONObject) regimentInformation.get(j);
+
+			tempStringVsStringMap = new HashMap<String,String>();
+			tempStringVsStringMap.put("label",regimentInfoObject.get("label").toString());
+			tempStringVsStringMap.put("id",regimentInfoObject.get("id").toString());
+			tempStringVsStringMap.put("applicableFrom_inXSDDate",regimentInfoObject.get("applicableFrom_inXSDDate").toString());
+			tempStringVsStringMap.put("regimentInfo_abbreviation",regimentInfoObject.get("regimentInfo_abbreviation").toString());
+			tempStringVsStringMap.put("regimentInfo_id",regimentInfoObject.get("regimentInfo_id").toString());
+			tempStringVsStringMap.put("regimentInfo_label",regimentInfoObject.get("regimentInfo_label").toString());
+			tempStringVsStringMap.put("regimentInfo_name",regimentInfoObject.get("regimentInfo_name").toString());
+
+			soldierAllRegimentsMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag)," ");
+
+			soldierDatesMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),"regimentInfo__"+j);
+			soldierCorrectDatesMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),regimentInfoObject.get("applicableFrom_inXSDDate").toString());
+			datesFlag ++;
+			soldierDataMap.put("regimentInfo__"+j,new HashMap<String, String>());
+			soldierDataMap.put("regimentInfo__"+j,tempStringVsStringMap);
+			//tempStringVsStringMap.clear();
+		}
+	}
+
+	public void extractRankData(JSONObject eachSoldierData)
+	{
+		JSONObject rankInfoObject;
+		JSONArray rankInformation;
+		Map<String,String> tempStringVsStringMap;
+
+		rankInformation = (JSONArray) eachSoldierData.get("rankInfo");
+		for(int j=0;j < rankInformation.size();j++)
+		{
+			rankInfoObject = (JSONObject) rankInformation.get(j);
+			tempStringVsStringMap = new HashMap<String,String>();
+
+			tempStringVsStringMap.put("label",rankInfoObject.get("label").toString());
+			tempStringVsStringMap.put("id",rankInfoObject.get("id").toString());
+			tempStringVsStringMap.put("applicableFrom_inXSDDate",rankInfoObject.get("applicableFrom_inXSDDate").toString());
+			tempStringVsStringMap.put("hasRank_id",rankInfoObject.get("hasRank_id").toString());
+			tempStringVsStringMap.put("hasRank_label",rankInfoObject.get("hasRank_label").toString());
+			tempStringVsStringMap.put("hasRank_name",rankInfoObject.get("hasRank_name").toString());
+			tempStringVsStringMap.put("hasRank_sortation",rankInfoObject.get("hasRank_sortation").toString());
+
+			soldierAllRanksMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag)," ");
+
+			soldierDatesMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),"rankInfo__"+String.valueOf(j));
+			soldierCorrectDatesMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString()+"__"+ String.valueOf(datesFlag),rankInfoObject.get("applicableFrom_inXSDDate").toString());
+
+			datesFlag ++;
+			soldierDataMap.put("rankInfo__"+String.valueOf(j),new HashMap<String, String>());
+			soldierDataMap.put("rankInfo__"+String.valueOf(j),tempStringVsStringMap);
+			//tempStringVsStringMap.clear();
+		}
+	}
 
 	public Map<String, String> getResource(String sub)
 	{
@@ -431,4 +411,3 @@ public class SoldierTimeLine
 		return map;
 	}
 }
-

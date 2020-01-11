@@ -18,7 +18,7 @@ public class SoldierTimeLineHandler implements Subroutine {
 		//String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 		//String actvDs = (String) responseBean.getPayload().get("actvDs");
 		Map<String, Object> dataMap = responseBean.getPayload();
-		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer", false);
+		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer");
 		responseBean.setActnCode(10);
 		try {
 			dataMap.put("soldierTimeLineData", soldierTimeLine.getData(args[0]));

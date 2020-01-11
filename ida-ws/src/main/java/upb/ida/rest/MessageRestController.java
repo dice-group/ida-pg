@@ -76,7 +76,7 @@ public class MessageRestController {
 	public ResponseBean getSoldierData(@RequestParam(value = "soldierId") String soldierId) throws Exception {
 
 		Map<String, Object> dataMap = new HashMap<>();
-		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer", false);
+		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer");
 		dataMap.put("actvScrId", "");
 		dataMap.put("actvTbl", "");
 		dataMap.put("actvDs", "");
