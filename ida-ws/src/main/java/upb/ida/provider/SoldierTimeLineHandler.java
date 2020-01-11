@@ -15,8 +15,6 @@ public class SoldierTimeLineHandler implements Subroutine {
 	private ResponseBean responseBean;
 
 	public String call (com.rivescript.RiveScript rs, String[] args) {
-		//String actvTbl = (String) responseBean.getPayload().get("actvTbl");
-		//String actvDs = (String) responseBean.getPayload().get("actvDs");
 		Map<String, Object> dataMap = responseBean.getPayload();
 		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer");
 		responseBean.setActnCode(10);

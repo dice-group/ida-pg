@@ -19,22 +19,28 @@ import java.util.*;
 
 public class SoldierTimeLine
 {
-	private String dbhost = "http://127.0.0.1:3030/";
-	//private String dbhost = "http://fuseki:8082/";
-	//private String datasetName = "";
-	private String dbUrl = "";
-	private Model model = null;
-	private RDFConnectionFuseki conn = null;
 	private final String PREFIXES = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\n" +
 			"PREFIX data: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/>\n" +
 			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
 			"PREFIX dbo: <http://dbpedia.org/ontology/>\n" +
 			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 			"PREFIX soldierData: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier/>";
+	private String dbUrl = "";
+	private Model model = null;
+	private RDFConnectionFuseki conn = null;
+	//private String dbhost = "http://fuseki:8082/";
+	private Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
+	private Map<String,String> soldierDatesMap = new TreeMap<String,String>();
+	private Map<String,String> soldierCorrectDatesMap = new HashMap<String,String>();
+	private Map<String,String> soldierAllDOBMap = new HashMap<String,String>();
+	private Map<String,String> soldierAllRanksMap = new HashMap<String,String>();
+	private Map<String,String> soldierAllRegimentsMap = new HashMap<String,String>();
+	private Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
+	private int datesFlag = 0;
 
 	public SoldierTimeLine(String dataset)
 	{
-		//datasetName = dataset;
+		String dbhost = "http://127.0.0.1:3030/";
 		try
 		{
 			if (System.getenv("FUSEKI_URL") != null)
@@ -194,15 +200,6 @@ public class SoldierTimeLine
 		return rows;
 	}
 
-	Map<String,Map<String,String>> soldierDataMap = new HashMap<String,Map<String,String>>();
-	Map<String,String> soldierDatesMap = new TreeMap<String,String>();
-	Map<String,String> soldierCorrectDatesMap = new HashMap<String,String>();
-	Map<String,String> soldierAllDOBMap = new HashMap<String,String>();
-	Map<String,String> soldierAllRanksMap = new HashMap<String,String>();
-	Map<String,String> soldierAllRegimentsMap = new HashMap<String,String>();
-	Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
-	int datesFlag = 0;
-
 	public Map<String,Map<String,String>> preProcessSoldierData(JSONArray rows)
 	{
 		Map<String,String> tempStringVsStringMap;
@@ -229,8 +226,6 @@ public class SoldierTimeLine
 			soldierDataMap.put("basicInfo__"+String.valueOf(i),new HashMap<String, String>());
 			soldierDataMap.put("basicInfo__"+String.valueOf(i),tempStringVsStringMap);
 
-
-
 			extractDecorationData(eachSoldierData);
 			extractRegimentData(eachSoldierData);
 			extractRankData(eachSoldierData);
@@ -241,7 +236,6 @@ public class SoldierTimeLine
 
 		soldierDataMap.put("correctDates",new HashMap<String, String>());
 		soldierDataMap.put("correctDates",soldierCorrectDatesMap);
-
 
 		soldierDataMap.put("allDOB",new HashMap<String, String>());
 		soldierDataMap.put("allDOB",soldierAllDOBMap);
