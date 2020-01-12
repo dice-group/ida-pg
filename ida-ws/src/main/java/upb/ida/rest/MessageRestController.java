@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import upb.ida.bean.ResponseBean;
-import upb.ida.dao.SoldierTimeLine;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 
