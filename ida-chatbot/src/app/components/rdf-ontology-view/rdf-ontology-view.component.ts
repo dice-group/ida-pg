@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit} from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input} from '@angular/core';
 import {UniqueIdProviderService} from '../../service/misc/unique-id-provider.service';
 
 declare function createV4RDFOntologyGraph(a, b,c,d,e,f,g,h,j,i);
@@ -8,6 +8,8 @@ declare function createV4RDFOntologyGraph(a, b,c,d,e,f,g,h,j,i);
   styleUrls: ['./rdf-ontology-view.component.css']
 })
 export class RdfOntologyViewComponent implements OnInit {
+
+  @Input('data') ontologyData: any;
 
   public figId: string;
   public ontologyId: string;

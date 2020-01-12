@@ -1,0 +1,10 @@
+! version = 2.0
+
+//User queries for ontology
+
++ i want a ontology explorer for <star>
+* <call>OntologyExplorerHandler "<star1>"</call> == pass => Your requested
+^ \s ontology explorer is now added to the main view
+
++ open ontology *
+@ i want a ontology explorer for <star>
