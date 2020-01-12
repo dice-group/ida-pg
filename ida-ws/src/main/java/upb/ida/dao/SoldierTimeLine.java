@@ -67,26 +67,23 @@ public class SoldierTimeLine
 	{
 		ResultSet returnVaule;
 		QueryExecution queryExecution = null;
+		try {
+			if (model == null) {
 
-		if (model == null)
-		{
-			try
-			{
 				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
 				conn = (RDFConnectionFuseki) builder.build();
 				Query query = QueryFactory.create(queryString);
 				queryExecution = conn.query(query);
 				conn.close();
-			}
-			catch (Exception ex)
-			{
-				System.out.println(ex.getMessage());
+
+			} else {
+				Query query = QueryFactory.create(queryString);
+				queryExecution = QueryExecutionFactory.create(query, model);
 			}
 		}
-		else
+		catch (Exception ex)
 		{
-			Query query = QueryFactory.create(queryString);
-			queryExecution = QueryExecutionFactory.create(query, model);
+			System.out.println(ex.getMessage());
 		}
 
 		returnVaule = ResultSetFactory.copyResults(queryExecution.execSelect());
