@@ -62,7 +62,7 @@ import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import { SpeechInputComponent } from './components/speech-input/speech-input.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { SoldierTimelineComponent } from './components/soldier-timeline/soldier-timeline.component';
+import { SoldierTimelineComponent } from './components/soldier-timeline/soldier-timeline.component'
 @NgModule({
   declarations: [
     AppComponent,
