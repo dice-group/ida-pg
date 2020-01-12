@@ -27,6 +27,7 @@ public class SoldierTimelineTest {
 		Map<String, String> expected = new HashMap<>();
 		expected.put("membershipNumber",  "12345");
 		expected.put("firstName",  "John");
+		expected.put("lastName", "Doe");
 		expected.put("DALVerified",  "true");
 		expected.put("id",  "47540");
 		expected.put("label",  "Doe, John");
