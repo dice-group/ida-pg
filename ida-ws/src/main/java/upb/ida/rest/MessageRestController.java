@@ -72,17 +72,4 @@ public class MessageRestController {
 		return response;
 	}
 
-	@RequestMapping("/getSoldierData")
-	public ResponseBean getSoldierData(@RequestParam(value = "soldierId") String soldierId) throws Exception {
-
-		Map<String, Object> dataMap = new HashMap<>();
-		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer");
-		dataMap.put("actvScrId", "");
-		dataMap.put("actvTbl", "");
-		dataMap.put("actvDs", "");
-		dataMap.put("soldier", soldierTimeLine.getData(soldierId));
-		response.setPayload(dataMap);
-		return response;
-	}
-
 }

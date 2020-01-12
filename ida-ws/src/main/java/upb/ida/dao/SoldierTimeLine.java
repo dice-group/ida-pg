@@ -14,9 +14,11 @@ import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class SoldierTimeLine
 {
 	private final String PREFIXES = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\n" +
@@ -26,6 +28,7 @@ public class SoldierTimeLine
 			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 			"PREFIX soldierData: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier/>";
 	private String dbUrl = "";
+	private static String dbhost = System.getenv("FUSEKI_URL");
 	private Model model = null;
 	private RDFConnectionFuseki conn = null;
 	//private String dbhost = "http://fuseki:8082/";
@@ -38,66 +41,71 @@ public class SoldierTimeLine
 	private Map<String,String> soldierAllDecorationsMap = new HashMap<String,String>();
 	private int datesFlag = 0;
 
-	public SoldierTimeLine(String dataset)
-	{
-		String dbhost = "http://127.0.0.1:3030/";
-		try
-		{
-			if (System.getenv("FUSEKI_URL") != null)
-			{
-				dbhost = System.getenv("FUSEKI_URL");
-			}
-
-			dbUrl = dbhost + dataset;
-
-			RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
-			conn = (RDFConnectionFuseki) builder.build();
-		}
-		catch (Exception ex)
-		{
-			System.out.println(ex.getMessage());
-		}
-	}
 
 	/**
 	 * @param queryString the SPARQL query to be executed on the RDF dataset
 	 * @return It takes query string as its parameter and returns the result set after executing the query.
 	 */
-	public ResultSet getResultFromQuery(String queryString)
+	public ResultSet getResultFromQuery(String queryString, String dataset)
 	{
-		ResultSet returnVaule;
-		QueryExecution queryExecution = null;
-		try {
-			if (model == null) {
+		QueryExecution queryExecution;
+		ResultSet resultSet;
+		Query query = QueryFactory.create(queryString);
+		if(dbhost == null){
+			dbhost = "http://127.0.0.1:3030/";
+		}
 
-				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbUrl);
-				conn = (RDFConnectionFuseki) builder.build();
-				Query query = QueryFactory.create(queryString);
-				queryExecution = conn.query(query);
-				conn.close();
-
+		/*
+		 * No need to create a model from file or make database connection if the query is being run on already existing model. ( multiple queries are run on same model from getData function.)
+		 */
+		if (model == null) {
+			/*
+			 *	Create a fuseki model from the file and run the query on that model for test cases.
+			 */
+			if ("test-data".equals(dataset)) {
+				try {
+					model = ModelFactory.createDefaultModel();
+					String path = Objects.requireNonNull(getClass().getClassLoader().getResource("dataset/test-soldier.ttl")).getFile();
+					model.read(path);
+					queryExecution = QueryExecutionFactory.create(query, model);
+				} catch (NullPointerException ex) {
+					System.out.println(ex.getMessage());
+					return null;
+				}
 			} else {
-				Query query = QueryFactory.create(queryString);
-				queryExecution = QueryExecutionFactory.create(query, model);
+				try {
+					RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + dataset);
+					conn = (RDFConnectionFuseki) builder.build();
+					queryExecution = conn.query(query);
+				} catch (Exception ex) {
+					System.out.println(ex.getMessage());
+					return null;
+				} finally {
+					conn.close();
+				}
+			}
+		} else {
+			queryExecution = QueryExecutionFactory.create(query, model);
+		}
+		if (queryExecution != null) {
+			try {
+				resultSet = ResultSetFactory.copyResults(queryExecution.execSelect());
+				queryExecution.close();
+				return resultSet;
+			} catch (Exception e) {
+				return null;
 			}
 		}
-		catch (Exception ex)
-		{
-			System.out.println(ex.getMessage());
-		}
-
-		returnVaule = ResultSetFactory.copyResults(queryExecution.execSelect());
-		queryExecution.close();
-
-		return returnVaule;
+		return null;
 	}
 
-	public Map<String,Map<String,String>> getData(String soldierId)
+	public Map<String,Map<String,String>> getData(String soldierId, String datasetName)
 	{
-		dbUrl = "http://127.0.0.1:3030/ssfuehrer";
-		String qString = "PREFIX datagraph: <http://127.0.0.1:3030/ssfuehrer/data/data>\nSELECT ?subject ?predicate ?object \n FROM datagraph: \n WHERE { ?subject ?predicate ?object }";
+		model = null;
+		String dataset = datasetName + "-data";
+		String qString = "SELECT ?subject ?predicate ?object \n WHERE { ?subject ?predicate ?object }";
 
-		ResultSet resultSet = getResultFromQuery(qString);
+		ResultSet resultSet = getResultFromQuery(qString, dataset);
 		model = ModelFactory.createDefaultModel();
 		QuerySolution s;
 		Triple t;
@@ -112,13 +120,13 @@ public class SoldierTimeLine
 		String queryString = PREFIXES + "SELECT ?s ?p ?o\n" + "WHERE {\n" + "  ?s ?p ?o\n" + "  FILTER( ?s = soldierData:" + soldierId + " && ?p != rdf:type)\n" + "}";
 
 		//Map<String,Map<String,String>> returingData =  preProcessSoldierData(rows);
-		JSONArray rows = queryData(queryString);
+		JSONArray rows = queryData(queryString, dataset);
 		return preProcessSoldierData(rows);
 	}
 
-	public JSONArray queryData(String queryString)
+	public JSONArray queryData(String queryString, String dataset)
 	{
-		ResultSet resultSet = getResultFromQuery(queryString);
+		ResultSet resultSet = getResultFromQuery(queryString, dataset);
 		QuerySolution resource;
 		JSONArray rows = new JSONArray();
 		Map<String, JSONObject> rowsMap = new HashMap<>();
@@ -169,7 +177,7 @@ public class SoldierTimeLine
 						duplicateColumnLst.add(key);
 					}
 				} else {
-					foreignRef = getResource(value);
+					foreignRef = getResource(value, dataset);
 
 					for (String k : foreignRef.keySet()) {
 						childObj.put(k, foreignRef.get(k));
@@ -346,7 +354,7 @@ public class SoldierTimeLine
 		}
 	}
 
-	public Map<String, String> getResource(String sub)
+	public Map<String, String> getResource(String sub, String dataset)
 	{
 		Map<String, String> map = new HashMap<>();
 		Map<String, String> childRef = new HashMap<>();
@@ -362,7 +370,7 @@ public class SoldierTimeLine
 				"	<" + sub + "> ?p ?o;\n" +
 				"   FILTER ( ?p != rdf:type)\n" +
 				"}";
-		ResultSet resultSet = getResultFromQuery(queryString);
+		ResultSet resultSet = getResultFromQuery(queryString, dataset);
 		while (resultSet.hasNext())
 		{
 			resource = resultSet.next();
@@ -385,7 +393,7 @@ public class SoldierTimeLine
 			else
 			{
 				value = resource.get("o").asNode().getURI();
-				childRef = getResource(value);
+				childRef = getResource(value, dataset);
 				for (String k : childRef.keySet())
 				{
 					map.put(key + "_" + k, childRef.get(k));

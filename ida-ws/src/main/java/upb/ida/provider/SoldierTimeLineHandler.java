@@ -14,12 +14,14 @@ public class SoldierTimeLineHandler implements Subroutine {
 	@Autowired
 	private ResponseBean responseBean;
 
+	@Autowired
+	private SoldierTimeLine soldierTimeLine;
+
 	public String call (com.rivescript.RiveScript rs, String[] args) {
 		Map<String, Object> dataMap = responseBean.getPayload();
-		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer");
 		responseBean.setActnCode(10);
 		try {
-			dataMap.put("soldierTimeLineData", soldierTimeLine.getData(args[0]));
+			dataMap.put("soldierTimeLineData", soldierTimeLine.getData(args[0], "ssfuehrer"));
 			return IDALiteral.RESP_PASS_ROUTINE;
 		} catch (Exception ex){
 			System.out.println(ex.getMessage());
