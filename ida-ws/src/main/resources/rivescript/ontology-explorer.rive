@@ -2,7 +2,7 @@
 
 //User queries for ontology
 
-+ i want a ontology explorer for <star>
++ i want a ontology explorer for *
 * <call>OntologyExplorerHandler "<star1>"</call> == pass => Your requested
 ^ \s ontology explorer is now added to the main view
 
