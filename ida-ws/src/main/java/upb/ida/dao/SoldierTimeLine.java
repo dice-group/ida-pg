@@ -91,7 +91,7 @@ public class SoldierTimeLine {
 	}
 
 	public Map<String, Map<String, String>> getData(String soldierId, String datasetName) {
-
+		datesFlag = 0;
 		model = null;
 		String dataset = datasetName + "-data";
 		String qString = "SELECT ?subject ?predicate ?object \n WHERE { ?subject ?predicate ?object }";
@@ -202,7 +202,9 @@ public class SoldierTimeLine {
 			tempStringVsStringMap = new HashMap<>();
 
 			for (Object key : eachSoldierData.keySet()) {
-				tempStringVsStringMap.put(key.toString(), eachSoldierData.get(key).toString());
+				if(eachSoldierData.get(key) instanceof String){
+					tempStringVsStringMap.put(key.toString(), eachSoldierData.get(key).toString());
+				}
 			}
 
 			if (eachSoldierData.get("birthDate") != null) {
@@ -240,7 +242,9 @@ public class SoldierTimeLine {
 			decorationInfoObject = (JSONObject) decorationInformation.get(j);
 			tempStringVsStringMap = new HashMap<>();
 			for (Object key : decorationInfoObject.keySet()) {
-				tempStringVsStringMap.put(key.toString(), decorationInfoObject.get(key).toString());
+				if(decorationInfoObject.get(key) instanceof String){
+					tempStringVsStringMap.put(key.toString(), decorationInfoObject.get(key).toString());
+				}
 			}
 			if (decorationInfoObject.get("applicableFrom_inXSDDate") != null) {
 				soldierAllDecorationsMap.put(decorationInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, " ");
@@ -263,10 +267,12 @@ public class SoldierTimeLine {
 
 			tempStringVsStringMap = new HashMap<>();
 			for (Object key : regimentInfoObject.keySet()) {
-				tempStringVsStringMap.put(key.toString(), regimentInfoObject.get(key).toString());
+				if(regimentInfoObject.get(key) instanceof String){
+					tempStringVsStringMap.put(key.toString(), regimentInfoObject.get(key).toString());
+				}
 			}
 			if (regimentInfoObject.get("applicableFrom_inXSDDate") != null) {
-				soldierAllDecorationsMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, " ");
+				soldierAllRegimentsMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, " ");
 				soldierDatesMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, "regimentInfo__" + j);
 				soldierCorrectDatesMap.put(regimentInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, regimentInfoObject.get("applicableFrom_inXSDDate").toString());
 				datesFlag++;
@@ -286,10 +292,12 @@ public class SoldierTimeLine {
 			tempStringVsStringMap = new HashMap<>();
 
 			for (Object key : rankInfoObject.keySet()) {
-				tempStringVsStringMap.put(key.toString(), rankInfoObject.get(key).toString());
+				if(rankInfoObject.get(key) instanceof String){
+					tempStringVsStringMap.put(key.toString(), rankInfoObject.get(key).toString());
+				}
 			}
 			if (rankInfoObject.get("applicableFrom_inXSDDate") != null) {
-				soldierAllDecorationsMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, " ");
+				soldierAllRanksMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, " ");
 				soldierDatesMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, "rankInfo__" + j);
 				soldierCorrectDatesMap.put(rankInfoObject.get("applicableFrom_inXSDDate").toString() + "__" + datesFlag, rankInfoObject.get("applicableFrom_inXSDDate").toString());
 				datesFlag++;
