@@ -52,11 +52,6 @@ load-dataset;can load data set
 load-dataset;load data set
 load-dataset;show data set
 load-dataset;display data set
-load-entity;could load entity
-load-entity;check entity
-load-entity;show entity
-load-entity;load entity
-load-entity;may see entity
 bar;draw barchart
 bar;load barchart
 bar;sketch barchart
@@ -110,6 +105,10 @@ sun-burst;bring up sunburst diagram
 sun-burst;prepare sequence sunburst diagram
 sun-burst;can make sun burst
 sun-burst;show sequence sun burst visualization
+sun-burst;show ssb visualization
+sun-burst;prepare ssb diagram
+sun-burst;load ssb graph
+sun-burst;prepare ssb
 venn;load venn graph
 venn;can load ven diagram
 venn;need venn visualization
@@ -179,3 +178,22 @@ force-directed;prepare fdg
 force-directed;can make fdg
 force-directed;show fdg visualization
 force-directed;show fdg
+onto-explorer;show ontology
+onto-explorer;show me  ontology
+onto-explorer;show me the  ontology explorer
+onto-explorer;draw  ontology
+onto-explorer;draw me  ontology
+onto-explorer;draw me the  ontology explorer
+onto-explorer;open ontology for
+onto-explorer;open ontology explorer for
+onto-explorer;give me ontology explorer for
+onto-explorer;get me ontology explorer
+soldier-timeline;draw timeline for
+soldier-timeline;draw soldier time-line of .
+soldier-timeline;draw career time line for .
+soldier-timeline;open time-line of .
+soldier-timeline;open soldier career of .
+soldier-timeline;show me timeline of .
+soldier-timeline;show soldier career for .
+soldier-timeline;get me career of .
+soldier-timeline;give me career timeline visualisation of .

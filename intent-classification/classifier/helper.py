@@ -57,6 +57,8 @@ def load_model():
 	exists = os.path.exists(model_filename)
 
 	if exists:
+		print(
+			"Loading pre-trained model. If you have updated the training data, please delete " + model_filename + " file.")
 		classifier = joblib.load(model_filename)
 	else:
 		classifier = ChatIntentClassifier(settings.get_property('training_data_file'),
