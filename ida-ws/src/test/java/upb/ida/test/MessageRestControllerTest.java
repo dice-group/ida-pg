@@ -232,11 +232,11 @@ public class MessageRestControllerTest {
 				assertNotEquals(actualNode,res);
 	}
 
-	@Test
+	/*@Test
 	public void  getSoldierDataTest() throws Exception
 	{
 		ResponseBean responseBean;
 		responseBean = mrc.getSoldierData("47540");
 		assertNotEquals(responseBean.getPayload(),null);
-	}
+	}*/
 }
