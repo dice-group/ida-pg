@@ -30,6 +30,16 @@ services:
       - fuseki-storage:/fuseki
     networks:
       - ida-net
+#  intent-classification-dev:
+#    image: $REGISTRY/ida/intent-classification-dev:$VERSION
+#    ports:
+#      - 5001:5001
+#    environment:
+#      - ADMIN_PASSWORD=$FUSEKI_PW
+#    volumes:
+#      - "../intent-classification:/app/intent-classification"
+#    networks:
+#      - ida-net
 
 volumes:
   fuseki-storage:
