@@ -1,6 +1,5 @@
 package upb.ida.intent.model;
 
-import upb.ida.dao.DataRepository;
 import upb.ida.intent.IntentExecutorFactory;
 import upb.ida.intent.executor.IntentExecutor;
 
@@ -15,7 +14,7 @@ public class ChatbotContext {
 	private Question activeQuestion;
 	private String currentMessage;
 	private boolean resetOnNextRequest;
-	private DataRepository dao;
+//	private DataRepository dao;
 
 	public ChatbotContext() {
 		resetContext();
@@ -32,7 +31,7 @@ public class ChatbotContext {
 		this.activeQuestion = null;
 		this.currentMessage = null;
 		this.resetOnNextRequest = false;
-		this.dao = new DataRepository(false);
+//		this.dao = new DataRepository(false);
 	}
 
 	public String clearUserMessage() {
