@@ -13,6 +13,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import upb.ida.constant.IDALiteral;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -43,57 +44,40 @@ public class DataRepository {
 	 * @return It takes query string as its parameter and returns the result set after executing the query.
 	 */
 	public ResultSet getResultFromQuery(String dataset, String queryString) {
-		QueryExecution queryExecution;
+		QueryExecution queryExecution = null;
 		ResultSet resultSet;
 		Query query = QueryFactory.create(queryString);
 
-		/*
-		 * No need to create a model from file or make database connection if the query is being run on already existing model. ( multiple queries are run on same model from getData function.)
-		 */
-		if (model == null) {
-			/*
-			 *	Create a fuseki model from the file and run the query on that model for test cases.
-			 */
-			if (isTest || "test-data".equals(dataset) || "test-ontology".equals(dataset)) {
-				try {
-					model = ModelFactory.createDefaultModel();
-					String path = Objects.requireNonNull(getClass().getClassLoader().getResource("dataset/test.ttl")).getFile();
-					model.read(path);
-					queryExecution = QueryExecutionFactory.create(query, model);
-				} catch (NullPointerException ex) {
-					System.out.println(ex.getMessage());
-					return null;
-				}
+		try {
+			if (model == null && (isTest || IDALiteral.TEST_DATASET.equals(dataset) || IDALiteral.TEST_ONTOLOGYSET.equals(dataset))) {
+				model = ModelFactory.createDefaultModel();
+				String path = Objects.requireNonNull(getClass().getClassLoader().getResource("dataset/test.ttl")).getFile();
+				model.read(path);
+				queryExecution = QueryExecutionFactory.create(query, model);
+			} else if (model == null) {
+				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + dataset);
+				conn = (RDFConnectionFuseki) builder.build();
+				queryExecution = conn.query(query);
 			} else {
-				try {
-					RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + dataset);
-					conn = (RDFConnectionFuseki) builder.build();
-					queryExecution = conn.query(query);
-				} catch (Exception ex) {
-					System.out.println(ex.getMessage());
-					return null;
-				} finally {
-					conn.close();
-				}
+				queryExecution = QueryExecutionFactory.create(query, model);
 			}
-		} else {
-			queryExecution = QueryExecutionFactory.create(query, model);
-		}
-		if (queryExecution != null) {
-			try {
-				resultSet = ResultSetFactory.copyResults(queryExecution.execSelect());
+			resultSet = ResultSetFactory.copyResults(queryExecution.execSelect());
+			return resultSet;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null; // User will not get any message on UI if not returned null.
+		} finally {
+			if(queryExecution != null){
 				queryExecution.close();
-				return resultSet;
-			} catch (Exception e) {
-				return null;
+			}
+			if(conn != null){
+				conn.close();
 			}
 		}
-		return null;
 	}
 
 
 	/**
-	 *
 	 * @param dataset - Name of the dataset
 	 * @return - Metadata of the dataset as a map.
 	 */
@@ -109,63 +93,64 @@ public class DataRepository {
 		int rowCount;
 		QuerySolution resource;
 		int index;
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT ?class (count(?class) as ?count)\n" +
-				"WHERE {\n" +
-				"  \t?s rdf:type ?class;\n" +
-				"    FILTER (?class != owl:NamedIndividual)\n" +
-				"}\n" +
-				"GROUP BY ?class";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
-		if (resultSet == null) {
-			return null;
-		}
-		while (resultSet.hasNext()) {
-			resource = resultSet.next();
-			className = resource.get("class").asNode().getURI();
-			if (className.contains("#")) {
-				index = className.lastIndexOf("#");
-			} else {
-				index = className.lastIndexOf("/");
+		try {
+			StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append(
+					"SELECT ?class (count(?class) as ?count) WHERE { ?s rdf:type ?class; FILTER (?class != owl:NamedIndividual) } GROUP BY ?class");
+			ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
+			if (resultSet == null) {
+				return null;
 			}
-			className = className.substring(index + 1);
-			rowCount = Integer.parseInt(resource.get("count").asNode().getLiteralValue().toString());
-			classCountMap.put(className, rowCount);
-			classBaseUrlMap.put(className, resource.get("class").asNode().getURI());
-		}
-		columnMap = getClassColumnMap(dataset, distinctColumns);
-		Map<String, ArrayList<String>> columnInfoMap = getColumnsInformation(dataset, distinctColumns);
-		ArrayList<String> columnInfo;
-		for(String colName: columnInfoMap.keySet()){
-			columnInfo = columnInfoMap.get(colName);
-			columnCommentMap.put(colName, columnInfo.get(0));
-			columnTypeMap.put(colName, columnInfo.get(1));
-			columnLabelMap.put(colName, columnInfo.get(2));
-		}
-		Map<String, Object> dsInfo = new HashMap<>();
-		dsInfo.put("dsName", dataset);
-		dsInfo.put("dsDesc", "");
-		List<Map<String, Object>> tables = new ArrayList<>();
-		Map<String, Object> table;
-		String classKey;
-		for (String cls : classCountMap.keySet()) {
-			classKey = cls.replaceAll(" ", "");
-			if (columnMap.get(classKey) != null) {
-				table = new HashMap<>();
-				table.put("displayName", cls);
-				table.put("fileName", cls);
-				table.put("colCount", columnMap.get(classKey).size());
-				table.put("rowCount", classCountMap.get(cls));
-				table.put("baseUrl", classBaseUrlMap.get(cls));
-				table.put("fileColMd", createColumnsMetadata(columnMap, classKey, dataset, columnCommentMap, columnLabelMap, columnTypeMap));
-				tables.add(table);
+			while (resultSet.hasNext()) {
+				resource = resultSet.next();
+				className = resource.get("class").asNode().getURI();
+				if (className.contains("#")) {
+					index = className.lastIndexOf("#");
+				} else {
+					index = className.lastIndexOf("/");
+				}
+				className = className.substring(index + 1);
+				rowCount = Integer.parseInt(resource.get("count").asNode().getLiteralValue().toString());
+				classCountMap.put(className, rowCount);
+				classBaseUrlMap.put(className, resource.get("class").asNode().getURI());
+			}
+			columnMap = getClassColumnMap(dataset, distinctColumns);
+			Map<String, ArrayList<String>> columnInfoMap = getColumnsInformation(dataset, distinctColumns);
+			ArrayList<String> columnInfo;
+			for (String colName : columnInfoMap.keySet()) {
+				columnInfo = columnInfoMap.get(colName);
+				columnCommentMap.put(colName, columnInfo.get(0));
+				columnTypeMap.put(colName, columnInfo.get(1));
+				columnLabelMap.put(colName, columnInfo.get(2));
+			}
+			Map<String, Object> dsInfo = new HashMap<>();
+			dsInfo.put("dsName", dataset);
+			dsInfo.put("dsDesc", "");
+			List<Map<String, Object>> tables = new ArrayList<>();
+			Map<String, Object> table;
+			String classKey;
+			for (String cls : classCountMap.keySet()) {
+				classKey = cls.replaceAll(" ", "");
+				if (columnMap.get(classKey) != null) {
+					table = new HashMap<>();
+					table.put("displayName", cls);
+					table.put("fileName", cls);
+					table.put("colCount", columnMap.get(classKey).size());
+					table.put("rowCount", classCountMap.get(cls));
+					table.put("baseUrl", classBaseUrlMap.get(cls));
+					table.put("fileColMd", createColumnsMetadata(columnMap, classKey, dataset, columnCommentMap, columnLabelMap, columnTypeMap));
+					tables.add(table);
+				}
+			}
+			dsInfo.put("filesMd", tables);
+			return dsInfo;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null; // User will not get any message on UI if not returned null.
+		} finally {
+			if (conn != null) {
+				conn.close();
 			}
 		}
-		dsInfo.put("filesMd", tables);
-		if (conn != null) {
-			conn.close();
-		}
-		return dsInfo;
 	}
 
 	/**
@@ -188,14 +173,9 @@ public class DataRepository {
 		/*
 		 * Get all triples of the class and all other related triples.
 		 */
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT *\n" +
-				"WHERE {\n" +
-				"	?s a <" + classUrl + ">; \n" +
-				"	?p ?o;\n" +
-				"   FILTER ( ?p != rdf:type)\n" +
-				"}";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append(
+				"SELECT * WHERE { ?s a <").append(classUrl).append(">; ?p ?o; FILTER ( ?p != rdf:type) }");
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
 		while (resultSet.hasNext()) {
 			QuerySolution resource = resultSet.next();
 			id = resource.get("s").asNode().toString();
@@ -211,7 +191,7 @@ public class DataRepository {
 				rowObject = rowsMap.get(id);
 			}
 			value = getObjectValueOfResource(resource, dataset);
-			if(value == null){
+			if (value == null) {
 				continue;
 			}
 			if (rowObject.get(key) == null) {
@@ -248,13 +228,9 @@ public class DataRepository {
 		String val;
 		Map<String, String> resourceMap = new HashMap<>();
 		QuerySolution resource;
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT *\n" +
-				"WHERE {\n" +
-				"	<" + sub + "> ?p ?o;\n" +
-				" FILTER( ?o != owl:NamedIndividual)" +
-				"}";
-		ResultSet resultSet = getResultFromQuery(dataset, queryString);
+		StringBuilder queryString = new StringBuilder(IDALiteral.PREFIXES).append(
+				"SELECT * WHERE { <").append(sub).append("> ?p ?o; FILTER( ?o != owl:NamedIndividual) }");
+		ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 		while (resultSet.hasNext()) {
 			resource = resultSet.next();
 			key = resource.get("p").asNode().toString();
@@ -291,12 +267,8 @@ public class DataRepository {
 		String subject;
 		int index;
 		QuerySolution resource;
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT *\n" +
-				"WHERE {\n" +
-				"?s ?p <" + obj + ">\n" +
-				"}";
-		ResultSet resultSet = getResultFromQuery(dataset, queryString);
+		StringBuilder queryString = new StringBuilder(IDALiteral.PREFIXES).append("SELECT * WHERE { ?s ?p <").append(obj).append("> }");
+		ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 		if (resultSet.hasNext()) {
 			resource = resultSet.next();
 			subject = resource.get("s").asNode().toString();
@@ -327,15 +299,8 @@ public class DataRepository {
 		QuerySolution resource;
 		Set<String> distinctColumns = new TreeSet<>();
 		String classUrl = getClassUrl(className, dataset);
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT DISTINCT ?class ?pred" +
-				" WHERE {" +
-				"  ?s ?pred ?o;" +
-				"  ?pred [];" +
-				"  rdf:type ?class;" +
-				"  FILTER( ?class != owl:NamedIndividual && (?pred != rdf:type) && ?class = <" + classUrl + "> )" +
-				" }";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append("SELECT DISTINCT ?class ?pred WHERE { ?s ?pred ?o; ?pred []; rdf:type ?class; FILTER( ?class != owl:NamedIndividual && (?pred != rdf:type) && ?class = <").append(classUrl).append("> ) }");
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
 		while (resultSet != null && resultSet.hasNext()) {
 			resource = resultSet.next();
 			columnName = resource.get("pred").asNode().getURI();
@@ -351,14 +316,8 @@ public class DataRepository {
 
 	public String getClassUrl(String className, String dataset) {
 		int index;
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT ?class\n" +
-				"WHERE {\n" +
-				"  \t?s rdf:type ?class;\n" +
-				"    FILTER (?class != owl:NamedIndividual)\n" +
-				"}\n" +
-				"GROUP BY ?class";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append("SELECT ?class WHERE { ?s rdf:type ?class; FILTER (?class != owl:NamedIndividual) } GROUP BY ?class");
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
 		if (resultSet == null) {
 			return null;
 		}
@@ -378,15 +337,11 @@ public class DataRepository {
 	}
 
 	/**
-	 *
 	 * @param dataset - Name of the dataset for which the apache jena model has to created and assigned to class variable.
 	 */
 	private void setupDataSetModel(String dataset) {
-		String qString = "SELECT ?subject ?predicate ?object \n " +
-				"WHERE { " +
-				"?subject ?predicate ?object " +
-				"}";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", qString);
+		StringBuilder qString = new StringBuilder("SELECT ?subject ?predicate ?object  WHERE {  ?subject ?predicate ?object  }");
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", qString.toString());
 		List<Triple> triples = new ArrayList<>();
 		model = ModelFactory.createDefaultModel();
 		while (resultSet.hasNext()) {
@@ -400,9 +355,8 @@ public class DataRepository {
 	}
 
 	/**
-	 *
 	 * @param resource - Resource of which, value of the object has to be fetched.
-	 * @param dataset - Name of the dataset
+	 * @param dataset  - Name of the dataset
 	 * @return - Returns a string containing the object value of a resource.
 	 */
 	private String getObjectValueOfResource(QuerySolution resource, String dataset) {
@@ -433,22 +387,14 @@ public class DataRepository {
 	}
 
 	/**
-	 *
-	 * @param dataset Name of the dataset
+	 * @param dataset         Name of the dataset
 	 * @param distinctColumns - Empty set to have the list of distinct columns in the dataset.
 	 * @return - Map of class name and the list of columns of the class.
 	 */
-	private Map<String, ArrayList<String>> getClassColumnMap(String dataset, Set<String> distinctColumns){
+	private Map<String, ArrayList<String>> getClassColumnMap(String dataset, Set<String> distinctColumns) {
 		Map<String, ArrayList<String>> columnMap = new HashMap<>();
-		String queryString = IDALiteral.PREFIXES +
-				"SELECT DISTINCT ?class ?pred\n" +
-				"WHERE {\n" +
-				"  \t?s ?pred ?o;\n" +
-				"    ?pred [];\n" +
-				"    rdf:type ?class;\n" +
-				"    FILTER ( ?class != owl:NamedIndividual && (?pred != rdf:type))\n" +
-				"}";
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString);
+		StringBuilder queryString = new StringBuilder(IDALiteral.PREFIXES).append("SELECT DISTINCT ?class ?pred WHERE { ?s ?pred ?o; ?pred []; rdf:type ?class; FILTER ( ?class != owl:NamedIndividual && (?pred != rdf:type)) }");
+		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
 		QuerySolution resource;
 		String className;
 		int index;
@@ -475,8 +421,7 @@ public class DataRepository {
 	}
 
 	/**
-	 *
-	 * @param dataset - Name of the dataset. test
+	 * @param dataset         - Name of the dataset. test
 	 * @param distinctColumns - Set of column names.
 	 * @return - Map of column name as a key and its info (comment, data type & label) as value.
 	 */
@@ -484,7 +429,7 @@ public class DataRepository {
 		Map<String, ArrayList<String>> columnsInfoMap = new HashMap<>();
 		ArrayList<String> columnInfo;
 		boolean isFirst = true;
-		String filterPrefix = "?s = ";
+		StringBuilder filterPrefix = new StringBuilder("?s = ");
 		StringBuilder filterCondition = new StringBuilder();
 		QuerySolution resource;
 		int index;
@@ -498,19 +443,12 @@ public class DataRepository {
 			filterCondition.append(filterPrefix).append("<").append(col.replace("/data/", "/ontology/")).append(">");
 		}
 		if (!"".contentEquals(filterCondition)) {
-			String queryString = IDALiteral.PREFIXES +
-					"SELECT DISTINCT (?s as ?column) ?comment ?type ?label\n" +
-					"WHERE { \n" +
-					"  ?s\n" +
-					"  rdfs:range ?type;\n" +
-					"  rdfs:label ?label;\n" +
-					"  OPTIONAL {\n" +
-					"  \t?s rdfs:comment ?comment;\n" +
-					"  }" +
-					" 	FILTER (" + filterCondition + ")" +
-					"}";
+			StringBuilder queryString = new StringBuilder()
+					.append(IDALiteral.PREFIXES)
+					.append("SELECT DISTINCT (?s as ?column) ?comment ?type ?label WHERE {  ?s rdfs:range ?type; rdfs:label ?label; OPTIONAL { ?s rdfs:comment ?comment; } FILTER (")
+					.append(filterCondition).append(") }");
 			model = null;
-			ResultSet resultSet = getResultFromQuery(dataset + "-ontology", queryString);
+			ResultSet resultSet = getResultFromQuery(dataset + "-ontology", queryString.toString());
 			String columnType;
 			String comment;
 			String label;
@@ -554,7 +492,7 @@ public class DataRepository {
 		return columnsInfoMap;
 	}
 
-	private List<Map<String, Object>> createColumnsMetadata(Map<String, ArrayList<String>> columnMap, String classKey, String dataset, Map<String, String> columnCommentMap, Map<String, String> columnLabelMap, Map<String, String> columnTypeMap){
+	private List<Map<String, Object>> createColumnsMetadata(Map<String, ArrayList<String>> columnMap, String classKey, String dataset, Map<String, String> columnCommentMap, Map<String, String> columnLabelMap, Map<String, String> columnTypeMap) {
 		List<Map<String, Object>> columns = new ArrayList<>();
 		Map<String, Object> column;
 		int index = 1;
