@@ -4,9 +4,10 @@ public enum Intent {
 
 	GREETING("greeting"),
 	LOAD_DATASET("load-dataset"),
-	LOAD_ENTITY("load-entity"),
 	BAR("bar"),
 	FORCE_DIRECTED_GRAPH("force-directed"),
+	SOLDIER_CAREER_TIMELINE("soldier-timeline"),
+	ONTOLOGY_EXPLORER("onto-explorer"),
 	GEO_SPATIAL("geo-spatial"),
 	SUN_BURST("sun-burst"),
 	VENN("venn"),

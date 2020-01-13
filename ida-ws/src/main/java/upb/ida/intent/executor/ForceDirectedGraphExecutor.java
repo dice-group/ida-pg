@@ -22,7 +22,9 @@ public class ForceDirectedGraphExecutor extends AbstractExecutor implements Inte
 
 	@Override
 	public void execute(ChatbotContext context) throws IntentExecutorException {
+		// Add code here
 		System.out.println("FDG done");
+		context.addChatbotResponse("Force directed graph is now loaded");
 		context.resetOnNextRequest();
 
 	}

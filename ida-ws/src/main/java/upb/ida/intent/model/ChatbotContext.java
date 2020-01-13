@@ -1,5 +1,6 @@
 package upb.ida.intent.model;
 
+import upb.ida.dao.DataRepository;
 import upb.ida.intent.IntentExecutorFactory;
 import upb.ida.intent.executor.IntentExecutor;
 
@@ -14,6 +15,7 @@ public class ChatbotContext {
 	private Question activeQuestion;
 	private String currentMessage;
 	private boolean resetOnNextRequest;
+	private DataRepository dao;
 
 	public ChatbotContext() {
 		resetContext();
@@ -21,18 +23,16 @@ public class ChatbotContext {
 
 	public void resetContext() {
 		// Set to defaults
-		this.currentIntent = Intent.UNKNOWN;
-		this.currentExecutor = IntentExecutorFactory.getExecutorFor(Intent.UNKNOWN);
+		this.currentIntent = Intent.GREETING;
+		this.currentExecutor = IntentExecutorFactory.getExecutorFor(Intent.GREETING);
 		this.savedAnswers = new HashMap<>();
 		this.chatbotResponses = new ArrayList<>();
+		this.chatbotResponses.add("Hello! How may I help you?");
 		this.tips = new ArrayList<>();
 		this.activeQuestion = null;
 		this.currentMessage = null;
 		this.resetOnNextRequest = false;
-	}
-
-	public String getCurrentUserMessage() {
-		return currentMessage.trim();
+		this.dao = new DataRepository(false);
 	}
 
 	public String clearUserMessage() {
@@ -104,7 +104,7 @@ public class ChatbotContext {
 	}
 
 	public String getCurrentMessage() {
-		return currentMessage;
+		return currentMessage.trim();
 	}
 
 	public void setCurrentMessage(String currentMessage) {
@@ -119,8 +119,14 @@ public class ChatbotContext {
 		this.resetOnNextRequest = resetOnNextRequest;
 	}
 
-	public List<String> getActiveTableColumns() {
-		return Arrays.asList("City", "Cappuccino", "Cinema", "Wine", "Gasoline", "Avg Rent", "Avg Disposable Income");
+	public Set<String> getActiveTableColumns() {
+//		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
+//		String actvTbl = (String)responseBean.getPayload().get("actvTbl");
+//		String actvDs = (String) responseBean.getPayload().get("actvDs");
+//
+//		Set<String> columnsList = dao.getColumnsList(actvTbl, actvDs);
+//		return columnsList;
+		return new HashSet<>(Arrays.asList("City", "Cappuccino", "Cinema", "Wine", "Gasoline", "Avg Rent", "Avg Disposable Income"));
 	}
 
 	public void resetOnNextRequest() {

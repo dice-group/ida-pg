@@ -3,10 +3,7 @@ package upb.ida.intent;
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 import upb.ida.intent.model.Keyword;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -14,12 +11,12 @@ public class Util {
 	private static double similarityThreshold = 0.85;
 	private static JaroWinklerSimilarity similarity = new JaroWinklerSimilarity();
 
-	public static synchronized List<Keyword> extractKeywords(String text, List<String> targetWords) {
+	public static synchronized List<Keyword> extractKeywords(String text, Collection<String> targetWords) {
 		List<Keyword> output = new ArrayList<>();
-		String[] sourceWords = text.trim().replaceAll("\\s+", " ").split(" ");
+		String[] sourceWords = text.trim().toLowerCase().replaceAll("\\s+", " ").split(" ");
 		for (String sourceWord : sourceWords) {
 			for (String targetWord : targetWords) {
-				Double similarityScore = similarity.apply(sourceWord, targetWord);
+				Double similarityScore = similarity.apply(sourceWord, targetWord.toLowerCase());
 				if (similarityScore >= similarityThreshold) {
 					Keyword keyword = new Keyword(targetWord, similarityScore);
 					if (!output.contains(keyword)) output.add(keyword);
@@ -29,7 +26,7 @@ public class Util {
 		return output;
 	}
 
-	public static synchronized String extractTopKeyword(String text, List<String> targetWords) {
+	public static synchronized String extractTopKeyword(String text, Collection<String> targetWords) {
 		List<Keyword> keywords = extractKeywords(text, targetWords);
 
 		if (!keywords.isEmpty())

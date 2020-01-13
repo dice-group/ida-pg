@@ -1,5 +1,8 @@
 package upb.ida.intent;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
@@ -7,7 +10,6 @@ import upb.ida.intent.exception.IntentExecutorException;
 import upb.ida.intent.executor.IntentExecutor;
 import upb.ida.intent.model.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +17,25 @@ import java.util.Map;
 @SessionScope
 @Component
 public class Orchestrator {
+
+	@Autowired
+	private Environment env;
+
 	// Externalize
-	String restApiUrl = "http://127.0.0.1:5000/classify?text={text}";
-	double confidenceThreshold = 0.7;
+	@Value("${intent.classifier.rest}")
+	String restApiUrl;
+	@Value("${intent.classifier.confidence.threshold}")
+	double confidenceThreshold;
 
 	private ChatbotContext context = new ChatbotContext();
 
 	//TODO make this singleton
 	public Orchestrator() {
+		try {
+			context.getCurrentExecutor().execute(context);
+		} catch (IntentExecutorException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void prepareContext(String userMessage) {
@@ -41,21 +54,25 @@ public class Orchestrator {
 
 		if (messageIntent.equals(Intent.RESTART)) {
 			context.resetContext();
-			context.addChatbotResponse("Hello! How may I help you?");
+//			context.addChatbotResponse("Hello! How may I help you?");
 			return context;
 		}
 
-		if (context.getCurrentIntent().equals(Intent.UNKNOWN)) {
+		if (context.getCurrentIntent().equals(Intent.GREETING)) {
 			System.out.println("IC: new intent = " + messageIntent);
 			context.setCurrentIntent(messageIntent);
 			context.setCurrentExecutor(IntentExecutorFactory.getExecutorFor(messageIntent));
 		}
 
-		System.out.println("IC: new intent = " + context.getCurrentIntent());
+		// TODO these two if blocks are to make sure that new NLE implementation only handles the Intents which have
+		//  been completely implemented, rest goes to rivescript. Remove them later when all implementations are working.
+		if (context.getCurrentIntent().equals(Intent.UNKNOWN))
+			context.resetOnNextRequest();
 
-		// TODO remove this later when all implementations are working
-		if (!Arrays.asList(Intent.BAR, Intent.FORCE_DIRECTED_GRAPH).contains(context.getCurrentIntent()))
+		if (!this.isImplemented(context.getCurrentIntent())) {
+			context.resetOnNextRequest();
 			return null;
+		}
 
 		IntentExecutor executor = context.getCurrentExecutor();
 		executor.processResponse(context);
@@ -66,9 +83,8 @@ public class Orchestrator {
 			context.setActiveQuestion(nextQuestion);
 		} else {
 			// Perform final action
-//			context.addChatbotResponse("All information processed.");
 			executor.execute(context);
-//			context.setResetOnNextRequest(true);
+//			context.resetOnNextRequest();
 		}
 
 		System.out.println("IC: responses = " + context.getChatbotResponses());
@@ -94,8 +110,25 @@ public class Orchestrator {
 		return Intent.getForKey(classifiedIntents.get(0).getIntent());
 	}
 
+	private boolean isImplemented(Intent intent) {
+		String implementedIntents = env.getProperty("intent.executor.implemented");
+		if (implementedIntents == null) {
+			return false;
+		}
+
+		for (String implemented : implementedIntents.split(",")) {
+			if (Intent.getForKey(implemented).equals(intent)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public static void main(String[] args) throws IntentExecutorException {
 		Orchestrator o = new Orchestrator();
+		System.out.println("Chatbot: " + o.context.getChatbotResponses());
+
 //		"Cappuccino", "Cinema"
 		o.processMessage("kem chho");
 		System.out.println("Chatbot: " + o.context.getChatbotResponses());
