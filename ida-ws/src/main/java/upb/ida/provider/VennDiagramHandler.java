@@ -23,7 +23,7 @@ public class VennDiagramHandler implements Subroutine {
 	@Autowired
 	private FileUtil DemoMain;
 	@Autowired
-	private VennUtil VENN_Util;
+	private VennUtil vennUtil;
 	@Autowired
 	private ResponseBean responseBean;
 
@@ -43,7 +43,7 @@ public class VennDiagramHandler implements Subroutine {
 			String path = DemoMain.getDTFilePath(actvDs, actvTbl);
 			Map<String, Object> dataMap = responseBean.getPayload();
 
-			dataMap.put("vennDiagramData", VENN_Util.generateVennDiagram(actvTbl, args, actvDs));
+			dataMap.put("vennDiagramData", vennUtil.generateVennDiagram(actvTbl, args, actvDs));
             dataMap.put("label", "venn diagram data");
 			responseBean.setPayload(dataMap);
 			responseBean.setActnCode(IDALiteral.UIA_VENNDIAGRAM);
