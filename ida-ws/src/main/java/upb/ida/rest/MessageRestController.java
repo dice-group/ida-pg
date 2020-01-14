@@ -57,12 +57,15 @@ public class MessageRestController {
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
 
+		// Intercept the message and send it to NLE orchestrator. If the orchestrator cannot process it (i.e. returns
+		// null), then it will be processed by Rivescript.
 		ChatbotContext chatbotContext = orchestrator.processMessage(msg);
 		String reply;
-		if(chatbotContext == null)
+		if (chatbotContext == null)
 			reply = rsService.getRSResponse(msg);
 		else {
-			 reply = String.join(" ", chatbotContext.getChatbotResponses());
+			// Join multiple responses from NLE and make one string
+			reply = String.join(" ", chatbotContext.getChatbotResponses());
 		}
 		response.setChatmsg(reply);
 		return response;

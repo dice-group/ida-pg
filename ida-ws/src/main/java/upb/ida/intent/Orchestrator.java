@@ -27,9 +27,8 @@ public class Orchestrator {
 	@Value("${intent.classifier.confidence.threshold}")
 	double confidenceThreshold;
 
-	private ChatbotContext context = new ChatbotContext();
+	private ChatbotContext context = new ChatbotContext(); // Initialized with GREETING intent by default
 
-	//TODO make this singleton
 	public Orchestrator() {
 		try {
 			context.getCurrentExecutor().execute(context);
@@ -39,11 +38,19 @@ public class Orchestrator {
 	}
 
 	private void prepareContext(String userMessage) {
+		// Setting up context with the incoming message
 		context.setCurrentMessage(userMessage);
 		context.clearChatbotResponses();
 		context.clearTips();
 	}
 
+	/**
+	 * Entry point for processing messages through NLE
+	 *
+	 * @param message: incoming message from the user
+	 * @return ChatbotContext which contains current state of the NLE
+	 * @throws IntentExecutorException
+	 */
 	public ChatbotContext processMessage(String message) throws IntentExecutorException {
 		if (context.isResetOnNextRequest()) {
 			context.resetContext();
@@ -52,14 +59,15 @@ public class Orchestrator {
 		this.prepareContext(message);
 		Intent messageIntent = getMessageIntent(message);
 
+		// Clear the context if the user wants to restart
 		if (messageIntent.equals(Intent.RESTART)) {
 			context.resetContext();
-//			context.addChatbotResponse("Hello! How may I help you?");
 			return context;
 		}
 
+		// Set a new intent only if current intent is GREETING. If the current intent is already set to something other
+		// than GREETING, then NLE is in the middle of executing that intent and it should not be updated.
 		if (context.getCurrentIntent().equals(Intent.GREETING)) {
-			System.out.println("IC: new intent = " + messageIntent);
 			context.setCurrentIntent(messageIntent);
 			context.setCurrentExecutor(IntentExecutorFactory.getExecutorFor(messageIntent));
 		}
@@ -74,9 +82,11 @@ public class Orchestrator {
 			return null;
 		}
 
+		// At this point, correct intent and executor should be set in the context
 		IntentExecutor executor = context.getCurrentExecutor();
 		executor.processResponse(context);
 
+		// Decide if the executor needs more information to execute the final step
 		if (executor.needsMoreInformation(context)) {
 			Question nextQuestion = executor.getNextQuestion(context);
 			context.addChatbotResponse(nextQuestion.getQuestion());
@@ -87,10 +97,15 @@ public class Orchestrator {
 //			context.resetOnNextRequest();
 		}
 
-		System.out.println("IC: responses = " + context.getChatbotResponses());
 		return context;
 	}
 
+	/**
+	 * Get the intent of the incoming message
+	 *
+	 * @param message incoming message from the user
+	 * @return
+	 */
 	private Intent getMessageIntent(String message) {
 
 		Map<String, String> params = new HashMap<>();

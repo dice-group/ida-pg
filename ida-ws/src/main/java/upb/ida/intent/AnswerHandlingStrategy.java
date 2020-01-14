@@ -11,27 +11,33 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * Contains various types of logic for extracting answer from the user's massage
+ */
 public enum AnswerHandlingStrategy {
+
 	ACTIVE_TABLE_COLUMNS() {
+		/**
+		 * Extracts active table's columns from the message
+		 */
 		@Override
 		public List<String> extractAnswer(ChatbotContext context) {
 			String userMessage = context.getCurrentMessage();
 			Set<String> activeTableColumns = context.getActiveTableColumns();
-			String answer = Util.extractTopKeyword(userMessage, activeTableColumns);
+			String answer = SimilarityUtil.extractTopKeyword(userMessage, activeTableColumns);
 			return answer == null ? new ArrayList<>() : Collections.singletonList(answer);
 		}
 	},
-	BAR_CHART_SUBSET() {
-
+	FILTER_OPTIONS() {
+		/**
+		 * Extracts filter options from the message e.g. first 5, last 15
+		 */
 		Pattern firstNPattern = Pattern.compile("(?i)(\\s+)?first\\s+\\d+(\\s+)?");
 		Pattern lastNPattern = Pattern.compile("(?i)(\\s+)?last\\s+\\d+(\\s+)?");
 
 		@Override
 		public List<String> extractAnswer(ChatbotContext context) {
-			/*
-			1. First N
-			2. Last N
-			*/
 			List<String> answers = new ArrayList<>();
 			Matcher firstNMatcher = firstNPattern.matcher(context.getCurrentMessage());
 			Matcher lastNMatcher = lastNPattern.matcher(context.getCurrentMessage());
@@ -54,6 +60,12 @@ public enum AnswerHandlingStrategy {
 
 				answers.add(BarGraphUtil.LAST_N_REC);
 				answers.add(split[1]);
+			} else {
+				List<String> numericValue = NUMERIC_VALUE.extractAnswer(context);
+				if (!numericValue.isEmpty()) {
+					answers.add(BarGraphUtil.FIRST_N_REC);
+					answers.add(numericValue.get(0));
+				}
 			}
 
 			return answers;

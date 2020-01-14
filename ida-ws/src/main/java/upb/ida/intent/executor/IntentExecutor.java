@@ -6,7 +6,7 @@ import upb.ida.intent.model.Question;
 
 public interface IntentExecutor {
 
-	boolean isExecutable();
+	boolean isExecutable(ChatbotContext context);
 
 	Question getNextQuestion(ChatbotContext context);
 

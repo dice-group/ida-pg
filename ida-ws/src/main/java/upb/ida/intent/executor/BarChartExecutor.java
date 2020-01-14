@@ -22,7 +22,7 @@ public class BarChartExecutor extends AbstractExecutor implements IntentExecutor
 				Arrays.asList(
 						new Question("What is the X-axis?", Collections.singletonList("x-axis"), "X-axis set to ${x-axis}.", "Column from the active table to show as X-axis", AnswerHandlingStrategy.ACTIVE_TABLE_COLUMNS, false),
 						new Question("What is the Y-axis?", Collections.singletonList("y-axis"), "Y-axis set to ${y-axis}.", "Numeric column from the active table to show as Y-axis", AnswerHandlingStrategy.ACTIVE_TABLE_COLUMNS, false),
-						new Question("How many items would you like to see?", Arrays.asList("subset-type", "subset-size"), "Showing ${subset-size} items.", "HINT: Top N | Last N", AnswerHandlingStrategy.BAR_CHART_SUBSET, false)
+						new Question("How many items would you like to see?", Arrays.asList("subset-type", "subset-size"), "Showing ${subset-size} items.", "HINT: Top N | Last N", AnswerHandlingStrategy.FILTER_OPTIONS, false)
 				))
 		);
 

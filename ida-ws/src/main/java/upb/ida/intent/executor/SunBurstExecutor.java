@@ -13,8 +13,8 @@ public class SunBurstExecutor extends AbstractExecutor implements IntentExecutor
 	public SunBurstExecutor() {
 		super(Collections.unmodifiableList(
 				Arrays.asList(
-						new Question("What is column 1?", Collections.singletonList("col1"), "Column 1 is set to ${col1}.", null, AnswerHandlingStrategy.ACTIVE_TABLE_COLUMNS, false),
-						new Question("What is column 2?", Collections.singletonList("col2"), "Column 1 is set to ${col2}.", null, AnswerHandlingStrategy.ACTIVE_TABLE_COLUMNS, false)
+						new Question("Which column should be sequenced?", Collections.singletonList("col1"), "Column 1 is set to ${col1}.", null, AnswerHandlingStrategy.ACTIVE_TABLE_COLUMNS, false),
+						new Question("Which column values should it be sequenced upon?", Collections.singletonList("col2"), "Column 1 is set to ${col2}.", null, AnswerHandlingStrategy.ACTIVE_TABLE_COLUMNS, false)
 				))
 		);
 	}

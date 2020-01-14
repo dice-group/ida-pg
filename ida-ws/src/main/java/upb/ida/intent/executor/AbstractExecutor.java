@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contains common framework code to execute most of the common scenarios
+ */
 public abstract class AbstractExecutor implements IntentExecutor {
 
 	protected List<Question> questions;
@@ -17,14 +20,32 @@ public abstract class AbstractExecutor implements IntentExecutor {
 		this.questions = questions;
 	}
 
+	/**
+	 * Must be implemented by concrete subclasses. Final step to be executed after all information required to execute
+	 * is gathered.
+	 *
+	 * @param context current state of NLE
+	 * @throws IntentExecutorException
+	 */
 	@Override
 	public abstract void execute(ChatbotContext context) throws IntentExecutorException;
 
+	/**
+	 * Can be implemented to check for pre conditions before executing. Currently unused.
+	 *
+	 * @param context
+	 * @return boolean
+	 */
 	@Override
-	public boolean isExecutable() {
+	public boolean isExecutable(ChatbotContext context) {
 		return false;
 	}
 
+	/**
+	 * Processes the messages sent by the user. Saves the answer if the question was asked.
+	 *
+	 * @param context current state of NLE
+	 */
 	@Override
 	public void processResponse(ChatbotContext context) {
 		Map<String, String> savedAnswers = context.getSavedAnswers();
@@ -40,15 +61,12 @@ public abstract class AbstractExecutor implements IntentExecutor {
 				return;
 			}
 
-			System.out.println(answers);
-
 			Map<String, String> feedbackMap = new HashMap<>();
 			for (int i = 0; i < answers.size(); i++) {
 				savedAnswers.put(activeQuestion.getAnswerKeys().get(i), answers.get(i));
 				feedbackMap.put(activeQuestion.getAnswerKeys().get(i), answers.get(i));
 			}
 
-			// TODO transfer logic to Question
 			String feedbackTemplate = activeQuestion.getFeedbackText();
 			StringSubstitutor sub = new StringSubstitutor(feedbackMap);
 			String feedback = sub.replace(feedbackTemplate);
@@ -58,6 +76,12 @@ public abstract class AbstractExecutor implements IntentExecutor {
 		}
 	}
 
+	/**
+	 * Decides if the executor needs more information before executing the final step
+	 *
+	 * @param context current state of NLE
+	 * @return boolean
+	 */
 	@Override
 	public boolean needsMoreInformation(ChatbotContext context) {
 		Map<String, String> savedAnswers = context.getSavedAnswers();
@@ -69,6 +93,12 @@ public abstract class AbstractExecutor implements IntentExecutor {
 		return false;
 	}
 
+	/**
+	 * Gets the next question to ask to the user
+	 *
+	 * @param context current state of NLE
+	 * @return next Question instance
+	 */
 	@Override
 	public Question getNextQuestion(ChatbotContext context) {
 		Map<String, String> savedAnswers = context.getSavedAnswers();

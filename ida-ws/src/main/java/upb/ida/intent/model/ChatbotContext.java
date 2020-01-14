@@ -103,7 +103,7 @@ public class ChatbotContext {
 	}
 
 	public String getCurrentMessage() {
-		return currentMessage.trim();
+		return currentMessage == null ? null : currentMessage.trim();
 	}
 
 	public void setCurrentMessage(String currentMessage) {
