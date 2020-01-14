@@ -47,6 +47,7 @@ public class SoldierTimeLine {
 		QueryExecution queryExecution;
 		ResultSet resultSet;
 		Query query = QueryFactory.create(queryString);
+		
 
 		/*
 		 * No need to create a model from file or make database connection if the query is being run on already existing model. ( multiple queries are run on same model from getData function.)
@@ -92,6 +93,13 @@ public class SoldierTimeLine {
 
 	public Map<String, Map<String, String>> getData(String soldierId, String datasetName) {
 		datesFlag = 0;
+		soldierDataMap = new HashMap<String, Map<String, String>>();
+		soldierDatesMap = new TreeMap<String, String>();
+		soldierCorrectDatesMap = new HashMap<String, String>();
+		soldierAllDOBMap = new HashMap<String, String>();
+		soldierAllRanksMap = new HashMap<String, String>();
+		soldierAllRegimentsMap = new HashMap<String, String>();
+		soldierAllDecorationsMap = new HashMap<String, String>();
 		model = null;
 		String dataset = datasetName + "-data";
 		String qString = "SELECT ?subject ?predicate ?object \n WHERE { ?subject ?predicate ?object }";
