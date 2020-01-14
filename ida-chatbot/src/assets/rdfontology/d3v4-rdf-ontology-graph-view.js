@@ -649,7 +649,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
         var tempNodeContains = [];
         nodeContents.forEach(function(val) {
             if (val.label === nodeIdVal) {
-                tempNodeContains = val.contents
+                tempNodeContains = val.contents;
             }
         });
 
@@ -879,7 +879,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
     }
     
     function zoomActions() {
-        g.attr("transform", d3.event.transform)
+        g.attr("transform", d3.event.transform);
     }
 
     function update() 
