@@ -37,5 +37,11 @@ public class AnswerHandlingStrategyTest {
 		assertEquals(lastNAnswers.size(), 2);
 		assertEquals(lastNAnswers.get(0), BarGraphUtil.LAST_N_REC);
 		assertEquals(lastNAnswers.get(1), "5");
+
+		context.setCurrentMessage("display 25 records");
+		List<String> nAnswers = AnswerHandlingStrategy.FILTER_OPTIONS.extractAnswer(context);
+		assertEquals(nAnswers.size(), 2);
+		assertEquals(nAnswers.get(0), BarGraphUtil.FIRST_N_REC);
+		assertEquals(nAnswers.get(1), "25");
 	}
 }
