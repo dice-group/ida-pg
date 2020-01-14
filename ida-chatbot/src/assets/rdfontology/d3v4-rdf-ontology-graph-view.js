@@ -10,6 +10,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
   var onDoubleClickedNewlyCreatedLinks = [];
   var onDoubleClickCreatingNodes = false;
   var nodeDoubleClicked = ""; 
+  var undefVar = false;
   var width = 1175,
       height = 1100,
       resourceRadius = customizeGraphArray.resourceRadius,
@@ -207,6 +208,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
         var onDoubleClickNodesCreated = ""; 
 
         if (nodesArray === undefined) {
+            undefVar = true;
         }
         else{
             nodesArray.forEach(function(elem) {
@@ -268,7 +270,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
           //START :: Nodes and Links creation for subClassOf
           if (displaySubclasses) {
               if (element["rdfs:subClassOf"] === undefined) {
-                  
+                undefVar = true;
               }
               else{
                 tempSub = getLabel(displayDeustch, element["@id"]);
@@ -316,7 +318,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
           if (dispalyAllprop) {
               //get the subject label  
               if (element["rdfs:domain"] === undefined) {
-                  
+                undefVar = true;
               }
               else
               {
@@ -332,6 +334,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
 
               //get the predicate
               if (element["rdfs:domain"] === undefined) {
+                undefVar = true;
               }
               else{
                 tempPred = getLabel(displayDeustch, element["@id"]);
@@ -340,6 +343,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
 
               //get the object  range
               if (element["rdfs:range"] === undefined) {
+                undefVar = true;
               }
               else
               {
@@ -446,6 +450,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                 //START :: Nodes and Links creation for all Properties
                 //get the subject label  
                 if (element["rdfs:domain"] === undefined) {
+                    undefVar = true;
                 }
                 else
                 {
@@ -471,6 +476,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                 if (includeThis) {
                     //get the predicate
                     if (element["rdfs:domain"] === undefined) {
+                        undefVar = true;
                       }
                       else{
                           tempPred = getLabel(displayDeustch, element["@id"]);
@@ -478,6 +484,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
 
                     //get the object  range
                     if (element["rdfs:range"] === undefined) {
+                        undefVar = true;
                     }
                     else{
                       if ("@id" in element["rdfs:range"]) {
@@ -642,7 +649,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
         var tempNodeContains = [];
         nodeContents.forEach(function(val) {
             if (val.label === nodeIdVal) {
-                tempNodeContains = val.contents
+                tempNodeContains = val.contents;
             }
         });
 
@@ -661,6 +668,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeLabel = d3.select("#" + idsArray.nodeLabelId)
             nodeLabel.selectAll("*").remove();
             if (tempNodeContains["rdfs:label"] === undefined) {
+                undefVar = true;
             } else {
               if (Object.prototype.toString.call(tempNodeContains["rdfs:label"]) === "[object Array]") {
                   tempNodeContains["rdfs:label"].forEach(function(eachIds) {
@@ -696,6 +704,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeID = d3.select("#" + idsArray.nodeIdsId)
             nodeID.selectAll("*").remove();
             if (tempNodeContains["@id"] === undefined) {
+                undefVar = true;
             } else{
               nodeID.append("text")
               .text(" " + tempNodeContains["@id"] + "\n")
@@ -708,6 +717,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeType = d3.select("#" + idsArray.nodeTypeId)
             nodeType.selectAll("*").remove();
             if (tempNodeContains["@type"] === undefined) {
+                undefVar = true;
             } else{
               nodeType.append("text")
               .text(" " + tempNodeContains["@type"] + "\n\n")
@@ -721,6 +731,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeDescription = d3.select("#" + idsArray.nodeDescripId)
             nodeDescription.selectAll("*").remove();
             if (tempNodeContains["dc:description"] === undefined) {
+                undefVar = true;
             } else{
               if (Object.prototype.toString.call(tempNodeContains["dc:description"]) === "[object Array]") {
                   tempNodeContains["dc:description"].forEach(function(eachIds) {
@@ -755,6 +766,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeSubClass = d3.select("#" + idsArray.nodeSubClassId)
             nodeSubClass.selectAll("*").remove();
             if (tempNodeContains["rdfs:subClassOf"] === undefined) {
+                undefVar = true;
             } else{
               if (Object.prototype.toString.call(tempNodeContains["rdfs:subClassOf"]) === "[object Array]") {
                   var tempIndexSubClassof = 1;
@@ -786,6 +798,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeDomain = d3.select("#" + idsArray.nodeDomainId)
             nodeDomain.selectAll("*").remove();
             if (tempNodeContains["rdfs:domain"] === undefined) {
+                undefVar = true;
             } else{
               if (Object.prototype.toString.call(tempNodeContains["rdfs:domain"]) === "[object Array]") {
                   var tempIndexdomain = 1;
@@ -819,6 +832,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeRange = d3.select("#" + idsArray.nodeRangeId)
             nodeRange.selectAll("*").remove();
             if (tempNodeContains["rdfs:range"] === undefined) {
+                undefVar = true;
             } else{
               if (Object.prototype.toString.call(tempNodeContains["rdfs:range"]) === "[object Array]") {
                   var tempIndexRange = 1;
@@ -850,6 +864,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             var nodeComment = d3.select("#" + idsArray.nodeCommentId)
             nodeComment.selectAll("*").remove();
             if (tempNodeContains["rdfs:comment"] === undefined) {
+                undefVar = true;
             }
             else{
               nodeComment.append("text")
@@ -861,6 +876,10 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
             }
         }
 
+    }
+    
+    function zoomActions() {
+        g.attr("transform", d3.event.transform);
     }
 
     function update() 
@@ -902,7 +921,7 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
                       return ("5, 5");
                   }
                   return ("0, 0");
-              });;
+              });
 
           link.exit().remove();
           // ==================== Add Link Names =====================
@@ -1052,18 +1071,13 @@ function createV4RDFOntologyGraph(figId, svgId, fileName, displayDeustch, displa
 
 
           if (!disableZoom) {
-              var zoom_handler = d3.zoom()
-                  .on("zoom", zoom_actions);
-              //zoom_handler(svg);
-              //Zoom functions 
-              svg.call(zoom_handler).on("dblclick.zoom", null);
 
-              function zoom_actions() {
-                  g.attr("transform", d3.event.transform)
-
-              }
+            var zoomHandler = d3.zoom()
+                  .on("zoom", zoomActions);
+              
+              svg.call(zoomHandler).on("dblclick.zoom", null);
           }
-
+ 
       }
 
       function ticked() {
