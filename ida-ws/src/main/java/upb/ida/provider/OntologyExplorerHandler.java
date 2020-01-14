@@ -15,11 +15,13 @@ public class OntologyExplorerHandler implements Subroutine {
 	private ResponseBean responseBean;
 
 	public String call (com.rivescript.RiveScript rs, String[] args) {
+
 		Map<String, Object> dataMap = responseBean.getPayload();
 		OntologyExplorer oe = new OntologyExplorer();
 		responseBean.setActnCode(11);
 		try {
 			dataMap.put("ontologyData", oe.fetchData(args[0]));
+			responseBean.setPayload(dataMap);
 			return IDALiteral.RESP_PASS_ROUTINE;
 		} catch (Exception ex){
 			System.out.println(ex.getMessage());
