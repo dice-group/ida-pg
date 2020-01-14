@@ -66,9 +66,9 @@ background: rgba(0, 0, 0, 0.30); /* Some darker color when you click it */
 }
 
 .text-center {
-  text-align: center !important;
+  text-align: center;
 }
 
 .text-right {
-  text-align: right !important;
+  text-align: right;
 }
