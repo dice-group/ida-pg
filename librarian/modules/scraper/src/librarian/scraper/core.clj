@@ -1,4 +1,5 @@
 (ns librarian.scraper.core
+  "Main namespace of the library scraper."
   (:require [hickory.core :as h]
             [clojure.tools.logging :as log]
             [datascript.core :as d]
@@ -34,6 +35,7 @@
                                    p (inc max-pages)))}))
 
 (defn scrape
+  "Takes a scrape configuration, srapes a library accoring to that configuration and returns the resulting scrape database."
   [{:keys [name should-visit] :as config}]
   (let [{:keys [traverser finalize]} (traverser config)]
     (log/info (str "Starting scrape " name "..."))
@@ -46,6 +48,9 @@
       result)))
 
 (defn update-cached-scrape
+  "Takes a scrape configuration and an existing old scrape database for that configuration.
+   Returns an updated version of the given scrape database in which preexisting snippets are removed and the ones from the config are included instead.
+   Useful to cheaply update scrapes if only hard-coded parts of a scrape changed, i.e. where no HTTP page crawling is required."
   [{:keys [name snippets]} db]
   (log/info (str "Updating cached scrape " name "..."))
   (let [snippet-datoms (d/datoms db :avet :type ::snippet/snippet)

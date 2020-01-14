@@ -1,27 +1,29 @@
 (ns librarian.model.db
+  "A simple helper abstraction layer over the datascript API."
   (:require [datascript.core :as d]
             [clojure.walk :as walk]))
 
 (defn fix
+  "Replaces concept and attribute keyword aliases in the given `form` as specified in the given ecosystem."
   [{:keys [concept-aliases attribute-aliases]} form]
   (walk/prewalk-replace (merge concept-aliases
                                attribute-aliases)
                         form))
 
 (defn q
-  "Like datascript.core/q but uses an ecosystem to resolve concept and attribute aliases in queries."
+  "Like `datascript.core/q` but uses an ecosystem to resolve concept and attribute aliases in queries."
   [ecosystem query & inputs]
   (apply d/q (fix ecosystem query) inputs))
 
 (defn pull
-  "Like datascript.core/pull but uses an ecosystem to resolve concept and attribute aliases in queries."
+  "Like `datascript.core/pull` but uses an ecosystem to resolve concept and attribute aliases in queries."
   [ecosystem db selector eid]
   (d/pull db
           (fix ecosystem selector)
           (fix ecosystem eid)))
 
 (defn with
-  "Like datascript.core/with but uses an ecosystem to resolve concent and attribute aliases in queries."
+  "Like `datascript.core/with` but uses an ecosystem to resolve concent and attribute aliases in queries."
   ([ecosystem db tx-data]
    (with ecosystem db tx-data nil))
   ([ecosystem db tx-data tx-meta]

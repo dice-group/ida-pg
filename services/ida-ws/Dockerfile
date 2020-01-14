@@ -2,6 +2,7 @@ FROM maven:3.6.1-jdk-11 as builder
 
 RUN apt-get update -qq; \
 	apt-get -y --no-install-recommends install python3=3.5.3-1 python3-pip=9.0.1-2+deb9u1 python3-setuptools=33.1.1-1
+RUN pip3 install wheel==0.33.6 
 RUN pip3 install scikit-learn==0.21.2 json-tricks==3.13.1
 
 WORKDIR /app
@@ -34,12 +35,19 @@ RUN mvn install
 WORKDIR /app/ida-ws
 RUN mvn dependency:go-offline
 
-COPY ida-ws ida-ws
+COPY ida-ws /app/ida-ws
 
-WORKDIR /app/ida-ws
 RUN mvn package
 
 FROM tomcat:8.5.37-jre11
 
+RUN apt-get update -qq; \
+	apt-get -y --no-install-recommends install python3=3.5.3-1 python3-pip=9.0.1-2+deb9u1 python3-setuptools=33.1.1-1 \
+	&& apt-get clean \
+ 	&& rm -rf /var/lib/apt/lists/*
+RUN pip3 install wheel==0.33.6 
+RUN pip3 install scikit-learn==0.21.2 json-tricks==3.13.1
+
 EXPOSE 8080
 COPY --from=builder /app/ida-ws/target/ida-ws.war /usr/local/tomcat/webapps
+

@@ -1,4 +1,5 @@
-(ns librarian.scraper.attributes)
+(ns librarian.scraper.attributes
+  "Definition of datascript attributes to store scraper specific data.")
 
 (def attributes {:tx/source {:librarian/temporary true
                              :librarian/computed true
