@@ -1,0 +1,45 @@
+
+<section fxLayout="row wrap" fxLayoutAlign="center center">
+  <mat-card fxFlex="500px" fxFlex.xs="100%">
+    <mat-card-header>
+      <mat-card-title>Intelligent Data Assistant</mat-card-title>
+      <mat-card-subtitle>Chatbot</mat-card-subtitle>
+      <img mat-card-avatar src="/assets/chatbot.PNG">
+    </mat-card-header>
+    <h1 class="mat-display-2 text-center">Signup</h1>
+      <form [formGroup]="signupForm" autocomplete="off" novalidate (ngSubmit)="createUser(signupForm.value)" fxLayout="column wrap"
+            fxLayoutAlign="center center" fxLayoutGap="10px">
+        <mat-card-content>
+          <mat-form-field>
+            <input matInput type="text" placeholder="First name" formControlName="firstname" id="firstname">
+            <mat-error *ngIf="hasError('firstname', 'required')">First Name is required</mat-error>
+            <mat-error *ngIf="hasError('firstname', 'maxlength')">You have more than 60 characters</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="text" placeholder="Last name" formControlName="lastname" id="lastname">
+            <mat-error *ngIf="hasError('lastname', 'required')">Last Name is required</mat-error>
+            <mat-error *ngIf="hasError('lastname', 'maxlength')">You have more than 60 characters</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="email" placeholder="Email" formControlName="username" id="username">
+            <mat-error *ngIf="hasError('username', 'required')">Email is required</mat-error>
+            <mat-error *ngIf="hasError('username', 'email')">Incorrect format</mat-error>
+            <mat-error *ngIf="hasError('username', 'maxlength')">You have more than 60 characters</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="password" placeholder="Password" formControlName="password" id="password">
+            <mat-error *ngIf="hasError('password', 'required')">Password is required</mat-error>
+            <mat-error *ngIf="hasError('password', 'maxlength')">You have more than 100 characters</mat-error>
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" [disabled]="!signupForm.valid">Signup</button>
+        </mat-card-actions>
+      </form>
+    <p class="text-right">Already have an account ? Login <a routerLink="/login">here</a></p>
+    <mat-spinner style="margin:0 auto;" mode="indeterminate" [style.display]="this.showSpinner ? 'block' : 'none'"></mat-spinner>
+  </mat-card>
+</section>

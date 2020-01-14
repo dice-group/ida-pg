@@ -64,3 +64,11 @@ background: rgba(0, 0, 0, 0.30); /* Some darker color when you click it */
   border-radius: 8px;
   opacity: 0;
 }
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}

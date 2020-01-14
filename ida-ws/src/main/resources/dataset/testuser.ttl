@@ -1,0 +1,11 @@
+<http://userdata/#john@test.com>
+        <http://www.w3.org/2001/vcard-rdf/3.0#firstname>
+                "John" ;
+        <http://www.w3.org/2001/vcard-rdf/3.0#lastname>
+                "Doe" ;
+        <http://www.w3.org/2001/vcard-rdf/3.0#password>
+                "$2a$12$HUk8e05YP9qyHgM201PlTONnQZwR6dN9cDWgHOY.n5egGXKhxYx72" ;
+        <http://www.w3.org/2001/vcard-rdf/3.0#username>
+                "john@test.com" ;
+        <http://www.w3.org/2001/vcard-rdf/3.0#userrole>
+                "USER" .
