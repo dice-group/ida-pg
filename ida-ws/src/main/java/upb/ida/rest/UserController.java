@@ -9,12 +9,6 @@ package upb.ida.rest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.RDFNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -37,9 +31,7 @@ import upb.ida.domains.User;
 @RequestMapping("/user")
 public class UserController {
 
-	private static String dbhost = System.getenv("FUSEKI_URL");
-	private static String datasetName = "/users";
-	private static String dbUrl = dbhost + datasetName;
+	private static String datasetName = "users";
 
 	@Autowired
 	private ResponseBean responseBean;
@@ -51,7 +43,7 @@ public class UserController {
 	@ResponseBody
 	public ResponseBean listUsers() {
 		try {
-			String jsonOutput = userRepository.listAllUsers("users");
+			String jsonOutput = userRepository.listAllUsers(datasetName);
 			Map<String, Object> returnMap = new HashMap<>();
 			returnMap.put("users", jsonOutput);
 			responseBean.setPayload(returnMap);
@@ -70,14 +62,14 @@ public class UserController {
 			return responseBean;
 		} else {
 			try {
-				User oldRecord = userRepository.getUserByUsername("users", updatedrecord.getUsername());
+				User oldRecord = userRepository.getUserByUsername(datasetName, updatedrecord.getUsername());
 				if (oldRecord == null) {
 					responseBean.setErrMsg("user not found");
 					return responseBean;
 				}
 				updatedrecord.setUsername(oldRecord.getUsername());
 				updatedrecord.setPassword(oldRecord.getPassword());
-				if (userRepository.updateUser("users", oldRecord, "DELETE DATA", false) == IDALiteral.RESP_PASS_ROUTINE && userRepository.updateUser("users", updatedrecord, "INSERT DATA", false) == IDALiteral.RESP_PASS_ROUTINE) {
+				if (userRepository.updateUser(datasetName, oldRecord, "DELETE DATA", false) == IDALiteral.RESP_PASS_ROUTINE && userRepository.updateUser("users", updatedrecord, "INSERT DATA", false) == IDALiteral.RESP_PASS_ROUTINE) {
 					Map<String, Object> returnMap = new HashMap<String, Object>();
 					returnMap.put("updatedUser", updatedrecord.getUsername());
 					responseBean.setPayload(returnMap);
@@ -106,7 +98,7 @@ public class UserController {
 				responseBean.setErrCode(IDALiteral.FAILURE_USEREXISTS);
 				return responseBean;
 			}
-			if (userRepository.updateUser("users", record, "INSERT DATA", true) == IDALiteral.RESP_PASS_ROUTINE) {
+			if (userRepository.updateUser(datasetName, record, "INSERT DATA", true) == IDALiteral.RESP_PASS_ROUTINE) {
 				Map<String, Object> returnMap = new HashMap<>();
 				returnMap.put("newUser", record.getUsername());
 				responseBean.setPayload(returnMap);
@@ -131,7 +123,7 @@ public class UserController {
 			if (record == null) {
 				responseBean.setErrMsg("user not found");
 				return responseBean;
-			} else if (userRepository.updateUser("users", record, "DELETE DATA", false) == IDALiteral.RESP_PASS_ROUTINE) {
+			} else if (userRepository.updateUser(datasetName, record, "DELETE DATA", false) == IDALiteral.RESP_PASS_ROUTINE) {
 				responseBean.setErrMsg("User Deleted");
 			}
 		} catch (Exception ex) {
@@ -145,7 +137,7 @@ public class UserController {
 		UserRepository userRepository = new UserRepository();
 		User user = null;
 		try {
-			user = userRepository.getUserByUsername("users", clientUserName);
+			user = userRepository.getUserByUsername(datasetName, clientUserName);
 		}catch (Exception ex){
 			ex.printStackTrace();
 		}

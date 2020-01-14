@@ -1,6 +1,11 @@
 package upb.ida.dao;
 
-import org.apache.jena.query.*;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
@@ -25,9 +30,6 @@ public class UserRepository {
 	}
 
 	public ResultSet getResultFromQuery(String dataset, String queryString) {
-		if(dbhost == null){
-			dbhost = "http://127.0.0.1:3030";
-		}
 		QueryExecution queryExecution = null;
 		ResultSet resultSet;
 		Model model;
@@ -40,7 +42,7 @@ public class UserRepository {
 				model.read(path);
 				queryExecution = QueryExecutionFactory.create(queryString, model);
 			} else {
-				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + "/" + dataset);
+				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + dataset);
 				conn = (RDFConnectionFuseki) builder.build();
 				queryExecution = conn.query(queryString);
 			}
@@ -60,9 +62,6 @@ public class UserRepository {
 	}
 
 	private boolean updateQuery(String dataset, String queryString) {
-		if(dbhost == null){
-			dbhost = "http://127.0.0.1:3030";
-		}
 		Model model;
 		RDFConnectionFuseki conn = null;
 		try {
@@ -74,7 +73,7 @@ public class UserRepository {
 				model.read(path);
 				UpdateAction.execute(request, model);
 			} else {
-				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + "/" + dataset);
+				RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(dbhost + dataset);
 				conn = (RDFConnectionFuseki) builder.build();
 				conn.update(request);
 			}

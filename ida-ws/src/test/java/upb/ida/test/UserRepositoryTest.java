@@ -1,6 +1,5 @@
 package upb.ida.test;
 
-import org.apache.jena.query.ResultSetFormatter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +10,6 @@ import upb.ida.Application;
 import upb.ida.constant.IDALiteral;
 import upb.ida.dao.UserRepository;
 import upb.ida.domains.User;
-
-import java.io.ByteArrayOutputStream;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
