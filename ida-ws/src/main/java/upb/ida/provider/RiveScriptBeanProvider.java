@@ -11,7 +11,6 @@ import com.rivescript.Config;
 import com.rivescript.RiveScript;
 
 import upb.ida.constant.IDALiteral;
-import upb.ida.ontologyExplorer.OntologyExplorer;
 import upb.ida.temp.ExampleMacro;
 import upb.ida.util.FileUtil;
 

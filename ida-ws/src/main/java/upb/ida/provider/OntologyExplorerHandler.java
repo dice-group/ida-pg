@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import upb.ida.bean.ResponseBean;
 import upb.ida.constant.IDALiteral;
-import upb.ida.ontologyExplorer.OntologyExplorer;
+import upb.ida.ontologyexplorer.OntologyExplorer;
 
 import java.util.Map;
 
