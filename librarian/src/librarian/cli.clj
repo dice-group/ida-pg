@@ -1,4 +1,5 @@
 (ns librarian.cli
+  "The librarian CLI."
   (:require [librarian.scraper.io.config :as config]
             [librarian.scraper.io.scrape :as sscrape]
             [librarian.model.io.scrape :as mscrape]
@@ -17,6 +18,7 @@
 (def ^:private ecosystems-string (string/join ", " (map name (keys m/ecosystems))))
 
 (defn- mode-print
+  "Prints the given value with or without indentation."
   [val mode]
   (case mode
     "pretty" (pp/pprint val)
@@ -46,6 +48,7 @@
   (mode-print (mscrape/pull-file scrape selector eid) mode))
 
 (defn print-schema
+  "Prints the concepts and concept attributes of a given ecosystem."
   [{:keys [ecosystem]}]
   (if-let [{:keys [concept-aliases attribute-aliases attributes version]} (m/ecosystems ecosystem)]
     (do

@@ -1,4 +1,5 @@
 (ns librarian.generator.cost
+  "Implementation of the cost and heuristic measures used by the A* search through the CFG space."
   (:require [datascript.core :as d]
             [librarian.generator.query :as gq]
             [librarian.model.concepts.callable :as callable]))
@@ -25,8 +26,8 @@
   [^double n]
   (- (* n (Math/log n)) n))
 
-(defn sematic-compatibility
-  "The semantic compatibility of 'from to 'to.
+(defn semantic-compatibility
+  "The semantic compatibility of `from` to `to`.
    Only a mock implementation for now."
   [to-value from-value]
   (if (= from-value to-value)
@@ -34,16 +35,25 @@
     0))
 
 (defn max-compatibility
+  "Takes one semantic type `to-value` of a receiver and a collection `from-values` of the semantic types of some source.
+   Returns the maximum semantic compatibility of some semantic source type to the receiving type."
   [to-value from-values]
   (if (< (count to-value) 2)
     1
-    (apply max 0 (map #(sematic-compatibility to-value %) from-values))))
+    (apply max 0 (map #(semantic-compatibility to-value %) from-values))))
 
 (defn semantic-compatibility-evaluator
+  "Takes a database and the ids of semantic datatypes of some receiver.
+   Returns a so called semantic compatibility evaluator (SCE) for that receiver.
+   An SCE is a function that takes a collection of the ids of the semantic datatypes of a candidate source for the receiver.
+   The SCE returns a semantic compatibility score representing how well the candidate source fits the receiver.
+   The score is in `[0, 1]` where a higher score represents higher semantic compatibility."
   [db to-types]
   (let [to-types (map (partial gq/type-semantics db) to-types)]
     (if (zero? (count to-types))
+      ; If the receiver has no semantic requirements, everything is considered to be fully semantically compatible to it:
       (constantly 1)
+      ; Else:
       (fn [from-types]
         (let [from-types (group-by :key (map (partial gq/type-semantics db) from-types))
               general-values (map :value (from-types nil))
@@ -56,8 +66,9 @@
                           (assoc! compat key (max current-compat general-compat key-compat))))
                       (transient {nil 0}) to-types)
               compat (persistent! compat)]
-          (+ *min-semantic-weight* (* (/ (apply + (vals compat)) (count compat))
-                                      (- 1 *min-semantic-weight*))))))))
+          (+ *min-semantic-weight* ; Always add some minimum semantic compatibility as a form of smoothing.
+             (* (/ (apply + (vals compat)) (count compat)) ; Average compatibility of the source to each semantic type of the receiver.
+                (- 1 *min-semantic-weight*))))))))
 
 (defn costify-actions
   "Takes weighted actions, normalizes their weights and adds the normalized weight nlogs as costs."
@@ -69,6 +80,10 @@
           actions)))
 
 (defn match-completion-heuristic
+  "A cost measure for how well a collection of matches fit some placeholder callable.
+   Counts the number of additional parameter flaws that will be introduced by applying each of the given matches.
+   Returns the minimum number of added parameters introduced by the matches.
+   Used in the A* search to lower-bound the expected cost caused by some placeholder completion."
   [db matches]
   (transduce (map (fn [match]
                     (let [call (:match match)
@@ -94,7 +109,6 @@
                               (empty? candidates) c-step
                               :else 0))))
                    + min-receival-chain-cost (:parameter flaws))]
-    ;(println "hcount"  (transduce (map #(-> % placeholder-matches meta :heuristic inc)) + 0 (:call flaws)))
     (+ (* parameter-flaw-cost *h-param-weight*)
        ; (1 call completion action) + (minimum number of added params actions):
        (* (transduce (map #(-> % placeholder-matches meta :heuristic)) + 1 (:call flaws))

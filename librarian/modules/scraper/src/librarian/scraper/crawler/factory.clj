@@ -1,4 +1,6 @@
 (ns librarian.scraper.crawler.factory
+  "A Clojure implementation of crawler4j's abstract WebCrawlerFactory.
+   Allows the usage of Clojure functions as implementations of visit and shouldVisit."
   (:gen-class :name librarian.scraper.crawler.Factory
               :implements [edu.uci.ics.crawler4j.crawler.CrawlController$WebCrawlerFactory]
               :prefix "crawler-"

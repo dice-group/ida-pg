@@ -1,4 +1,5 @@
 (ns librarian.generator.actions.call
+  "Definition of the class of call insertion actions."
   (:require [datascript.core :as d]
             [librarian.model.concepts.typed :as typed]
             [librarian.model.concepts.data-receiver :as data-receiver]

@@ -231,6 +231,11 @@
 		    <version>2.1.0.RELEASE</version>
 		    <scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-core</artifactId>
+			<version>3.9.0-1</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>

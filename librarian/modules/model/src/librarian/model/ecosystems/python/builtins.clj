@@ -1,4 +1,5 @@
 (ns librarian.model.ecosystems.python.builtins
+  "Definition of Python builtin types and typecasting functions."
   (:require [librarian.model.syntax :refer [instanciate instances->tx]]
             [librarian.model.concepts.basetype :as basetype]
             [librarian.model.concepts.namespace :as namespace]

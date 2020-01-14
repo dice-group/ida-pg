@@ -1,4 +1,5 @@
 (ns librarian.model.paradigms.common
+  "Definition of a universal paradigm containing commonly used concepts found in most languages."
   (:require [librarian.model.syntax :refer [defparadigm]]
             [librarian.model.concepts.named :refer [named]]
             [librarian.model.concepts.namespace :refer [namespace]]
@@ -31,7 +32,6 @@
    :semantic-type semantic-type
    :role-type role-type
    :typed typed
-   :data-receiver data-receiver
 
    :callable callable
    :io-container io-container
@@ -39,6 +39,7 @@
    :result result
 
    :call call
+   :data-receiver data-receiver
    :call-parameter call-parameter
    :call-result call-result
    :constant constant

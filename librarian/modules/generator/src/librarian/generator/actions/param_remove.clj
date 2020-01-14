@@ -1,4 +1,5 @@
 (ns librarian.generator.actions.param-remove
+  "Definition of the class of call parameter removal actions."
   (:require [librarian.generator.query :as gq]
             [librarian.generator.cost :as gc]
             [librarian.generator.commutation :as gcomm]))

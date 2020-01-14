@@ -1,4 +1,5 @@
 (ns librarian.scraper.crawler.core
+  "A thin Clojure wrapper around crawler4j."
   (:require [me.raynes.fs :as fs]
             [librarian.scraper.crawler.factory])
   (:import (edu.uci.ics.crawler4j.crawler CrawlConfig CrawlController)
@@ -10,6 +11,7 @@
 (def crawler-storage (str (fs/temp-dir "librarian-data")))
 
 (defn crawl
+  "Takes a crawler configuration map and starts a crawer4j crawl."
   [{:keys [^String seed
            should-visit visit
            ^int concurrency
