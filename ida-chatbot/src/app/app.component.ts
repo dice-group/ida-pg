@@ -21,7 +21,9 @@ export class AppComponent {
   idCount = 1;
   title = 'app';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
+  //public ontologySideItem = new SidebarElement(1, 'Ontology Explorer', 'ontology');
   public activeItem = 0;
+  //private sidebarItems: SidebarElement[] = [this.introSideItem, this.ontologySideItem];
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
 
@@ -77,6 +79,9 @@ export class AppComponent {
     } else if (resp.actnCode === 9) {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
+      this.addNewTab(newTab, resp);
+    }else if (resp.actnCode === 11) {
+      const newTab = new TabElement(this.uis.getUniqueId(), "Ontology Explorer", TabType.OE, resp.payload.ontologyData, true, true);
       this.addNewTab(newTab, resp);
     }
   }
