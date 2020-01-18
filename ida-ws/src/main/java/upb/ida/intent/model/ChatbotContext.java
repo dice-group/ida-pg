@@ -1,7 +1,11 @@
 package upb.ida.intent.model;
 
+import upb.ida.bean.ResponseBean;
+import upb.ida.dao.DataRepository;
 import upb.ida.intent.IntentExecutorFactory;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.executor.IntentExecutor;
+import upb.ida.util.BeanUtil;
 
 import java.util.*;
 
@@ -14,13 +18,13 @@ public class ChatbotContext {
 	private Question activeQuestion;
 	private String currentMessage;
 	private boolean resetOnNextRequest;
-//	private DataRepository dao;
+	private DataRepository dao;
 
-	public ChatbotContext() {
+	public ChatbotContext() throws IntentException {
 		resetContext();
 	}
 
-	public void resetContext() {
+	public void resetContext() throws IntentException {
 		// Set to defaults
 		this.currentIntent = Intent.GREETING;
 		this.currentExecutor = IntentExecutorFactory.getExecutorFor(Intent.GREETING);
@@ -31,7 +35,7 @@ public class ChatbotContext {
 		this.activeQuestion = null;
 		this.currentMessage = null;
 		this.resetOnNextRequest = false;
-//		this.dao = new DataRepository(false);
+		this.dao = new DataRepository(false);
 	}
 
 	public String clearUserMessage() {
@@ -119,13 +123,11 @@ public class ChatbotContext {
 	}
 
 	public Set<String> getActiveTableColumns() {
-//		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
-//		String actvTbl = (String)responseBean.getPayload().get("actvTbl");
-//		String actvDs = (String) responseBean.getPayload().get("actvDs");
-//
-//		Set<String> columnsList = dao.getColumnsList(actvTbl, actvDs);
-//		return columnsList;
-		return new HashSet<>(Arrays.asList("City", "Cappuccino", "Cinema", "Wine", "Gasoline", "Avg Rent", "Avg Disposable Income"));
+		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
+		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
+		String actvDs = (String) responseBean.getPayload().get("actvDs");
+
+		return dao.getColumnsList(actvTbl, actvDs);
 	}
 
 	public void resetOnNextRequest() {

@@ -1,6 +1,6 @@
 package upb.ida.intent.executor;
 
-import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.intent.model.Question;
 
@@ -16,7 +16,7 @@ public class UnknownExecutor extends AbstractExecutor implements IntentExecutor 
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentExecutorException {
+	public void execute(ChatbotContext context) throws IntentException {
 		context.addChatbotResponse("Sorry, I could not understand your message. Please try again.");
 		context.resetOnNextRequest();
 	}

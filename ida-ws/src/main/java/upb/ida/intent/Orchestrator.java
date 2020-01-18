@@ -6,7 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
-import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.executor.IntentExecutor;
 import upb.ida.intent.model.*;
 
@@ -29,10 +29,10 @@ public class Orchestrator {
 
 	private ChatbotContext context = new ChatbotContext(); // Initialized with GREETING intent by default
 
-	public Orchestrator() {
+	public Orchestrator() throws IntentException {
 		try {
 			context.getCurrentExecutor().execute(context);
-		} catch (IntentExecutorException e) {
+		} catch (IntentException e) {
 			e.printStackTrace();
 		}
 	}
@@ -49,9 +49,9 @@ public class Orchestrator {
 	 *
 	 * @param message: incoming message from the user
 	 * @return ChatbotContext which contains current state of the NLE
-	 * @throws IntentExecutorException
+	 * @throws IntentException
 	 */
-	public ChatbotContext processMessage(String message) throws IntentExecutorException {
+	public ChatbotContext processMessage(String message) throws IntentException {
 		if (context.isResetOnNextRequest()) {
 			context.resetContext();
 		}
@@ -101,7 +101,7 @@ public class Orchestrator {
 	}
 
 	/**
-	 * Get the intent of the incoming message
+	 * Connects to intent classification rest api and retrieves the intent of the incoming message
 	 *
 	 * @param message incoming message from the user
 	 * @return
@@ -138,51 +138,6 @@ public class Orchestrator {
 		}
 
 		return false;
-	}
-
-	public static void main(String[] args) throws IntentExecutorException {
-		Orchestrator o = new Orchestrator();
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-//		"Cappuccino", "Cinema"
-		o.processMessage("kem chho");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("bar graph");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("Cappuccino");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("Cinema");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("last 6");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("force directed");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("force directed");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-		o.processMessage("go back");
-		System.out.println("Chatbot: " + o.context.getChatbotResponses());
-
-
-//		ChatbotContext ctx = new ChatbotContext();
-//		ctx.setCurrentMessage("last 60");
-//		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentMessage("I want the last 60");
-//		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentMessage("first 60 rows");
-//		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentMessage("gimme first 60rows");
-//		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-//		ctx.setCurrentMessage("gimme first 60 rows");
-//		System.out.println(AnswerHandlingStrategy.BAR_CHART_SUBSET.extractAnswer(ctx));
-
-
 	}
 
 }

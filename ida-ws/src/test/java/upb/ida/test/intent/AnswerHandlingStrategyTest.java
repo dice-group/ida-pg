@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 import upb.ida.intent.AnswerHandlingStrategy;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.util.BarGraphUtil;
 
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class AnswerHandlingStrategyTest {
 	@Test
-	public void testNumericValue() {
+	public void testNumericValue() throws IntentException {
 		ChatbotContext context = new ChatbotContext();
 		context.setCurrentMessage("give me 10 records");
 		List<String> answers = AnswerHandlingStrategy.NUMERIC_VALUE.extractAnswer(context);
@@ -23,7 +24,7 @@ public class AnswerHandlingStrategyTest {
 	}
 
 	@Test
-	public void testFilterOptions() {
+	public void testFilterOptions() throws IntentException {
 		ChatbotContext context = new ChatbotContext();
 
 		context.setCurrentMessage("show me first 15 records");

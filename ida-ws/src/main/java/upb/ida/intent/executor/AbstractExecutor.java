@@ -1,7 +1,7 @@
 package upb.ida.intent.executor;
 
 import org.apache.commons.text.StringSubstitutor;
-import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.intent.model.Question;
 
@@ -25,10 +25,10 @@ public abstract class AbstractExecutor implements IntentExecutor {
 	 * is gathered.
 	 *
 	 * @param context current state of NLE
-	 * @throws IntentExecutorException
+	 * @throws IntentException
 	 */
 	@Override
-	public abstract void execute(ChatbotContext context) throws IntentExecutorException;
+	public abstract void execute(ChatbotContext context) throws IntentException;
 
 	/**
 	 * Can be implemented to check for pre conditions before executing. Currently unused.

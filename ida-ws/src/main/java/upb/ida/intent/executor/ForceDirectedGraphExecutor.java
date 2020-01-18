@@ -1,12 +1,16 @@
 package upb.ida.intent.executor;
 
+import upb.ida.bean.ResponseBean;
+import upb.ida.constant.IDALiteral;
+import upb.ida.fdg.FdgUtil;
 import upb.ida.intent.AnswerHandlingStrategy;
-import upb.ida.intent.exception.IntentExecutorException;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.intent.model.Question;
+import upb.ida.util.BeanUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 public class ForceDirectedGraphExecutor extends AbstractExecutor implements IntentExecutor {
 
@@ -21,11 +25,33 @@ public class ForceDirectedGraphExecutor extends AbstractExecutor implements Inte
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentExecutorException {
-		// Add code here
-		System.out.println("FDG done");
-		context.addChatbotResponse("Force directed graph is now loaded");
-		context.resetOnNextRequest();
+	public void execute(ChatbotContext context) {
 
+		try {
+			Map<String, String> savedAnswers = context.getSavedAnswers();
+			String sourceNode = savedAnswers.get("source");
+			String targetNode = savedAnswers.get("target");
+			String strengthNode = savedAnswers.get("strength");
+
+			ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
+			FdgUtil FDG_Util = BeanUtil.getBean(FdgUtil.class);
+			String actvTbl = (String) responseBean.getPayload().get("actvTbl");
+			String actvDs = (String) responseBean.getPayload().get("actvDs");
+			Map<String, Object> dataMap = responseBean.getPayload();
+			dataMap.put("label", "Fdg Data");
+			/**
+			 * function call takes file path and arguments as
+			 * input to get data for force directed graph
+			 */
+			dataMap.put("fdgData", FDG_Util.generateFDG(actvTbl, sourceNode.toLowerCase(), targetNode, strengthNode, actvDs));
+			responseBean.setPayload(dataMap);
+			responseBean.setActnCode(IDALiteral.UIA_FDG);
+
+			context.addChatbotResponse("Force directed graph is now loaded");
+			context.resetOnNextRequest();
+		} catch (Exception e) {
+			context.addChatbotResponse("Force directed graph could not be loaded");
+			e.printStackTrace();
+		}
 	}
 }

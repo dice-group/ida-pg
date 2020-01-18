@@ -3,7 +3,10 @@ package upb.ida.intent;
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 import upb.ida.intent.model.Keyword;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SimilarityUtil {
@@ -44,23 +47,8 @@ public class SimilarityUtil {
 		List<Keyword> keywords = extractKeywords(text, targetWords);
 
 		if (!keywords.isEmpty())
-			return keywords.stream().sorted(Comparator.comparingDouble(Keyword::getSimilarityScore)).collect(Collectors.toList()).get(0).getKeyword();
+			return keywords.stream().sorted(Comparator.comparingDouble(Keyword::getSimilarityScore).reversed()).collect(Collectors.toList()).get(0).getKeyword();
 		else
 			return null;
-	}
-
-	public static void main(String[] args) {
-//		String input = "labbel";
-//		String target = "label";
-//
-//		System.out.println("CosineDistance: " + new CosineDistance().apply(input, target));
-////		System.out.println("CosineSimilarity: " + new CosineSimilarity().cosineSimilarity(input, target));
-////		System.out.println("xxxxxxx: " + new FuzzyScore(Locale.ENGLISH).apply(input, target));
-//		System.out.println("JaccardSimilarity: " + new JaccardSimilarity().apply(input, target));
-//		System.out.println("JaroWinklerSimilarity: " + new JaroWinklerSimilarity().apply(input, target));
-//		System.out.println("LevenshteinDistance: " + new LevenshteinDistance().apply(input, target));
-//		System.out.println("LevenshteinDetailedDistance: " + new LevenshteinDetailedDistance().apply(input, target));
-
-		System.out.println(SimilarityUtil.extractKeywords("this is my Soldiers data which has some Regiment", Arrays.asList("soldier", "regiment", "label", "id", "description", "deathDate", "birthDate")));
 	}
 }

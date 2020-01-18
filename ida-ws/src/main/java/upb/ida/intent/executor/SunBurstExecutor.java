@@ -1,7 +1,7 @@
 package upb.ida.intent.executor;
 
 import upb.ida.intent.AnswerHandlingStrategy;
-import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.intent.model.Question;
 
@@ -20,7 +20,7 @@ public class SunBurstExecutor extends AbstractExecutor implements IntentExecutor
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentExecutorException {
+	public void execute(ChatbotContext context) throws IntentException {
 
 	}
 }

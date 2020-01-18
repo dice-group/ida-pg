@@ -1,6 +1,6 @@
 package upb.ida.intent.executor;
 
-import upb.ida.intent.exception.IntentExecutorException;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.model.ChatbotContext;
 
 public class OntologyExplorerExecutor extends AbstractExecutor implements IntentExecutor {
@@ -10,7 +10,7 @@ public class OntologyExplorerExecutor extends AbstractExecutor implements Intent
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentExecutorException {
+	public void execute(ChatbotContext context) throws IntentException {
 
 	}
 }

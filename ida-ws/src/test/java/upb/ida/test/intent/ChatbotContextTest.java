@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 import upb.ida.intent.IntentExecutorFactory;
+import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.executor.GreetingExecutor;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.intent.model.Intent;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 public class ChatbotContextTest {
 	@Test
-	public void testChatbotContext() {
+	public void testChatbotContext() throws IntentException {
 		ChatbotContext context = new ChatbotContext();
 		testDefaultChatbotContext(context);
 

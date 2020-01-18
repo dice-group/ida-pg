@@ -30,4 +30,8 @@ public enum Intent {
 		}
 		return UNKNOWN;
 	}
+
+	public String getKey() {
+		return key;
+	}
 }
