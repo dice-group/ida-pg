@@ -1,6 +1,7 @@
 package upb.ida.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,11 +33,15 @@ public class MessageRestController {
 	private DataService dataService;
 	@Autowired
 	private Orchestrator orchestrator;
+	@Value("${intent.classifier.active}")
+	boolean useNLE;
+
 
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return "Hello " + name + "!";
 	}
+
 	/**
 	 * Method to accept queries for the chatbot
 	 * @param msg - query in natural language
@@ -59,7 +64,10 @@ public class MessageRestController {
 
 		// Intercept the message and send it to NLE orchestrator. If the orchestrator cannot process it (i.e. returns
 		// null), then it will be processed by Rivescript.
-		ChatbotContext chatbotContext = orchestrator.processMessage(msg);
+		ChatbotContext chatbotContext = null;
+		if (useNLE)
+			chatbotContext = orchestrator.processMessage(msg);
+
 		String reply;
 		if (chatbotContext == null)
 			reply = rsService.getRSResponse(msg);

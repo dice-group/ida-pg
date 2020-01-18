@@ -1,19 +1,13 @@
 package upb.ida.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
-import java.util.*;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
 import upb.ida.fdg.FDG_Node;
@@ -21,9 +15,18 @@ import upb.ida.fdg.FDG_Triple;
 import upb.ida.fdg.FdgUtil;
 import upb.ida.rest.MessageRestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {Application.class})
+@TestPropertySource("classpath:application.properties")
 public class MessageRestControllerTest {
 
 	@Autowired

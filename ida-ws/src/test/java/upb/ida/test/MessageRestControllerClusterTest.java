@@ -4,16 +4,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
 import upb.ida.rest.MessageRestController;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+
+import java.util.*;
+
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
@@ -21,7 +20,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {Application.class})
-
+@TestPropertySource("classpath:application.properties")
 public class MessageRestControllerClusterTest {
 
 	@Autowired
