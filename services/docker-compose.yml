@@ -19,6 +19,8 @@ services:
     image: $REGISTRY/ida/intent-classification:$VERSION
     ports:
       - 5001:5001
+    volumes:
+      - "../intent-classification:/app/intent-classification"
     networks:
       - ida-net
 
