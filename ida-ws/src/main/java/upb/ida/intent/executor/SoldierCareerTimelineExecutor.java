@@ -1,15 +1,11 @@
 package upb.ida.intent.executor;
 
-import upb.ida.bean.ResponseBean;
-import upb.ida.dao.SoldierTimeLine;
 import upb.ida.intent.AnswerHandlingStrategy;
 import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.model.ChatbotContext;
 import upb.ida.intent.model.Question;
-import upb.ida.util.BeanUtil;
 
 import java.util.Collections;
-import java.util.Map;
 
 public class SoldierCareerTimelineExecutor extends AbstractExecutor implements IntentExecutor {
 
@@ -25,14 +21,14 @@ public class SoldierCareerTimelineExecutor extends AbstractExecutor implements I
 
 	@Override
 	public void execute(ChatbotContext context) throws IntentException {
-		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer", false);
-		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
-
-		Map<String, String> savedAnswers = context.getSavedAnswers();
-		String soldierId = savedAnswers.get("soldier-id");
-		Map<String, Map<String, String>> data = soldierTimeLine.getData(soldierId);
-		responseBean.getPayload().put("soldierTimeLineData", data);
-		responseBean.setActnCode(10);
-		context.resetOnNextRequest();
+//		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer", false);
+//		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
+//
+//		Map<String, String> savedAnswers = context.getSavedAnswers();
+//		String soldierId = savedAnswers.get("soldier-id");
+//		Map<String, Map<String, String>> data = soldierTimeLine.getData(soldierId);
+//		responseBean.getPayload().put("soldierTimeLineData", data);
+//		responseBean.setActnCode(10);
+//		context.resetOnNextRequest();
 	}
 }
