@@ -2,7 +2,7 @@ package upb.ida.intent.model;
 
 import upb.ida.bean.ResponseBean;
 import upb.ida.dao.DataRepository;
-import upb.ida.intent.IntentExecutorFactory;
+import upb.ida.intent.IntentExecutorFactoryHelper;
 import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.executor.IntentExecutor;
 import upb.ida.util.BeanUtil;
@@ -27,7 +27,7 @@ public class ChatbotContext {
 	public void resetContext() throws IntentException {
 		// Set to defaults
 		this.currentIntent = Intent.GREETING;
-		this.currentExecutor = IntentExecutorFactory.getExecutorFor(Intent.GREETING);
+		this.currentExecutor = IntentExecutorFactoryHelper.getExecutorFor(Intent.GREETING);
 		this.savedAnswers = new HashMap<>();
 		this.chatbotResponses = new ArrayList<>();
 		this.chatbotResponses.add("Hello! How may I help you?");

@@ -11,6 +11,6 @@ public class OntologyExplorerExecutor extends AbstractExecutor implements Intent
 
 	@Override
 	public void execute(ChatbotContext context) throws IntentException {
-
+		// Placeholder
 	}
 }

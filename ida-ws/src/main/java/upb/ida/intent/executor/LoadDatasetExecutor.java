@@ -43,10 +43,6 @@ public class LoadDatasetExecutor extends AbstractExecutor implements IntentExecu
 	}
 
 	@Override
-	public void processResponse(ChatbotContext context) {
-	}
-
-	@Override
 	public void execute(ChatbotContext context) throws IntentException {
 		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
 		Map<String, Object> dataMap = responseBean.getPayload();
@@ -96,13 +92,5 @@ public class LoadDatasetExecutor extends AbstractExecutor implements IntentExecu
 
 		return datasets;
 	}
-
-	public static void main(String[] args) {
-		LoadDatasetExecutor o = new LoadDatasetExecutor();
-		String message = "load ssfuehrer dataset";
-		String answer = o.getDatasetFromMessage(message);
-		System.out.println(answer);
-	}
-
 
 }

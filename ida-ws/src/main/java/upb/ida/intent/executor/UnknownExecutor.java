@@ -26,9 +26,4 @@ public class UnknownExecutor extends AbstractExecutor implements IntentExecutor 
 		return false;
 	}
 
-	@Override
-	public void processResponse(ChatbotContext context) {
-	}
-
-
 }

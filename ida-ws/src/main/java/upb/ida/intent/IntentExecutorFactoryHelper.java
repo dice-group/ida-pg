@@ -4,9 +4,9 @@ import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.executor.*;
 import upb.ida.intent.model.Intent;
 
-public class IntentExecutorFactory {
+public class IntentExecutorFactoryHelper {
 
-	private IntentExecutorFactory() {
+	private IntentExecutorFactoryHelper() {
 
 	}
 
@@ -27,6 +27,6 @@ public class IntentExecutorFactory {
 		else if (intentClass.equals(Intent.LOAD_DATASET))
 			return new LoadDatasetExecutor();
 
-		throw new IntentException(new Exception(String.format("No executor found for intent \"%s\"", intentClass.getKey())));
+		throw new IntentException(String.format("No executor found for intent \"%s\"", intentClass.getKey()));
 	}
 }

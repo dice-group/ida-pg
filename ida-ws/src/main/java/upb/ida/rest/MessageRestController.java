@@ -34,7 +34,7 @@ public class MessageRestController {
 	@Autowired
 	private Orchestrator orchestrator;
 	@Value("${intent.classifier.active}")
-	boolean useNLE;
+	private boolean useNLE;
 
 
 	@RequestMapping("/sayhello")

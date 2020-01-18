@@ -25,10 +25,4 @@ public class GreetingExecutor extends AbstractExecutor implements IntentExecutor
 	public boolean needsMoreInformation(ChatbotContext context) {
 		return false;
 	}
-
-	@Override
-	public void processResponse(ChatbotContext context) {
-	}
-
-
 }

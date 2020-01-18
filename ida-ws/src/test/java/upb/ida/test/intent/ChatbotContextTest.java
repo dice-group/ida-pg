@@ -3,7 +3,7 @@ package upb.ida.test.intent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
-import upb.ida.intent.IntentExecutorFactory;
+import upb.ida.intent.IntentExecutorFactoryHelper;
 import upb.ida.intent.exception.IntentException;
 import upb.ida.intent.executor.GreetingExecutor;
 import upb.ida.intent.model.ChatbotContext;
@@ -27,7 +27,7 @@ public class ChatbotContextTest {
 		context.setCurrentMessage("hello");
 		context.setResetOnNextRequest(true);
 		context.setActiveQuestion(new Question("question text", Collections.singletonList("answerKey"), "feedbackText", "helpText", null, true));
-		context.setCurrentExecutor(IntentExecutorFactory.getExecutorFor(Intent.GREETING));
+		context.setCurrentExecutor(IntentExecutorFactoryHelper.getExecutorFor(Intent.GREETING));
 		context.setCurrentIntent(Intent.GREETING);
 		context.setChatbotResponses(new ArrayList<>(Arrays.asList("response 1")));
 		context.addChatbotResponse("response 2");

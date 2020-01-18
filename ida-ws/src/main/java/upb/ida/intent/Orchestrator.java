@@ -23,9 +23,9 @@ public class Orchestrator {
 
 	// Externalize
 	@Value("${intent.classifier.rest}")
-	String restApiUrl;
+	private String restApiUrl;
 	@Value("${intent.classifier.confidence.threshold}")
-	double confidenceThreshold;
+	private double confidenceThreshold;
 
 	private ChatbotContext context = new ChatbotContext(); // Initialized with GREETING intent by default
 
@@ -69,7 +69,7 @@ public class Orchestrator {
 		// than GREETING, then NLE is in the middle of executing that intent and it should not be updated.
 		if (context.getCurrentIntent().equals(Intent.GREETING)) {
 			context.setCurrentIntent(messageIntent);
-			context.setCurrentExecutor(IntentExecutorFactory.getExecutorFor(messageIntent));
+			context.setCurrentExecutor(IntentExecutorFactoryHelper.getExecutorFor(messageIntent));
 		}
 
 		// TODO these two if blocks are to make sure that new NLE implementation only handles the Intents which have
