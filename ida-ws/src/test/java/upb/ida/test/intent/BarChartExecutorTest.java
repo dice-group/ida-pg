@@ -10,7 +10,9 @@ import upb.ida.intent.model.Intent;
 import upb.ida.intent.model.Question;
 import upb.ida.util.BarGraphUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 public class BarChartExecutorTest {
