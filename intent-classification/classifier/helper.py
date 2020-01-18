@@ -13,7 +13,7 @@ stopwords = {"a", "an", "the", "for", "to", "and", "of", "you", "me", "in", "on"
 			 "there"}
 
 
-def preprocess_text(text: str):
+def preprocess_text(text):
 	non_alphanumeric_filter = re.compile("[^a-zA-Z0-9]")
 	space_trimmer = re.compile("\\s+")
 
@@ -70,5 +70,5 @@ def load_model():
 
 
 def save_model(classifier):
-# 	joblib.dump(classifier, os.path.join(settings.APP_STATIC, settings.get_property('model_file')))
+	# joblib.dump(classifier, os.path.join(settings.APP_STATIC, settings.get_property('model_file')))
 	pass

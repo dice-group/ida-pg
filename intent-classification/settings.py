@@ -11,6 +11,6 @@ if CONFIG is None:
 	CONFIG.read(os.path.join(APP_STATIC, 'properties.ini'))
 
 
-def get_property(key: str, section: str = 'properties'):
+def get_property(key, section='properties'):
 	properties = CONFIG[section]
 	return properties.get(key)
