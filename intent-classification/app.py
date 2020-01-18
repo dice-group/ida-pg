@@ -4,16 +4,16 @@ from flask import request
 
 from classifier import helper
 
-flask_app = Flask(__name__)
+app = Flask(__name__)
 classifier = helper.load_model()
 
 
-@flask_app.route('/')
+@app.route('/')
 def hello_world():
-	return 'Hello World!'
+	return 'use /classify endpoint'
 
 
-@flask_app.route('/classify')
+@app.route('/classify')
 def classify():
 	text = str(request.args.get('text'))
 	n = request.args.get('n')
@@ -30,4 +30,4 @@ def classify():
 
 
 if __name__ == '__main__':
-	flask_app.run(port=5001)
+	app.run(port=5001)

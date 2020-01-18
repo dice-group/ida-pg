@@ -70,4 +70,5 @@ def load_model():
 
 
 def save_model(classifier):
-	joblib.dump(classifier, os.path.join(settings.APP_STATIC, settings.get_property('model_file')))
+# 	joblib.dump(classifier, os.path.join(settings.APP_STATIC, settings.get_property('model_file')))
+pass
