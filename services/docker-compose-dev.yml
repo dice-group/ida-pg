@@ -17,6 +17,8 @@ services:
     image: $REGISTRY/ida/ida-ws-dev:$VERSION
     environment:
       - FUSEKI_URL=http://fuseki:3030/
+      - FUSEKI_USER=admin
+      - FUSEKI_PW=$FUSEKI_PW
     volumes:
       - "../ida-ws/src:/app/ida-ws/src"
       - "../ida-ws/target:/app/ida-ws/target"
@@ -32,16 +34,16 @@ services:
       - fuseki-storage:/fuseki
     networks:
       - ida-net
-#  intent-classification-dev:
-#    image: $REGISTRY/ida/intent-classification-dev:$VERSION
-#    ports:
-#      - 5001:5001
-#    environment:
-#      - ADMIN_PASSWORD=$FUSEKI_PW
-#    volumes:
-#      - "../intent-classification:/app/intent-classification"
-#    networks:
-#      - ida-net
+  intent-classification:
+    image: $REGISTRY/ida/intent-classification-dev:$VERSION
+    ports:
+      - 5001:5001
+    environment:
+      - ADMIN_PASSWORD=$FUSEKI_PW
+    volumes:
+      - "../intent-classification:/app/intent-classification"
+    networks:
+      - ida-net
 
 volumes:
   fuseki-storage:
