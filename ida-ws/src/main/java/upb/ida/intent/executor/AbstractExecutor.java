@@ -84,6 +84,9 @@ public abstract class AbstractExecutor implements IntentExecutor {
 	 */
 	@Override
 	public boolean needsMoreInformation(ChatbotContext context) {
+		if(questions == null)
+			return false;
+
 		Map<String, String> savedAnswers = context.getSavedAnswers();
 		for (Question q : questions) {
 			boolean allAnswerKeysSaved = q.getAnswerKeys().stream().allMatch(savedAnswers::containsKey);
@@ -101,6 +104,7 @@ public abstract class AbstractExecutor implements IntentExecutor {
 	 */
 	@Override
 	public Question getNextQuestion(ChatbotContext context) {
+
 		Map<String, String> savedAnswers = context.getSavedAnswers();
 		for (Question q : questions) {
 			boolean allAnswerKeysSaved = q.getAnswerKeys().stream().allMatch(savedAnswers::containsKey);

@@ -36,5 +36,7 @@ public class OntologyExplorerExecutor extends AbstractExecutor implements Intent
 				context.addChatbotResponse("Ontology does not exist for current dataset.");
 			}
 		}
+
+		context.resetOnNextRequest();
 	}
 }

@@ -23,7 +23,6 @@ public class SoldierCareerTimelineExecutor extends AbstractExecutor implements I
 
 	}
 
-
 	@Override
 	public void execute(ChatbotContext context) throws IntentException {
 		SoldierTimeLine soldierTimeLine = new SoldierTimeLine();
