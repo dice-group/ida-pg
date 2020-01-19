@@ -17,6 +17,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         literalRadius = customizeGraphArray.literalRadius;
 
     var g, link, linkTexts, node, circles, lables;
+    var i = 0;
     var svgClear = d3.select("#" + svgId);
     svgClear.selectAll("*").remove();
 
@@ -199,6 +200,214 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         return returnVaule;
     }
 
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+    
+    function update() {
+
+        simulation.restart();
+
+        simulation
+            .nodes(nodesArray)
+            .on("tick", ticked);
+
+        simulation.force("link")
+            .links(linksArray);
+
+
+        g = svg.append("g")
+            .attr("class", "everything");
+
+        link = g.selectAll("line")
+            .attr("class", "links")
+            .data(linksArray)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("stroke-width", 1)
+            .style("fill", "#999")
+            .attr("marker-end", function (d) {
+                var labelStr = d.predicate;
+                if (labelStr.includes("subClassOf")) {
+                    return "url(#subclass)";
+                }
+                return "url(#normal)";
+            })
+            .style("stroke-dasharray", function (d) {
+                var labelStr = d.predicate;
+                if (labelStr.includes("subClassOf")) {
+                    return ("3, 3");
+                }
+                if (labelStr.includes("subPropertyOf")) {
+                    return ("5, 5");
+                }
+                return ("0, 0");
+            });
+
+        link.exit().remove();
+        // ==================== Add Link Names =====================
+        linkTexts = g.selectAll(".link-text")
+            .data(linksArray)
+            .enter()
+            .append("text")
+            .attr("class", "link-text")
+            .text(function (d) {
+                var labelStr = d.predicate;
+                if (labelStr.includes("subClassOf")) {
+                    return customizeGraphArray.subClassLabel;
+                }
+                return d.predicate;
+            })
+            .style("fill", function (d) {
+                var labelStr = d.predicate;
+                if (labelStr.includes("subClassOf")) {
+                    return customizeGraphArray.subClassLabelColor;
+                }
+                return customizeGraphArray.propertyTextColor;
+            })
+            .style("font-size", "80%")
+            .style("font-style", "italic")
+            .attr("x", 12)
+            .attr("y", 3)
+            ;
+
+
+        linkTexts.append("title")
+            .text(function (d) {
+                var labelStr = d.predicate;
+                var returnValue;
+
+                if (labelStr.includes("subClassOf")) {
+
+                    returnValue = "Source : " + d.source.id + "\nProperty : " + customizeGraphArray.subClassLabel + "\nObject : " + d.target.id;
+                } else {
+                    returnValue = "Source : " + d.source.id + "\nProperty : " + labelStr + "\nObject : " + d.target.id;
+                }
+
+                return returnValue;
+            });
+        // ==================== Add Link Names =====================
+
+        node = g.append("g")
+            .attr("class", "nodes")
+            .selectAll("g")
+            .data(nodesArray)
+            .enter().append("g");
+        node.exit().remove();
+
+        circles = node.append("circle")
+            .attr("id", function (d) {
+                return d.nodeId;
+            })
+            .attr("r", function (d) {
+                var labelStr = d.id;
+                if (d.isLitteral) {
+                    return literalRadius;
+                }
+                return resourceRadius;
+            })
+            .style("fill", function (d) {
+                var labelStr = d.id;
+                var expandedNode = false;
+
+                if (!dispalyAllprop) {
+                    expandedNodesArray.forEach(function (val) {
+                        if (val === "#" + d.nodeId) {
+                            expandedNode = true;
+                        }
+                    });
+                }
+
+                if (expandedNode) {
+                    return "#8E44AD";
+                }
+                if (d.isLitteral) {
+                    return customizeGraphArray.literalNodeColor;
+                }
+                return customizeGraphArray.resourceNodeColor;
+            })
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+            );
+
+        lables = node.append("text")
+            .attr("class", "node-text")
+            .text(function (d) {
+                return d.id;
+            })
+            .style("font-size", function (d) {
+                var labelStr = d.id;
+                if (d.isLitteral) {
+                    return "80%";
+                }
+                return "100%";
+            })
+            .style("font-style", function (d) {
+                var labelStr = d.id;
+                if (d.isLitteral) {
+                    return "italic";
+                }
+                return "bold";
+            })
+            .style("fill", function (d) {
+                var labelStr = d.id;
+                if (d.isLitteral) {
+                    return customizeGraphArray.literalNodeTextColor;
+                }
+                return customizeGraphArray.resourceNodeTextColor;
+            })
+            .attr("x", function (d) {
+                if (d.isLitteral) {
+                    return 8;
+                }
+                return 12;
+            })
+            .attr("y", 3);
+
+        node.append("title")
+            .text(function (d) {
+                var returnValue = "Node : " + d.id;
+                if (d.isLitteral) {
+                    returnValue = "Node : " + d.id + "\nData type : " + d.literalDataType;
+                } else {
+                    returnValue = "Node : " + d.id;
+                }
+                return returnValue;
+            });
+
+        //START :: on double click
+        node.on("dblclick", doubleClickFunctionality);
+        //END :: on double click    
+
+        //START :: on  click
+        node.on("click", clickFuntionality);
+        //END :: on  click
+
+
+        if (!disableZoom) {
+
+            var zoomHandler = d3.zoom()
+                .on("zoom", zoomActions);
+
+            svg.call(zoomHandler).on("dblclick.zoom", null);
+        }
+
+    }
 
     //crating node function
     function createNewNode(tempSub, tempPred, tempObj, isLitteralVal, literalDataTypeVal) {
@@ -206,7 +415,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         var subNodeAdded = false;
         var objNodeAdded = false;
         var onDoubleClickNodesCreated = "";
-
+        var nodeValue = {};
         if (nodesArray === undefined) {
             undefVar = true;
         }
@@ -223,7 +432,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
 
         if (subNodeAdded === false) {
             circleIdIndex = circleIdIndex + 1;
-            var nodeValue = {
+            nodeValue = {
                 id: tempSub,
                 predicate: tempPred,
                 nodeId: "circleId" + circleIdIndex,
@@ -240,7 +449,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         }
         if (objNodeAdded === false) {
             circleIdIndex = circleIdIndex + 1;
-            var nodeValue = {
+            nodeValue = {
                 id: tempObj,
                 predicate: tempPred,
                 nodeId: "circleId" + circleIdIndex,
@@ -265,6 +474,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         tempObj = "?";
         pred = "---subClassOf---";
         tempDomainArray = [];
+        var tempDomainLabel;
         //START :: Nodes and Links creation for subClassOf
         if (displaySubclasses) {
             if (element["subClassOf"] === undefined) {
@@ -276,11 +486,6 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                 if (Object.prototype.toString.call(element["subClassOf"]) === "[object Array]") {
                     element["subClassOf"].forEach(function (eachIds) {
                         tempObj = getLabel(displayDeustch, eachIds);
-                        /*if (tempObj === "noLabel") {
-                            tempLabelArray = eachIds["@id"].split("/");
-                            tempLabelArray1 = tempLabelArray[tempLabelArray.length - 1].split(":");
-                            tempObj = tempLabelArray1[tempLabelArray1.length - 1];
-                        }*/
 
                         tripleValue = {
                             source: tempSub,
@@ -293,11 +498,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                     });
                 } else {
                     tempObj = getLabel(displayDeustch, element["subClassOf"]);
-                    /*if (tempObj === "noLabel") {
-                        tempLabelArray = element["subClassOf"]["@id"].split("/");
-                        tempLabelArray1 = tempLabelArray[tempLabelArray.length - 1].split(":");
-                        tempObj = tempLabelArray1[tempLabelArray1.length - 1];
-                    }*/
+                    
                     tripleValue = {
                         source: tempSub,
                         predicate: pred,
@@ -411,7 +612,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         var idVal = "#" + d.nodeId;
         var clickedNodeLabel = d.id;
         var newlyCreatingLinkData = "";
-
+        
         if (expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal)) {
             expandedNodesArray.push(idVal);
 
@@ -563,7 +764,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             removeClikedNode = "";
             onDoubleClickedNewlyCreatedLinks.forEach(function (val) {
                 if (val.nodeClicked === idVal) {
-                    for (var i = 0; i < linksArray.length; i++) {
+                    for (i = 0; i < linksArray.length; i++) {
                         if (linksArray[i].source === val.link.source && linksArray[i].predicate === val.link.predicate && linksArray[i].target === val.link.target) {
                             linksArray.splice(i, 1);
                             i--;
@@ -574,7 +775,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                 }
             });
 
-            for (var i = 0; i < onDoubleClickedNewlyCreatedLinks.length; i++) {
+            for (i = 0; i < onDoubleClickedNewlyCreatedLinks.length; i++) {
                 if (onDoubleClickedNewlyCreatedLinks[i].nodeClicked === removeClikedNode) {
                     onDoubleClickedNewlyCreatedLinks.splice(i, 1);
                     i--;
@@ -585,7 +786,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             removeClikedNode = "";
             onDoubleClickedNewlyCreatedNodes.forEach(function (val) {
                 if (val.nodeClicked === idVal) {
-                    for (var i = 0; i < nodesArray.length; i++) {
+                    for (i = 0; i < nodesArray.length; i++) {
                         if (nodesArray[i].id === val.nodeCreated.id) {
                             nodesArray.splice(i, 1);
                             i--;
@@ -595,14 +796,14 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                 }
             });
 
-            for (var i = 0; i < onDoubleClickedNewlyCreatedNodes.length; i++) {
+            for (i = 0; i < onDoubleClickedNewlyCreatedNodes.length; i++) {
                 if (onDoubleClickedNewlyCreatedNodes[i].nodeClicked === removeClikedNode) {
                     onDoubleClickedNewlyCreatedNodes.splice(i, 1);
                     i--;
                 }
             }
 
-            for (var i = 0; i < expandedNodesArray.length; i++) {
+            for (i = 0; i < expandedNodesArray.length; i++) {
                 if (expandedNodesArray[i] === idVal) {
                     expandedNodesArray.splice(i, 1);
                     break;
@@ -855,197 +1056,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         g.attr("transform", d3.event.transform);
     }
 
-    function update() {
-
-        simulation.restart();
-
-        simulation
-            .nodes(nodesArray)
-            .on("tick", ticked);
-
-        simulation.force("link")
-            .links(linksArray);
-
-
-        g = svg.append("g")
-            .attr("class", "everything");
-
-        link = g.selectAll("line")
-            .attr("class", "links")
-            .data(linksArray)
-            .enter().append("line")
-            .attr("class", "link")
-            .attr("stroke-width", 1)
-            .style("fill", "#999")
-            .attr("marker-end", function (d) {
-                var labelStr = d.predicate;
-                if (labelStr.includes("subClassOf")) {
-                    return "url(#subclass)";
-                }
-                return "url(#normal)";
-            })
-            .style("stroke-dasharray", function (d) {
-                var labelStr = d.predicate;
-                if (labelStr.includes("subClassOf")) {
-                    return ("3, 3");
-                }
-                if (labelStr.includes("subPropertyOf")) {
-                    return ("5, 5");
-                }
-                return ("0, 0");
-            });
-
-        link.exit().remove();
-        // ==================== Add Link Names =====================
-        linkTexts = g.selectAll(".link-text")
-            .data(linksArray)
-            .enter()
-            .append("text")
-            .attr("class", "link-text")
-            .text(function (d) {
-                var labelStr = d.predicate;
-                if (labelStr.includes("subClassOf")) {
-                    return customizeGraphArray.subClassLabel;
-                }
-                return d.predicate;
-            })
-            .style("fill", function (d) {
-                var labelStr = d.predicate;
-                if (labelStr.includes("subClassOf")) {
-                    return customizeGraphArray.subClassLabelColor;
-                }
-                return customizeGraphArray.propertyTextColor;
-            })
-            .style("font-size", "80%")
-            .style("font-style", "italic")
-            .attr("x", 12)
-            .attr("y", 3)
-            ;
-
-
-        linkTexts.append("title")
-            .text(function (d) {
-                var labelStr = d.predicate;
-                var returnValue;
-
-                if (labelStr.includes("subClassOf")) {
-
-                    returnValue = "Source : " + d.source.id + "\nProperty : " + customizeGraphArray.subClassLabel + "\nObject : " + d.target.id;
-                } else {
-                    returnValue = "Source : " + d.source.id + "\nProperty : " + labelStr + "\nObject : " + d.target.id;
-                }
-
-                return returnValue;
-            });
-        // ==================== Add Link Names =====================
-
-        node = g.append("g")
-            .attr("class", "nodes")
-            .selectAll("g")
-            .data(nodesArray)
-            .enter().append("g");
-        node.exit().remove();
-
-        circles = node.append("circle")
-            .attr("id", function (d) {
-                return d.nodeId;
-            })
-            .attr("r", function (d) {
-                var labelStr = d.id;
-                if (d.isLitteral) {
-                    return literalRadius;
-                }
-                return resourceRadius;
-            })
-            .style("fill", function (d) {
-                var labelStr = d.id;
-                var expandedNode = false;
-
-                if (!dispalyAllprop) {
-                    expandedNodesArray.forEach(function (val) {
-                        if (val === "#" + d.nodeId) {
-                            expandedNode = true;
-                        }
-                    });
-                }
-
-                if (expandedNode) {
-                    return "#8E44AD";
-                }
-                if (d.isLitteral) {
-                    return customizeGraphArray.literalNodeColor;
-                }
-                return customizeGraphArray.resourceNodeColor;
-            })
-            .call(d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended)
-            );
-
-        lables = node.append("text")
-            .attr("class", "node-text")
-            .text(function (d) {
-                return d.id;
-            })
-            .style("font-size", function (d) {
-                var labelStr = d.id;
-                if (d.isLitteral) {
-                    return "80%";
-                }
-                return "100%";
-            })
-            .style("font-style", function (d) {
-                var labelStr = d.id;
-                if (d.isLitteral) {
-                    return "italic";
-                }
-                return "bold";
-            })
-            .style("fill", function (d) {
-                var labelStr = d.id;
-                if (d.isLitteral) {
-                    return customizeGraphArray.literalNodeTextColor;
-                }
-                return customizeGraphArray.resourceNodeTextColor;
-            })
-            .attr("x", function (d) {
-                if (d.isLitteral) {
-                    return 8;
-                }
-                return 12;
-            })
-            .attr("y", 3);
-
-        node.append("title")
-            .text(function (d) {
-                var returnValue = "Node : " + d.id;
-                if (d.isLitteral) {
-                    returnValue = "Node : " + d.id + "\nData type : " + d.literalDataType;
-                } else {
-                    returnValue = "Node : " + d.id;
-                }
-                return returnValue;
-            });
-
-        //START :: on double click
-        node.on("dblclick", doubleClickFunctionality);
-        //END :: on double click    
-
-        //START :: on  click
-        node.on("click", clickFuntionality);
-        //END :: on  click
-
-
-        if (!disableZoom) {
-
-            var zoomHandler = d3.zoom()
-                .on("zoom", zoomActions);
-
-            svg.call(zoomHandler).on("dblclick.zoom", null);
-        }
-
-    }
+    
 
     function ticked() {
         lables
@@ -1091,25 +1102,4 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
     }
 
     update();
-
-
-    // });
-
-    function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-    }
-
-    function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    }
-
-    function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-    }
-
 };
