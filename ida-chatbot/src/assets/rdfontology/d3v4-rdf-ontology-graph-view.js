@@ -19,6 +19,9 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
 
     var g, link, linkTexts, node, circles, lables;
     var i = 0;
+
+    if (typeof d3 == 'undefined'){d3 = d3;}
+    
     var svgClear = d3.select("#" + svgId);
     svgClear.selectAll("*").remove();
 
@@ -556,7 +559,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             }
 
             //node description on double click
-            var nodeDescription = d3.select("#" + idsArray.nodeDescripId)
+            var nodeDescription = d3.select("#" + idsArray.nodeDescripId);
             nodeDescription.selectAll("*").remove();
             if (tempNodeContains["description"] === undefinedVarValue) {
                 undefVar = true;
@@ -591,7 +594,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                 }
             }
 
-            var nodeSubClass = d3.select("#" + idsArray.nodeSubClassId)
+            var nodeSubClass = d3.select("#" + idsArray.nodeSubClassId);
             nodeSubClass.selectAll("*").remove();
             if (tempNodeContains["subClassOf"] === undefinedVarValue) {
                 undefVar = true;
@@ -623,7 +626,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                 }
             }
 
-            var nodeDomain = d3.select("#" + idsArray.nodeDomainId)
+            var nodeDomain = d3.select("#" + idsArray.nodeDomainId);
             nodeDomain.selectAll("*").remove();
             if (tempNodeContains["domain"] === undefinedVarValue) {
                 undefVar = true;
@@ -657,7 +660,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
 
 
 
-            var nodeRange = d3.select("#" + idsArray.nodeRangeId)
+            var nodeRange = d3.select("#" + idsArray.nodeRangeId);
             nodeRange.selectAll("*").remove();
             if (tempNodeContains["range"] === undefinedVarValue) {
                 undefVar = true;
@@ -689,7 +692,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
                 }
             }
 
-            var nodeComment = d3.select("#" + idsArray.nodeCommentId)
+            var nodeComment = d3.select("#" + idsArray.nodeCommentId);
             nodeComment.selectAll("*").remove();
             if (tempNodeContains["comment"] === undefinedVarValue) {
                 undefVar = true;
@@ -1102,4 +1105,4 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
     //END :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
 
     update();
-};
+}
