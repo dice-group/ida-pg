@@ -60,14 +60,25 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- IDA modules: -->
 		<dependency>
 			<groupId>librarian</groupId>
 			<artifactId>model</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>tailrecursion</groupId>
+					<artifactId>cljs-priority-map</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		
+		<dependency>
+			<groupId>librarian</groupId>
+			<artifactId>generator</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+
 		<!-- jsr303 validation -->
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -109,7 +120,7 @@
 		</dependency>
 
 		<!-- Jackson JSON Processor -->
-		<!-- <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId> 
+		<!-- <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId>
 			<version>2.4.1</version> </dependency> -->
 
 		<dependency>
@@ -153,7 +164,7 @@
 			<version>1.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io added by 
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io added by
 			Faisal -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -161,9 +172,9 @@
 			<version>2.6</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind 
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 			added by faisal -->
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson added 
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson added
 			by faisal -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -179,7 +190,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
-			<version>3.0</version>
+			<version>3.6.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -226,7 +237,6 @@
 			<version>3.9.0-1</version>
 		</dependency>
 
-
 	</dependencies>
 	<build>
 		<finalName>ida-ws</finalName>
@@ -254,7 +264,7 @@
 				    <useDefaultDelimiters>false</useDefaultDelimiters>
 				</configuration>
             </plugin>
-            
+
             <plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
