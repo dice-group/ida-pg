@@ -1,0 +1,10 @@
+! version = 2.0
+
+//User queries for ontology
+
++ i want ontology explorer for current dataset
+* <call>OntologyExplorerHandler </call> == pass => Ontology explorer is now added to the main view
+- Ontology does not exist for current dataset!
+
++ open ontology explorer
+@ i want ontology explorer for current dataset

@@ -15,7 +15,7 @@ import upb.ida.service.RiveScriptService;
 
 /**
  * Exposes RESTful RPCs for the IDA Chatbot
- * 
+ *
  * @author Nikit
  *
  */
@@ -27,7 +27,7 @@ public class MessageRestController {
 	private ResponseBean response;
 	@Autowired
 	private RiveScriptService rsService;
-	@Autowired 
+	@Autowired
 	private DataService dataService;
 	@RequestMapping("/sayhello")
 	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
@@ -57,7 +57,7 @@ public class MessageRestController {
 		response.setChatmsg(reply);
 		return response;
 	}
-	
+
 	@RequestMapping("/getdatatable")
 	public ResponseBean getDataTable(@RequestParam(value = "actvScrId") String actvScrId, @RequestParam(value = "actvTbl") String actvTbl,
 			@RequestParam(value = "actvDs") String actvDs) throws Exception {
