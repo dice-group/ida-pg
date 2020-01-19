@@ -1,13 +1,6 @@
 package upb.ida.intent;
 
-import upb.ida.intent.exception.IntentException;
-import upb.ida.intent.executor.GreetingExecutor;
-import upb.ida.intent.executor.IntentExecutor;
-import upb.ida.intent.executor.ForceDirectedGraphExecutor;
-import upb.ida.intent.executor.GeoSpatialExecutor;
-import upb.ida.intent.executor.BarChartExecutor;
-import upb.ida.intent.executor.LoadDatasetExecutor;
-import upb.ida.intent.executor.UnknownExecutor;
+import upb.ida.intent.executor.*;
 import upb.ida.intent.model.Intent;
 
 public class IntentExecutorFactoryHelper {
@@ -18,21 +11,37 @@ public class IntentExecutorFactoryHelper {
 
 	// IntentExecutors are initialized by this method. For making the executors work based on
 	// external configuration, this method should be updated.
-	public static IntentExecutor getExecutorFor(Intent intentClass) throws IntentException {
+	public static IntentExecutor getExecutorFor(Intent intentClass) {
 
-		if (intentClass.equals(Intent.GREETING))
-			return new GreetingExecutor();
-		else if (intentClass.equals(Intent.UNKNOWN))
-			return new UnknownExecutor();
-		else if (intentClass.equals(Intent.BAR))
-			return new BarChartExecutor();
-		else if (intentClass.equals(Intent.FORCE_DIRECTED_GRAPH))
-			return new ForceDirectedGraphExecutor();
-		else if (intentClass.equals(Intent.GEO_SPATIAL))
-			return new GeoSpatialExecutor();
-		else if (intentClass.equals(Intent.LOAD_DATASET))
-			return new LoadDatasetExecutor();
+		IntentExecutor executor;
 
-		throw new IntentException(String.format("No executor found for intent \"%s\"", intentClass.getKey()));
+		switch (intentClass){
+			case GREETING:
+				executor = new GreetingExecutor();
+				break;
+			case BAR:
+				executor = new BarChartExecutor();
+				break;
+			case FORCE_DIRECTED_GRAPH:
+				executor = new ForceDirectedGraphExecutor();
+				break;
+			case GEO_SPATIAL:
+				executor = new GeoSpatialExecutor();
+				break;
+			case LOAD_DATASET:
+				executor = new LoadDatasetExecutor();
+				break;
+			case ONTOLOGY_EXPLORER:
+				executor = new OntologyExplorerExecutor();
+				break;
+			case SOLDIER_CAREER_TIMELINE:
+				executor = new SoldierCareerTimelineExecutor();
+				break;
+			default:
+				executor = new UnknownExecutor();
+				break;
+		}
+
+		return executor;
 	}
 }
