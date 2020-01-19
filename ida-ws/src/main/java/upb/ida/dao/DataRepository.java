@@ -103,7 +103,7 @@ public class DataRepository {
 		try {
 			StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append(
 					"SELECT ?class (count(?class) as ?count) WHERE { ?s rdf:type ?class; FILTER (?class != owl:NamedIndividual) } GROUP BY ?class");
-			ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
+			ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 			if (resultSet == null) {
 				return null;
 			}
@@ -182,7 +182,7 @@ public class DataRepository {
 		 */
 		StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append(
 				"SELECT * WHERE { ?s a <").append(classUrl).append(">; ?p ?o; FILTER ( ?p != rdf:type) }");
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
+		ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 		while (resultSet.hasNext()) {
 			QuerySolution resource = resultSet.next();
 			id = resource.get("s").asNode().toString();
@@ -307,7 +307,7 @@ public class DataRepository {
 		Set<String> distinctColumns = new TreeSet<>();
 		String classUrl = getClassUrl(className, dataset);
 		StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append("SELECT DISTINCT ?class ?pred WHERE { ?s ?pred ?o; ?pred []; rdf:type ?class; FILTER( ?class != owl:NamedIndividual && (?pred != rdf:type) && ?class = <").append(classUrl).append("> ) }");
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
+		ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 		while (resultSet != null && resultSet.hasNext()) {
 			resource = resultSet.next();
 			columnName = resource.get("pred").asNode().getURI();
@@ -324,7 +324,7 @@ public class DataRepository {
 	public String getClassUrl(String className, String dataset) {
 		int index;
 		StringBuilder queryString = new StringBuilder().append(IDALiteral.PREFIXES).append("SELECT ?class WHERE { ?s rdf:type ?class; FILTER (?class != owl:NamedIndividual) } GROUP BY ?class");
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
+		ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 		if (resultSet == null) {
 			return null;
 		}
@@ -348,7 +348,7 @@ public class DataRepository {
 	 */
 	private void setupDataSetModel(String dataset) {
 		StringBuilder qString = new StringBuilder("SELECT ?subject ?predicate ?object  WHERE {  ?subject ?predicate ?object  }");
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", qString.toString());
+		ResultSet resultSet = getResultFromQuery(dataset, qString.toString());
 		List<Triple> triples = new ArrayList<>();
 		model = ModelFactory.createDefaultModel();
 		while (resultSet.hasNext()) {
@@ -372,7 +372,7 @@ public class DataRepository {
 			value = resource.get("o").asLiteral().getString();
 		} else if (resource.get("o").isURIResource()) {
 			value = resource.get("o").asNode().getURI();
-			value = getForeignReference(value, dataset + "-data");
+			value = getForeignReference(value, dataset);
 		}
 		return value;
 	}
@@ -384,7 +384,7 @@ public class DataRepository {
 			for (String col : duplicateColumnLst) {
 				rowsMap.get(rowId).remove(col);
 			}
-			incomingEdge = getIncomingEdge(rowId, dataset + "-data");
+			incomingEdge = getIncomingEdge(rowId, dataset);
 			if (incomingEdge != null) {
 				rowsMap.get(rowId).putAll(getIncomingEdge(rowId, dataset));
 			}
@@ -401,7 +401,7 @@ public class DataRepository {
 	private Map<String, ArrayList<String>> getClassColumnMap(String dataset, Set<String> distinctColumns) {
 		Map<String, ArrayList<String>> columnMap = new HashMap<>();
 		StringBuilder queryString = new StringBuilder(IDALiteral.PREFIXES).append("SELECT DISTINCT ?class ?pred WHERE { ?s ?pred ?o; ?pred []; rdf:type ?class; FILTER ( ?class != owl:NamedIndividual && (?pred != rdf:type)) }");
-		ResultSet resultSet = getResultFromQuery(dataset + "-data", queryString.toString());
+		ResultSet resultSet = getResultFromQuery(dataset, queryString.toString());
 		QuerySolution resource;
 		String className;
 		int index;
