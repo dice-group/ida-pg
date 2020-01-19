@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import upb.ida.bean.ResponseBean;
-import upb.ida.ontologyexplorer.OntologyExplorer;
 import upb.ida.service.DataService;
 import upb.ida.service.RiveScriptService;
 
@@ -69,18 +68,6 @@ public class MessageRestController {
 		dataMap.put("actvDs", actvDs);
 		response.setPayload(dataMap);
 		dataService.getDataTable(actvDs, actvTbl);
-		return response;
-	}
-
-	@RequestMapping("/getOntologyData")
-	public ResponseBean getOntologyData(@RequestParam(value = "fileName") String fileName) throws Exception {
-		Map<String, Object> dataMap = new HashMap<>();
-		OntologyExplorer oe = new OntologyExplorer();
-		dataMap.put("actvScrId", "");
-		dataMap.put("actvTbl", "");
-		dataMap.put("actvDs", "");
-		dataMap.put("soldier", oe.fetchData(fileName));
-		response.setPayload(dataMap);
 		return response;
 	}
 

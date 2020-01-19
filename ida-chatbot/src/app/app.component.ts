@@ -80,8 +80,8 @@ export class AppComponent {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
       this.addNewTab(newTab, resp);
-    }else if (resp.actnCode === 11) {
-      const newTab = new TabElement(this.uis.getUniqueId(), "Ontology Explorer", TabType.OE, resp.payload.ontologyData, true, true);
+    }else if (resp.actnCode === 11) { 
+      const newTab = new TabElement(this.uis.getUniqueId(), "Ontology Explorer", TabType.OE, resp.payload, true, true);
       this.addNewTab(newTab, resp);
     }
   }

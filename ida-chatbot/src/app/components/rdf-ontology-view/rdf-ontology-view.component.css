@@ -41,3 +41,7 @@
   width:275px;
 }
 
+:host ::ng-deep mat-toolbar-row.primary{
+  background: #673ab7;
+  color: #FFF;
+}

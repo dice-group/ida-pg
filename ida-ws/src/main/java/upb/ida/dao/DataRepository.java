@@ -8,12 +8,19 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.DatasetAccessorFactory;
+import org.apache.jena.query.DatasetAccessor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import upb.ida.constant.IDALiteral;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -525,5 +532,22 @@ public class DataRepository {
 			columns.add(column);
 		}
 		return columns;
+	}
+
+	public JSONObject getOntologyData(String datasetName) {
+		if(!IDALiteral.SS_DATASET.equals(datasetName)){
+			return null;
+		}
+		try{
+			DatasetAccessor accessor = DatasetAccessorFactory.createHTTP(dbhost + datasetName + "-ontology");
+			model = accessor.getModel();
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			RDFDataMgr.write(outputStream, model, Lang.JSONLD);
+			JSONParser parser = new JSONParser();
+			return (JSONObject) parser.parse(new String(outputStream.toByteArray()));
+		}catch (Exception ex){
+			ex.printStackTrace();
+		}
+		return null;
 	}
 }
