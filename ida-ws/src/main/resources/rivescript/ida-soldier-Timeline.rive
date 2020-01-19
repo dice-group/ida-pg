@@ -1,0 +1,13 @@
+! version = 2.0
+
+//User queries for soldier career timeline
+
++ i want a soldier career timeline for *
+* <call>SoldierTimeLineHandler "<star1>"</call> == pass => Your requested
+^ \sSoldier Timeline is now added to the main view
+
++ i want career timeline for *
+@  i want a soldier career timeline for <star>
+
++ i want timeline for *
+@ i want a soldier career timeline for <star>

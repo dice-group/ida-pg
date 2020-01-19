@@ -1,0 +1,253 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <div style="width: 100%; height: 20%;">
+      <h1 align='center'>Soldier Career Timeline</h1>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar> 
+
+<mat-horizontal-stepper  #stepper>
+
+  <mat-step *ngFor="let i of allDates">
+
+    <ng-template *ngIf="allDOB.includes(i)" matStepLabel>{{dateCorectValue.get(i)}} DOB</ng-template>
+    <ng-template *ngIf="allDatesOfRank.includes(i)" matStepLabel>{{dateCorectValue.get(i)}} Rank</ng-template>
+    <ng-template *ngIf="allDatesOfRegiment.includes(i)" matStepLabel>{{dateCorectValue.get(i)}} Regiment</ng-template>
+    <ng-template *ngIf="allDatesOfDecoration.includes(i)" matStepLabel>{{dateCorectValue.get(i)}} Decoration</ng-template>
+    <ng-template *ngIf="allDOD.includes(i)" matStepLabel>{{dateCorectValue.get(i)}} DOD</ng-template>
+
+    
+    <mat-card *ngIf="allDOB.includes(i)">
+        <div id="soldierInformationId" style="border-radius: 8px;padding-top: 9px;">
+          <mat-card-title >Date of Birth</mat-card-title> 
+        </div>
+        
+        <div id="soldierInfoTagsId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass">Date : </mat-card-subtitle>
+              <div class="soldierInfoDiv"> {{dateCorectValue.get(i)}}</div>    
+            </div>
+            
+           <!-- <div class="soldierInfoDivClass">
+              <mat-card-subtitle>Plcae:</mat-card-subtitle>
+              <div class="soldierInfoDiv"> {{soldierDOBInfo.get(i).get("place")}}</div>
+            </div> -->
+        </div> 
+      </mat-card> 
+    
+      <mat-card *ngIf="allDatesOfRank.includes(i)">
+        <div id="soldierInformationId" style="border-radius: 8px;padding-top: 9px;">
+          <mat-card-title>Rank Information</mat-card-title> 
+        </div>
+        
+        <div id="soldierInfoTagsId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass">Date: </mat-card-subtitle>  
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("applicableFrom_inXSDDate")}}</div>
+            </div>
+            
+            <!--<div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass">ID : </mat-card-subtitle>  
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("id")}}</div>
+            </div> -->
+
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass" >Rank Name : </mat-card-subtitle>  
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasRank_name")}}</div>
+            </div>
+
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass" >Rank Sortation : </mat-card-subtitle>  
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasRank_sortation")}}</div>
+            </div>
+
+
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass">Label :</mat-card-subtitle>
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("label")}}</div>
+            </div>
+
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass">Rank Id : </mat-card-subtitle>  
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasRank_id")}}</div>
+            </div>
+
+            <!--<div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass">Rank Label : </mat-card-subtitle>  
+              <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasRank_label")}}</div>
+            </div> -->
+            
+        </div>
+      </mat-card>
+
+      <mat-card *ngIf="allDatesOfRegiment.includes(i)">
+        <div id="soldierInformationId" style="border-radius: 8px;padding-top: 9px;">
+          <mat-card-title>Regiment Information</mat-card-title> 
+        </div>
+
+        <div id="soldierInfoTagsId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass" >Date : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("applicableFrom_inXSDDate")}}</div>
+          </div>
+          
+           <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">ID : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("id")}}</div>
+          </div> 
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">Regiment Info Name : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("regimentInfo_name")}}</div>
+          </div>
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">Regiment Info Id : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("regimentInfo_id")}}</div>
+          </div>
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">Label :</mat-card-subtitle>
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("label")}}</div>
+          </div>
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">Regiment Info Abbreviation : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("regimentInfo_abbreviation")}}</div>
+          </div>
+
+          
+
+          <!--<div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">Regiment Info Label : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("regimentInfo_label")}}</div>
+          </div> -->
+
+          
+        </div>
+
+        
+      </mat-card>
+
+      <mat-card *ngIf="allDatesOfDecoration.includes(i)">
+        <div id="soldierInformationId" style="border-radius: 8px;padding-top: 9px;">
+          <mat-card-title>Decoration Information</mat-card-title> 
+        </div>
+
+        <div id="soldierInfoTagsId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass" >Date : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("applicableFrom_inXSDDate")}}</div>
+          </div>
+          
+         <!-- <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">ID : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("id")}}</div>
+          </div> -->
+          
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass" >Decoration Name : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasDecoration_name")}}</div>
+          </div>
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass" >Decoration Id : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasDecoration_id")}}</div>
+          </div>
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass">Label :</mat-card-subtitle>
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("label")}}</div>
+          </div>
+
+          <div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass" >Decoration Abbreviation : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasDecoration_abbreviation")}}</div>
+          </div>
+
+          
+
+          <!--<div class="soldierInfoDivClass">
+            <mat-card-subtitle class="fieldLabelClass" >Decoration Label : </mat-card-subtitle>  
+            <div class="soldierInfoDiv"> {{soldierDatesVsFileds.get(i).get("hasDecoration_label")}}</div>
+          </div> -->
+
+          
+        </div>
+
+      </mat-card>
+      
+      <mat-card *ngIf="allDOD.includes(i)">
+        <div id="soldierInformationId" style="border-radius: 8px;padding-top: 9px;">
+          <mat-card-title>Date of Death</mat-card-title> 
+        </div>
+        
+        <div id="soldierInfoTagsId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+            <div class="soldierInfoDivClass">
+              <mat-card-subtitle class="fieldLabelClass" >Date : </mat-card-subtitle>
+              <div class="soldierInfoDiv"> {{dateCorectValue.get(i)}}</div>
+            </div>
+            
+            <!-- <div class="soldierInfoDivClass">
+              <mat-card-subtitle>Plcae:</mat-card-subtitle>
+              <div class="soldierInfoDiv"> {{soldierDODPlace}}</div>
+            </div> -->
+        </div>
+      </mat-card>
+
+    <br/>
+
+    <div> 
+      <button mat-raised-button matStepperPrevious>Back</button>
+      <button mat-raised-button matStepperNext>Next</button>
+    </div>
+  </mat-step>
+
+  
+</mat-horizontal-stepper>
+
+<mat-card>
+  <div id="soldierInformationId" style="border-radius: 8px;padding-top: 9px;">
+    <mat-card-title>Soldier Information</mat-card-title> 
+  </div>
+  
+  <div id="soldierInfoTagsId" style=" text-align: justify;overflow: auto;display: block;border-radius: 8px;">
+    
+    <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass">Full Name :</mat-card-subtitle>
+      <div class="soldierInfoDiv" >{{soldierData.basicInfo__0.label}}</div>
+    </div>
+
+   <!-- <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass">First Name :</mat-card-subtitle>
+      <div class="soldierInfoDiv" >{{soldierData.basicInfo__0.firstName}}</div>
+    </div>
+    
+    <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass">Last Name :</mat-card-subtitle>
+      <div class="soldierInfoDiv" >{{soldierData.basicInfo__0.lastName}}</div>
+    </div> -->
+    
+    <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass">ID :</mat-card-subtitle>
+      <div class="soldierInfoDiv" >{{soldierData.basicInfo__0.id}}</div>
+    </div> 
+
+    <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass" >DALVerified :</mat-card-subtitle>
+      <div  class="soldierInfoDiv" >{{soldierData.basicInfo__0.DALVerified}}</div>
+    </div> 
+
+    <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass">NSDAPNumber :</mat-card-subtitle>
+      <div class="soldierInfoDiv" >{{soldierData.basicInfo__0.NSDAPNumber}}</div>
+    </div>
+
+    <div class="soldierInfoDivClass">
+      <mat-card-subtitle class="fieldLabelClass">Membership Number :</mat-card-subtitle>
+      <div class="soldierInfoDiv" >{{soldierData.basicInfo__0.membershipNumber}}</div>
+    </div>
+
+  </div>
+
+</mat-card>
