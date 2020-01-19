@@ -1,0 +1,120 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix dbr: <http://dbpedia.org/resource/> .
+@prefix regiment: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/regiment/> .
+@prefix rank: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/rank/> .
+@prefix decoration: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/decoration/> .
+@prefix literature: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/literature/> .
+@prefix soldier: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier/> .
+@prefix soldier_decoration: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier_decoration/> .
+@prefix soldier_regiment: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier_regiment/> .
+@prefix soldier_rank: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier_rank/> .
+@prefix soldier_literature: <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/soldier_literature/> .
+@prefix : <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/> .
+@base <https://www.upb.de/historisches-institut/neueste-geschichte/ssdal/data/> .
+
+
+#######Soldier Information########
+soldier:47540
+	rdf:type owl:NamedIndividual, :Soldier ;
+	:id 47540 ;
+	:membershipNumber 12345 ;
+	dbo:firstName "John"^^xsd:string ;
+	dbo:lastName "Doe"^^xsd:string ;
+	 dbo:birthDate "1854-01-01"^^xsd:date ;
+	:NSDAPNumber 443322 ;
+	:DALVerified true ;
+	rdfs:label "Doe, John" .
+
+
+######Decoration##########
+soldier_decoration:35189
+	rdf:type owl:NamedIndividual, :DecorationEvent ;
+	:id 35189 ;
+	 :hasDecoration decoration:420 ;
+	 :applicableFrom soldier_decoration:soldier_decoration_from_35189 ;
+	rdfs:label "Soldier Decoration: 35189" .
+
+soldier_decoration:soldier_decoration_from_35189
+	rdf:type owl:NamedIndividual, time:Instant ;
+	 time:inXSDDate "1875-11-01"^^xsd:date .
+
+soldier:47540 :decorationInfo soldier_decoration:35189 .
+
+
+###########Regiment########
+soldier_regiment:7253
+	rdf:type owl:NamedIndividual, :SoldierRegimentInfo ;
+	:id 7253 ;
+	 :regimentInfo regiment:271 ;
+	 :applicableFrom soldier_regiment:soldier_regiment_from_7253 ;
+	rdfs:label "Soldier Regiment: 7253" .
+
+soldier_regiment:soldier_regiment_from_7253
+	rdf:type owl:NamedIndividual, time:Instant ;
+	 time:inXSDDate "1887-11-25"^^xsd:date .
+
+soldier:47540 :hasRegiment soldier_regiment:7253 .
+##
+
+
+##
+soldier_rank:24680
+	rdf:type owl:NamedIndividual, :SoldierRankInfo ;
+	:id 24680 ;
+	 :hasRank rank:23 ;
+	 :applicableFrom soldier_rank:soldier_rank_from_24680 ;
+	rdfs:label "Soldier Rank: 24680" .
+
+soldier_rank:soldier_rank_from_24680
+	rdf:type owl:NamedIndividual, time:Instant ;
+	 time:inXSDDate "1885-05-01"^^xsd:date .
+
+soldier:47540 :rankInfo soldier_rank:24680 .
+##
+
+
+##
+regiment:271
+	rdf:type owl:NamedIndividual, :Regiment ;
+	:id 271 ;
+	:name "North West"^^xsd:string ;
+	:abbreviation "NW"^^xsd:string ;
+	rdfs:label "North West" .
+##
+
+##
+decoration:420
+	rdf:type owl:NamedIndividual, :Decoration ;
+	:id 420 ;
+	:name "Officer"^^xsd:string ;
+	:abbreviation "OFR"^^xsd:string ;
+	 time:hasBeginning decoration:decoration_start_420 ;
+	 time:hasEnd decoration:decoration_end_420 ;
+	rdfs:label "Officer" .
+
+decoration:decoration_end_420
+	rdf:type owl:NamedIndividual, time:Instant ;
+	 time:inXSDDate "1875-11-20"^^xsd:date .
+
+decoration:decoration_start_420
+	rdf:type owl:NamedIndividual, time:Instant ;
+	 time:inXSDDate "1880-06-05"^^xsd:date .
+
+##
+
+##
+rank:23
+	rdf:type owl:NamedIndividual, :Rank ;
+	:id 23 ;
+	:name "Colonel"^^xsd:string ;
+	:sortation 23 ;
+	rdfs:label "Colonel" .
+##

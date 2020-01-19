@@ -53,6 +53,8 @@ public class RiveScriptBeanProvider {
 	private SSBDiagramHandler SSBDiagramHandler;
 	@Autowired
 	private OntologyExplorerHandler ontologyExplorerHandler;
+	@Autowired
+	private SoldierTimeLineHandler soldierTimeLineHandler;
 
 	/**
 	 * Method to provide a session scoped bean for the RiveScript bot
@@ -85,6 +87,7 @@ public class RiveScriptBeanProvider {
 		bot.setSubroutine("GeoDiagramHandler", GeoDiagramHandler);
 		bot.setSubroutine("SSBDiagramHandler", SSBDiagramHandler);
 		bot.setSubroutine("OntologyExplorerHandler", ontologyExplorerHandler);
+		bot.setSubroutine("SoldierTimeLineHandler", soldierTimeLineHandler);
 		return bot;
 	}
 

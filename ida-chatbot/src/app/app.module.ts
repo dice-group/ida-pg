@@ -62,7 +62,8 @@ import { VennViewComponent } from './components/venn-view/venn-view.component';
 import { RdfOntologyViewComponent } from './components/rdf-ontology-view/rdf-ontology-view.component'
 import { DeckglHexViewComponent } from './components/deckgl-hex-view/deckgl-hex-view.component';
 import { SpeechInputComponent } from './components/speech-input/speech-input.component';
-//import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { SoldierTimelineComponent } from './components/soldier-timeline/soldier-timeline.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -83,12 +84,14 @@ import { SpeechInputComponent } from './components/speech-input/speech-input.com
     SsbViewComponent,
     VennViewComponent,
     DeckglHexViewComponent,
-    SpeechInputComponent
+    SpeechInputComponent,
+    SoldierTimelineComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HttpClientModule,
     CdkTableModule,
@@ -124,8 +127,8 @@ import { SpeechInputComponent } from './components/speech-input/speech-input.com
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    FlexLayoutModule //,
-   // NgbModule
+    FlexLayoutModule,
+    NgbModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

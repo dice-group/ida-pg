@@ -49,7 +49,7 @@ public interface IDALiteral {
 			"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 			"prefix dbr: <http://dbpedia.org/resource/>\n" +
 			"prefix dc: <http://purl.org/dc/elements/1.1/>\n");
-	public static final String TEST_DATASET = "test-data";
+	public static final String TEST_DATASET = "test";
 	public static final String TEST_ONTOLOGYSET = "test-ontology";
 	public static final String SS_DATASET = "ssfuehrer";
 	public static final String ONTOLOGY_ERROR = "Please load a dataset before.";

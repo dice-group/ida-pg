@@ -1,16 +1,16 @@
-import {Component, ElementRef, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {Message} from './models/message';
-import {ResponseBean} from './models/response-bean';
-import {SidebarComponent} from './components/sidebar/sidebar.component';
-import {MainviewElement} from './models/mainview-element';
-import {SidebarElement} from './models/sidebar-element';
-import {ChatboxComponent} from './components/chatbox/chatbox.component';
-import {RestService} from './service/rest/rest.service';
-import {DataViewContainerComponent} from './components/data-view-container/data-view-container.component';
-import {TabElement} from './models/tab-element';
-import {UniqueIdProviderService} from './service/misc/unique-id-provider.service';
-import {TabType} from './enums/tab-type.enum';
-import {IdaEventService} from './service/event/ida-event.service';
+import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core'
+import { Message } from './models/message'
+import { ResponseBean } from './models/response-bean'
+import { SidebarComponent } from './components/sidebar/sidebar.component'
+import { MainviewElement } from './models/mainview-element'
+import { SidebarElement } from './models/sidebar-element'
+import { ChatboxComponent } from './components/chatbox/chatbox.component'
+import { RestService } from './service/rest/rest.service'
+import { DataViewContainerComponent } from './components/data-view-container/data-view-container.component'
+import { TabElement } from './models/tab-element'
+import { UniqueIdProviderService } from './service/misc/unique-id-provider.service'
+import { TabType } from './enums/tab-type.enum'
+import { IdaEventService } from './service/event/ida-event.service'
 
 @Component({
   selector: 'app-root',
@@ -21,9 +21,7 @@ export class AppComponent {
   idCount = 1;
   title = 'app';
   public introSideItem = new SidebarElement(0, 'Introduction', 'intro');
-  //public ontologySideItem = new SidebarElement(1, 'Ontology Explorer', 'ontology');
   public activeItem = 0;
-  //private sidebarItems: SidebarElement[] = [this.introSideItem, this.ontologySideItem];
   private sidebarItems: SidebarElement[] = [this.introSideItem];
   private mainViewItems: MainviewElement[] = [];
 
@@ -80,7 +78,10 @@ export class AppComponent {
       // Open new tab with DataTable
       const newTab = new TabElement(this.uis.getUniqueId(), resp.payload.actvTbl, TabType.SSB, resp.payload.ssbDiagramData, true, true);
       this.addNewTab(newTab, resp);
-    }else if (resp.actnCode === 11) { 
+    } else if (resp.actnCode === 10) {
+      const newTab = new TabElement(this.uis.getUniqueId(),'Soldier Career Timeline', TabType.SCTL, resp.payload.soldierTimeLineData, true, true)
+      this.addNewTab(newTab, resp)
+    }else if (resp.actnCode === 11) {
       const newTab = new TabElement(this.uis.getUniqueId(), "Ontology Explorer", TabType.OE, resp.payload, true, true);
       this.addNewTab(newTab, resp);
     }
