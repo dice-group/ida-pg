@@ -1,14 +1,15 @@
-(ns librarian.helpers.transients)
+(ns librarian.helpers.transients
+  "Helpers to work with transient collections.")
 
 (defn into!
-  "Like into but it keeps the target transient."
+  "Like `into` but it keeps the target transient."
   ([to from]
    (reduce conj! to from))
   ([to xform from]
    (transduce xform conj! to from)))
 
 (defn update!
-  "Like update but for transients."
+  "Like `update` but for transients."
   ([m k f]
    (assoc! m k (f (get m k))))
   ([m k f x]

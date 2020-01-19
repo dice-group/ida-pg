@@ -1,4 +1,5 @@
 (ns librarian.helpers.spec
+  "A collection of helpers to work with specs."
   (:require [clojure.spec.alpha :as s])
   (:refer-clojure :exclude [and instance?]))
 
@@ -11,6 +12,8 @@
       [])))
 
 (defmacro entity-keys
+  "Like `clojure.spec.alpha/keys` but can be used to check any associative datastructure, not only maps.
+   In particular lazy maps, e.g. Datomic entities can be checked."
   [& {:keys [req opt req-un opt-un gen]}]
   `(let [req-filtered# (filterwalk keyword? ~req)
          req-un-filtered# (filterwalk keyword? ~req-un)
@@ -28,14 +31,14 @@
             (s/conformer (comp :entity meta)))))
 
 (defmacro keys*
-  "Like clojure.spec.alpha/keys* but always conforms to and allows maps."
+  "Like `clojure.spec.alpha/keys*` but always conforms to and allows maps."
   [& args]
   `(s/and (s/or :map (s/and map? (s/keys ~@args))
                 :default (s/keys* ~@args))
           (s/conformer ~(fn [[_ map]] (if (nil? map) {} map)))))
 
 (defn and
-  "A function wrapper around clojure.spec.alpha/and."
+  "A function wrapper around `clojure.spec.alpha/and`."
   [& [first second third & rest :as pred-forms]]
   (case (count pred-forms)
     0 any?
@@ -49,10 +52,12 @@
         res))))
 
 (defn vec-of
+  "Like `clojure.spec.alpha/coll-of` but requires the colletion to be a vector."
   [pred-form]
   (s/and vector? (s/coll-of pred-form)))
 
 (defn instance?
+  "Checks whether a given map is an instance of the given librarian concept (e.g. a callable, a parameter or a namespace etc.)."
   [concept]
   (let [parent (if (keyword? concept) concept (:ident concept))]
     (fn [entity]

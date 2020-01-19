@@ -1,4 +1,5 @@
 (ns librarian.generator.query
+  "Implementation of common database queries needed to access and extend the CFG encoded in a database."
   (:require [datascript.core :as d]
             [librarian.helpers.map :as hm]
             [librarian.helpers.transients :refer [into!]]
@@ -20,6 +21,7 @@
             [librarian.model.concepts.positionable :as positionable]))
 
 (defn transitive-closure
+  "Computes the transitive closure for a collection of `start` ids and traversable attributes `attrs` and `reverse-attrs`."
   [db attrs reverse-attrs start]
   (loop [open (transient (vec start))
          closure (transient #{})]
@@ -39,6 +41,8 @@
         (persistent! closure)))))
 
 (defn typed-compatible?
+  "Returns whether a value would be permitted to flow from control flow node `from` to control flow node `to`.
+   Supports partial application."
   ([db from to]
    ((typed-compatible? db to) from))
   ([db to]
@@ -56,6 +60,7 @@
        (constantly false)))))
 
 (defn dependents
+  "Returns all control flow nodes that are in some way dependent on the control flow node associated to `id`."
   [db id]
   (transitive-closure db
                       [::call/result]
@@ -63,6 +68,7 @@
                       [id]))
 
 (defn depends-on?
+  "Returns whether the control flow node with id `a` is a dependent of the node with id `b`."
   ([db a b]
    ((depends-on? db b) a))
   ([db b]
@@ -70,22 +76,33 @@
      (fn [a] (contains? deps a)))))
 
 (defn optional-call-param?
+  "Returns whether the given call-parameter instance is optional."
   [db call-param]
   (-> (d/entity db call-param) ::call-parameter/parameter ::parameter/optional some?))
 
 (defn placeholder?
+  "Returns whether the given control flow node is fully specified or if it still needs to be concretized to a specific instance (e.g. some callable)."
   [db id]
   (:v (first (d/datoms db :aevt :placeholder id)) false))
 
 (defn containing-snippet
+  "Returns the id of the snippet that contains the control flow node with the given `id`."
   [db id]
   (:e (first (d/datoms db :avet ::snippet/contains id))))
 
 (defn receives?
+  "Returns whether the given control flow node receives some value."
   [db id]
   (some? (d/datoms db :aevt ::data-receiver/receives id)))
 
 (defn receivers
+  "Returns a map with keys `:semantic` and `:full`.
+   Semantic receivers directly or indirectly inherit the semantic types of the control flow node with the given `id`.
+   Full receivers inherit all the datatypes of `id`.
+
+   Example:
+   A parameter of type object receiving an integer will then also be of type integer.
+   A string value that was typecast to an integer however does not propagate its programmatic type to the cast value but it propagates its semantic type (e.g. the unit of measurement it is using)."
   [db id]
   (loop [open (transient [id])
          semantic-closure (transient #{id})
@@ -113,6 +130,9 @@
          :full (persistent! full-closure)}))))
 
 (defn types
+  "Returns a collection of the datatypes of the concept with id `e`.
+   Each datatype is represented by a map with keys `[:db/id :semantic]`.
+   `:semantic` is a boolean representing whether the datatype is a semantic type or not."
   [db e]
   (->> (d/entity db e)
        ::typed/datatype
@@ -121,15 +141,19 @@
                                      (:type t))}))))
 
 (defn semantic-types
+  "Like `types` but only returns the ids of the semantic types of `e`."
   [db e]
   (keep #(when (:semantic %) (:db/id %)) (types db e)))
 
 (defn type-semantics
+  "Returns the semantic information associated to the semantic type with id `semantic-type`."
   [db semantic-type]
   {:key (:v (first (d/datoms db :eavt semantic-type ::semantic-type/key)))
    :value (:v (first (d/datoms db :eavt semantic-type ::semantic-type/value)))})
 
 (defn types->subtypes
+  "Returns the identifier keywords of all direct and indirect subconcepts of the given concepts `types`.
+   `types` is a collection of concept identifier keywords."
   ([]
    (comp (mapcat #(conj (descendants %) %))
          (distinct)))
@@ -137,6 +161,8 @@
    (into #{} (mapcat #(conj (descendants %) %)) types)))
 
 (defn types->direct-instances
+  "Returns the ids of direct instances of the given concepts `types`.
+   `types` is a collection of concept identifier keywords."
   ([db]
    (comp (mapcat #(d/datoms db :avet :type %))
          (map :e)
@@ -145,6 +171,7 @@
    (into [] (types->direct-instances db) types)))
 
 (defn types->instances
+  "Like `types->direct-instances` but also returns instances of subtypes of the provided types."
   ([db]
    (comp (types->subtypes)
          (types->direct-instances db)))
@@ -152,14 +179,19 @@
    (into [] (types->instances db) types)))
 
 (defn fillable-call-param?
+  "Returns whether the call-parameter with id `call-param` could potentially receive a value.
+   In particular this will return `false` for call-parameters of placeholder parameters, since their datatype might not be fully known which might make premature value propagations invalid in the future."
   [db call-param]
   (-> (d/entity db call-param) ::call-parameter/parameter :placeholder not))
 
 (defn callable
+  "Returns the id of the callable for the call with id `call`."
   [db call]
   (:v (first (d/datoms db :eavt call ::call/callable))))
 
 (defn compatibly-typed-sources
+  "Returns the ids of all control flow nodes that could potentially flow their value into the control flow node with id `flaw`.
+   Optionally the search for such sources can be restricted to control flow nodes that are part of a given snippet with id `snippet`."
   ([db flaw]
    (compatibly-typed-sources db flaw nil))
   ([db flaw snippet]
@@ -180,6 +212,7 @@
              source-types)))))
 
 (defn compatibly-typed-callables
+  "Returns the ids of all callables that return a value that could potentially flow into the control flow node with id `flaw`."
   [db flaw]
   (into #{}
         (comp (types->direct-instances db)
@@ -188,6 +221,35 @@
         (types->subtypes [::result/result])))
 
 (defn placeholder-matches
+  "Takes the id of some placeholder.
+   Returns a collection of potential completions/matches for the placeholder.
+   Each match is a map with keys `[:placeholder :match]`.
+   `:placeholder` is the id of the placeholder that should be replaced and `:match` the id of the concept it should be replaced with.
+   Since some placeholder replacements might entail the replacement of other placeholders that are associated to the replaced placeholder, the match map might additionally contain other keys (e.g. a match for a callable placeholder might have a `::callable/parameter` entry).
+   Each of those additional keys is a reference attribute of the replaced placeholder.
+   They are associated to a collection of collections of matches for referenced placeholder concepts resulting in a recursive placeholder replacement tree.
+
+   Example result for a given placeholder callable with id `1`:
+   ```
+   [{:placeholder 1
+     :match 101
+     ::callable/parameter [[{:placeholder 2, :match 102}
+                            {:placeholder 2, :match 103}]
+                           [{:placeholder 3, :match 104}]]
+     ::callable/result [{:placeholder 4, :match 105}]}
+    {:placeholder 1
+     :match 201
+     ::callable/parameter [[{:placeholder 2, :match 202}]
+                           [{:placeholder 3, :match 203}]]
+     ::callable/result [{:placeholder 4, :match 204}]}]
+   ```
+   Two candidate callables were found to replace the given placeholder.
+   Both candidate matches would require the placeholder parameters and result of the placeholder callable to also be replaced.
+   For the first candidate match, two potential replacements for the first placeholder parameter were found and one replacement for the second placeholder parameter was found.
+   This matching tree encodes a total of three different replacements that might be performed:
+   1. `1 => 101 + 2 => 102 + 3 => 104 + 4 => 105`
+   2. `1 => 101 + 2 => 103 + 3 => 104 + 4 => 105`
+   3. `1 => 201 + 2 => 202 + 3 => 203 + 4 => 204`"
   [db placeholder]
   (let [e (d/entity db placeholder)]
     (if (:placeholder e)

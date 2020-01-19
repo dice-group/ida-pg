@@ -1,4 +1,5 @@
 (ns librarian.generator.actions.call-completion
+  "Definition of the class of call completion actions."
   (:require [datascript.core :as d]
             [clojure.math.combinatorics :as combo]
             [librarian.helpers.transients :refer [into!]]
@@ -10,6 +11,9 @@
             [librarian.model.concepts.typed :as typed]))
 
 (defn- all-valid-call-io-match-combos
+  "Takes a collection of placeholder matches for parameter of result placeholders.
+   Expands the given recursive tree of matches into all concrete replacement combinations encoded by it.
+   Refer to the documentation of `librarian.generator.query/placeholder-matches` for an example of such an expansion."
   [matched-entities]
   (into []
         (comp (filter #(apply distinct? (map :placeholder %)))
@@ -47,6 +51,7 @@
                               ::call/result))
 
 (defn call->io-conts
+  "Returns the ids and types of the parameters or results of a given call."
   [db call io-type]
   (mapv (fn [io]
           (let [id (:v io)]

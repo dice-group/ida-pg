@@ -4,6 +4,7 @@
            (edu.uci.ics.crawler4j.url WebURL)))
 
 (defn match-url
+  "Returns a function that checks whether a page reached by crawler4j matches the given string or regex pattern."
   [pattern]
   (if (string? pattern)
     (fn [_, ^Page page, ^WebURL url]
@@ -12,6 +13,7 @@
       (some? (re-matches pattern (.getURL url))))))
 
 (defn require-classes
+  "Returns a function that checks whether the anchor element pointing to a candidate page has all of the required classes."
   [& required-classes]
   (fn [_, ^Page page, ^WebURL url]
     (let [{:strs [class] :or {class ""}} (into {} (.getAttributes url))

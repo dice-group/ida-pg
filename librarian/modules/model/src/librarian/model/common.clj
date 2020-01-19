@@ -1,4 +1,5 @@
-(ns librarian.model.common)
+(ns librarian.model.common
+  "Schema description of universal model attributes that are not specific to any particular concept.")
 
 (def attributes {:type {:db/index true
                         :db/cardinality :db.cardinality/many

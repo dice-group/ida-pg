@@ -1,4 +1,5 @@
 (ns librarian.generator.actions.snippet
+  "Definition of the class of snippet insertion actions."
   (:require [datascript.core :as d]
             [librarian.helpers.transaction :as tx]
             [librarian.generator.query :as gq]

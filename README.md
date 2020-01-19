@@ -14,14 +14,13 @@ It's core purpose is to ease the task of a Data Scientist by providing a chat in
 
 **Coming soon:**
 *   Link to the deployed instance
-*   Directions on deploying locally
 
 ## Development quick start
 
 IDA currently consists of three main components:
-*   `ida-ws`: A Java Spring server that provides the IDA REST-API.
-*   `ida-chatbot`: The Angular webclient for IDA.
-*   `librarian`: A general purpose toolkit to programmatically work with software libraries.
+*   [`ida-ws`](./ida-ws): A Java Spring server that provides the IDA REST-API.
+*   [`ida-chatbot`](./ida-chatbot): The Angular webclient for IDA.
+*   [`librarian`](./librarian): A general purpose toolkit to programmatically work with software libraries.
 
 You will need at least the following tools:
 *   bash

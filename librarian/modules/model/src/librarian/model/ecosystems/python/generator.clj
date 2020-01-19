@@ -1,4 +1,5 @@
 (ns librarian.model.ecosystems.python.generator
+  "Generate Python code from a CFG encoded in a datascript database."
   (:require [clojure.string :as str]
             [datascript.core :as d]
             [loom.alg :as alg]
