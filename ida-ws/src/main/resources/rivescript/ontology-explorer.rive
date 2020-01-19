@@ -2,9 +2,9 @@
 
 //User queries for ontology
 
-+ i want a ontology explorer for *
-* <call>OntologyExplorerHandler "<star1>"</call> == pass => Your requested
-^ \sOntology explorer is now added to the main view
++ i want ontology explorer for current dataset
+* <call>OntologyExplorerHandler </call> == pass => Ontology explorer is now added to the main view
+- Ontology does not exist for current dataset!
 
-+ open * ontology
-@ i want a ontology explorer for <star>
++ open ontology explorer
+@ i want ontology explorer for current dataset

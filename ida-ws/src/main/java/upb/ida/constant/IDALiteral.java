@@ -17,6 +17,7 @@ public interface IDALiteral {
 	public static final int UIA_GSDIAGRAM = 8;
 	public static final int UIA_SSBDIAGRAM = 9;
 	public static final int UIA_NOACTION = 0;
+	public static final int UIA_ONTOLOGY = 11;
 
 
 	//Rivescript literals
@@ -50,5 +51,7 @@ public interface IDALiteral {
 			"prefix dc: <http://purl.org/dc/elements/1.1/>\n");
 	public static final String TEST_DATASET = "test-data";
 	public static final String TEST_ONTOLOGYSET = "test-ontology";
+	public static final String SS_DATASET = "ssfuehrer";
+	public static final String ONTOLOGY_ERROR = "Please load a dataset before.";
 
 }

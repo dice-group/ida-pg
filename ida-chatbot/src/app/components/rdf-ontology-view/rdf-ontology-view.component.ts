@@ -10,7 +10,7 @@ declare function createV4RDFOntologyGraph(a, b, c, d, e, f, g, h, j, i);
 })
 export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterContentInit {
 
-  @Input('data') ontologyData: any;
+  @Input('data') inputData: any;
 
   public figId: string;
   public ontologyId: string;
@@ -24,6 +24,9 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
   public nodeDomainId: string;
   public nodeRangeId: string;
   public nodeCommentId: string;
+  ontologyData: any = {};
+  title = "";
+
 
   expandNodeInfoCard = false;
   languageCheked = false;
@@ -62,6 +65,8 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
   }
 
   ngOnInit() {
+    this.ontologyData = this.inputData.ontologyData || {};
+    this.title = this.inputData.actvDs || "";
   }
 
   ngAfterContentInit() {
@@ -92,7 +97,7 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
       propertyTextColor: this.propertyTextColor,
       onClickNodeColor: this.onClickNodeColor
     }
-    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.fileName, this.languageCheked, this.classHeirarchyChecked,
+    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.ontologyData, this.languageCheked, this.classHeirarchyChecked,
       this.allPropChecked, this.allNodesInBoundClicked, this.disableZoomClicked, idVal, customizeGraphVals);
   }
   ngAfterViewInit() {
@@ -116,7 +121,7 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
       propertyTextColor: this.propertyTextColor,
       onClickNodeColor: this.onClickNodeColor
     }
-    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.fileName, this.languageCheked, this.classHeirarchyChecked,
+    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.ontologyData, this.languageCheked, this.classHeirarchyChecked,
       this.allPropChecked, this.allNodesInBoundClicked, this.disableZoomClicked, idVal, customizeGraphVals);
   }
 
@@ -140,7 +145,7 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
       propertyTextColor: this.propertyTextColor,
       onClickNodeColor: this.onClickNodeColor
     }
-    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.fileName, this.languageCheked, this.classHeirarchyChecked,
+    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.ontologyData, this.languageCheked, this.classHeirarchyChecked,
       this.allPropChecked, this.allNodesInBoundClicked, this.disableZoomClicked, idVal, customizeGraphVals);
   }
   graphResetChanged(event) {
@@ -184,7 +189,7 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
       onClickNodeColor: this.onClickNodeColor
     }
 
-    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.fileName, this.languageCheked, this.classHeirarchyChecked,
+    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.ontologyData, this.languageCheked, this.classHeirarchyChecked,
       this.allPropChecked, this.allNodesInBoundClicked, this.disableZoomClicked, idVal, customizeGraphVals);
   }
 
@@ -209,7 +214,7 @@ export class RdfOntologyViewComponent implements OnInit, AfterViewInit, AfterCon
       propertyTextColor: this.propertyTextColor,
       onClickNodeColor: this.onClickNodeColor
     }
-    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.fileName, this.languageCheked, this.classHeirarchyChecked,
+    createV4RDFOntologyGraph(this.figId, this.ontologyId, this.ontologyData, this.languageCheked, this.classHeirarchyChecked,
       this.allPropChecked, this.allNodesInBoundClicked,
       this.disableZoomClicked, idVal, customizeGraphVals);
   }
