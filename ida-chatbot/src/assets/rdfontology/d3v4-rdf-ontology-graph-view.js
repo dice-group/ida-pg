@@ -11,6 +11,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
     var onDoubleClickCreatingNodes = false;
     var nodeDoubleClicked = "";
     var undefVar = false;
+    var undefinedVarValue = undefined;
     var width = 1175,
         height = 1100,
         resourceRadius = customizeGraphArray.resourceRadius,
@@ -80,7 +81,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
     // }
     //START :: get english and deutsch labels values into arrays
     data["@graph"].forEach(function (elem) {
-        if (elem["label"] === undefined) {
+        if (elem["label"] === undefinedVarValue) {
             tempLabelArray = elem["@id"].split("/");
             tempLabelArray1 = tempLabelArray[tempLabelArray.length - 1].split(":");
             tempLabel = tempLabelArray1[tempLabelArray1.length - 1];
@@ -201,7 +202,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
     }
 
     function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        if (!d3.event.active) { simulation.alphaTarget(0.3).restart();}
         d.fx = d.x;
         d.fy = d.y;
     }
@@ -212,11 +213,503 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
     }
 
     function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
+        if (!d3.event.active) {simulation.alphaTarget(0);}
         d.fx = null;
         d.fy = null;
     }
-    
+
+    function ticked() {
+        lables
+            .attr("x2", function (d) {
+                return d.x - width;
+            })
+            .attr("y2", function (d) {
+                return d.y - height;
+            });
+        link
+            .attr("x1", function (d) {
+                return d.source.x;
+            })
+            .attr("y1", function (d) {
+                return d.source.y;
+            })
+            .attr("x2", function (d) {
+                return d.target.x;
+            })
+            .attr("y2", function (d) {
+                return d.target.y;
+            });
+        linkTexts
+            .attr("x", function (d) {
+                return 4 + (d.source.x + d.target.x) / 2;
+            })
+            .attr("y", function (d) {
+                return 4 + (d.source.y + d.target.y) / 2;
+            });
+        node
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+        if (applyNodesBoundary) {
+            node
+                .attr("cx", function (d) {
+                    return d.x = Math.max(Math.max(resourceRadius, literalRadius), Math.min(width - Math.max(resourceRadius, literalRadius), d.x));
+                })
+                .attr("cy", function (d) {
+                    return d.y = Math.max(Math.max(resourceRadius, literalRadius), Math.min(height - Math.max(resourceRadius, literalRadius), d.y));
+                });
+        }
+    }
+
+    function doubleClickFunctionality(d) {
+        var idVal = "#" + d.nodeId;
+        var clickedNodeLabel = d.id;
+        var newlyCreatingLinkData = "";
+        var allClear;
+        
+        if (expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal)) {
+            expandedNodesArray.push(idVal);
+
+
+            d3.select(idVal)
+                .attr("r", resourceRadius + 4)
+                .style("fill", customizeGraphArray.onClickNodeColor);
+
+            var tempSub = "?";
+            var tempPred = "?";
+            var tempObj = "?";
+            var pred = "---subClassOf---";
+            var tempDomainArray = [];
+            var includeThis, tempDomainLabel, tempLabelArray, tempLabelArray1, isLitteral, literalDataType, tripleValue, removeClikedNode;
+
+            onDoubleClickCreatingNodes = true;
+            nodeDoubleClicked = idVal;
+
+            data["@graph"].forEach(function (element) {
+                tempSub = "?";
+                tempPred = "?";
+                tempObj = "?";
+                pred = "---subClassOf---";
+                tempDomainArray = [];
+
+                includeThis = false;
+                //START :: Nodes and Links creation for all Properties
+                //get the subject label  
+                if (element["domain"] === undefinedVarValue) {
+                    undefVar = true;
+                }
+                else {
+                    if (Object.prototype.toString.call(element["domain"]) === "[object Array]") {
+                        element["domain"].forEach(function (eachIds) {
+                            tempDomainLabel = getLabel(displayDeustch, eachIds);
+
+                            if (clickedNodeLabel === tempDomainLabel) {
+                                includeThis = true;
+                                tempDomainArray.push(tempDomainLabel);
+                            }
+
+                        });
+                    } else {
+                        tempSub = getLabel(displayDeustch, element["domain"]);
+
+                        if (clickedNodeLabel === tempSub) {
+                            includeThis = true;
+                        }
+                    }
+                }
+
+                if (includeThis) {
+                    //get the predicate
+                    if (element["domain"] === undefinedVarValue) {
+                        undefVar = true;
+                    }
+                    else {
+                        tempPred = getLabel(displayDeustch, element["@id"]);
+                    }
+
+                    //get the object  range
+                    if (element["range"] === undefinedVarValue) {
+                        undefVar = true;
+                    }
+                    else {
+                        tempObj = getLabel(displayDeustch, element["range"]);
+                    }
+
+                    isLitteral = false;
+                    literalDataType = tempObj;
+
+                    if (tempObj.toLowerCase().includes("xsd:")) {
+                        tempObj = tempObj + literalIndex;
+                        literalIndex = literalIndex + 1;
+                        isLitteral = true;
+                    }
+
+                    if (!tempDomainArray.length === 0) {
+                        tempDomainArray.forEach(function (el) {
+                            if (el !== "?" && tempPred !== "?" && tempObj !== "?") {
+                                if (isLitteral) {
+                                    tripleValue = {
+                                        source: el,
+                                        predicate: tempPred,
+                                        target: tempObj,
+                                        value: 1
+                                    };
+                                    linksArray.push(tripleValue);
+                                    newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
+                                    onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
+                                    createNewNode(el, tempPred, tempObj, isLitteral, literalDataType, element);
+                                } else {
+                                    tripleValue = {
+                                        source: el,
+                                        predicate: tempPred,
+                                        target: tempObj,
+                                        value: 1
+                                    };
+                                    linksArray.push(tripleValue);
+                                    newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
+                                    onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
+                                    createNewNode(el, tempPred, tempObj, isLitteral, literalDataType);
+                                }
+                            }
+                        });
+                    } else {
+                        if (tempSub !== "?" && tempPred !== "?" && tempObj !== "?") {
+                            if (isLitteral) {
+                                tripleValue = {
+                                    source: tempSub,
+                                    predicate: " ",
+                                    target: tempPred,
+                                    value: 1
+                                };
+                                linksArray.push(tripleValue);
+                                newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
+                                onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
+                                createNewNode(tempSub, "", tempPred, isLitteral, literalDataType);
+                            } else {
+                                tripleValue = {
+                                    source: tempSub,
+                                    predicate: tempPred,
+                                    target: tempObj,
+                                    value: 1
+                                };
+                                linksArray.push(tripleValue);
+                                newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
+                                onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
+                                createNewNode(tempSub, tempPred, tempObj, isLitteral, literalDataType);
+                            }
+                        }
+                    }
+                }
+                //END :: Nodes and Links creation for all Properties
+            });
+
+
+            onDoubleClickCreatingNodes = false;
+
+            allClear = d3.selectAll(".everything");
+            allClear.selectAll("*").remove();
+
+            update();
+            simulation.restart();
+
+
+        }
+        else if (expandedNodesArray.includes(idVal)) {
+            removeClikedNode = "";
+            onDoubleClickedNewlyCreatedLinks.forEach(function (val) {
+                if (val.nodeClicked === idVal) {
+                    for (i = 0; i < linksArray.length; i++) {
+                        if (linksArray[i].source === val.link.source && linksArray[i].predicate === val.link.predicate && linksArray[i].target === val.link.target) {
+                            linksArray.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    removeClikedNode = val.nodeClicked;
+
+                }
+            });
+
+            for (i = 0; i < onDoubleClickedNewlyCreatedLinks.length; i++) {
+                if (onDoubleClickedNewlyCreatedLinks[i].nodeClicked === removeClikedNode) {
+                    onDoubleClickedNewlyCreatedLinks.splice(i, 1);
+                    i--;
+                }
+            }
+
+
+            removeClikedNode = "";
+            onDoubleClickedNewlyCreatedNodes.forEach(function (val) {
+                if (val.nodeClicked === idVal) {
+                    for (i = 0; i < nodesArray.length; i++) {
+                        if (nodesArray[i].id === val.nodeCreated.id) {
+                            nodesArray.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    removeClikedNode = val.nodeClicked;
+                }
+            });
+
+            for (i = 0; i < onDoubleClickedNewlyCreatedNodes.length; i++) {
+                if (onDoubleClickedNewlyCreatedNodes[i].nodeClicked === removeClikedNode) {
+                    onDoubleClickedNewlyCreatedNodes.splice(i, 1);
+                    i--;
+                }
+            }
+
+            for (i = 0; i < expandedNodesArray.length; i++) {
+                if (expandedNodesArray[i] === idVal) {
+                    expandedNodesArray.splice(i, 1);
+                    break;
+                }
+            }
+            allClear = d3.selectAll(".everything");
+            allClear.selectAll("*").remove();
+
+            update();
+            simulation.restart();
+
+        }
+    }
+
+    function clickFuntionality(d) {
+        var nodeIdVal = d.id;
+        var tempNodeContains = [];
+        nodeContents.forEach(function (val) {
+            if (val.label === nodeIdVal) {
+                tempNodeContains = val.contents;
+            }
+        });
+
+        var tempNode = d3.select("#" + idsArray.nodeId);
+        tempNode.selectAll("*").remove();
+        tempNode.append("text")
+            .text(" " + nodeIdVal + "\n")
+            .style("font-style", "italic")
+            .style("font-size", "80%")
+            .style("position", "relative")
+            .style("bottom", "2px");
+
+
+        //node label on double click
+        if (tempNodeContains !== undefinedVarValue) {
+            var nodeLabel = d3.select("#" + idsArray.nodeLabelId);
+            nodeLabel.selectAll("*").remove();
+            if (tempNodeContains["label"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                if (Object.prototype.toString.call(tempNodeContains["label"]) === "[object Array]") {
+                    tempNodeContains["label"].forEach(function (eachIds) {
+                        if (eachIds["@language"] === "de" && displayDeustch) {
+
+                            nodeLabel.append("text")
+                                .text(" " + eachIds["@value"] + "\n")
+                                .style("font-style", "italic")
+                                .style("font-size", "80%")
+                                .style("position", "relative")
+                                .style("bottom", "2px");
+                        } else if (eachIds["@language"] === "en" && !displayDeustch) {
+                            nodeLabel.append("text")
+                                .text(" " + eachIds["@value"] + "\n")
+                                .style("font-style", "italic")
+                                .style("font-size", "80%")
+                                .style("position", "relative")
+                                .style("bottom", "2px");
+                        }
+
+                    });
+                } else {
+                    nodeLabel.append("text")
+                        .text(" " + tempNodeContains["label"]["@value"] + "\n")
+                        .style("font-style", "italic")
+                        .style("font-size", "80%")
+                        .style("position", "relative")
+                        .style("bottom", "2px");
+                }
+            }
+
+            //node id on double click
+            var nodeID = d3.select("#" + idsArray.nodeIdsId);
+            nodeID.selectAll("*").remove();
+            if (tempNodeContains["@id"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                nodeID.append("text")
+                    .text(" " + tempNodeContains["@id"] + "\n")
+                    .style("font-style", "italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+            }
+            //node type on double click
+            var nodeType = d3.select("#" + idsArray.nodeTypeId);
+            nodeType.selectAll("*").remove();
+            if (tempNodeContains["@type"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                nodeType.append("text")
+                    .text(" " + tempNodeContains["@type"] + "\n\n")
+                    .style("font-style", "italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+            }
+
+            //node description on double click
+            var nodeDescription = d3.select("#" + idsArray.nodeDescripId)
+            nodeDescription.selectAll("*").remove();
+            if (tempNodeContains["description"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                if (Object.prototype.toString.call(tempNodeContains["description"]) === "[object Array]") {
+                    tempNodeContains["description"].forEach(function (eachIds) {
+                        if (eachIds["@language"] === "de" && displayDeustch) {
+
+                            nodeDescription.append("text")
+                                .text(" " + eachIds["@value"] + "\n")
+                                .style("font-style", "italic")
+                                .style("font-size", "80%")
+                                .style("position", "relative")
+                                .style("bottom", "2px");
+                        } else if (eachIds["@language"] === "en" && !displayDeustch) {
+                            nodeDescription.append("text")
+                                .text(" " + eachIds["@value"] + "\n")
+                                .style("font-style", "italic")
+                                .style("font-size", "80%")
+                                .style("position", "relative")
+                                .style("bottom", "2px");
+                        }
+
+                    });
+                } else {
+                    nodeDescription.append("text")
+                        .text(" " + tempNodeContains["description"]["@value"] + "\n")
+                        .style("font-style", "italic")
+                        .style("font-size", "80%")
+                        .style("position", "relative")
+                        .style("bottom", "2px");
+                }
+            }
+
+            var nodeSubClass = d3.select("#" + idsArray.nodeSubClassId)
+            nodeSubClass.selectAll("*").remove();
+            if (tempNodeContains["subClassOf"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                if (Object.prototype.toString.call(tempNodeContains["subClassOf"]) === "[object Array]") {
+                    var tempIndexSubClassof = 1;
+                    tempNodeContains["subClassOf"].forEach(function (eachIds) {
+                        var subClassLabel = getLabel(displayDeustch, eachIds);
+
+                        nodeSubClass.append("text")
+                            .text(" " + tempIndexSubClassof + ". " + subClassLabel + "\n")
+                            .style("font-style", "italic")
+                            .style("font-size", "80%")
+                            .style("position", "relative")
+                            .style("bottom", "2px");
+
+                        tempIndexSubClassof = tempIndexSubClassof + 1;
+
+                    });
+                } else {
+                    var subClassLabel = getLabel(displayDeustch, tempNodeContains["subClassOf"]);
+
+                    nodeSubClass.append("text")
+                        .text(" " + subClassLabel + "\n")
+                        .style("font-style", "italic")
+                        .style("font-size", "80%")
+                        .style("position", "relative")
+                        .style("bottom", "2px");
+                }
+            }
+
+            var nodeDomain = d3.select("#" + idsArray.nodeDomainId)
+            nodeDomain.selectAll("*").remove();
+            if (tempNodeContains["domain"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                if (Object.prototype.toString.call(tempNodeContains["domain"]) === "[object Array]") {
+                    var tempIndexdomain = 1;
+                    tempNodeContains["domain"].forEach(function (eachIds) {
+                        var domainLabel = getLabel(displayDeustch, eachIds);
+
+                        nodeDomain.append("text")
+                            .text(" " + tempIndexdomain + ". " + domainLabel + "\n")
+                            .style("font-style", "italic")
+                            .style("font-size", "80%")
+                            .style("position", "relative")
+                            .style("bottom", "2px");
+
+                        tempIndexdomain = tempIndexdomain + 1;
+
+                    });
+                } else {
+                    var domainLabel = getLabel(displayDeustch, tempNodeContains["domain"]);
+
+                    nodeDomain.append("text")
+                        .text(" " + domainLabel + "\n")
+                        .style("font-style", "italic")
+                        .style("font-size", "80%")
+                        .style("position", "relative")
+                        .style("bottom", "2px");
+                }
+            }
+
+
+
+            var nodeRange = d3.select("#" + idsArray.nodeRangeId)
+            nodeRange.selectAll("*").remove();
+            if (tempNodeContains["range"] === undefinedVarValue) {
+                undefVar = true;
+            } else {
+                if (Object.prototype.toString.call(tempNodeContains["range"]) === "[object Array]") {
+                    var tempIndexRange = 1;
+                    tempNodeContains["range"].forEach(function (eachIds) {
+                        var rangeLabel = getLabel(displayDeustch, eachIds);
+
+                        nodeRange.append("text")
+                            .text(" " + tempIndexRange + ". " + rangeLabel + "\n")
+                            .style("font-style", "italic")
+                            .style("font-size", "80%")
+                            .style("position", "relative")
+                            .style("bottom", "2px");
+
+                        tempIndexRange = tempIndexRange + 1;
+
+                    });
+                } else {
+                    var rangeLabel = getLabel(displayDeustch, tempNodeContains["range"]);
+
+                    nodeRange.append("text")
+                        .text(" " + rangeLabel + "\n")
+                        .style("font-style", "italic")
+                        .style("font-size", "80%")
+                        .style("position", "relative")
+                        .style("bottom", "2px");
+                }
+            }
+
+            var nodeComment = d3.select("#" + idsArray.nodeCommentId)
+            nodeComment.selectAll("*").remove();
+            if (tempNodeContains["comment"] === undefinedVarValue) {
+                undefVar = true;
+            }
+            else {
+                nodeComment.append("text")
+                    .text(tempNodeContains["comment"] + "\n")
+                    .style("font-style", "italic")
+                    .style("font-size", "80%")
+                    .style("position", "relative")
+                    .style("bottom", "2px");
+            }
+        }
+
+    }
+
+    function zoomActions() {
+        g.attr("transform", d3.event.transform);
+    }
+
     function update() {
 
         simulation.restart();
@@ -416,7 +909,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         var objNodeAdded = false;
         var onDoubleClickNodesCreated = "";
         var nodeValue = {};
-        if (nodesArray === undefined) {
+        if (nodesArray === undefinedVarValue) {
             undefVar = true;
         }
         else {
@@ -477,7 +970,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         var tempDomainLabel;
         //START :: Nodes and Links creation for subClassOf
         if (displaySubclasses) {
-            if (element["subClassOf"] === undefined) {
+            if (element["subClassOf"] === undefinedVarValue) {
                 undefVar = true;
             }
             else {
@@ -516,7 +1009,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         //START :: Nodes and Links creation for all Properties
         if (dispalyAllprop) {
             //get the subject label  
-            if (element["domain"] === undefined) {
+            if (element["domain"] === undefinedVarValue) {
                 undefVar = true;
             }
             else {
@@ -531,7 +1024,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             }
 
             //get the predicate
-            if (element["domain"] === undefined) {
+            if (element["domain"] === undefinedVarValue) {
                 undefVar = true;
             }
             else {
@@ -540,7 +1033,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
 
 
             //get the object  range
-            if (element["range"] === undefined) {
+            if (element["range"] === undefinedVarValue) {
                 undefVar = true;
             }
             else {
@@ -607,499 +1100,6 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         //END :: Nodes and Links creation for all Properties
     });
     //END :: Creation of Graph depenging on displaySubclasses and dispalyAllprop values
-
-    function doubleClickFunctionality(d) {
-        var idVal = "#" + d.nodeId;
-        var clickedNodeLabel = d.id;
-        var newlyCreatingLinkData = "";
-        
-        if (expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal)) {
-            expandedNodesArray.push(idVal);
-
-
-            d3.select(idVal)
-                .attr("r", resourceRadius + 4)
-                .style("fill", customizeGraphArray.onClickNodeColor);
-
-            var tempSub = "?";
-            var tempPred = "?";
-            var tempObj = "?";
-            var pred = "---subClassOf---";
-            var tempDomainArray = [];
-            var includeThis, tempDomainLabel, tempLabelArray, tempLabelArray1, isLitteral, literalDataType, tripleValue, removeClikedNode;
-
-            onDoubleClickCreatingNodes = true;
-            nodeDoubleClicked = idVal;
-
-            data["@graph"].forEach(function (element) {
-                tempSub = "?";
-                tempPred = "?";
-                tempObj = "?";
-                pred = "---subClassOf---";
-                tempDomainArray = [];
-
-                includeThis = false;
-                //START :: Nodes and Links creation for all Properties
-                //get the subject label  
-                if (element["domain"] === undefined) {
-                    undefVar = true;
-                }
-                else {
-                    if (Object.prototype.toString.call(element["domain"]) === "[object Array]") {
-                        element["domain"].forEach(function (eachIds) {
-                            tempDomainLabel = getLabel(displayDeustch, eachIds);
-
-                            if (clickedNodeLabel === tempDomainLabel) {
-                                includeThis = true;
-                                tempDomainArray.push(tempDomainLabel);
-                            }
-
-                        });
-                    } else {
-                        tempSub = getLabel(displayDeustch, element["domain"]);
-
-                        if (clickedNodeLabel === tempSub) {
-                            includeThis = true;
-                        }
-                    }
-                }
-
-                if (includeThis) {
-                    //get the predicate
-                    if (element["domain"] === undefined) {
-                        undefVar = true;
-                    }
-                    else {
-                        tempPred = getLabel(displayDeustch, element["@id"]);
-                    }
-
-                    //get the object  range
-                    if (element["range"] === undefined) {
-                        undefVar = true;
-                    }
-                    else {
-                        tempObj = getLabel(displayDeustch, element["range"]);
-                    }
-
-                    isLitteral = false;
-                    literalDataType = tempObj;
-
-                    if (tempObj.toLowerCase().includes("xsd:")) {
-                        tempObj = tempObj + literalIndex;
-                        literalIndex = literalIndex + 1;
-                        isLitteral = true;
-                    }
-
-                    if (!tempDomainArray.length === 0) {
-                        tempDomainArray.forEach(function (el) {
-                            if (el !== "?" && tempPred !== "?" && tempObj !== "?") {
-                                if (isLitteral) {
-                                    tripleValue = {
-                                        source: el,
-                                        predicate: tempPred,
-                                        target: tempObj,
-                                        value: 1
-                                    };
-                                    linksArray.push(tripleValue);
-                                    newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
-                                    onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
-                                    createNewNode(el, tempPred, tempObj, isLitteral, literalDataType, element);
-                                } else {
-                                    tripleValue = {
-                                        source: el,
-                                        predicate: tempPred,
-                                        target: tempObj,
-                                        value: 1
-                                    };
-                                    linksArray.push(tripleValue);
-                                    newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
-                                    onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
-                                    createNewNode(el, tempPred, tempObj, isLitteral, literalDataType);
-                                }
-                            }
-                        });
-                    } else {
-                        if (tempSub !== "?" && tempPred !== "?" && tempObj !== "?") {
-                            if (isLitteral) {
-                                tripleValue = {
-                                    source: tempSub,
-                                    predicate: " ",
-                                    target: tempPred,
-                                    value: 1
-                                };
-                                linksArray.push(tripleValue);
-                                newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
-                                onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
-                                createNewNode(tempSub, "", tempPred, isLitteral, literalDataType);
-                            } else {
-                                tripleValue = {
-                                    source: tempSub,
-                                    predicate: tempPred,
-                                    target: tempObj,
-                                    value: 1
-                                };
-                                linksArray.push(tripleValue);
-                                newlyCreatingLinkData = { nodeClicked: idVal, link: tripleValue };
-                                onDoubleClickedNewlyCreatedLinks.push(newlyCreatingLinkData);
-                                createNewNode(tempSub, tempPred, tempObj, isLitteral, literalDataType);
-                            }
-                        }
-                    }
-                }
-                //END :: Nodes and Links creation for all Properties
-            });
-
-
-            onDoubleClickCreatingNodes = false;
-
-            var allClear = d3.selectAll(".everything");
-            allClear.selectAll("*").remove();
-
-            update();
-            simulation.restart();
-
-
-        }
-        else if (expandedNodesArray.includes(idVal)) {
-            removeClikedNode = "";
-            onDoubleClickedNewlyCreatedLinks.forEach(function (val) {
-                if (val.nodeClicked === idVal) {
-                    for (i = 0; i < linksArray.length; i++) {
-                        if (linksArray[i].source === val.link.source && linksArray[i].predicate === val.link.predicate && linksArray[i].target === val.link.target) {
-                            linksArray.splice(i, 1);
-                            i--;
-                        }
-                    }
-                    removeClikedNode = val.nodeClicked;
-
-                }
-            });
-
-            for (i = 0; i < onDoubleClickedNewlyCreatedLinks.length; i++) {
-                if (onDoubleClickedNewlyCreatedLinks[i].nodeClicked === removeClikedNode) {
-                    onDoubleClickedNewlyCreatedLinks.splice(i, 1);
-                    i--;
-                }
-            }
-
-
-            removeClikedNode = "";
-            onDoubleClickedNewlyCreatedNodes.forEach(function (val) {
-                if (val.nodeClicked === idVal) {
-                    for (i = 0; i < nodesArray.length; i++) {
-                        if (nodesArray[i].id === val.nodeCreated.id) {
-                            nodesArray.splice(i, 1);
-                            i--;
-                        }
-                    }
-                    removeClikedNode = val.nodeClicked;
-                }
-            });
-
-            for (i = 0; i < onDoubleClickedNewlyCreatedNodes.length; i++) {
-                if (onDoubleClickedNewlyCreatedNodes[i].nodeClicked === removeClikedNode) {
-                    onDoubleClickedNewlyCreatedNodes.splice(i, 1);
-                    i--;
-                }
-            }
-
-            for (i = 0; i < expandedNodesArray.length; i++) {
-                if (expandedNodesArray[i] === idVal) {
-                    expandedNodesArray.splice(i, 1);
-                    break;
-                }
-            }
-            var allClear = d3.selectAll(".everything");
-            allClear.selectAll("*").remove();
-
-            update();
-            simulation.restart();
-
-        }
-    }
-
-    function clickFuntionality(d) {
-        var nodeIdVal = d.id;
-        var tempNodeContains = [];
-        nodeContents.forEach(function (val) {
-            if (val.label === nodeIdVal) {
-                tempNodeContains = val.contents;
-            }
-        });
-
-        var tempNode = d3.select("#" + idsArray.nodeId)
-        tempNode.selectAll("*").remove();
-        tempNode.append("text")
-            .text(" " + nodeIdVal + "\n")
-            .style("font-style", "italic")
-            .style("font-size", "80%")
-            .style("position", "relative")
-            .style("bottom", "2px");
-
-
-        //node label on double click
-        if (tempNodeContains !== undefined) {
-            var nodeLabel = d3.select("#" + idsArray.nodeLabelId)
-            nodeLabel.selectAll("*").remove();
-            if (tempNodeContains["label"] === undefined) {
-                undefVar = true;
-            } else {
-                if (Object.prototype.toString.call(tempNodeContains["label"]) === "[object Array]") {
-                    tempNodeContains["label"].forEach(function (eachIds) {
-                        if (eachIds["@language"] === "de" && displayDeustch) {
-
-                            nodeLabel.append("text")
-                                .text(" " + eachIds["@value"] + "\n")
-                                .style("font-style", "italic")
-                                .style("font-size", "80%")
-                                .style("position", "relative")
-                                .style("bottom", "2px");
-                        } else if (eachIds["@language"] === "en" && !displayDeustch) {
-                            nodeLabel.append("text")
-                                .text(" " + eachIds["@value"] + "\n")
-                                .style("font-style", "italic")
-                                .style("font-size", "80%")
-                                .style("position", "relative")
-                                .style("bottom", "2px");
-                        }
-
-                    });
-                } else {
-                    nodeLabel.append("text")
-                        .text(" " + tempNodeContains["label"]["@value"] + "\n")
-                        .style("font-style", "italic")
-                        .style("font-size", "80%")
-                        .style("position", "relative")
-                        .style("bottom", "2px");
-                }
-            }
-
-            //node id on double click
-            var nodeID = d3.select("#" + idsArray.nodeIdsId)
-            nodeID.selectAll("*").remove();
-            if (tempNodeContains["@id"] === undefined) {
-                undefVar = true;
-            } else {
-                nodeID.append("text")
-                    .text(" " + tempNodeContains["@id"] + "\n")
-                    .style("font-style", "italic")
-                    .style("font-size", "80%")
-                    .style("position", "relative")
-                    .style("bottom", "2px");
-            }
-            //node type on double click
-            var nodeType = d3.select("#" + idsArray.nodeTypeId)
-            nodeType.selectAll("*").remove();
-            if (tempNodeContains["@type"] === undefined) {
-                undefVar = true;
-            } else {
-                nodeType.append("text")
-                    .text(" " + tempNodeContains["@type"] + "\n\n")
-                    .style("font-style", "italic")
-                    .style("font-size", "80%")
-                    .style("position", "relative")
-                    .style("bottom", "2px");
-            }
-
-            //node description on double click
-            var nodeDescription = d3.select("#" + idsArray.nodeDescripId)
-            nodeDescription.selectAll("*").remove();
-            if (tempNodeContains["description"] === undefined) {
-                undefVar = true;
-            } else {
-                if (Object.prototype.toString.call(tempNodeContains["description"]) === "[object Array]") {
-                    tempNodeContains["description"].forEach(function (eachIds) {
-                        if (eachIds["@language"] === "de" && displayDeustch) {
-
-                            nodeDescription.append("text")
-                                .text(" " + eachIds["@value"] + "\n")
-                                .style("font-style", "italic")
-                                .style("font-size", "80%")
-                                .style("position", "relative")
-                                .style("bottom", "2px");
-                        } else if (eachIds["@language"] === "en" && !displayDeustch) {
-                            nodeDescription.append("text")
-                                .text(" " + eachIds["@value"] + "\n")
-                                .style("font-style", "italic")
-                                .style("font-size", "80%")
-                                .style("position", "relative")
-                                .style("bottom", "2px");
-                        }
-
-                    });
-                } else {
-                    nodeDescription.append("text")
-                        .text(" " + tempNodeContains["description"]["@value"] + "\n")
-                        .style("font-style", "italic")
-                        .style("font-size", "80%")
-                        .style("position", "relative")
-                        .style("bottom", "2px");
-                }
-            }
-
-            var nodeSubClass = d3.select("#" + idsArray.nodeSubClassId)
-            nodeSubClass.selectAll("*").remove();
-            if (tempNodeContains["subClassOf"] === undefined) {
-                undefVar = true;
-            } else {
-                if (Object.prototype.toString.call(tempNodeContains["subClassOf"]) === "[object Array]") {
-                    var tempIndexSubClassof = 1;
-                    tempNodeContains["subClassOf"].forEach(function (eachIds) {
-                        var subClassLabel = getLabel(displayDeustch, eachIds);
-
-                        nodeSubClass.append("text")
-                            .text(" " + tempIndexSubClassof + ". " + subClassLabel + "\n")
-                            .style("font-style", "italic")
-                            .style("font-size", "80%")
-                            .style("position", "relative")
-                            .style("bottom", "2px");
-
-                        tempIndexSubClassof = tempIndexSubClassof + 1;
-
-                    });
-                } else {
-                    var subClassLabel = getLabel(displayDeustch, tempNodeContains["subClassOf"]);
-
-                    nodeSubClass.append("text")
-                        .text(" " + subClassLabel + "\n")
-                        .style("font-style", "italic")
-                        .style("font-size", "80%")
-                        .style("position", "relative")
-                        .style("bottom", "2px");
-                }
-            }
-
-            var nodeDomain = d3.select("#" + idsArray.nodeDomainId)
-            nodeDomain.selectAll("*").remove();
-            if (tempNodeContains["domain"] === undefined) {
-                undefVar = true;
-            } else {
-                if (Object.prototype.toString.call(tempNodeContains["domain"]) === "[object Array]") {
-                    var tempIndexdomain = 1;
-                    tempNodeContains["domain"].forEach(function (eachIds) {
-                        var domainLabel = getLabel(displayDeustch, eachIds);
-
-                        nodeDomain.append("text")
-                            .text(" " + tempIndexdomain + ". " + domainLabel + "\n")
-                            .style("font-style", "italic")
-                            .style("font-size", "80%")
-                            .style("position", "relative")
-                            .style("bottom", "2px");
-
-                        tempIndexdomain = tempIndexdomain + 1;
-
-                    });
-                } else {
-                    var domainLabel = getLabel(displayDeustch, tempNodeContains["domain"]);
-
-                    nodeDomain.append("text")
-                        .text(" " + domainLabel + "\n")
-                        .style("font-style", "italic")
-                        .style("font-size", "80%")
-                        .style("position", "relative")
-                        .style("bottom", "2px");
-                }
-            }
-
-
-
-            var nodeRange = d3.select("#" + idsArray.nodeRangeId)
-            nodeRange.selectAll("*").remove();
-            if (tempNodeContains["range"] === undefined) {
-                undefVar = true;
-            } else {
-                if (Object.prototype.toString.call(tempNodeContains["range"]) === "[object Array]") {
-                    var tempIndexRange = 1;
-                    tempNodeContains["range"].forEach(function (eachIds) {
-                        var rangeLabel = getLabel(displayDeustch, eachIds);
-
-                        nodeRange.append("text")
-                            .text(" " + tempIndexRange + ". " + rangeLabel + "\n")
-                            .style("font-style", "italic")
-                            .style("font-size", "80%")
-                            .style("position", "relative")
-                            .style("bottom", "2px");
-
-                        tempIndexRange = tempIndexRange + 1;
-
-                    });
-                } else {
-                    var rangeLabel = getLabel(displayDeustch, tempNodeContains["range"]);
-
-                    nodeRange.append("text")
-                        .text(" " + rangeLabel + "\n")
-                        .style("font-style", "italic")
-                        .style("font-size", "80%")
-                        .style("position", "relative")
-                        .style("bottom", "2px");
-                }
-            }
-
-            var nodeComment = d3.select("#" + idsArray.nodeCommentId)
-            nodeComment.selectAll("*").remove();
-            if (tempNodeContains["comment"] === undefined) {
-                undefVar = true;
-            }
-            else {
-                nodeComment.append("text")
-                    .text(tempNodeContains["comment"] + "\n")
-                    .style("font-style", "italic")
-                    .style("font-size", "80%")
-                    .style("position", "relative")
-                    .style("bottom", "2px");
-            }
-        }
-
-    }
-
-    function zoomActions() {
-        g.attr("transform", d3.event.transform);
-    }
-
-    
-
-    function ticked() {
-        lables
-            .attr("x2", function (d) {
-                return d.x - width;
-            })
-            .attr("y2", function (d) {
-                return d.y - height;
-            });
-        link
-            .attr("x1", function (d) {
-                return d.source.x;
-            })
-            .attr("y1", function (d) {
-                return d.source.y;
-            })
-            .attr("x2", function (d) {
-                return d.target.x;
-            })
-            .attr("y2", function (d) {
-                return d.target.y;
-            });
-        linkTexts
-            .attr("x", function (d) {
-                return 4 + (d.source.x + d.target.x) / 2;
-            })
-            .attr("y", function (d) {
-                return 4 + (d.source.y + d.target.y) / 2;
-            });
-        node
-            .attr("transform", function (d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-        if (applyNodesBoundary) {
-            node
-                .attr("cx", function (d) {
-                    return d.x = Math.max(Math.max(resourceRadius, literalRadius), Math.min(width - Math.max(resourceRadius, literalRadius), d.x));
-                })
-                .attr("cy", function (d) {
-                    return d.y = Math.max(Math.max(resourceRadius, literalRadius), Math.min(height - Math.max(resourceRadius, literalRadius), d.y));
-                });
-        }
-    }
 
     update();
 };
