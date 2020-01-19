@@ -32,6 +32,7 @@ public class OntologyExplorerExecutor extends AbstractExecutor implements Intent
 				dataMap.put("ontologyData", ontologyData);
 				responseBean.setPayload(dataMap);
 				responseBean.setActnCode(IDALiteral.UIA_ONTOLOGY);
+				context.addChatbotResponse("Ontology is now displayed.");
 			} else {
 				context.addChatbotResponse("Ontology does not exist for current dataset.");
 			}
