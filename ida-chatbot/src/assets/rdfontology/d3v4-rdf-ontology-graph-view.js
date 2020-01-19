@@ -260,7 +260,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         }
         //END :: Node creation
     }
-
+    
     function dragstarted(d) {
         if (!d3v4.event.active) { simulation.alphaTarget(0.3).restart();}
         d.fx = d.x;
@@ -326,8 +326,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
         var clickedNodeLabel = d.id;
         var newlyCreatingLinkData = "";
         var allClear;
-        var includeThis, tempDomainLabel, tempLabelArray, tempLabelArray1, isLitteral, literalDataType, tripleValue, removeClikedNode;
-
+        
         if (expandedNodesArray.length === 0 || !expandedNodesArray.includes(idVal)) {
             expandedNodesArray.push(idVal);
 
@@ -341,7 +340,8 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             var tempObj = "?";
             var pred = "---subClassOf---";
             var tempDomainArray = [];
-            
+            var includeThis, tempDomainLabel, tempLabelArray, tempLabelArray1, isLitteral, literalDataType, tripleValue, removeClikedNode;
+
             onDoubleClickCreatingNodes = true;
             nodeDoubleClicked = idVal;
 
@@ -479,14 +479,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             onDoubleClickedNewlyCreatedLinks.forEach(function (val) {
                 if (val.nodeClicked === idVal) {
                     for (i = 0; i < linksArray.length; i++) {
-                        var sourceVal = linksArray[i].source;
-                        var linkSrc = val.link.source;
-                        var predVal = linksArray[i].predicate;
-                        var linkPred = val.link.predicate;
-                        var targetVal = linksArray[i].target;
-                        var linkTarget = val.link.target;
-                        
-                        if ( sourceVal === linkSrc && predVal === linkPred &&  targetVal === linkTarget) {
+                        if (linksArray[i].source === val.link.source && linksArray[i].predicate === val.link.predicate && linksArray[i].target === val.link.target) {
                             linksArray.splice(i, 1);
                             i--;
                         }
@@ -497,8 +490,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             });
 
             for (i = 0; i < onDoubleClickedNewlyCreatedLinks.length; i++) {
-                var nodeClickedVal = onDoubleClickedNewlyCreatedLinks[i].nodeClicked;
-                if ( nodeClickedVal === removeClikedNode) {
+                if (onDoubleClickedNewlyCreatedLinks[i].nodeClicked === removeClikedNode) {
                     onDoubleClickedNewlyCreatedLinks.splice(i, 1);
                     i--;
                 }
@@ -509,9 +501,7 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             onDoubleClickedNewlyCreatedNodes.forEach(function (val) {
                 if (val.nodeClicked === idVal) {
                     for (i = 0; i < nodesArray.length; i++) {
-                        var tempIdVal = nodesArray[i].id;
-                        var tempCreatedId = val.nodeCreated.id;
-                        if (tempIdVal === tempCreatedId ) {
+                        if (nodesArray[i].id === val.nodeCreated.id) {
                             nodesArray.splice(i, 1);
                             i--;
                         }
@@ -521,16 +511,14 @@ function createV4RDFOntologyGraph(figId, svgId, graphData, displayDeustch, displ
             });
 
             for (i = 0; i < onDoubleClickedNewlyCreatedNodes.length; i++) {
-                var nodeClickedValue = onDoubleClickedNewlyCreatedLinks[i].nodeClicked;
-                if (nodeClickedValue === removeClikedNode) {
+                if (onDoubleClickedNewlyCreatedNodes[i].nodeClicked === removeClikedNode) {
                     onDoubleClickedNewlyCreatedNodes.splice(i, 1);
                     i--;
                 }
             }
 
             for (i = 0; i < expandedNodesArray.length; i++) {
-                var expandedArrayVal = expandedNodesArray[i];
-                if (expandedArrayVal === idVal) {
+                if (expandedNodesArray[i] === idVal) {
                     expandedNodesArray.splice(i, 1);
                     break;
                 }
