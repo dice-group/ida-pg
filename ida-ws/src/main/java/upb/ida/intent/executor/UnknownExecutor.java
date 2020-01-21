@@ -16,9 +16,9 @@ public class UnknownExecutor extends AbstractExecutor implements IntentExecutor 
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentException {
+	public boolean execute(ChatbotContext context) throws IntentException {
 		context.addChatbotResponse("Sorry, I could not understand your message. Please try again.");
-		context.resetOnNextRequest();
+		return true;
 	}
 
 	@Override

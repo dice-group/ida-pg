@@ -20,7 +20,8 @@ public class SunBurstExecutor extends AbstractExecutor implements IntentExecutor
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentException {
+	public boolean execute(ChatbotContext context) throws IntentException {
 		// Placeholder
+		return true;
 	}
 }

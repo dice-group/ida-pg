@@ -43,7 +43,7 @@ public class LoadDatasetExecutor extends AbstractExecutor implements IntentExecu
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentException {
+	public boolean execute(ChatbotContext context) throws IntentException {
 		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
 		Map<String, Object> dataMap = responseBean.getPayload();
 		String dataset = this.getDatasetFromMessage(context.getCurrentMessage());
@@ -61,7 +61,7 @@ public class LoadDatasetExecutor extends AbstractExecutor implements IntentExecu
 			responseBean.setActnCode(IDALiteral.UIA_LOADDS);
 			context.addChatbotResponse("Requested dataset is loaded.");
 		}
-		context.resetOnNextRequest();
+		return true;
 	}
 
 	private String getDatasetFromMessage(String userMessage) {

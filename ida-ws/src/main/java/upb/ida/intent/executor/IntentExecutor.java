@@ -10,7 +10,7 @@ public interface IntentExecutor {
 
 	Question getNextQuestion(ChatbotContext context);
 
-	void execute(ChatbotContext context) throws IntentException;
+	boolean execute(ChatbotContext context) throws IntentException;
 
 	boolean needsMoreInformation(ChatbotContext context);
 

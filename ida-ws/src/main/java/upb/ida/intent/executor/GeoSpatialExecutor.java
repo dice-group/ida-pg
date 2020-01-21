@@ -23,7 +23,7 @@ public class GeoSpatialExecutor extends AbstractExecutor implements IntentExecut
 	}
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentException {
+	public boolean execute(ChatbotContext context) throws IntentException {
 		Map<String, String> savedAnswers = context.getSavedAnswers();
 		String latitude = savedAnswers.get("latitude");
 		String longitude = savedAnswers.get("longitude");
@@ -60,10 +60,11 @@ public class GeoSpatialExecutor extends AbstractExecutor implements IntentExecut
 			}
 			dataMap.put("gsDiagramData", response);
 			context.addChatbotResponse("Geo Spatial diagram is now loaded");
-			context.resetOnNextRequest();
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			context.addChatbotResponse("Geo Spatial diagram could not be loaded");
+			return false;
 		}
 
 

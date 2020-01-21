@@ -97,8 +97,10 @@ public class Orchestrator {
 			context.setActiveQuestion(nextQuestion);
 		} else {
 			// Perform final action
-			executor.execute(context);
-//			context.resetOnNextRequest();
+			boolean success = executor.execute(context);
+			if(success) {
+				context.resetOnNextRequest();
+			}
 		}
 
 		return context;

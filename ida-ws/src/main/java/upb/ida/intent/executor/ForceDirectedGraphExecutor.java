@@ -25,7 +25,7 @@ public class ForceDirectedGraphExecutor extends AbstractExecutor implements Inte
 	}
 
 	@Override
-	public void execute(ChatbotContext context) {
+	public boolean execute(ChatbotContext context) {
 
 		try {
 			Map<String, String> savedAnswers = context.getSavedAnswers();
@@ -48,10 +48,11 @@ public class ForceDirectedGraphExecutor extends AbstractExecutor implements Inte
 			responseBean.setActnCode(IDALiteral.UIA_FDG);
 
 			context.addChatbotResponse("Force directed graph is now loaded");
-			context.resetOnNextRequest();
+			return true;
 		} catch (Exception e) {
 			context.addChatbotResponse("Force directed graph could not be loaded");
 			e.printStackTrace();
+			return false;
 		}
 	}
 }

@@ -26,9 +26,10 @@ public abstract class AbstractExecutor implements IntentExecutor {
 	 *
 	 * @param context current state of NLE
 	 * @throws IntentException
+	 * @return
 	 */
 	@Override
-	public abstract void execute(ChatbotContext context) throws IntentException;
+	public abstract boolean execute(ChatbotContext context) throws IntentException;
 
 	/**
 	 * Can be implemented to check for pre conditions before executing. Currently unused.

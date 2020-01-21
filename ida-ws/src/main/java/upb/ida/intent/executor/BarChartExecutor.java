@@ -29,18 +29,19 @@ public class BarChartExecutor extends AbstractExecutor implements IntentExecutor
 	}
 
 	@Override
-	public void execute(ChatbotContext context) {
+	public boolean execute(ChatbotContext context) {
 		// Final action
 		try {
 			BarGraphUtil barGraphUtil = BeanUtil.getBean(BarGraphUtil.class);
 			ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
 			Map<String, String> savedAnswers = context.getSavedAnswers();
 			barGraphUtil.generateBarGraphData(new String[]{savedAnswers.get("x-axis"), savedAnswers.get("y-axis"), savedAnswers.get("subset-type"), savedAnswers.get("subset-size")}, responseBean);
-			context.resetOnNextRequest();
+			return true;
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 			context.addChatbotResponse("Error occurred in executing the action.");
 			context.resetOnNextRequest();
+			return false;
 		}
 	}
 

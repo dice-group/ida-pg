@@ -20,15 +20,25 @@ public class SoldierCareerTimelineExecutor extends AbstractExecutor implements I
 
 
 	@Override
-	public void execute(ChatbotContext context) throws IntentException {
-//		SoldierTimeLine soldierTimeLine = new SoldierTimeLine("ssfuehrer", false);
+	public boolean execute(ChatbotContext context) throws IntentException {
+		// TODO uncomment this after merging soldier career code
+//		SoldierTimeLine soldierTimeLine = new SoldierTimeLine();
 //		ResponseBean responseBean = BeanUtil.getBean(ResponseBean.class);
+//		String actvDs = (String) responseBean.getPayload().get("actvDs");
+//		String actvTbl = (String) responseBean.getPayload().get("actvTbl");
 //
-//		Map<String, String> savedAnswers = context.getSavedAnswers();
-//		String soldierId = savedAnswers.get("soldier-id");
-//		Map<String, Map<String, String>> data = soldierTimeLine.getData(soldierId);
-//		responseBean.getPayload().put("soldierTimeLineData", data);
-//		responseBean.setActnCode(10);
-//		context.resetOnNextRequest();
+//		if (!actvDs.equalsIgnoreCase(IDALiteral.SS_DATASET) || !actvTbl.equalsIgnoreCase("Soldier")) {
+//			context.addChatbotResponse("Soldier career timeline visualization only works with SSFuehrer dataset.");
+//			return false;
+//		} else {
+//			Map<String, String> savedAnswers = context.getSavedAnswers();
+//			String soldierId = savedAnswers.get("soldier-id");
+//			Map<String, Map<String, String>> data = soldierTimeLine.getData(soldierId, actvDs);
+//			responseBean.getPayload().put("soldierTimeLineData", data);
+//			responseBean.setActnCode(10);
+//			context.addChatbotResponse("Soldier career timeline is loaded.");
+//			return true;
+//		}
+		return true;
 	}
 }
