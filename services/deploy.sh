@@ -20,6 +20,7 @@ function build_container() {
 
 build_container nginx .. -f nginx/Dockerfile
 build_container ida-ws .. -f ida-ws/Dockerfile
+build_container intent-classification .. -f intent-classification/Dockerfile
 
 export REGISTRY=$registry
 export VERSION=$version

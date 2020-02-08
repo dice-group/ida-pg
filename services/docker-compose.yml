@@ -9,7 +9,18 @@ services:
       - ida-net
   ida-ws:
     image: $REGISTRY/ida/ida-ws:$VERSION
-
+    environment:
+      - FUSEKI_URL=http://fuseki:3030/
+      - FUSEKI_USER=admin
+      - FUSEKI_PW=$FUSEKI_PW
+    networks:
+      - ida-net
+  intent-classification:
+    image: $REGISTRY/ida/intent-classification:$VERSION
+    ports:
+      - 5001:5001
+    volumes:
+      - "../intent-classification:/app/intent-classification"
     networks:
       - ida-net
 

@@ -9,11 +9,13 @@ import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import upb.ida.Application;
 import upb.ida.bean.ResponseBean;
 import upb.ida.rest.MessageRestController;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Map;
@@ -23,7 +25,8 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = { Application.class })
+@ContextConfiguration(classes = {Application.class})
+@TestPropertySource("classpath:application.properties")
 public class LoadDsMsgRstCntrlTest {
 
 	@Autowired
